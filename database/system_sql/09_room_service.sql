@@ -1,0 +1,4 @@
+-- Room Service module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: room_service_orders, room_service_delivery
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

@@ -1,0 +1,167 @@
+{
+  "hotel": "Hotel Paradise on the Nile",
+  "designer": "Reagansoft Innovation Limited",
+  "location": "Jinja, Uganda",
+  "modules": {
+    "01_owners": [
+      "owner_accounts",
+      "owner_approvals",
+      "owner_alerts",
+      "owner_dashboard"
+    ],
+    "02_reception": [
+      "reception_users",
+      "reception_records",
+      "guest_checkins",
+      "guest_checkouts"
+    ],
+    "03_reservations": [
+      "reservations",
+      "reservation_rooms",
+      "booking_sources"
+    ],
+    "04_rooms": [
+      "rooms",
+      "room_types",
+      "room_status_history"
+    ],
+    "05_housekeeping": [
+      "housekeeping_tasks",
+      "room_cleaning_logs",
+      "lost_property"
+    ],
+    "06_kitchen": [
+      "kitchen_orders",
+      "kitchen_stations",
+      "kitchen_order_status"
+    ],
+    "07_restaurant": [
+      "restaurant_tables",
+      "restaurant_orders",
+      "restaurant_shifts"
+    ],
+    "08_bar": [
+      "bar_items",
+      "bar_orders",
+      "bar_shifts"
+    ],
+    "09_room_service": [
+      "room_service_orders",
+      "room_service_delivery"
+    ],
+    "10_swimming_pool": [
+      "pool_visits",
+      "pool_services",
+      "pool_payments"
+    ],
+    "11_spa": [
+      "spa_services",
+      "spa_appointments",
+      "spa_payments"
+    ],
+    "12_laundry": [
+      "laundry_orders",
+      "laundry_items",
+      "laundry_status"
+    ],
+    "13_store": [
+      "store_items",
+      "store_receipts",
+      "store_issues"
+    ],
+    "14_inventory": [
+      "inventory_items",
+      "inventory_movements",
+      "stock_counts"
+    ],
+    "15_procurement": [
+      "suppliers",
+      "purchase_orders",
+      "goods_received"
+    ],
+    "16_maintenance": [
+      "maintenance_tickets",
+      "maintenance_tasks",
+      "maintenance_assets"
+    ],
+    "17_events": [
+      "events",
+      "event_bookings",
+      "event_services"
+    ],
+    "18_transport": [
+      "vehicles",
+      "transport_requests",
+      "vehicle_logs"
+    ],
+    "19_finance": [
+      "invoices",
+      "payments",
+      "expenses",
+      "financial_periods"
+    ],
+    "20_cashier": [
+      "cashier_shifts",
+      "cash_movements",
+      "cash_reconciliations"
+    ],
+    "21_accounting": [
+      "chart_of_accounts",
+      "journal_entries",
+      "journal_lines"
+    ],
+    "22_auditor": [
+      "audit_logs",
+      "audit_exports",
+      "audit_reviews"
+    ],
+    "23_hr": [
+      "staff_profiles",
+      "attendance",
+      "leave_requests"
+    ],
+    "24_pos": [
+      "pos_terminals",
+      "pos_sales",
+      "pos_sale_items",
+      "pos_voids_refunds"
+    ],
+    "25_notifications": [
+      "notifications",
+      "notification_preferences",
+      "notification_devices"
+    ],
+    "26_communication": [
+      "department_threads",
+      "department_messages",
+      "message_reads",
+      "call_logs"
+    ],
+    "27_authentication": [
+      "password_reset_tokens",
+      "login_attempts",
+      "sessions",
+      "two_factor_settings"
+    ],
+    "28_efris": [
+      "efris_invoices",
+      "efris_attempts",
+      "efris_responses"
+    ]
+  },
+  "communication": {
+    "internal_messaging": true,
+    "department_threads": true,
+    "message_read_receipts": true,
+    "call_logs": true,
+    "voice_call_provider": "external/approved provider adapter"
+  },
+  "authentication": {
+    "self_service_password_reset": true,
+    "email_reset": true,
+    "sms_reset_adapter": true,
+    "session_management": true,
+    "login_attempt_logging": true,
+    "two_factor_ready": true
+  }
+}

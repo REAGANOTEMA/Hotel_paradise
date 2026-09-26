@@ -1,0 +1,224 @@
+{
+  "dishes": {
+    "classic-margherita": {
+      "ext": "jpg",
+      "w": 1400,
+      "h": 1750,
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 400
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 600
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 800
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 1200
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 1600
+        }
+      ]
+    },
+    "mushroom-soup": {
+      "ext": "jpg",
+      "w": 1600,
+      "h": 1200,
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 240
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 360
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 480
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 720
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 960
+        }
+      ]
+    },
+    "section-pizza": {
+      "ext": "jpg",
+      "w": 2400,
+      "h": 500,
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 67
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 100
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 133
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 200
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 267
+        }
+      ]
+    }
+  },
+  "rooms": {
+    "standard-twin": {
+      "ext": "jpg",
+      "w": 1600,
+      "h": 1200,
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 240
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 360
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 480
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 720
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 960
+        }
+      ]
+    },
+    "suite": {
+      "ext": "jpg",
+      "w": 1400,
+      "h": 1900,
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 434
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 651
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 869
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 1303
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 1737
+        }
+      ]
+    }
+  },
+  "gallery": {},
+  "hero": [
+    {
+      "slug": "hero1",
+      "ext": "webp",
+      "w": 382,
+      "h": 510,
+      "variants": []
+    },
+    {
+      "slug": "hero2",
+      "ext": "webp",
+      "w": 680,
+      "h": 453,
+      "variants": []
+    },
+    {
+      "slug": "hero3",
+      "ext": "webp",
+      "w": 680,
+      "h": 357,
+      "variants": []
+    },
+    {
+      "slug": "hero4",
+      "ext": "webp",
+      "w": 680,
+      "h": 451,
+      "variants": []
+    },
+    {
+      "slug": "hero5",
+      "ext": "webp",
+      "w": 680,
+      "h": 453,
+      "variants": [
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 426
+        }
+      ]
+    },
+    {
+      "slug": "hero6",
+      "ext": "webp",
+      "w": 680,
+      "h": 510,
+      "variants": []
+    },
+    {
+      "slug": "hero7",
+      "ext": "webp",
+      "w": 680,
+      "h": 453,
+      "variants": []
+    }
+  ]
+}

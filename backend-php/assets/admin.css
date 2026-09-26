@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+:root{--gold:#C9A227;--navy:#071A33;--navy2:#0f2850;--nile:#0B5D78;--ivory:#f6f3ea;--ink:#1c2733;--muted:#6b7686;--line:#e4e0d2;--bg:#f3f1ea;--side:250px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+img,svg{max-width:100%}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:600;margin:0}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.skipLink{position:absolute;left:-9999px;top:0;z-index:60;background:var(--gold);color:#071A33;padding:12px 20px;font-weight:700;border-radius:0 0 10px 0}
+.skipLink:focus{left:0}
+
+.app{display:flex;min-height:100vh}
+.side{width:var(--side);background:linear-gradient(165deg,#050d1c,#071A33 55%,#0f2850);color:#dfe7f0;flex:none;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;overflow-y:auto;overscroll-behavior:contain;z-index:20}
+.sideBrand{padding:22px 20px 12px;color:#fff;display:flex;align-items:center;gap:12px}
+.sideLogo{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2.5px solid var(--gold);flex:none;background:var(--ivory);padding:2px;box-shadow:0 2px 10px #00000055}
+.sideBrand .sbText{font-family:'Playfair Display',serif;letter-spacing:1.2px;line-height:1.15;min-width:0}
+.sideBrand .sbText span{font-size:15px;display:block;white-space:nowrap}
+.sideBrand .sbText small{font-family:'DM Sans';color:var(--gold);font-size:8.5px;letter-spacing:2.2px}
+.sideLabel{margin:8px 20px 6px;font-size:9px;letter-spacing:2.6px;color:#8aa0b6;font-weight:700}
+.sideNav{flex:1;padding:4px 12px 16px}
+.sideNav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:#b9c7d6;font-size:13.5px;margin-bottom:2px;min-height:44px}
+.sideNav a:hover{background:#ffffff12;color:#fff}
+.sideNav a.on{background:linear-gradient(90deg,#C9A227,#e0b53a);color:#071A33;font-weight:700}
+.sideNav .dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.45;flex:none}
+.sideFoot{padding:16px 20px calc(16px + env(safe-area-inset-bottom));border-top:1px solid #ffffff14}
+.sideFoot a{color:#8aa0b6;font-size:12px}
+.sideFoot a:hover{color:var(--gold)}
+/* the close control only exists while the sidebar is a drawer */
+.sideClose{display:none;position:absolute;top:20px;right:14px;width:40px;height:40px;background:none;border:0;padding:0}
+.sideClose span{position:absolute;left:10px;right:10px;top:19px;height:2px;background:#fff;border-radius:2px}
+.sideClose span:first-child{transform:rotate(45deg)}
+.sideClose span:last-child{transform:rotate(-45deg)}
+.sideScrim{display:none;position:fixed;inset:0;background:rgba(5,13,26,.6);z-index:19;opacity:0;transition:opacity .25s ease}
+.sideScrim[hidden]{display:none}
+
+.main{margin-left:var(--side);flex:1;min-width:0;display:flex;flex-direction:column}
+.top{background:#fff;border-bottom:1px solid var(--line);padding:16px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:10}
+.sideToggle{display:none;position:relative;width:44px;height:44px;flex:none;background:none;border:0;padding:0;margin-left:-8px}
+.sideToggle span{position:absolute;left:10px;right:10px;height:2px;background:var(--navy);border-radius:2px}
+.sideToggle span:nth-child(1){top:15px}
+.sideToggle span:nth-child(2){top:21px}
+.sideToggle span:nth-child(3){top:27px}
+.topTitles{min-width:0}
+.pageTitle{font-size:23px;color:var(--navy);line-height:1.2}
+.pageSub{margin:2px 0 0;color:var(--muted);font-size:13px}
+.topRight{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;flex:none}
+.who{color:var(--navy);font-weight:700;white-space:nowrap}
+.whoRole{color:var(--muted);font-size:12px;white-space:nowrap}
+
+.content{padding:24px 26px 56px;flex:1;min-width:0}
+.flash{border-radius:12px;padding:14px 18px;margin:0 0 20px;font-weight:600;font-size:14px}
+.flash.ok{background:#e4f3e6;color:#2e7d32;border:1px solid #bfe3c4}
+.flash.bad{background:#fde9e9;color:#c62828;border:1px solid #f5c2c2}
+.flash.warn{background:#fff4dd;color:#9a6b00;border:1px solid #eeda9a}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:26px}
+.kpi{--k:#0f2850;background:#fff;border:1px solid var(--line);border-top:3px solid var(--k);border-radius:14px;padding:18px 20px;box-shadow:0 8px 24px #071A3310}
+.kpiLbl{font-size:11px;letter-spacing:2px;color:var(--muted);font-weight:700}
+.kpiVal{font-family:'Playfair Display';font-size:26px;color:var(--navy);margin:8px 0 2px}
+.kpiHint{font-size:12px;color:var(--muted)}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:18px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:22px;box-shadow:0 10px 30px #071A3310}
+.panel h2{font-size:19px;color:var(--navy);margin-bottom:4px}
+.panel .hint{color:var(--muted);font-size:13px;margin:0 0 16px}
+.panel h3{font-size:15px;color:var(--navy);margin:18px 0 10px}
+
+table.tbl{width:100%;border-collapse:collapse}
+/* Added by the script in layout.php. A report with nine columns scrolls
+   sideways inside its own box instead of dragging the whole page with it. */
+.tableScroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+.tbl th{text-align:left;font-size:10.5px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;padding:10px 12px;border-bottom:2px solid var(--line);background:#faf9f5;white-space:nowrap}
+.tbl td{padding:11px 12px;border-bottom:1px solid #eeeae0;vertical-align:middle}
+.tbl tr:hover td{background:#fbfaf6}
+.tbl .num{text-align:right;font-weight:600}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.5px}
+.btn,.btnGhost{display:inline-flex;align-items:center;gap:7px;background:var(--gold);color:#10213a;padding:11px 18px;border-radius:10px;font-weight:700;font-size:13px;border:0;letter-spacing:.3px}
+.btn:hover{background:#e0b53a}
+.btnGhost{background:transparent;color:var(--navy);border:1px solid var(--line)}
+.btnGhost:hover{border-color:var(--gold);color:var(--gold)}
+.btn.sm,.btnGhost.sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.btn.danger{background:#c62828;color:#fff}
+.btn.danger:hover{background:#9e1f1f}
+.btn.blue{background:var(--nile);color:#fff}
+.btn.blue:hover{background:#0d6e8f}
+.btn.tick{background:#2e7d32;color:#fff}
+
+.bar{display:flex;gap:10px;flex-wrap:wrap}
+.grow{flex:1;min-width:160px}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;letter-spacing:1.5px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:11px 13px;border:1px solid #d9d4c6;border-radius:9px;font-family:inherit;font-size:14px;background:#fff;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #C9A22766;border-color:var(--gold)}
+.field small{color:var(--muted)}
+.formGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+.formRow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+
+.twoCol{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;align-items:start}
+
+ul.clean{list-style:none;margin:0;padding:0}
+.miniList .li{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid #eeeae0;font-size:13.5px}
+.miniList .li:last-child{border-bottom:0}
+.miniList .li b{color:var(--navy)}
+
+.roomGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.rfilter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.rfilter button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:12.5px;color:var(--muted)}
+.rfilter button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.room{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.room .rno{font-family:'Playfair Display';font-size:17px;color:var(--navy)}
+.room .rtype{font-size:11px;color:var(--muted)}
+.room .b{display:inline-block;margin-top:8px}
+.room.avail{border-top:3px solid #2e7d32}
+.room.occupied{border-top:3px solid var(--gold)}
+.room.reserved{border-top:3px solid #b26a00}
+.room.dirty{border-top:3px solid #c62828}
+.room.cleaning{border-top:3px solid var(--nile)}
+.room.inspected{border-top:3px solid #2e7d32}
+.room.maintenance{border-top:3px solid #94a3b8}
+
+.posWrap{display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:start}
+.menuCats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.menuCats button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:12.5px}
+.menuCats button.on{background:var(--gold);color:#10213a;font-weight:700;border-color:var(--gold)}
+.itemGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.itemCard{border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px;text-align:left}
+.itemCard:hover{border-color:var(--gold)}
+.itemCard .nm{font-weight:600;color:var(--navy)}
+.itemCard .pr{color:var(--gold);font-weight:700;font-size:14px;margin-top:4px}
+.cart{border:1px solid var(--line);border-radius:14px;background:#fff;padding:18px}
+.cartRow{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px dashed #eeeae0;font-size:13.5px}
+.cartRow b{color:var(--navy)}
+.cartRow button{background:none;border:0;color:#c62828;font-size:15px}
+
+.totals{border-top:2px solid var(--line);margin-top:12px;padding-top:12px}
+.totals .tt{display:flex;justify-content:space-between;font-weight:700;font-size:16px}
+
+.dashGrid{display:grid;grid-template-columns:1.5fr 1fr;gap:22px;align-items:start}
+
+.reports{margin-bottom:22px}
+.print-hide{}
+
+.res-detail{margin-bottom:20px}
+.res-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.payRow2{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid #eeeae0}
+
+.loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#050d1c,#071A33 60%,#0f2850);padding:20px}
+.loginCard{width:100%;max-width:390px;background:#fff;border-radius:18px;padding:38px 34px;box-shadow:0 30px 80px #00000055}
+.loginCard .sideBrand{color:var(--navy);padding:0;margin-bottom:22px;justify-content:center}
+.loginCard .sideBrand .sideLogo{width:64px;height:64px}
+.loginCard .sideBrand .sbText span{color:var(--navy);font-size:19px;letter-spacing:1.6px}
+.loginCard .sideBrand .sbText small{color:var(--gold)}
+.loginCard p{color:var(--muted);font-size:13.5px;line-height:1.6}
+.demo{border-top:1px solid var(--line);margin-top:22px;padding-top:16px;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.demo b{color:var(--navy)}
+
+/* ===================================================================
+   Responsive
+
+     1080  the sidebar becomes a drawer, opened from the header
+      900  the two column layouts stack
+      720  tighter padding, the header wraps
+      560  phones, and the form fields stop zooming the page on iOS
+   =================================================================== */
+@media(max-width:1080px){
+  .main{margin-left:0}
+  .side{
+    transform:translateX(-102%);
+    transition:transform .3s cubic-bezier(.3,0,.2,1);
+    box-shadow:0 0 60px #00000060;
+    width:min(84vw,300px);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .side.open{transform:none}
+  .sideClose{display:block}
+  .sideScrim{display:block;opacity:1}
+  .sideToggle{display:block}
+  body.navOpen{overflow:hidden}
+  .twoCol,.posWrap,.dashGrid{grid-template-columns:1fr}
+}
+
+@media(max-width:900px){
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+  .kpi{padding:15px 16px}
+  .kpiVal{font-size:22px}
+  .formGrid,.formRow{grid-template-columns:1fr}
+  .itemGrid{grid-template-columns:repeat(auto-fill,minmax(132px,1fr))}
+  .roomGrid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+}
+
+@media(max-width:720px){
+  .top{padding:12px 16px;gap:12px}
+  .pageTitle{font-size:19px}
+  .pageSub{font-size:12px}
+  .content{padding:18px 16px 44px}
+  .panel{padding:17px 15px;border-radius:14px;margin-bottom:16px}
+  .panel h2{font-size:17px}
+  .toolbar{gap:8px}
+  .toolbar .btn,.toolbar .btnGhost{flex:1 1 auto;justify-content:center}
+  .res-meta{grid-template-columns:1fr 1fr}
+  .loginWrap{padding:16px}
+  .loginCard{padding:28px 22px;border-radius:16px}
+}
+
+@media(max-width:560px){
+  /* Anything under 16px makes iOS zoom the page the moment a field is tapped. */
+  .field input,.field select,.field textarea{font-size:16px;padding:12px}
+  .topRight{gap:8px}
+  .whoRole{display:none}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpiLbl{font-size:10px;letter-spacing:1.4px}
+  .kpiVal{font-size:19px;margin:6px 0 2px}
+  .kpiHint{font-size:11px}
+  .res-meta{grid-template-columns:1fr}
+  .itemGrid{grid-template-columns:1fr 1fr}
+  .roomGrid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr))}
+  .rfilter,.menuCats{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+  .rfilter::-webkit-scrollbar,.menuCats::-webkit-scrollbar{display:none}
+  .rfilter button,.menuCats button{flex:none;padding:10px 15px;min-height:40px}
+  .bar{gap:8px}
+  .bar .btn,.bar .btnGhost{flex:1 1 auto;justify-content:center}
+  .tbl th,.tbl td{padding:10px 9px}
+  .panel h3{font-size:14px}
+  .loginCard .sideBrand .sbText span{font-size:17px}
+}
+
+@media(pointer:coarse){
+  .btn,.btnGhost{min-height:44px;justify-content:center}
+  .rfilter button,.menuCats button{min-height:42px;padding:10px 16px}
+  .sideNav a{min-height:46px}
+  .tableScroll{-webkit-overflow-scrolling:touch}
+}
+
+@media print{
+  .side,.top,.sideScrim,.skipLink,.toolbar .btn{display:none!important}
+  .main{margin:0}
+  .content{padding:0}
+  body{background:#fff}
+  .panel{border:0;box-shadow:none}
+  .tableScroll{overflow:visible}
+}

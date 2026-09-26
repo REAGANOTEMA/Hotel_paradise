@@ -1,0 +1,4 @@
+-- Maintenance module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: maintenance_tickets, maintenance_tasks, maintenance_assets
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

@@ -1,0 +1,4 @@
+-- Accounting module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: chart_of_accounts, journal_entries, journal_lines
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

@@ -1,0 +1,4 @@
+-- Procurement module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: suppliers, purchase_orders, goods_received
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

@@ -1,0 +1,5 @@
+# WEBSITE SQL FILE MANIFEST
+
+Total SQL files: 1
+
+- `01_WEBSITE_INTEGRATION_SCHEMA.sql` — 945 bytes

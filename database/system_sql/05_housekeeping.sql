@@ -1,0 +1,4 @@
+-- Housekeeping module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: housekeeping_tasks, room_cleaning_logs, lost_property
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

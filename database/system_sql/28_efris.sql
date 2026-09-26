@@ -1,0 +1,4 @@
+-- Efris module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: efris_invoices, efris_attempts, efris_responses
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.
