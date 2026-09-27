@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, API} from './shared';
+import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, apiUrl} from './shared';
 import {SmartImage} from './SmartImage';
 
 /**
@@ -29,7 +29,7 @@ function RoomsPage() {
  const [busy, setBusy] = React.useState(false);
 
  React.useEffect(() => {
-  fetch(API + '?act=rooms').then(r => r.json()).then(d => {
+  apiUrl('rooms').then(url => fetch(url)).then(r => r.json()).then(d => {
    if (d.ok && Array.isArray(d.rooms)) {
     const m: Record<string, number> = {};
     d.rooms.forEach((r: {name: string; price: number}) => { if (r.price > 0) m[r.name] = r.price; });
@@ -56,7 +56,7 @@ function RoomsPage() {
   if (!sel) return;
   setBusy(true); setMsg(null);
   try {
-   const res = await fetch(API + '?act=booking', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+   const res = await fetch(await apiUrl('booking'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
     name: form.name, phone: form.phone, email: form.email, check_in: form.check_in, check_out: form.check_out,
     room_type: sel.type, adults: parseInt(form.adults) || 1
    })});

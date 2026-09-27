@@ -5,8 +5,72 @@ if(session_status()===PHP_SESSION_NONE) session_start();
 date_default_timezone_set('Africa/Kampala');
 mb_internal_encoding('UTF-8');
 
-const BASE=''.'/hotelparadiseonthenile/backend-php';
-const SITE_URL=''.'/hotelparadiseonthenile';
+/**
+ * Where the console and the public site live, worked out from where this file
+ * actually is rather than written down here.
+ *
+ * These used to be hard coded to /hotelparadiseonthenile, which is right for
+ * exactly one way of installing the site and wrong for every other. On this
+ * machine the console sits at /Hotel_paradise, so every stylesheet and logo
+ * came back 404 and the console rendered unstyled. Deriving the paths means the
+ * console works in the domain root, in a subfolder, or in a project folder on a
+ * developer's machine, with nothing to edit on the way to hosting.
+ *
+ * BASE is the backend-php folder, the one this file's parent directory.
+ * SITE_URL is the folder above it, which is the public website.
+ *
+ * They are defined rather than declared const because the value depends on the
+ * request, and a constant has to be known before the code runs.
+ */
+function hp_paths(): array{
+ static $paths=null;
+ if($paths!==null) return $paths;
+
+ $appDir=str_replace('\\','/',dirname(__DIR__));          // .../backend-php
+ $siteDir=dirname($appDir);                               // the public website
+ $docRoot=str_replace('\\','/',rtrim($_SERVER['DOCUMENT_ROOT']??'','/'));
+
+ // Only a path that really sits inside the document root can be expressed as a
+ // URL. Anything else (a Windows path, a symbolic link outside the root) falls
+ // back to the folder name, which is right for the usual shared hosting layout.
+ $toUrl=function(string $dir) use($docRoot){
+  if($docRoot!=='' && strpos($dir,$docRoot)===0){
+   $rel=substr($dir,strlen($docRoot));
+   return $rel===''?'/':rtrim($rel,'/');
+  }
+  return '/'.basename($dir);
+ };
+
+ $base=$toUrl($appDir);
+ $paths=[
+  'base'=>$base,
+  'site'=>($siteDir===$appDir?$base:$toUrl($siteDir)),
+ ];
+ return $paths;
+}
+
+define('BASE',hp_paths()['base']);
+define('SITE_URL',hp_paths()['site']);
+
+/**
+ * Whether the sign in page may print the demo passwords.
+ *
+ * It used to print them unconditionally, which handed the administrator's
+ * password to anyone who loaded the page. It is off unless someone deliberately
+ * switches it on, and a hosting platform will never set this, so the live site
+ * shows nothing but the form.
+ *
+ * To turn it on on a development machine, set HP_DEMO_LOGINS=1 before starting
+ * Apache, or put it in httpd.conf / .htaccess as:
+ *
+ *   SetEnv HP_DEMO_LOGINS 1
+ */
+function demo_logins_enabled(): bool{
+  $v=getenv('HP_DEMO_LOGINS');
+  if($v===false && isset($_SERVER['HP_DEMO_LOGINS'])) $v=$_SERVER['HP_DEMO_LOGINS'];
+  if($v===false) return false;
+  return in_array(strtolower(trim((string)$v)),['1','true','yes','on'],true);
+}
 
 /**
  * Where the databases are.
@@ -97,7 +161,7 @@ function web_db(): PDO{
 function db_label(PDO $pdo): string{
  $cfg=db_config();
  foreach([[$cfg['name'],$cfg['user']],[$cfg['web']['name'],$cfg['web']['user']]] as $pair){
-  try{ if($pdo->query('SELECT DATABASE()')->fetchColumn()===$pair[0]) return $pair[0].' as '.$pair[1]; }catch(Throwable $e){}
+  try{ if($pdo->query('SELECT DATABASE()')->fetchColumn()===$pair[0]) return $pair[0]===$pair[1]?$pair[0]:$pair[0].' as '.$pair[1]; }catch(Throwable $e){}
  }
  try{ return (string)$pdo->query('SELECT DATABASE()')->fetchColumn(); }catch(Throwable $e){ return 'unknown'; }
 }

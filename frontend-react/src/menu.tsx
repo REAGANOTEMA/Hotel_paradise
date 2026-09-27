@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmt, API} from './shared';
+import {TopBar, PageNav, Footer, fmt, apiUrl} from './shared';
 import {SmartImage} from './SmartImage';
 import {
   MENU_REVISION,
@@ -314,7 +314,7 @@ function DishDetail({
         </div>
 
         <div className="modalBody">
-          <p className="modalCrumb">{breadcrumb.join('  ›  ')}</p>
+          <p className="modalCrumb">{breadcrumb.join('  â€º  ')}</p>
           <h2 className="modalTitle" id="dishTitle">{dish.name}</h2>
 
           <p className="modalPrice">
@@ -416,7 +416,8 @@ function MenuPage() {
   const [justAdded, setJustAdded] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    fetch(API + '?act=menu')
+    apiUrl('menu')
+      .then(url => fetch(url))
       .then(r => r.json())
       .then(d => {
         if (d.ok && Array.isArray(d.categories) && d.categories.some((c: {items?: unknown[]}) => Array.isArray(c.items) && c.items.length)) {
@@ -529,7 +530,7 @@ function MenuPage() {
     if (!name.trim() || !phone.trim()) { setMsg({ok: false, text: 'Please add your name and phone number so we can confirm your order.'}); return; }
     setBusy(true); setMsg(null);
     try {
-      const res = await fetch(API + '?act=order', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+      const res = await fetch(await apiUrl('order'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
         name: name.trim(), phone: phone.trim(),
         items: tray.map(x => ({
           id: x.dish.id,
@@ -647,7 +648,7 @@ function MenuPage() {
         <button className="orderPanelHead" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-controls="orderBody">
           <span className="orderPanelTitle">
             <b>Your order</b>
-            <em>{tray.length === 0 ? 'Nothing added yet. Open any dish to add it.' : count + ' item' + (count === 1 ? '' : 's') + ' · UGX ' + Math.round(subtotal).toLocaleString()}</em>
+            <em>{tray.length === 0 ? 'Nothing added yet. Open any dish to add it.' : count + ' item' + (count === 1 ? '' : 's') + ' Â· UGX ' + Math.round(subtotal).toLocaleString()}</em>
           </span>
           <span className="orderPanelToggle">{open ? 'Collapse' : 'Open'}</span>
         </button>
@@ -665,7 +666,7 @@ function MenuPage() {
                       <b>{x.dish.name}</b>
                       {(x.companion || x.salads.length > 0) && <span className="traySides">
                         {x.companion && <>with {x.companion.name.toLowerCase()}</>}
-                        {x.companion && x.salads.length > 0 && ' · '}
+                        {x.companion && x.salads.length > 0 && ' Â· '}
                         {x.salads.length > 0 && x.salads.map(s => s.name).join(', ').toLowerCase()}
                       </span>}
                       <span>{fmt(unit)} each</span>
@@ -689,7 +690,7 @@ function MenuPage() {
             </div>
           ) : (
             <div className="trayForm">
-              <div className="bookMsg">Online ordering is briefly unavailable. Your list is still here — call <a href={'tel:' + CALL.replace(/\s/g, '')}>{CALL}</a> to place it.</div>
+              <div className="bookMsg">Online ordering is briefly unavailable. Your list is still here â€” call <a href={'tel:' + CALL.replace(/\s/g, '')}>{CALL}</a> to place it.</div>
             </div>
           )}
 

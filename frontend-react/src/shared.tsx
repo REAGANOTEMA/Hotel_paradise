@@ -1,6 +1,48 @@
 import React from 'react';
 
-export const API = '/hotelparadiseonthenile/backend-php/api.php';
+/**
+ * Where the PHP API actually is.
+ *
+ * The site has been installed in more than one place: at the root of a domain
+ * and inside a subdirectory. Guessing one of them and being wrong on the other
+ * host is how a working site ends up silently serving its baked-in menu while
+ * every order fails. So the plausible places are tried once, in order, and the
+ * first one that answers is kept for the rest of the visit.
+ */
+let apiBase: string | null = null;
+
+const apiCandidates = (): string[] => {
+  const here = new URL('.', window.location.href).pathname.replace(/\/+$/, '');
+  return [...new Set([
+    `${here}/backend-php/api.php`,
+    '/backend-php/api.php',
+    '/hotelparadiseonthenile/backend-php/api.php',
+  ])];
+};
+
+export const apiUrl = async (act: string): Promise<string> => {
+  if (apiBase === null) {
+    for (const candidate of apiCandidates()) {
+      try {
+        const res = await fetch(`${candidate}?act=health`, {headers: {Accept: 'application/json'}});
+        if (res.ok) {
+          const body = await res.json();
+          if (body && body.ok) {
+            apiBase = candidate;
+            break;
+          }
+        }
+      } catch {
+        // This address is not the API. Try the next one.
+      }
+    }
+    // Nothing answered, so use the most likely address and let the caller's
+    // own error handling report it in words the guest can act on.
+    if (apiBase === null) apiBase = apiCandidates()[0];
+  }
+  return `${apiBase}?act=${act}`;
+};
+
 export const LOGO = './logo-256.png';
 
 export const fmt = (n: number): string => 'UGX ' + Math.round(n).toLocaleString();

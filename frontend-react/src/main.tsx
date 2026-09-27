@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, API, LOGO} from './shared';
+import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, LOGO} from './shared';
 import {heroShots, SmartImage} from './SmartImage';
 
 const dining = [

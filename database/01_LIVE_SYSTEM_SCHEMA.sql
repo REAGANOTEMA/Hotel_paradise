@@ -130,7 +130,16 @@ CREATE TABLE IF NOT EXISTS menu_categories (
   eyebrow VARCHAR(120) DEFAULT NULL,
   blurb TEXT DEFAULT NULL,
   image VARCHAR(190) DEFAULT NULL,
-  sort_order INT NOT NULL DEFAULT 0
+  sort_order INT NOT NULL DEFAULT 0,
+  -- "Published" is the only question the public website asks. "Active" is a
+  -- different question that the till asks: is the kitchen still selling this?
+  -- Keeping them apart is what lets the website menu be a subset of the hotel's
+  -- real menu instead of a copy of it, so the two can never quietly drift.
+  published BOOLEAN NOT NULL DEFAULT FALSE,
+  -- A section is identified by where it is and what it is called. The website
+  -- menu is published by matching on this, so it is what stops the same
+  -- section being loaded twice and leaving two half menus on the site.
+  UNIQUE KEY uq_menu_categories (hotel_id, outlet, name)
 );
 
 CREATE TABLE IF NOT EXISTS menu_items (
@@ -145,7 +154,13 @@ CREATE TABLE IF NOT EXISTS menu_items (
   sort_order INT NOT NULL DEFAULT 0,
   active BOOLEAN DEFAULT TRUE,
   stock_tracked BOOLEAN DEFAULT TRUE,
-  FOREIGN KEY(category_id) REFERENCES menu_categories(id)
+  published BOOLEAN NOT NULL DEFAULT FALSE,
+  FOREIGN KEY(category_id) REFERENCES menu_categories(id),
+  -- Two rows for the same dish in one hotel means the kitchen sells it twice
+  -- and the till charges it twice. This key makes that impossible, and lets the
+  -- published menu be reloaded in place, keeping the ids that past orders
+  -- already point at.
+  UNIQUE KEY uq_menu_items (hotel_id, name)
 );
 
 CREATE TABLE IF NOT EXISTS shifts (

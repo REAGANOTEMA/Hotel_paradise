@@ -40,9 +40,14 @@ function existing_columns(string $table, array $wanted): array{
  return array_values(array_filter($wanted,fn($c)=>isset($have[strtolower($c)])));
 }
 
-/** A stand-in for a column that may not exist, so the shape never changes. */
-function nullable_column(string $table, string $col, string $as): string{
- return isset(table_columns($table)[strtolower($col)]) ? "$col AS $as" : "'' AS $as";
+/**
+ * A stand-in for a column that may not exist, so the shape never changes.
+ * The prefix is for queries that join two tables holding the same column name,
+ * where an unqualified column is rejected as ambiguous.
+ */
+function nullable_column(string $table, string $col, string $as, string $prefix=''): string{
+  if(!isset(table_columns($table)[strtolower($col)])) return "'' AS $as";
+  return ($prefix!==''?$prefix.'.':'').$col." AS $as";
 }
 
 $act=$_GET['act']??'';
@@ -77,11 +82,12 @@ if($act==='health'){
   $out(['ok'=>(bool)($report['hotel']['connected']??false),'where'=>$report]);
 }
 
-/** How many dishes the menu is serving, used only by the health check. */
+/** How many dishes the website is serving, used only by the health check. */
 function menu_item_count(PDO $pdo): ?int{
- try{
-  return (int)$pdo->query('SELECT COUNT(*) FROM menu_items WHERE active=1')->fetchColumn();
- }catch(Throwable $e){ return null; }
+  try{
+   $where=existing_columns('menu_items',['published'])?'published=1':'active=1';
+   return (int)$pdo->query('SELECT COUNT(*) FROM menu_items WHERE '.$where)->fetchColumn();
+  }catch(Throwable $e){ return null; }
 }
 
 if($act==='booking'){
@@ -118,22 +124,39 @@ if($act==='menu'){
   // Ask for the optional columns only where they exist, and stand in a blank
   // string where they do not, so the response shape is always the same.
   $catCols=existing_columns('menu_categories',['id','outlet','name','eyebrow','blurb','image','sort_order']);
-  $catOrder=in_array('sort_order',$catCols,true)?'sort_order,id':'id';
-  $cats=rows('SELECT '.implode(',',array_map(fn($c)=>nullable_column('menu_categories',$c,$c),$catCols)).' FROM menu_categories ORDER BY '.$catOrder);
+  // Every column in the order by is qualified with the table it belongs to. The
+  // dish query joins two tables that both have an id and a sort_order, and an
+  // unqualified name there is ambiguous, which the database rejects outright.
+  $catOrder=in_array('sort_order',$catCols,true)?'c.sort_order,c.id':'c.id';
+  $mcOrder=in_array('sort_order',$catCols,true)?'mc.sort_order,mc.id':'mc.id';
+
+  // "Published" is the question the website asks. "Active" is a different
+  // question that the till asks, and the answer is not always the same: a dish
+  // can be on the website, sold in the restaurant, or neither, and the two must
+  // not be forced to agree. A database from before the split has no published
+  // column, so it falls back to selling whatever is active.
+  $published=existing_columns('menu_items',['published']);
+  $itemWhere=$published?'mi.published=1':'mi.active=1';
+  $catWhere=$published?'c.published=1':'1=1';
+
+  $cats=rows('SELECT '.implode(',',array_map(fn($c)=>nullable_column('menu_categories',$c,$c),$catCols))
+    .' FROM menu_categories c WHERE '.$catWhere.' ORDER BY '.$catOrder);
   $itemCols=existing_columns('menu_items',['image','group_name','sort_order']);
   $itemOrder=in_array('sort_order',$itemCols,true)?'mi.sort_order,':'';
   $items=rows('SELECT mi.id,mi.name,mi.description,mi.price,mc.id cid,mc.outlet,mc.name cat'
-    .','.nullable_column('menu_items','image','image')
-    .','.nullable_column('menu_items','group_name','group_name')
+    .','.nullable_column('menu_items','image','image','mi')
+    .','.nullable_column('menu_items','group_name','group_name','mi')
     .' FROM menu_items mi JOIN menu_categories mc ON mc.id=mi.category_id'
-    .' WHERE mi.active=1 ORDER BY mc.'.$catOrder.','.$itemOrder.'mi.id');
+    .' WHERE '.$itemWhere.' ORDER BY '.$mcOrder.','.$itemOrder.'mi.id');
   $by=[];
   foreach($cats as $c){ $by[$c['id']]=['cid'=>(int)$c['id'],'outlet'=>ucfirst($c['outlet']),'name'=>$c['name'],'eyebrow'=>$c['eyebrow']??'','blurb'=>$c['blurb']??'','image'=>$c['image']??'','items'=>[]]; }
   foreach($items as $i){
    $price=$i['price']===null?null:(float)$i['price'];
    $by[$i['cid']]['items'][]=['id'=>(int)$i['id'],'name'=>$i['name'],'desc'=>$i['description']??'','group'=>$i['group_name']??'','image'=>$i['image']??'','price'=>$price,'rate'=>$price===null?'Price on request':'UGX '.number_format($price)];
   }
-  $out(['ok'=>true,'categories'=>array_values($by)]);
+  // A section the guest can open but not order from is worse than no section at
+  // all, so anything that ended up empty is dropped from the response.
+  $out(['ok'=>true,'categories'=>array_values(array_filter($by,fn($c)=>$c['items']!==[]))]);
 }
 
 if($act==='order'){
@@ -146,7 +169,11 @@ if($act==='order'){
   foreach($lines as $ln){
     $qty=(int)($ln['qty']??1);
     if($qty<1){ continue; }
-    $mi=row('SELECT id,name,price FROM menu_items WHERE id=? AND active=1',[(int)($ln['id']??0)]);
+    // A guest may only order a dish the website is currently offering. The
+    // check is on the database row, never on what the browser sent, so a price
+    // or a dish that has since been withdrawn cannot be forced through.
+    $orderable=existing_columns('menu_items',['published'])?'active=1 AND published=1':'active=1';
+    $mi=row('SELECT id,name,price FROM menu_items WHERE id=? AND '.$orderable,[(int)($ln['id']??0)]);
     if(!$mi){ $out(['ok'=>false,'error'=>'One of the dishes is no longer available. Please refresh the menu.'],422); }
     if($mi['price']===null){ $out(['ok'=>false,'error'=>'That dish is priced on request. Please call +256 759 504 928 and the team will price it for you.'],422); }
 

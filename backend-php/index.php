@@ -31,10 +31,10 @@ function pagelogin(): void{
   echo '<form method="post">';
   echo '<div class="field"><label>Email address</label><input name="email" type="email" required autocomplete="username" autofocus></div>';
   echo '<div class="field"><label>Password</label><input name="password" type="password" required autocomplete="current-password"></div>';
-  echo '<button class="btn" style="width:100%;justify-content:center">Sign in</button></form>';
-  echo '<div class="demo">Demo accounts, password <b>Paradise2026</b> except the administrator which uses <b>Admin@123</b>.<br>Administrator: <b>admin@hotelparadiseonthenile.info</b><br>Front desk: <b>frontdesk@hotelparadiseonthenile.info</b></div>';
-  echo '<div class="demo" style="border:0;margin-top:14px;padding-top:0">Management system by <a href="https://reagansoftinnovation.com" target="_blank" rel="noopener noreferrer" style="color:var(--gold)">Reagansoft Innovation Limited</a></div>';
-  echo '</div></div></body></html>';
+ echo '<button class="btn" style="width:100%;justify-content:center">Sign in</button></form>'.PHP_EOL;
+ if(demo_logins_enabled()) echo '<div class="demo">Demo accounts, password <b>Paradise2026</b> except the administrator which uses <b>Admin@123</b>.<br>Administrator: <b>admin@hotelparadiseonthenile.info</b><br>Front desk: <b>frontdesk@hotelparadiseonthenile.info</b></div>';
+ echo '<div class="demo" style="border:0;margin-top:14px;padding-top:0">Management system by <a href="https://reagansoftinnovation.com" target="_blank" rel="noopener" rel="noreferrer" style="color:var(--gold)">Reagansoft Innovation Limited</a></div>';
+ echo '</div></div></body></html>';
 }
 
 $page=$_GET['page']??'dashboard';

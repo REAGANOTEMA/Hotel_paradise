@@ -129,13 +129,17 @@ const MAIN_PLATE = /^(whole fish|fish fillets|chicken lovers|steaks|pork|house s
  * the ones that come with the plate, so they are held at the card price here
  * and in backend-php/app/menu_extras.php, which must be kept in step.
  */
-const SERVED_WITH: Record<string, string[]> = {
-  'paradise-lusaniya': ['pilau', 'matoke', 'wedges'],
+export const SERVED_WITH: Record<string, string[]> = {
+  'Paradise Lusaniya': ['pilau', 'matoke', 'wedges'],
 };
 
 /** Applies a dish's own included list to the choices it may be ordered with. */
 function withIncluded(dish: MenuItem, list: Choice[]): Choice[] {
-  const free = SERVED_WITH[dish.id];
+  // Keyed on the dish's name, because that is what identifies a dish here and
+  // what MENU_SERVED_WITH in backend-php/app/menu_extras.php is keyed on too.
+  // The two lists must be kept in step, or the guest is shown one price and
+  // charged another.
+  const free = SERVED_WITH[dish.name];
   if (!free) return list;
   return list.map(c => (free.includes(c.key) && c.add ? {...c, add: 0} : c));
 }

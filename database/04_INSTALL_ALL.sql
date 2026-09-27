@@ -1,3 +1,21 @@
+-- ============================================================================
+-- SUPERSEDED. DO NOT USE THIS FILE FOR A NEW INSTALL.
+--
+-- This is the old single-file installer. It is kept only for reference, and it
+-- is no longer correct: it creates a menu of 15 dishes rather than the full 81,
+-- and it predates the `published` column that now decides what the website
+-- shows. An install made from it would serve a stale menu.
+--
+-- To install, follow database/HOSTING.md, which uses these five files in order:
+--
+--   05_HOSTING_INSTALL.sql                     databases, users and rights
+--   01_LIVE_SYSTEM_SCHEMA.sql                  the 32 tables
+--   02_LIVE_SYSTEM_SEED.sql                    the hotel, staff, rooms
+--   07_FULL_MENU_SEED.sql                      all 15 sections and 81 dishes
+--   website_sql/01_WEBSITE_INTEGRATION_SCHEMA.sql   the website's own table
+--
+-- Everything below is kept as it was, unchanged.
+-- ============================================================================
 -- HOTEL PARADISE ON THE NILE — LIVE INSTALLER
 -- Designed by Reagansoft Innovation Limited
 
