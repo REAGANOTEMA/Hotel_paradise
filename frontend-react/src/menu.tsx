@@ -7,6 +7,7 @@ import {
   MENU_REVISION,
   addOnPrice,
   companionsFor,
+  defaultCompanion,
   dishImage,
   linePrice,
   menuSections,
@@ -250,7 +251,7 @@ function DishDetail({
 }) {
   const companions = React.useMemo(() => companionsFor(dish), [dish]);
   const salads = React.useMemo(() => saladsFor(dish), [dish]);
-  const [companion, setCompanion] = React.useState<Choice | null>(companions[0] ?? null);
+  const [companion, setCompanion] = React.useState<Choice | null>(() => defaultCompanion(dish));
   const [pickedSalads, setPickedSalads] = React.useState<Choice[]>([]);
   const [qty, setQty] = React.useState(1);
   const panel = React.useRef<HTMLDivElement>(null);
@@ -595,8 +596,8 @@ function MenuPage() {
           </header>
 
           {section.groups.map((g, gi) => (
-            <div className="subGroup" key={section.key + '-' + gi}>
-              <h3 className="subHead">{g.name}</h3>
+            <div className={'subGroup' + (g.title === '' ? ' noHead' : '')} key={section.key + '-' + gi}>
+              {g.title !== '' && <h3 className="subHead">{g.title}</h3>}
               <div className="dishGrid">
                 {g.items.map(dish => {
                   const mine = inTray(dish);

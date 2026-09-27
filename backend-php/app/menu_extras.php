@@ -19,6 +19,8 @@ declare(strict_types=1);
 const MENU_COMPANIONS=[
   'chips'   =>['name'=>'Chips',           'add'=>0],
   'rice'    =>['name'=>'Steamed rice',    'add'=>0],
+  'roll'    =>['name'=>'Bread roll',      'add'=>0],
+  'none'    =>['name'=>'As it comes',     'add'=>0],
   'fries'   =>['name'=>'French fries',    'add'=>3000],
   'wedges'  =>['name'=>'Potato wedges',   'add'=>4000],
   'pilau'   =>['name'=>'Brown pilau rice','add'=>4000],

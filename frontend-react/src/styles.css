@@ -687,7 +687,7 @@ tr:last-child td{border-bottom:0}
   .dishTitle{font-size:16.5px}
   .dishDesc{font-size:12.5px;margin:0}
   .dishFoot b{font-size:13.5px}
-  .addBtn{padding:8px 13px;font-size:11px}
+  .addBtn{padding:8px 14px;font-size:11px;min-height:40px}
   /* the plate is small here, so the hover cue is taken off the board */
   .dishPeek{display:none}
   .dishHeld{top:8px;left:8px;font-size:8.5px;letter-spacing:1.2px;padding:4px 7px}

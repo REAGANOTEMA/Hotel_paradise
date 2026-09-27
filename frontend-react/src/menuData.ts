@@ -26,6 +26,12 @@ export type MenuItem = {
 export type MenuGroup = {
   name: string;
   items: MenuItem[];
+  /**
+   * The heading to print above the group. tidySections sets this to an empty
+   * string for a group whose name only repeats the section above it, so the
+   * dishes stay on the page and the second copy of the word does not.
+   */
+  title?: string;
 };
 
 export type MenuSection = {
@@ -82,6 +88,8 @@ export type Choice = {
 export const COMPANIONS: Choice[] = [
   {key: 'chips', name: 'Chips', add: 0, note: 'House standard, included'},
   {key: 'rice', name: 'Steamed rice', add: 0, note: 'House standard, included'},
+  {key: 'roll', name: 'Bread roll', add: 0, note: 'Comes with the dish'},
+  {key: 'none', name: 'As it comes', add: 0, note: 'Nothing added, no charge'},
   {key: 'fries', name: 'French fries', add: 3000, note: 'Thick cut, salted'},
   {key: 'wedges', name: 'Potato wedges', add: 4000, note: 'Rosemary and garlic'},
   {key: 'pilau', name: 'Brown pilau rice', add: 4000, note: 'Cooked in spiced stock'},
@@ -113,26 +121,44 @@ export const NO_SALADS: Choice[] = [];
 /** A dish with no photograph still needs a dish, not a table of starches. */
 const servedPlain = /\b(served plain|baked to order|three scoops|two scoops|a pair of|a slice of|a generous and visually|chocolate syrup)\b/i;
 
+/** The sections that are a full plate of food, whatever the copy leaves out. */
+const MAIN_PLATE = /^(whole fish|fish fillets|chicken lovers|steaks|pork|house specials|curries|biryani|snacks|egg dishes|burgers)$/i;
+
 /**
  * Which accompaniments a dish may be ordered with, taken from its own copy.
  * Ordered from the most specific wording down, because a line such as
  * "served with chips" also contains the word "with".
+ *
+ * Every list leads with something that comes with the dish, so the plate a
+ * guest opens is never quietly dearer than the price printed on the card.
  */
 export function companionsFor(dish: MenuItem): Choice[] {
   const d = dish.desc || '';
+  const g = dish.group || '';
   if (servedPlain.test(d)) return NO_COMPANIONS;
   if (/two accompaniments/i.test(d)) return COMPANIONS;
   if (/accompaniment of your choice/i.test(d)) return COMPANIONS;
   if (/rice or chapatti/i.test(d)) return choice(COMPANIONS, ['rice', 'chapatti', 'pilau', 'matoke', 'naan']);
   if (/rice or mashed potatoes/i.test(d)) return choice(COMPANIONS, ['rice', 'chapatti', 'cassava', 'ugali', 'matoke']);
-  if (/rice or chips/i.test(d)) return choice(COMPANIONS, ['rice', 'chips', 'pilau', 'matoke', 'wedges', 'fries']);
+  if (/(?:rice|chips)\s+or\s+(?:rice|chips)/i.test(d)) return choice(COMPANIONS, ['rice', 'chips', 'pilau', 'matoke', 'wedges', 'fries']);
   if (/with chips/i.test(d)) return choice(COMPANIONS, ['chips', 'fries', 'wedges', 'matoke']);
   if (/with rice/i.test(d)) return choice(COMPANIONS, ['rice', 'pilau', 'matoke', 'cassava']);
-  if (/toast/i.test(d)) return choice(COMPANIONS, ['garlic', 'chapatti', 'naan']);
-  if (/with a bread roll|served with a bread roll/i.test(d)) return choice(COMPANIONS, ['garlic', 'chapatti', 'naan']);
+  if (/bread roll|toasted bread|toasted roll|toast/i.test(d)) return choice(COMPANIONS, ['roll', 'garlic', 'chapatti', 'naan']);
   if (/served with/i.test(d)) return choice(COMPANIONS, ['chips', 'rice', 'wedges', 'fries', 'matoke', 'pilau']);
-  if (/^pizza$|^calzone$/i.test(dish.group)) return choice(COMPANIONS, ['garlic']);
+  // a pizza is a whole meal on its own, so it only ever offers a side
+  if (/^pizza$|^calzone$/i.test(g)) return choice(COMPANIONS, ['none', 'garlic']);
+  // a sandwich that names its own bread still takes an upgrade in its place
+  if (/sandwich/i.test(g)) return choice(COMPANIONS, ['roll', 'garlic', 'naan']);
+  // a stew, a grill or a platter is always served on something, even where the
+  // copy has not troubled to say what
+  if (MAIN_PLATE.test(g)) return choice(COMPANIONS, ['rice', 'chips', 'fries', 'wedges', 'pilau', 'matoke', 'chapatti', 'ugali', 'cassava', 'garlic', 'naan']);
   return NO_COMPANIONS;
+}
+
+/** What the detail view starts on: the first accompaniment that is included. */
+export function defaultCompanion(dish: MenuItem): Choice | null {
+  const list = companionsFor(dish);
+  return list.find(c => addOnPrice(c) === 0) ?? list[0] ?? null;
 }
 
 /**
@@ -142,9 +168,10 @@ export function companionsFor(dish: MenuItem): Choice[] {
  */
 export function saladsFor(dish: MenuItem): Choice[] {
   const d = dish.desc || '';
+  const g = dish.group || '';
   if (servedPlain.test(d)) return NO_SALADS;
-  if (/^pizza$|^calzone$/i.test(dish.group)) return SALADS;
-  if (/^soups$|ice cream|crepe|fruit/i.test(dish.group)) return NO_SALADS;
+  if (/^pizza$|^calzone$/i.test(g)) return SALADS;
+  if (/^soups$/i.test(g) || /ice cream|crepe|fruit|salad/i.test(g)) return NO_SALADS;
   if (companionsFor(dish).length) return SALADS;
   if (/served with|rice|chips/i.test(d)) return SALADS;
   return NO_SALADS;
@@ -505,25 +532,30 @@ export const totalDishes = (list: MenuSection[]): number =>
 const sameWords = (a: string, b: string): boolean =>
   slugify(a) === slugify(b);
 
-/** A heading that only repeats the section above it, or a lone dish. */
+/** A heading that only repeats the section above it, or names its one dish. */
 const headingIsNoise = (section: MenuSection, group: MenuGroup): boolean => {
   if (sameWords(group.name, section.name)) return true;
-  if (group.name.toLowerCase() === section.eyebrow.toLowerCase() && section.eyebrow !== '') return true;
+  if (section.eyebrow && slugify(group.name) === slugify(section.eyebrow)) return true;
   if (group.items.length === 1 && sameWords(group.items[0].name, group.name)) return true;
   return false;
 };
 
 /**
- * The menu as it should be read: one section banner, then the headings
- * underneath it that actually tell the guest something they cannot
- * already see. Applied to the live menu from the kitchen as well as to
- * the fallback, so the two always read the same way.
+ * The menu as it should be read: one section banner, then only the headings
+ * underneath it that tell the guest something they cannot already see. A
+ * heading that repeats the banner is dropped, and the dishes beneath it are
+ * left exactly where they are, so nothing is ever lost off the page.
+ *
+ * Applied to the live menu from the kitchen as well as to the fallback, so
+ * the two always read the same way.
  */
 export function tidySections(list: MenuSection[]): MenuSection[] {
   return list
     .map(section => ({
       ...section,
-      groups: section.groups.filter(g => g.items.length && !headingIsNoise(section, g))
+      groups: section.groups
+        .filter(g => g.items.length)
+        .map(g => ({...g, title: headingIsNoise(section, g) ? '' : g.name}))
     }))
     .filter(section => section.groups.length);
 }
