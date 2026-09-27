@@ -50,6 +50,26 @@ function nullable_column(string $table, string $col, string $as, string $prefix=
   return ($prefix!==''?$prefix.'.':'').$col." AS $as";
 }
 
+/**
+ * The fee the hotel adds to every website booking. It is read from the hotel
+ * record rather than sent by the browser, so a guest cannot set it, remove it
+ * or change it by editing a request. A database that predates the column has
+ * no fee to charge and books for the room rate alone.
+ */
+function booking_withdrawal_fee(): array{
+  $fee=0.0; $label='Withdrawal fee';
+  $have=table_columns('hotels');
+  if(isset($have['booking_withdrawal_fee'])){
+   $h=row('SELECT booking_withdrawal_fee, booking_withdrawal_fee_label FROM hotels WHERE id=1');
+   if($h){
+    $fee=(float)$h['booking_withdrawal_fee'];
+    $label=trim((string)$h['booking_withdrawal_fee_label'])!==''?(string)$h['booking_withdrawal_fee_label']:$label;
+   }
+  }
+  return ['label'=>$label,'amount'=>round(max(0.0,$fee),2)];
+}
+
+
 $act=$_GET['act']??'';
 $method=$_SERVER['REQUEST_METHOD'];
 $read=['rooms','menu','health'];
@@ -107,17 +127,22 @@ if($act==='booking'){
   $gid=(int)db()->lastInsertId();
  }
  $num=next_number('HPN','reservations','booking_number');
- $rate=(float)$rt['base_rate']; $total=$rate*$nights;
- q('INSERT INTO reservations(hotel_id,guest_id,booking_number,source,check_in,check_out,adults,children,status,room_rate,nights,subtotal,paid,total,created_at) VALUES(1,?,?,\'website\',?,?,?,?,\'pending\',?,?,?,0,?,NOW())',
-   [$gid,$num,$cin.' 14:00:00',$cout.' 11:00:00',$adults,$children,$rate,$nights,$total,$total]);
+ $rate=(float)$rt['base_rate']; $subtotal=round($rate*$nights,2);
+ $fee=booking_withdrawal_fee(); $feeAmount=$fee['amount']; $total=round($subtotal+$feeAmount,2);
+ $hasFee=(bool)existing_columns('reservations',['withdrawal_fee']);
+ q('INSERT INTO reservations(hotel_id,guest_id,booking_number,source,check_in,check_out,adults,children,status,room_rate,nights,subtotal,paid,total'.($hasFee?',withdrawal_fee':'').',created_at) VALUES(1,?,?,\'website\',?,?,?,?,\'pending\',?,?,?,0,?'.($hasFee?',':'').',NOW())',
+  [$gid,$num,$cin.' 14:00:00',$cout.' 11:00:00',$adults,$children,$rate,$nights,$subtotal,$total,$feeAmount]);
  $rid=(int)db()->lastInsertId();
  q('INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate) VALUES(?,?,NULL,1,?)',[$rid,$rt['id'],$rate]);
- $out(['ok'=>true,'booking_number'=>$num,'room_type'=>$rt['name'],'nights'=>$nights,'total'=>$total,'message'=>'Your request has been received. Our front desk will confirm availability on the number you provided.']);
+ $out(['ok'=>true,'booking_number'=>$num,'room_type'=>$rt['name'],'nights'=>$nights,
+  'subtotal'=>$subtotal,'withdrawal_fee'=>$feeAmount,'withdrawal_fee_label'=>$fee['label'],'total'=>$total,
+  'message'=>'Your request has been received. Our front desk will confirm availability on the number you provided.']);
 }
 
 if($act==='rooms'){
  $rt=rows('SELECT id,name,base_rate FROM room_types WHERE active=1 ORDER BY id');
- $out(['ok'=>true,'rooms'=>array_map(fn($r)=>['id'=>(int)$r['id'],'name'=>$r['name'],'price'=>(float)$r['base_rate'],'rate'=>'UGX '.number_format((float)$r['base_rate'])],$rt)]);
+ $out(['ok'=>true,'booking_fee'=>booking_withdrawal_fee(),
+  'rooms'=>array_map(fn($r)=>['id'=>(int)$r['id'],'name'=>$r['name'],'price'=>(float)$r['base_rate'],'rate'=>'UGX '.number_format((float)$r['base_rate'])],$rt)]);
 }
 
 if($act==='menu'){

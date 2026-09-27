@@ -85,16 +85,22 @@ FROM room_types rt JOIN (
  SELECT 301 n UNION ALL SELECT 302 UNION ALL SELECT 303 UNION ALL SELECT 304 UNION ALL SELECT 305 UNION ALL SELECT 306 UNION ALL SELECT 307 UNION ALL SELECT 308 UNION ALL SELECT 309 UNION ALL SELECT 310 UNION ALL SELECT 311 UNION ALL SELECT 312 UNION ALL SELECT 313 UNION ALL SELECT 314
 ) num WHERE rt.name='Deluxe Double';
 
+-- Floor 3 standard inventory. The hotel has 69 rooms in total. These twelve
+-- floor 3 standard rooms are configured either as a twin or as a double:
+-- rooms 301 and 302 are kept as twins and rooms 303 to 312 are the same
+-- physical rooms configured for a double. Room numbers are stable and keep
+-- the physical room they refer to, so reconfiguring a room only changes its
+-- prefix and its room type, never its number.
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('TW', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
 FROM room_types rt JOIN (
- SELECT 301 n UNION ALL SELECT 302 UNION ALL SELECT 303 UNION ALL SELECT 304 UNION ALL SELECT 305 UNION ALL SELECT 306 UNION ALL SELECT 307 UNION ALL SELECT 308 UNION ALL SELECT 309 UNION ALL SELECT 310 UNION ALL SELECT 311 UNION ALL SELECT 312
+ SELECT 301 n UNION ALL SELECT 302
 ) num WHERE rt.name='Standard Twin';
 
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('SD', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
 FROM room_types rt JOIN (
- SELECT 301 n UNION ALL SELECT 302 UNION ALL SELECT 303 UNION ALL SELECT 304 UNION ALL SELECT 305 UNION ALL SELECT 306 UNION ALL SELECT 307 UNION ALL SELECT 308 UNION ALL SELECT 309 UNION ALL SELECT 310
+ SELECT 303 n UNION ALL SELECT 304 UNION ALL SELECT 305 UNION ALL SELECT 306 UNION ALL SELECT 307 UNION ALL SELECT 308 UNION ALL SELECT 309 UNION ALL SELECT 310 UNION ALL SELECT 311 UNION ALL SELECT 312
 ) num WHERE rt.name='Standard Double';
 
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)

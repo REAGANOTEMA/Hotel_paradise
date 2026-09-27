@@ -10,6 +10,11 @@ CREATE TABLE IF NOT EXISTS hotels (
  country VARCHAR(100) DEFAULT 'Uganda',
  currency CHAR(3) DEFAULT 'UGX',
  timezone VARCHAR(64) DEFAULT 'Africa/Kampala',
+ -- Charged once on every booking made through the website and shown to the
+ -- guest as its own line. Held per hotel so a second property can differ.
+ -- Rates already include the local hotel tax, so tax is not added on top.
+ booking_withdrawal_fee DECIMAL(14,2) NOT NULL DEFAULT 0.00,
+ booking_withdrawal_fee_label VARCHAR(80) NOT NULL DEFAULT 'Withdrawal fee',
  created_at TIMESTAMP NULL,
  updated_at TIMESTAMP NULL
 );
@@ -101,6 +106,7 @@ CREATE TABLE IF NOT EXISTS reservations (
  nights INT DEFAULT 1,
  subtotal DECIMAL(14,2) NOT NULL DEFAULT 0,
  tax DECIMAL(14,2) NOT NULL DEFAULT 0,
+ withdrawal_fee DECIMAL(14,2) NOT NULL DEFAULT 0.00,
  total DECIMAL(14,2) NOT NULL DEFAULT 0,
  paid DECIMAL(14,2) NOT NULL DEFAULT 0,
  notes TEXT,
