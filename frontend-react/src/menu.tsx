@@ -2,7 +2,7 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {TopBar, PageNav, Footer, fmt, apiUrl} from './shared';
-import {SmartImage} from './SmartImage';
+import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {
   MENU_REVISION,
   addOnPrice,
@@ -30,12 +30,8 @@ const CALL = '+256 759 504 928';
 /** The fallback menu, read the way it is going to be printed. */
 const FALLBACK: MenuSection[] = tidySections(menuSections);
 
-/**
- * Add ?photos=1 to any page to see the file name each slot is waiting for.
- * Guests never see it; it is here so the kitchen can tell at a glance which
- * photographs are still outstanding.
- */
-const SHOW_FILE_HINTS = new URLSearchParams(location.search).get('photos') === '1';
+/** The photographs each slot is still waiting for, shown on request only. */
+const SHOW_FILE_HINTS = photoHintsEnabled();
 
 /** Reads the live kitchen menu and folds it into the same shape as the fallback. */
 const toSections = (cats: Array<{name: string; eyebrow?: string; blurb?: string; image?: string; items: any[]}>): MenuSection[] =>
@@ -314,7 +310,7 @@ function DishDetail({
         </div>
 
         <div className="modalBody">
-          <p className="modalCrumb">{breadcrumb.join('  â€º  ')}</p>
+          <p className="modalCrumb">{breadcrumb.join('  ›  ')}</p>
           <h2 className="modalTitle" id="dishTitle">{dish.name}</h2>
 
           <p className="modalPrice">
@@ -648,7 +644,7 @@ function MenuPage() {
         <button className="orderPanelHead" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-controls="orderBody">
           <span className="orderPanelTitle">
             <b>Your order</b>
-            <em>{tray.length === 0 ? 'Nothing added yet. Open any dish to add it.' : count + ' item' + (count === 1 ? '' : 's') + ' Â· UGX ' + Math.round(subtotal).toLocaleString()}</em>
+            <em>{tray.length === 0 ? 'Nothing added yet. Open any dish to add it.' : count + ' item' + (count === 1 ? '' : 's') + ' · UGX ' + Math.round(subtotal).toLocaleString()}</em>
           </span>
           <span className="orderPanelToggle">{open ? 'Collapse' : 'Open'}</span>
         </button>
@@ -666,7 +662,7 @@ function MenuPage() {
                       <b>{x.dish.name}</b>
                       {(x.companion || x.salads.length > 0) && <span className="traySides">
                         {x.companion && <>with {x.companion.name.toLowerCase()}</>}
-                        {x.companion && x.salads.length > 0 && ' Â· '}
+                        {x.companion && x.salads.length > 0 && ' · '}
                         {x.salads.length > 0 && x.salads.map(s => s.name).join(', ').toLowerCase()}
                       </span>}
                       <span>{fmt(unit)} each</span>
@@ -690,7 +686,7 @@ function MenuPage() {
             </div>
           ) : (
             <div className="trayForm">
-              <div className="bookMsg">Online ordering is briefly unavailable. Your list is still here â€” call <a href={'tel:' + CALL.replace(/\s/g, '')}>{CALL}</a> to place it.</div>
+              <div className="bookMsg">Online ordering is briefly unavailable. Your list is still here — call <a href={'tel:' + CALL.replace(/\s/g, '')}>{CALL}</a> to place it.</div>
             </div>
           )}
 

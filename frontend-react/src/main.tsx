@@ -2,7 +2,7 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, LOGO} from './shared';
-import {heroShots, SmartImage} from './SmartImage';
+import {heroShots, SmartImage, type HeroShot} from './SmartImage';
 
 const dining = [
  {name: 'Breakfast', price: 'UGX 25,000', note: 'For non residents, or children above six years sharing a room with their parents'},
@@ -26,7 +26,7 @@ const MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIC
 const HERO_WIDTHS = [640, 1024, 1440, 1920, 2560];
 
 /** Only widths the file really has, so a 680px photo is never asked to fill 2560. */
-const heroSrcSet = (shot: {ext: string; w: number; variants: {w: number; ext: string}[]}) => {
+const heroSrcSet = (shot: HeroShot) => {
   const picks: {file: string; w: number}[] = HERO_WIDTHS.map(w => {
     const v = shot.variants.find(x => x.w >= w);
     return v ? {file: shot.slug + '-' + v.w + '.' + v.ext, w: v.w} : null;

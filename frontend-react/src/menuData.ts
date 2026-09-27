@@ -153,10 +153,7 @@ function withIncluded(dish: MenuItem, list: Choice[]): Choice[] {
  * guest opens is never quietly dearer than the price printed on the card.
  */
 export function companionsFor(dish: MenuItem): Choice[] {
-  const d = dish.desc || '';
-  const g = dish.group || '';
-  const list = companionList(dish);
-  return withIncluded(dish, list);
+  return withIncluded(dish, companionList(dish));
 }
 
 function companionList(dish: MenuItem): Choice[] {

@@ -2,13 +2,10 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, apiUrl} from './shared';
-import {SmartImage} from './SmartImage';
+import {SmartImage, photoHintsEnabled} from './SmartImage';
 
-/**
- * Add ?photos=1 to see the file name each room is waiting for. Guests never
- * see it; it is here so the front desk can tell which rooms still need a shot.
- */
-const SHOW_FILE_HINTS = new URLSearchParams(location.search).get('photos') === '1';
+/** The photographs each room is still waiting for, shown on request only. */
+const SHOW_FILE_HINTS = photoHintsEnabled();
 
 function useQuery() {
  const p = new URLSearchParams(window.location.search);

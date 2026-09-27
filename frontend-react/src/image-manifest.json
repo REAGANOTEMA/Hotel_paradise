@@ -100,8 +100,8 @@
   "rooms": {
     "standard-twin": {
       "ext": "jpg",
-      "w": 1600,
-      "h": 1200,
+      "w": 1920,
+      "h": 1280,
       "variants": [
         {
           "w": 320,

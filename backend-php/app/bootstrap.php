@@ -21,14 +21,21 @@ mb_internal_encoding('UTF-8');
  *
  * They are defined rather than declared const because the value depends on the
  * request, and a constant has to be known before the code runs.
+ *
+ * The two arguments exist so the arithmetic can be checked against every layout
+ * the site is installed in, which is the one way to be sure a move to hosting
+ * will not bring the 404s back. Production always calls it with no arguments.
  */
-function hp_paths(): array{
- static $paths=null;
- if($paths!==null) return $paths;
+function hp_paths(?string $appDir=null, ?string $docRoot=null): array{
+ static $real=null;
+ // The real answer is worked out once per request. Passing the folders in asks
+ // about some other layout, so that is always worked out afresh and never kept.
+ $asking=($appDir===null && $docRoot===null);
+ if($asking && $real!==null) return $real;
 
- $appDir=str_replace('\\','/',dirname(__DIR__));          // .../backend-php
- $siteDir=dirname($appDir);                               // the public website
- $docRoot=str_replace('\\','/',rtrim($_SERVER['DOCUMENT_ROOT']??'','/'));
+ $appDir=str_replace('\\','/',$appDir??dirname(__DIR__));  // .../backend-php
+ $siteDir=dirname($appDir);                                  // the public website
+ $docRoot=str_replace('\\','/',rtrim($docRoot??($_SERVER['DOCUMENT_ROOT']??''),'/'));
 
  // Only a path that really sits inside the document root can be expressed as a
  // URL. Anything else (a Windows path, a symbolic link outside the root) falls
@@ -41,11 +48,16 @@ function hp_paths(): array{
   return '/'.basename($dir);
  };
 
- $base=$toUrl($appDir);
+ // The site's own folder comes out as / when the site fills the domain. Left
+ // alone that would read //images/logo.png, which a browser treats as a
+ // protocol relative address and looks for on a host called "images", so an
+ // empty site path is the honest answer for a site at the domain root.
+ $site=$toUrl($siteDir);
  $paths=[
-  'base'=>$base,
-  'site'=>($siteDir===$appDir?$base:$toUrl($siteDir)),
+  'base'=>$toUrl($appDir),
+  'site'=>($site==='/'?'':$site),
  ];
+ if($asking) $real=$paths;
  return $paths;
 }
 

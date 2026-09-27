@@ -13,9 +13,14 @@ export const IMAGE_DIR: Record<ImageGroup, string> = {
   gallery: './images/gallery/'
 };
 
-const LIB = manifest as Record<ImageGroup, Record<string, Entry>> & {hero: Entry[]};
-
 export type HeroShot = {slug: string; ext: string; w: number; h: number; variants: Variant[]};
+
+/**
+ * The hero list is the one place the manifest names the photograph, so that the
+ * carousel can lay its slides out before anything is fetched. Every other group
+ * is keyed by slug, which is why HeroShot carries the extra field.
+ */
+const LIB = manifest as Record<ImageGroup, Record<string, Entry>> & {hero: HeroShot[]};
 
 /** What the build found in /images, already sorted into carousel order. */
 export const heroShots: HeroShot[] = LIB.hero || [];
@@ -24,11 +29,35 @@ export const heroShots: HeroShot[] = LIB.hero || [];
  * Photographs dropped in after the last build. Each unknown slug is checked
  * once per session against the extensions we accept, and the answer is cached
  * so the 81 dish cards do not each fire their own set of requests.
+ *
+ * This only runs when the file hints are switched on. The build manifest is the
+ * list of photographs the site actually ships, and a guest who loads the menu
+ * should not pay for the guesses: probing asked the server about every missing
+ * file five times over, which on this menu came to nearly a thousand 404s a
+ * page and filled the console with noise. A photograph added after the last
+ * build appears on the next build, and ?photos=1 picks it up straight away
+ * while it is being prepared.
  */
 const probed = new Map<string, Entry | null>();
 const waiting = new Map<string, Array<(e: Entry | null) => void>>();
 
 const EXTS = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+/**
+ * Whether to show the file name a photo slot is waiting for, and to let the
+ * slots ask the server about photographs the build did not know about.
+ *
+ * Add ?photos=1 to any page. It is here so the kitchen can tell at a glance
+ * which photographs are still outstanding, and so a new picture can be tried
+ * before the site is rebuilt. Guests never see it.
+ */
+export function photoHintsEnabled(): boolean {
+  try {
+    return new URLSearchParams(location.search).get('photos') === '1';
+  } catch {
+    return false;
+  }
+}
 
 function probe(group: ImageGroup, slug: string): Promise<Entry | null> {
   const hit = probed.get(slug);
@@ -136,9 +165,10 @@ export function SmartImage({
   const [entry, setEntry] = React.useState<Entry | null | undefined>(known);
   const [failed, setFailed] = React.useState(false);
 
-  // Known at build time: render straight away. Unknown: ask once.
+  // Known at build time: render straight away. Unknown: ask once, and only
+  // when the file hints are on, so a normal page load makes no guesses.
   React.useEffect(() => {
-    if (known || !slug) return;
+    if (known || !slug || !photoHintsEnabled()) return;
     let alive = true;
     probe(group, slug).then(found => {
       if (alive) setEntry(found);
@@ -153,7 +183,10 @@ export function SmartImage({
   // media query can still change the crop on a narrow screen.
   const box = ratio ? ({'--r': ratio} as React.CSSProperties) : undefined;
 
-  if (!slug || failed || entry === null || (!known && entry === undefined)) {
+  // entry is the photograph the build found, null when it has been proved
+  // missing, and undefined only while an unknown slug is still being asked
+  // about. Anything but a real Entry means show the waiting box.
+  if (!slug || failed || !entry) {
     return (
       <div
         className={'photoBox isEmpty ' + className}
