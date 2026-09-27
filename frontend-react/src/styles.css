@@ -314,6 +314,7 @@ tr:last-child td{border-bottom:0}
 .spotTotal span{display:block;font-size:11px;letter-spacing:2px;color:var(--gold);font-weight:700}
 .spotTotal b{font-family:'Playfair Display';font-size:24px;display:block;margin:4px 0}
 .spotTotal small{color:#c7d2de;font-size:12px}
+.spotTotal .feeLine{display:block;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.18);color:#e8d9a6;font-size:12px}
 .planGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .planField label{display:block;font-size:10px;letter-spacing:2px;color:#667085;margin-bottom:6px}
 .planField input,.planField select{width:100%;padding:12px;border:1px solid #d9dee7;background:#fff;font-family:inherit;font-size:14px}

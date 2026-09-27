@@ -345,11 +345,11 @@ export const menuSections: MenuSection[] = [
       {
         name: 'Whole Fish',
         items: [
-          item('Premium Whole Tilapia, Fried or Steamed', 'Medium premium tilapia, fried or steamed, served with chips.', null, 'Whole Fish'),
-          item('Premium Wet Fried Tilapia', 'Premium tilapia in a seasoned wet fry.', null, 'Whole Fish'),
+          item('Premium Whole Tilapia, Fried or Steamed', 'Medium premium tilapia, fried or steamed, served with chips.', 30000, 'Whole Fish'),
+          item('Premium Wet Fried Tilapia', 'Premium tilapia in a seasoned wet fry.', 38000, 'Whole Fish'),
           item('Grilled Premium Tilapia', 'Whole oven grilled, oil free, premium tilapia, with an accompaniment of your choice.', null, 'Whole Fish'),
-          item('Large Whole Tilapia, Fried or Steamed', 'Large king tilapia, fried or steamed, served with chips.', null, 'Whole Fish'),
-          item('Grilled Tilapia Fillet, Spinach and Cheese', 'Grilled tilapia fillet in a creamy spinach and cheese sauce, with an accompaniment of your choice.', null, 'Whole Fish')
+          item('Large Whole Tilapia, Fried or Steamed', 'Large king tilapia, fried or steamed, served with chips.', 40000, 'Whole Fish'),
+          item('Grilled Tilapia Fillet, Spinach and Cheese', 'Grilled tilapia fillet in a creamy spinach and cheese sauce, with an accompaniment of your choice.', 43000, 'Whole Fish')
         ]
       }
     ]
@@ -367,7 +367,7 @@ export const menuSections: MenuSection[] = [
           item('Paradise Rustica Fish', 'Grilled tilapia fillet layered on guacamole and salsa with hot chili, served with rustica sauce, garnished with black olives.', 32000, 'Fish Fillets'),
           item('Mombasa Fish', 'Tilapia fillet crumbed in coconut and fried to your liking, served with chips or rice.', 32000, 'Fish Fillets'),
           item('Deep Fried or Pan Grilled Fillet', 'Coated tilapia fillet, deep fried or pan grilled, served with rice or chips.', 32000, 'Fish Fillets'),
-          item('Catch of the Day', 'Pan grilled Nile perch fillet served with rice or chips.', null, 'Fish Fillets')
+          item('Catch of the Day', 'Pan grilled Nile perch fillet served with rice or chips.', 32000, 'Fish Fillets')
         ]
       }
     ]

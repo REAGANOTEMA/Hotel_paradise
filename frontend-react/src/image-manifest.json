@@ -98,6 +98,12 @@
     }
   },
   "rooms": {
+    "clear-chickenand-beef-noodle-soup": {
+      "ext": "jpg",
+      "w": 720,
+      "h": 1080,
+      "variants": []
+    },
     "deluxe-double": {
       "ext": "jpg",
       "w": 770,
@@ -158,6 +164,18 @@
           "h": 640
         }
       ]
+    },
+    "hero1": {
+      "ext": "jpg",
+      "w": 1680,
+      "h": 1050,
+      "variants": []
+    },
+    "mushroom-soup": {
+      "ext": "jpg",
+      "w": 1244,
+      "h": 1244,
+      "variants": []
     },
     "standard-double": {
       "ext": "jpg",
@@ -241,6 +259,12 @@
           "h": 854
         }
       ]
+    },
+    "suite-bed": {
+      "ext": "png",
+      "w": 1024,
+      "h": 683,
+      "variants": []
     },
     "triple-room": {
       "ext": "jpg",

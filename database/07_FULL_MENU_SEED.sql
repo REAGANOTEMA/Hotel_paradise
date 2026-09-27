@@ -132,11 +132,11 @@ ON DUPLICATE KEY UPDATE
 
 INSERT INTO menu_items (hotel_id,category_id,name,group_name,description,price,image,sort_order,active,published)
 VALUES
-  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fisherman''s Offer'),'Premium Whole Tilapia, Fried or Steamed','Whole Fish','Medium premium tilapia, fried or steamed, served with chips.',NULL,NULL,1,1,1),
-  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fisherman''s Offer'),'Premium Wet Fried Tilapia','Whole Fish','Premium tilapia in a seasoned wet fry.',NULL,NULL,2,1,1),
+  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fisherman''s Offer'),'Premium Whole Tilapia, Fried or Steamed','Whole Fish','Medium premium tilapia, fried or steamed, served with chips.',30000,NULL,1,1,1),
+  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fisherman''s Offer'),'Premium Wet Fried Tilapia','Whole Fish','Premium tilapia in a seasoned wet fry.',38000,NULL,2,1,1),
   (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fisherman''s Offer'),'Grilled Premium Tilapia','Whole Fish','Whole oven grilled, oil free, premium tilapia, with an accompaniment of your choice.',NULL,NULL,3,1,1),
-  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fisherman''s Offer'),'Large Whole Tilapia, Fried or Steamed','Whole Fish','Large king tilapia, fried or steamed, served with chips.',NULL,NULL,4,1,1),
-  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fisherman''s Offer'),'Grilled Tilapia Fillet, Spinach and Cheese','Whole Fish','Grilled tilapia fillet in a creamy spinach and cheese sauce, with an accompaniment of your choice.',NULL,NULL,5,1,1)
+  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fisherman''s Offer'),'Large Whole Tilapia, Fried or Steamed','Whole Fish','Large king tilapia, fried or steamed, served with chips.',40000,NULL,4,1,1),
+  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fisherman''s Offer'),'Grilled Tilapia Fillet, Spinach and Cheese','Whole Fish','Grilled tilapia fillet in a creamy spinach and cheese sauce, with an accompaniment of your choice.',43000,NULL,5,1,1)
 ON DUPLICATE KEY UPDATE
   category_id=VALUES(category_id), group_name=VALUES(group_name), description=VALUES(description),
   price=VALUES(price), image=VALUES(image), sort_order=VALUES(sort_order), active=1, published=1;
@@ -153,7 +153,7 @@ VALUES
   (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fish Fillets'),'Paradise Rustica Fish','Fish Fillets','Grilled tilapia fillet layered on guacamole and salsa with hot chili, served with rustica sauce, garnished with black olives.',32000,NULL,1,1,1),
   (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fish Fillets'),'Mombasa Fish','Fish Fillets','Tilapia fillet crumbed in coconut and fried to your liking, served with chips or rice.',32000,NULL,2,1,1),
   (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fish Fillets'),'Deep Fried or Pan Grilled Fillet','Fish Fillets','Coated tilapia fillet, deep fried or pan grilled, served with rice or chips.',32000,NULL,3,1,1),
-  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fish Fillets'),'Catch of the Day','Fish Fillets','Pan grilled Nile perch fillet served with rice or chips.',NULL,NULL,4,1,1)
+  (1,(SELECT id FROM menu_categories WHERE hotel_id=1 AND outlet='restaurant' AND name='Fish Fillets'),'Catch of the Day','Fish Fillets','Pan grilled Nile perch fillet served with rice or chips.',32000,NULL,4,1,1)
 ON DUPLICATE KEY UPDATE
   category_id=VALUES(category_id), group_name=VALUES(group_name), description=VALUES(description),
   price=VALUES(price), image=VALUES(image), sort_order=VALUES(sort_order), active=1, published=1;

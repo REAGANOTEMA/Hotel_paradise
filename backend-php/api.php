@@ -130,8 +130,19 @@ if($act==='booking'){
  $rate=(float)$rt['base_rate']; $subtotal=round($rate*$nights,2);
  $fee=booking_withdrawal_fee(); $feeAmount=$fee['amount']; $total=round($subtotal+$feeAmount,2);
  $hasFee=(bool)existing_columns('reservations',['withdrawal_fee']);
- q('INSERT INTO reservations(hotel_id,guest_id,booking_number,source,check_in,check_out,adults,children,status,room_rate,nights,subtotal,paid,total'.($hasFee?',withdrawal_fee':'').',created_at) VALUES(1,?,?,\'website\',?,?,?,?,\'pending\',?,?,?,0,?'.($hasFee?',':'').',NOW())',
-  [$gid,$num,$cin.' 14:00:00',$cout.' 11:00:00',$adults,$children,$rate,$nights,$subtotal,$total,$feeAmount]);
+ // The column list and the placeholders are both built from this one array, so
+ // a column can never end up paired with the wrong value. The statement this
+ // replaces listed fifteen columns against fourteen values and put the literal
+ // 'website' in booking_number, which shifted every later value one column
+ // left and made every website booking fail with a 500.
+ $ins=['hotel_id'=>1,'guest_id'=>$gid,'booking_number'=>$num,'source'=>'website',
+  'check_in'=>$cin.' 14:00:00','check_out'=>$cout.' 11:00:00',
+  'adults'=>$adults,'children'=>$children,'status'=>'pending',
+  'room_rate'=>$rate,'nights'=>$nights,'subtotal'=>$subtotal,'paid'=>0,'total'=>$total];
+ if($hasFee) $ins['withdrawal_fee']=$feeAmount;
+ $insCols=array_keys($ins);
+ q('INSERT INTO reservations('.implode(',',$insCols).',created_at)'
+   .' VALUES('.implode(',',array_fill(0,count($insCols),'?')).',NOW())',array_values($ins));
  $rid=(int)db()->lastInsertId();
  q('INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate) VALUES(?,?,NULL,1,?)',[$rid,$rt['id'],$rate]);
  $out(['ok'=>true,'booking_number'=>$num,'room_type'=>$rt['name'],'nights'=>$nights,

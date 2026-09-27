@@ -22,23 +22,30 @@ function RoomsPage() {
  const [live, setLive] = React.useState<Record<string, number>>({});
  const [chosen, setChosen] = React.useState<string>(q.room || '');
  const [form, setForm] = React.useState({name: '', phone: '', email: '', check_in: q.check_in, check_out: q.check_out, adults: q.adults || '2'});
- const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
- const [busy, setBusy] = React.useState(false);
+  const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
+  const [busy, setBusy] = React.useState(false);
+  // The fee is read from the server, never guessed here, so what the guest is
+  // shown is what the server will actually charge.
+  const [fee, setFee] = React.useState<{label: string; amount: number}>({label: 'Withdrawal fee', amount: 0});
 
- React.useEffect(() => {
-  apiUrl('rooms').then(url => fetch(url)).then(r => r.json()).then(d => {
-   if (d.ok && Array.isArray(d.rooms)) {
-    const m: Record<string, number> = {};
-    d.rooms.forEach((r: {name: string; price: number}) => { if (r.price > 0) m[r.name] = r.price; });
-    setLive(m);
-   }
-  }).catch(() => {});
- }, []);
+  React.useEffect(() => {
+   apiUrl('rooms').then(url => fetch(url)).then(r => r.json()).then(d => {
+    if (d.ok && Array.isArray(d.rooms)) {
+     const m: Record<string, number> = {};
+     d.rooms.forEach((r: {name: string; price: number}) => { if (r.price > 0) m[r.name] = r.price; });
+     setLive(m);
+    }
+    if (d.ok && d.booking_fee) {
+     setFee({label: String(d.booking_fee.label || 'Withdrawal fee'), amount: Number(d.booking_fee.amount) || 0});
+    }
+   }).catch(() => {});
+  }, []);
 
- const rooms = baseRooms.map(r => ({...r, price: live[r.type] ?? r.price, rate: live[r.type] ? fmt(live[r.type]) : r.rate}));
- const sel = rooms.find(r => r.type === chosen) || null;
- const nights = form.check_in && form.check_out && form.check_out > form.check_in ? Math.max(1, Math.ceil((Date.parse(form.check_out) - Date.parse(form.check_in)) / 86400000)) : 0;
- const total = sel && nights && sel.price > 0 ? sel.price * nights : 0;
+  const rooms = baseRooms.map(r => ({...r, price: live[r.type] ?? r.price, rate: live[r.type] ? fmt(live[r.type]) : r.rate}));
+  const sel = rooms.find(r => r.type === chosen) || null;
+  const nights = form.check_in && form.check_out && form.check_out > form.check_in ? Math.max(1, Math.ceil((Date.parse(form.check_out) - Date.parse(form.check_in)) / 86400000)) : 0;
+  const subtotal = sel && nights && sel.price > 0 ? sel.price * nights : 0;
+  const total = subtotal + (nights ? fee.amount : 0);
 
  const pick = (t: string) => {
   setChosen(t);
@@ -57,8 +64,13 @@ function RoomsPage() {
     name: form.name, phone: form.phone, email: form.email, check_in: form.check_in, check_out: form.check_out,
     room_type: sel.type, adults: parseInt(form.adults) || 1
    })});
-   const d = await res.json();
-   setMsg({ok: !!d.ok, text: d.ok ? ('You have chosen the ' + sel.type + '. Request ' + d.booking_number + ' received. ' + d.message) : (d.error || 'Something went wrong. Please try again or call +256 759 504 928.')});
+    const d = await res.json();
+    setMsg({ok: !!d.ok, text: d.ok
+     ? ('You have chosen the ' + sel.type + '. Request ' + d.booking_number + ' received. Total '
+        + fmt(Number(d.total) || 0)
+        + (Number(d.withdrawal_fee) > 0 ? ' (including a ' + fmt(Number(d.withdrawal_fee)) + ' ' + String(d.withdrawal_fee_label || fee.label).toLowerCase() + ')' : '')
+        + '. ' + d.message)
+     : (d.error || 'Something went wrong. Please try again or call +256 759 504 928.')});
   } catch {
    setMsg({ok: false, text: 'Could not reach the booking service. Please call +256 759 504 928.'});
   }
@@ -137,7 +149,8 @@ function RoomsPage() {
        />
        <h3>{sel.type}</h3>
        <p className="bedsLine">{sel.beds} &middot; {sel.guests}</p>
-        <div className="spotTotal"><span>{sel.rate} per night</span><b>{nights ? fmt(total) : 'Pick your dates'}</b><small>{nights ? 'For ' + nights + ' night' + (nights > 1 ? 's' : '') + ', breakfast and hotel tax included. Also US$ ' + sel.usd + ' per night' : 'Choose check in and check out to see your total, quoted in Uganda Shillings'}</small></div>
+        <div className="spotTotal"><span>{sel.rate} per night</span><b>{nights ? fmt(total) : 'Pick your dates'}</b><small>{nights ? 'For ' + nights + ' night' + (nights > 1 ? 's' : '') + ', breakfast and hotel tax included. Also US$ ' + sel.usd + ' per night' : 'Choose check in and check out to see your total, quoted in Uganda Shillings'}</small>
+         {nights && fee.amount > 0 ? <small className="feeLine">{fmt(subtotal)} for the room, plus a {fmt(fee.amount)} {fee.label.toLowerCase()}</small> : null}</div>
 
 
 
