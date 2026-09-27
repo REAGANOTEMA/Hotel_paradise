@@ -1,4 +1,4 @@
-USE hotel_paradise_nile;
+USE hotelpardise_system;
 
 INSERT INTO hotels(name,slug,city,country,currency,timezone) VALUES
 ('Hotel Paradise on the Nile','hotel-paradise-on-the-nile','Jinja','Uganda','UGX','Africa/Kampala');

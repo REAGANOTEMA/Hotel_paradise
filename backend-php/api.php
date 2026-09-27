@@ -47,13 +47,41 @@ function nullable_column(string $table, string $col, string $as): string{
 
 $act=$_GET['act']??'';
 $method=$_SERVER['REQUEST_METHOD'];
-$read=['rooms','menu'];
+$read=['rooms','menu','health'];
 if($method!=='GET'&&$method!=='POST'){ $out(['ok'=>false,'error'=>'Method not allowed'],405); }
 if($method==='GET'){
  if(!in_array($act,$read)){ $out(['ok'=>false,'error'=>'Method not allowed for this request'],405); }
  $body=$_GET;
 }else{
  $body=json_decode(file_get_contents('php://input'),true)?:$_POST;
+}
+
+if($act==='health'){
+  // Answers which databases the site is actually talking to, so a connection
+  // problem can be seen in a browser instead of guessed at. It never reports a
+  // host name, a user password, or anything else that should stay private.
+  $report=[];
+  foreach(['hotel'=>fn()=>db(),'website'=>fn()=>web_db()] as $which=>$open){
+    try{
+     $pdo=$open();
+     $n=(int)$pdo->query('SELECT 1')->fetchColumn();
+     $report[$which]=[
+      'connected'=>$n===1,
+      'database'=>db_label($pdo),
+      'menu_items'=>$which==='hotel'?menu_item_count($pdo):null
+     ];
+    }catch(Throwable $e){
+     $report[$which]=['connected'=>false,'database'=>null,'error'=>$e->getMessage()];
+    }
+  }
+  $out(['ok'=>(bool)($report['hotel']['connected']??false),'where'=>$report]);
+}
+
+/** How many dishes the menu is serving, used only by the health check. */
+function menu_item_count(PDO $pdo): ?int{
+ try{
+  return (int)$pdo->query('SELECT COUNT(*) FROM menu_items WHERE active=1')->fetchColumn();
+ }catch(Throwable $e){ return null; }
 }
 
 if($act==='booking'){

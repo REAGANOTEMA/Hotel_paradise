@@ -5,22 +5,101 @@ if(session_status()===PHP_SESSION_NONE) session_start();
 date_default_timezone_set('Africa/Kampala');
 mb_internal_encoding('UTF-8');
 
-const DB_HOST='127.0.0.1';
-const DB_NAME='hotel_paradise_nile';
-const DB_USER='root';
-const DB_PASS='';
 const BASE=''.'/hotelparadiseonthenile/backend-php';
 const SITE_URL=''.'/hotelparadiseonthenile';
 
-function db(): PDO{
- static $pdo=null;
- if($pdo===null){
-  $pdo=new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset=utf8mb4',DB_USER,DB_PASS,[
+/**
+ * Where the databases are.
+ *
+ * The passwords live in config.php, which is never committed, and every value
+ * can be overridden by an environment variable so that a host with a MySQL
+ * hostname of its own needs no edit at all. The old hard coded values are kept
+ * only as a last resort, so a missing config file still says something useful
+ * in the error log instead of failing on an undefined constant.
+ */
+function db_config(): array{
+ static $cfg=null;
+ if($cfg!==null) return $cfg;
+ $file=__DIR__.'/../config.php';
+ $fromFile=is_readable($file)?require $file:[];
+ if(!is_array($fromFile)) $fromFile=[];
+ // config.php nests the website settings under 'web_db', so a dotted name such
+ // as "web_db.pass" has to be walked rather than looked up whole
+ $fromConfig=function(string $path) use($fromFile){
+  $node=$fromFile;
+  foreach(explode('.',$path) as $step){
+   if(!is_array($node)||!array_key_exists($step,$node)) return null;
+   $node=$node[$step];
+  }
+  return $node;
+ };
+ $pick=function(string $path,string $env,string $fallback) use($fromConfig): string{
+  $v=getenv($env);
+  if(is_string($v)&&$v!=='') return $v;
+  $v=$fromConfig($path);
+  if(is_string($v)&&$v!=='') return $v;
+  return $fallback;
+ };
+ $host=$pick('db.host','HP_DB_HOST','127.0.0.1');
+ $port=$pick('db.port','HP_DB_PORT','');
+ return $cfg=[
+  'dsn'=>'mysql:host='.$host.($port!==''?';port='.$port:'').';charset=utf8mb4',
+  'host'=>$host,'port'=>$port,
+  'name'=>$pick('db.name','HP_DB_NAME','hotelpardise_system'),
+  'user'=>$pick('db.user','HP_DB_USER','hotelpardise_system'),
+  'pass'=>$pick('db.pass','HP_DB_PASS',''),
+  'web'=>[
+   'name'=>$pick('web_db.name','HP_WEB_DB_NAME','hotelpardise_website'),
+   'user'=>$pick('web_db.user','HP_WEB_DB_USER','hotelpardise_website'),
+   'pass'=>$pick('web_db.pass','HP_WEB_DB_PASS',''),
+  ],
+ ];
+}
+
+/** Opens a connection and says clearly in the log which one could not open. */
+function db_connect(string $dsn,string $dbName,string $user,string $pass): PDO{
+ try{
+  return new PDO($dsn.';dbname='.$dbName,$user,$pass,[
    PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
    PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC
   ]);
+ }catch(PDOException $e){
+  error_log('[hotel db] cannot open '.$dbName.' as '.$user.'@'.db_config()['host'].': '.$e->getMessage());
+  throw $e;
+ }
+}
+
+/**
+ * The hotel database. The management system uses this, and so does the public
+ * menu and takeaway ordering, because the menu the guest reads, the order the
+ * kitchen receives and the row the till settles have to be the same rows.
+ */
+function db(): PDO{
+ static $pdo=null;
+ if($pdo===null){
+  $c=db_config();
+  $pdo=db_connect($c['dsn'],$c['name'],$c['user'],$c['pass']);
  }
  return $pdo;
+}
+
+/** The website's own database, used only for website specific tables. */
+function web_db(): PDO{
+ static $pdo=null;
+ if($pdo===null){
+  $c=db_config();
+  $pdo=db_connect($c['dsn'],$c['web']['name'],$c['web']['user'],$c['web']['pass']);
+ }
+ return $pdo;
+}
+
+/** A short description of a connection for the health check, never a secret. */
+function db_label(PDO $pdo): string{
+ $cfg=db_config();
+ foreach([[$cfg['name'],$cfg['user']],[$cfg['web']['name'],$cfg['web']['user']]] as $pair){
+  try{ if($pdo->query('SELECT DATABASE()')->fetchColumn()===$pair[0]) return $pair[0].' as '.$pair[1]; }catch(Throwable $e){}
+ }
+ try{ return (string)$pdo->query('SELECT DATABASE()')->fetchColumn(); }catch(Throwable $e){ return 'unknown'; }
 }
 function q(string $sql,array $p=[]){ $st=db()->prepare($sql); $st->execute($p); return $st; }
 function rows(string $sql,array $p=[]){ return q($sql,$p)->fetchAll(); }

@@ -3,7 +3,7 @@
 -- ============================================================================
 -- Run AFTER schema.sql and seed.sql.
 --
---   mysql -u root hotel_paradise_nile < database/menu_alacarte.sql
+--   mysql -u root hotelpardise_system < database/menu_alacarte.sql
 --
 -- Notes for the rates team
 -- -----------------------
@@ -16,7 +16,7 @@
 --    room service and POS history are left untouched.
 -- ============================================================================
 
-USE hotel_paradise_nile;
+USE hotelpardise_system;
 
 -- Keep the old front of house menu out of the way, keep the bar.
 DELETE mi FROM menu_items mi

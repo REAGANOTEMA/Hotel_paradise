@@ -2,8 +2,8 @@
 -- Designed by Reagansoft Innovation Limited
 
 -- Hotel Paradise on the Nile - Full schema
-CREATE DATABASE IF NOT EXISTS hotel_paradise_nile CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE hotel_paradise_nile;
+CREATE DATABASE IF NOT EXISTS hotelpardise_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE hotelpardise_system;
 
 CREATE TABLE IF NOT EXISTS hotels (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -415,7 +415,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
  created_at TIMESTAMP NULL
 );
 
-USE hotel_paradise_nile;
+USE hotelpardise_system;
 
 INSERT INTO hotels(name,slug,city,country,currency,timezone) VALUES
 ('Hotel Paradise on the Nile','hotel-paradise-on-the-nile','Jinja','Uganda','UGX','Africa/Kampala');
@@ -623,7 +623,7 @@ INSERT INTO payments(hotel_id,user_id,invoice_id,reservation_id,amount,method,st
 -- ============================================================================
 -- Run AFTER schema.sql and seed.sql.
 --
---   mysql -u root hotel_paradise_nile < database/menu_alacarte.sql
+--   mysql -u root hotelpardise_system < database/menu_alacarte.sql
 --
 -- Notes for the rates team
 -- -----------------------
@@ -636,7 +636,7 @@ INSERT INTO payments(hotel_id,user_id,invoice_id,reservation_id,amount,method,st
 --    room service and POS history are left untouched.
 -- ============================================================================
 
-USE hotel_paradise_nile;
+USE hotelpardise_system;
 
 -- Keep the old front of house menu out of the way, keep the bar.
 DELETE mi FROM menu_items mi

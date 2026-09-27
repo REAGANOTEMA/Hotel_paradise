@@ -1,6 +1,6 @@
 -- Hotel Paradise on the Nile - Full schema
-CREATE DATABASE IF NOT EXISTS hotel_paradise_nile CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE hotel_paradise_nile;
+CREATE DATABASE IF NOT EXISTS hotelpardise_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE hotelpardise_system;
 
 CREATE TABLE IF NOT EXISTS hotels (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
