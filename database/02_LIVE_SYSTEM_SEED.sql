@@ -51,6 +51,7 @@ INSERT INTO room_types(hotel_id,name,description,max_guests,base_rate,active) VA
 (1,'Triple Room','A comfortable setting for three guests.',3,213000,TRUE),
 (1,'Executive Deluxe','An elevated stay with refined touches for business and leisure.',2,202000,TRUE),
 (1,'Deluxe Double','Elegant double accommodation with a warm, private atmosphere.',2,178000,TRUE),
+(1,'Standard Double','A well kept double room with a comfortable bed, in an easy reach of the front desk.',2,155000,TRUE),
 (1,'Standard Twin','A neatly kept room with two comfortable beds.',2,142000,TRUE),
 (1,'Standard Single','A simple, well equipped single room.',1,128000,TRUE);
 
@@ -89,6 +90,12 @@ SELECT 1, rt.id, CONCAT('TW', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'avail
 FROM room_types rt JOIN (
  SELECT 301 n UNION ALL SELECT 302 UNION ALL SELECT 303 UNION ALL SELECT 304 UNION ALL SELECT 305 UNION ALL SELECT 306 UNION ALL SELECT 307 UNION ALL SELECT 308 UNION ALL SELECT 309 UNION ALL SELECT 310 UNION ALL SELECT 311 UNION ALL SELECT 312
 ) num WHERE rt.name='Standard Twin';
+
+INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
+SELECT 1, rt.id, CONCAT('SD', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
+FROM room_types rt JOIN (
+ SELECT 301 n UNION ALL SELECT 302 UNION ALL SELECT 303 UNION ALL SELECT 304 UNION ALL SELECT 305 UNION ALL SELECT 306 UNION ALL SELECT 307 UNION ALL SELECT 308 UNION ALL SELECT 309 UNION ALL SELECT 310
+) num WHERE rt.name='Standard Double';
 
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('SG', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'

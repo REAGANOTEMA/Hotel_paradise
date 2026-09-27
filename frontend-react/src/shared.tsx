@@ -61,15 +61,15 @@ export type Room = {
 };
 
 export const rooms: Room[] = [
-  {id: 1, type: 'Suite', rate: 'UGX 248,000', usd: '100 to 120', price: 248000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'The grand retreat', text: 'Our most spacious room, generous in space and comfort, with premium furnishings, a king sized bed and a calm, elegant atmosphere.', featured: true},
+     {id: 1, type: 'Suite', rate: 'UGX 248,000', usd: '100 to 120', price: 248000, guests: 'Up to 3 guests', beds: 'One king sized bed', pillow: 'The grand retreat', text: 'Our most spacious room, generous in space and comfort, with premium furnishings, a king sized bed and a calm, elegant atmosphere.', featured: true},
   {id: 2, type: 'Family Room', rate: 'UGX 314,000', usd: '122 to 125', price: 314000, guests: 'Up to 4 guests', beds: 'One double bed and two single beds', pillow: 'Made for families', text: 'Roomier than most, with a double bed and two single beds, made for families travelling together with comfort in mind.', featured: true},
   {id: 3, type: 'Triple Room', rate: 'UGX 213,000', usd: '100', price: 213000, guests: 'Up to 3 guests', beds: 'Three single beds', pillow: 'For three guests', text: 'A comfortable setting with three single beds, ideal for friends or a small group staying together.'},
   {id: 4, type: 'Executive Deluxe', rate: 'UGX 202,000', usd: '80', price: 202000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'Business ready', text: 'An elevated stay with refined touches and a king sized bed, well suited to business and leisure travellers alike.'},
   {id: 5, type: 'Deluxe Double', rate: 'UGX 178,000', usd: '70', price: 178000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'The popular choice', text: 'Elegant double accommodation with a restful, warm and private atmosphere and a comfortable double bed.'},
-  {id: 6, type: 'Standard Twin', rate: 'UGX 142,000', usd: '60', price: 142000, guests: 'Up to 2 guests', beds: 'Two single beds', pillow: 'Two beds', text: 'A neatly kept room with two comfortable single beds for a peaceful night of rest.'},
-  {id: 7, type: 'Standard Double', rate: 'UGX 178,000', usd: '60', price: 178000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'Quiet and cosy', text: 'A well kept double room with a comfortable bed, everything you need for a good night in Jinja.'},
-  {id: 8, type: 'Standard Single', rate: 'On request', usd: '55', price: 0, guests: '1 guest', beds: 'One single bed', pillow: 'Great value', text: 'A simple, well equipped single room with a comfortable single bed. Contact the hotel for today rate.'}
-];
+     {id: 6, type: 'Standard Double', rate: 'UGX 155,000', usd: '60', price: 155000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'Quiet and cosy', text: 'A well kept double room with a comfortable bed, everything you need for a good night in Jinja.'},
+     {id: 7, type: 'Standard Twin', rate: 'UGX 142,000', usd: '60', price: 142000, guests: 'Up to 2 guests', beds: 'Two single beds', pillow: 'Two beds', text: 'A neatly kept room with two comfortable single beds for a peaceful night of rest.'},
+     {id: 8, type: 'Standard Single', rate: 'UGX 128,000', usd: '55', price: 128000, guests: '1 guest', beds: 'One single bed', pillow: 'Great value', text: 'A simple, well equipped single room with a comfortable single bed, and the best value on the river.'}
+   ];
 
 /**
  * The photograph a room is illustrated by, in /images/rooms/.

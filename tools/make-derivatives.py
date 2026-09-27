@@ -41,9 +41,111 @@ ROOM_LADDER = (320, 480, 640, 960, 1280)
 GALLERY_LADDER = (480, 960, 1440, 1920)
 HERO_LADDER = (640, 1024, 1440, 1920, 2560)
 
+# The room card is a portrait frame. A wide photograph left alone would have its
+# sides cut off by the browser instead of by us, and the small copies would then
+# be cut from a different picture than the one on screen, so rooms are cropped
+# here to the shape the card actually has.
+ROOM_CARD_RATIO = (3.0, 4.0)
+
 # Never enlarge: a copy wider than the original would only be resampled back up
 # by the browser, which is exactly the softness we are trying to remove.
 MIN_UPLIFT = 1.15
+
+
+def save_like(path, im, quality=88):
+    """Writes an image back in the format its own file name promises."""
+    ext = os.path.splitext(path)[1].lower()
+    if ext in (".jpg", ".jpeg"):
+        im.convert("RGB").save(path, "JPEG", quality=quality, optimize=True, progressive=True)
+    elif ext == ".webp":
+        im.convert("RGB").save(path, "WEBP", quality=quality, method=6)
+    else:
+        im.save(path)
+
+
+def derivative_copies(stem):
+    """The narrower copies that belong to one original."""
+    out = []
+    folder = os.path.dirname(stem)
+    base = os.path.basename(stem)
+    for name in sorted(os.listdir(folder)):
+        full = os.path.join(folder, name)
+        if not os.path.isfile(full):
+            continue
+        other = os.path.splitext(name)[0]
+        if not other.startswith(base + "-"):
+            continue
+        tail = other[len(base) + 1:]
+        if tail.isdigit() and len(tail) >= 2:
+            out.append(full)
+    return out
+
+
+def crop_to_ratio(im, ratio, focus=0.5):
+    """
+    Centre crops to a width:height ratio, keeping the middle of the frame.
+
+    A bed is shot straight on and sits in the middle of it, so the middle is
+    what is worth keeping. Returns the image and whether anything was cut.
+    """
+    target = ratio[0] / ratio[1]
+    w, h = im.size
+    if abs(w / h - target) <= 0.02:
+        return im, False
+    if w / h > target:                       # too wide, take a slice out of the sides
+        new_w = max(1, round(h * target))
+        left = max(0, min(round((w - new_w) * focus), w - new_w))
+        return im.crop((left, 0, left + new_w, h)), True
+    new_h = max(1, round(w / target))        # too tall, take one off the top and bottom
+    top = max(0, min(round((h - new_h) * focus), h - new_h))
+    return im.crop((0, top, w, top + new_h)), True
+
+
+def crop_rooms():
+    """Fits every room photograph to the card, and clears the copies of the old one."""
+    folder = os.path.join(IMAGES, "rooms")
+    if not os.path.isdir(folder):
+        return
+    originals = [
+        f
+        for f in sorted(os.listdir(folder))
+        if os.path.isfile(os.path.join(folder, f))
+        and f.lower().endswith(EXTS)
+        and not _is_copy(f)
+    ]
+    if not originals:
+        return
+
+    print("  %-9s fitting %d photograph(s) to the %g:%g card"
+          % ("rooms", len(originals), ROOM_CARD_RATIO[0], ROOM_CARD_RATIO[1]))
+    for name in originals:
+        full = os.path.join(folder, name)
+        try:
+            with Image.open(full) as im:
+                im = ImageOps.exif_transpose(im)
+                if im.mode not in ("RGB", "RGBA"):
+                    im = im.convert("RGB")
+                before = im.size
+                cropped, changed = crop_to_ratio(im, ROOM_CARD_RATIO)
+                if changed:
+                    # A copy left over from the previous photograph would still be
+                    # offered to a phone, and it is that old picture it points at,
+                    # so it goes before any new copy is made.
+                    stem = os.path.splitext(full)[0]
+                    for old in derivative_copies(stem):
+                        os.remove(old)
+                    save_like(full, cropped)
+                after = cropped.size
+        except Exception as exc:  # a bad file should not stop the rest
+            print("      %-34s skipped, %s" % (name, exc))
+            continue
+
+        if before == after:
+            print("      %-34s already %g:%g  (%dx%d)"
+                  % (name, ROOM_CARD_RATIO[0], ROOM_CARD_RATIO[1], after[0], after[1]))
+        else:
+            print("      %-34s %dx%d -> %dx%d  cropped to the card"
+                  % (name, before[0], before[1], after[0], after[1]))
 
 
 def already_built(path, width, mtime):
@@ -148,6 +250,7 @@ def main():
     if not os.path.isdir(IMAGES):
         sys.exit("No images folder found at " + IMAGES)
     print("Building photograph copies from", IMAGES)
+    crop_rooms()
     process(os.path.join(IMAGES, "dishes"), DISH_LADDER, "dishes")
     process(os.path.join(IMAGES, "rooms"), ROOM_LADDER, "rooms")
     process(os.path.join(IMAGES, "gallery"), GALLERY_LADDER, "gallery")
