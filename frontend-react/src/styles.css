@@ -366,8 +366,16 @@ tr:last-child td{border-bottom:0}
 
 /* dish cards, each with its photograph */
 .dishGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:20px}
-.dishCard{background:#ffffffe6;display:flex;flex-direction:column;box-shadow:0 10px 30px #071A3310;border:1px solid #ece7db;transition:transform .25s ease,box-shadow .25s ease;overflow:hidden}
-.dishCard:hover{transform:translateY(-2px);box-shadow:0 18px 42px #071A3318}
+.dishCard{position:relative;background:#ffffffe6;display:flex;flex-direction:column;box-shadow:0 10px 30px #071A3310;border:1px solid #ece7db;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;overflow:hidden}
+.dishCard:hover{transform:translateY(-2px);box-shadow:0 18px 42px #071A3318;border-color:#ded5bd}
+/* a dish already in the order keeps a gold edge, so a guest scanning the
+   menu can see at a glance what they have chosen */
+.dishCard.held{border-color:var(--gold);box-shadow:0 10px 30px #C9A22722}
+/* the whole card opens the details; it sits over the plate and the words,
+   and under the price row, which carries its own button */
+.dishOpen{position:absolute;inset:0;z-index:1;background:none;border:0;padding:0;border-radius:0;font:inherit;color:inherit;text-align:left}
+.dishOpen:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+.dishOpenMedia{display:block;position:relative;overflow:hidden}
 .shot{border-bottom:1px solid #ece7db}
 .shot.isEmpty{background:linear-gradient(150deg,#f9f6ee,#ece5d4)}
 .shotEmpty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:12px;text-align:center}
@@ -375,14 +383,29 @@ tr:last-child td{border-bottom:0}
 .shotNote{font-size:10px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:#a08a4c}
 /* Only ever shown to staff, via ?photos=1 */
 .shotFile{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;color:#9a9384;background:#ffffff7a;border:1px dashed #d8cfb6;padding:3px 7px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dishBody{padding:15px 16px 16px;display:flex;flex-direction:column;flex:1}
-.dishBody h4{font-family:'Playfair Display';font-weight:600;font-size:18px;color:var(--navy);margin:0 0 6px;line-height:1.25}
-.dishBody p{margin:0 0 14px;color:#687386;font-size:13px;line-height:1.6;flex:1}
-.dishFoot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:4px}
+
+/* the word "Open" that fades in over the plate when the card is hovered */
+.dishPeek{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:9px;padding:26px 14px 12px;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,#071A3300,#071A33e0 62%);opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;pointer-events:none}
+.dishPeek svg{width:17px;height:12px}
+.dishCard:hover .dishPeek,.dishCard:focus-within .dishPeek{opacity:1;transform:translateY(0)}
+/* how many of this dish are already in the order */
+.dishHeld{position:absolute;top:12px;left:12px;z-index:3;background:var(--gold);color:#071A33;font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;padding:6px 10px;box-shadow:0 4px 14px #071A3333}
+
+.dishOpenText{padding:15px 16px 0}
+.dishTitle{font-family:'Playfair Display';font-weight:600;font-size:18px;color:var(--navy);margin:0 0 6px;line-height:1.25}
+.dishDesc{margin:0 0 4px;color:#687386;font-size:13px;line-height:1.6}
+/* the price row is held to the foot of the card, so a row of cards reads as
+   one clean line of prices however long the descriptions are */
+.dishBody{padding:11px 16px 16px;display:flex;flex-direction:column;margin-top:auto;position:relative;z-index:2}
+.dishFoot{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .dishFoot b{color:var(--gold);font-size:14.5px;white-space:nowrap}
 .dishFoot b.askPrice{color:#8a95a5;font-size:12px;font-weight:600;font-style:italic}
-.addBtn{background:var(--gold);color:#071A33;font-weight:700;letter-spacing:1px;font-size:11.5px;padding:9px 16px;flex:none;transition:background .18s ease}
-.addBtn:hover{background:#d8aa2e}
+.addBtn{display:inline-flex;align-items:center;gap:7px;background:var(--gold);color:#071A33;font-weight:700;letter-spacing:1px;font-size:11.5px;padding:9px 16px;flex:none;transition:background .18s ease,box-shadow .18s ease}
+.addBtn svg{width:12px;height:12px;flex:none}
+.addBtn:hover{background:#d8aa2e;box-shadow:0 6px 18px #C9A22755}
+
+/* read by a screen reader only, for the card wide open button */
+.srOnly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .orderNote{color:#5b6675;font-size:14.5px;line-height:1.8;background:#fff;border-left:3px solid var(--gold);padding:18px 22px;box-shadow:0 8px 28px #071A3312}
 .trayEmpty{color:#687386;font-size:14px;line-height:1.7;padding:8px 2px 2px}
 .trayList{margin-bottom:6px}
@@ -415,6 +438,126 @@ tr:last-child td{border-bottom:0}
 .orderPanelBody{padding:0 26px 26px;border-top:1px solid #eaedf2}
 .orderPanelBody .trayList{margin-top:8px}
 .orderPanelBody .planBook{margin-top:6px}
+
+/* the companion and salad the guest chose, written under the dish name */
+.traySides{display:block;font-style:italic;color:#5b6675;font-size:12px;line-height:1.5;margin:2px 0 1px}
+/* a line that has just been added, so the guest sees it arrive */
+.trayItem.fresh{animation:trayIn .5s cubic-bezier(.22,.9,.3,1)}
+@keyframes trayIn{
+  0%{background:#C9A2272e;transform:translateX(-6px);opacity:0}
+  60%{background:#C9A2271a}
+  100%{background:transparent;transform:translateX(0);opacity:1}
+}
+
+/* ---------------------------------------------------------------
+   THE FLOATING ORDER BUTTON
+
+   Appears only once there is something in the order, and only while
+   the order panel itself is closed, so the two never compete.
+   --------------------------------------------------------------- */
+.orderPill{position:fixed;right:24px;bottom:28px;z-index:22;display:flex;align-items:center;gap:13px;padding:12px 20px 12px 13px;background:var(--navy);color:#fff;box-shadow:0 16px 42px #071A3359;transition:transform .22s cubic-bezier(.22,.9,.3,1),box-shadow .22s ease,background .22s ease}
+.orderPill:hover{background:#0d2338;box-shadow:0 20px 50px #071A3366;transform:translateY(-2px)}
+.orderPill::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,#C9A22733,#C9A22700);pointer-events:none}
+.orderPillDot{position:relative;z-index:1;min-width:34px;height:34px;padding:0 6px;border-radius:999px;background:var(--gold);color:#071A33;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center}
+.orderPillText{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.orderPillText b{font-family:'Playfair Display';font-size:15px;font-weight:600}
+.orderPillText em{font-style:normal;font-size:11px;letter-spacing:1.4px;color:var(--gold);font-weight:700;margin-top:2px}
+.orderPill.pop{animation:pillPop .5s cubic-bezier(.22,1.2,.36,1)}
+@keyframes pillPop{0%{transform:scale(1)}35%{transform:scale(1.07)}100%{transform:scale(1)}}
+
+/* ---------------------------------------------------------------
+   THE DISH DETAIL VIEW
+
+   A wide panel on a desktop, where the plate sits beside the words,
+   and a sheet from the bottom of the screen on a phone, where the
+   plate sits above them. Both carry the same content in the same
+   order, so the dish reads the same whichever way it is opened.
+   --------------------------------------------------------------- */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:34px}
+.modalScrim{position:absolute;inset:0;background:rgba(5,13,26,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadeIn .3s ease both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.modalPanel{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);width:min(1080px,100%);max-height:min(88vh,880px);background:var(--ivory);box-shadow:0 40px 110px #00000066;overflow:hidden;animation:panelIn .42s cubic-bezier(.22,.9,.3,1) both}
+@keyframes panelIn{
+  from{opacity:0;transform:translateY(22px) scale(.975)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+/* a gold edge, so the panel reads as a plate set on the table */
+.modalPanel::before{content:'';position:absolute;inset:0;z-index:5;pointer-events:none;border:1px solid #C9A2274d;box-shadow:inset 0 0 0 1px #ffffff14}
+
+.modalClose{position:absolute;top:14px;right:14px;z-index:6;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:#fffffff2;color:var(--navy);box-shadow:0 6px 20px #071A3326;transition:background .18s ease,color .18s ease,transform .18s ease}
+.modalClose svg{width:15px;height:15px}
+.modalClose:hover{background:var(--gold);color:#071A33;transform:rotate(90deg)}
+
+/* the plate fills its half of the panel on a wide screen, and sits as a
+   band above the words once the panel becomes a sheet */
+.modalMedia{position:relative;min-height:0;background:linear-gradient(150deg,#16293f,#0B5D78);overflow:hidden}
+.modalMedia .shot{position:absolute;inset:0;--r:auto;width:100%;height:100%;border-bottom:0}
+.modalMedia .shot.isEmpty{background:linear-gradient(150deg,#16293f,#0B5D78)}
+.modalMedia .plateGlyph{width:74px;height:74px;color:#ffffff3d;opacity:1}
+.modalMedia .shotNote{color:#ffffff5c}
+/* the section name, sitting on the photograph in the corner */
+.modalMediaTag{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:44px 26px 22px;background:linear-gradient(180deg,#071A3300,#071A33d6)}
+.valueMark{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3.4px;text-transform:uppercase;color:var(--gold);border:1px solid #C9A22766;padding:6px 12px;background:#071A3352}
+
+.modalBody{padding:38px 40px 34px;overflow-y:auto;overscroll-behavior:contain}
+.modalCrumb{margin:0 0 10px;color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase}
+.modalTitle{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(28px,3vw,40px);line-height:1.1;color:var(--navy);margin:0 0 12px;padding-right:38px;text-wrap:balance}
+.modalPrice{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 16px;color:var(--gold);font-family:'Playfair Display',serif;font-size:30px;font-weight:600}
+.modalPrice small{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8a95a5}
+.modalPrice .askPrice{color:#8a95a5;font-size:22px;font-style:italic}
+.modalDesc{margin:0 0 26px;color:#4a5568;font-size:15.5px;line-height:1.78;padding-left:16px;border-left:3px solid var(--gold)}
+.modalFile{display:inline-block;margin:-14px 0 22px}
+
+/* --- the companion and salad pickers --------------------------------- */
+.pickSet{border:0;padding:0;margin:0 0 28px;padding-top:4px}
+.pickLegend{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;width:100%;padding:0 0 12px;margin:0 0 14px;border-bottom:1px solid #e3dccb}
+.pickLegend span{font-size:11px;font-weight:700;letter-spacing:3.4px;text-transform:uppercase;color:var(--navy)}
+.pickLegend em{font-style:normal;font-size:12px;color:#8a95a5;letter-spacing:.2px}
+.pickGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.pickCard{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-areas:'tick text' 'tick price';gap:2px 12px;align-items:center;padding:12px 14px;background:#fff;border:1px solid #e6e0d2;cursor:pointer;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease,transform .18s ease}
+.pickCard:hover{border-color:#cfc4a6;transform:translateY(-1px);box-shadow:0 8px 22px #071A3310}
+.pickCard input{position:absolute;opacity:0;width:0;height:0}
+.pickTick{grid-area:tick;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border:1.5px solid #cfc4a6;border-radius:50%;color:transparent;transition:background .18s ease,border-color .18s ease,color .18s ease}
+.pickTick svg{width:11px;height:11px}
+.pickText{grid-area:text;display:flex;flex-direction:column;min-width:0}
+.pickText b{font-size:13.5px;font-weight:600;color:var(--navy);line-height:1.3}
+.pickText small{font-size:11px;color:#8a95a5;line-height:1.4}
+/* the radio fills, the checkbox becomes a tick in a square */
+.pickCard:has(input:checked){border-color:var(--gold);background:#fffdf5;box-shadow:0 8px 24px #C9A2271f}
+.pickCard:has(input:checked) .pickTick{background:var(--gold);border-color:var(--gold);color:#071A33}
+.pickCard:has(input:focus-visible){outline:3px solid var(--navy);outline-offset:2px}
+.pickPrice{grid-area:price;justify-self:start;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-left:34px}
+.pickPrice.incl{color:#7b8794;font-weight:600;font-style:italic;text-transform:none;letter-spacing:.2px}
+
+/* --- the quantity, the running total and the add button ------------- */
+.modalBar{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:18px 0 20px;margin-top:2px;border-top:1px solid #e3dccb}
+.qtyBox{display:flex;align-items:center;gap:13px}
+.qtyLabel{font-size:10px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:#8a95a5}
+.qtyStep{display:flex;align-items:center;gap:2px;background:#fff;border:1px solid #dcd4c2}
+.qtyStep button{width:42px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:0;color:var(--navy);font-size:19px;font-weight:700;line-height:1;transition:background .16s ease,color .16s ease}
+.qtyStep button svg{width:13px;height:13px}
+.qtyStep button:hover:not([disabled]){background:var(--navy);color:#fff}
+.qtyStep button[disabled]{opacity:.28;cursor:not-allowed}
+.qtyStep output{min-width:42px;text-align:center;font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)}
+.modalTotal{text-align:right;line-height:1.15}
+.modalTotal span{display:block;font-size:10px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:#8a95a5;margin-bottom:4px}
+.modalTotal b{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy)}
+.addBtnWide{width:100%;justify-content:center;padding:18px 24px;font-size:13px;letter-spacing:1.6px;text-transform:uppercase}
+.modalNote{margin:14px 0 0;color:#8a95a5;font-size:12px;line-height:1.65;text-align:center}
+
+/* --- a dish the kitchen prices by hand ------------------------------- */
+.askBox{background:#fff;border:1px solid #e6e0d2;border-left:3px solid var(--gold);padding:24px 26px;margin-bottom:26px}
+.askBox h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin:0 0 8px}
+.askBox p{margin:0 0 16px;color:#5b6675;font-size:14px;line-height:1.75}
+.askCall{display:inline-flex;align-items:center;gap:9px;padding:14px 22px}
+.askCall svg{width:14px;height:14px}
+
+/* --- back to where the guest was ------------------------------------ */
+.modalBack{display:inline-flex;align-items:center;gap:10px;margin-top:26px;padding-top:20px;border-top:1px solid #e3dccb;width:100%;color:var(--nile);font-size:12px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;transition:color .18s ease}
+.modalBack svg{width:17px;height:12px;transform:rotate(180deg);transition:transform .2s ease}
+.modalBack:hover{color:var(--gold)}
+.modalBack:hover svg{transform:rotate(180deg) translateX(5px)}
 
 /* contact map */
 .mapBox{min-height:320px;display:flex;flex-direction:column;background:#fff;color:var(--ink);box-shadow:0 20px 50px #00000030}
@@ -480,6 +623,8 @@ tr:last-child td{border-bottom:0}
   .menuJump{top:64px}
   .secBlock{scroll-margin-top:126px}
   .orderPanel{scroll-margin-top:126px}
+  /* the floating order button sits above the fixed booking bar */
+  .orderPill{bottom:calc(96px + env(safe-area-inset-bottom))}
   .mobileCta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:25;gap:10px;padding:10px 4vw calc(10px + env(safe-area-inset-bottom));background:rgba(7,26,51,.96);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid rgba(201,162,39,.35);box-shadow:0 -10px 30px #071A3340}
   .mobileCta .btn{flex:1;text-align:center;padding:14px 10px}
   /* the fixed bar sits over the bottom of the hero, so the text and the
@@ -516,19 +661,38 @@ tr:last-child td{border-bottom:0}
   .partyCard{padding:26px 24px}
   .booking{grid-template-columns:1fr}
   .cardBody{padding:24px 22px}
+  /* the detail view becomes a sheet from the foot of the screen, the plate
+     above the words, the same content in the same order */
+  .modal{padding:0;align-items:flex-end}
+  .modalPanel{grid-template-columns:1fr;width:100%;max-height:92vh;animation:sheetIn .42s cubic-bezier(.22,.9,.3,1) both}
+  .modalMedia .shot{position:relative;inset:auto;--r:16/10;height:auto}
+  .modalBody{padding:28px 26px 32px}
+  .modalTitle{font-size:clamp(25px,6vw,34px)}
+  .modalPrice{font-size:27px}
+  .modalTotal b{font-size:27px}
+  .pickGrid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
 }
+@keyframes sheetIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 
 /* --- 640: the menu becomes a list of thumbnails --------------------- */
 @media(max-width:640px){
   .menuWrap{padding-top:20px}
   .dishGrid{grid-template-columns:1fr}
-  .dishCard{flex-direction:row;align-items:stretch}
-  .dishCard .shot{--r:1/1;width:132px;flex:none;border-bottom:0;border-right:1px solid #ece7db}
+  /* the card becomes a plate beside its words, rather than a stack */
+  .dishCard{display:grid;grid-template-columns:124px 1fr;align-items:stretch}
+  .dishOpenMedia{grid-column:1;grid-row:1/3}
+  .dishOpenMedia .shot{--r:1/1;height:100%;border-bottom:0;border-right:1px solid #ece7db}
+  .dishOpenText{grid-column:2;grid-row:1;padding:13px 14px 0}
+  .dishBody{grid-column:2;grid-row:2;padding:7px 14px 13px}
+  .dishTitle{font-size:16.5px}
+  .dishDesc{font-size:12.5px;margin:0}
+  .dishFoot b{font-size:13.5px}
+  .addBtn{padding:8px 13px;font-size:11px}
+  /* the plate is small here, so the hover cue is taken off the board */
+  .dishPeek{display:none}
+  .dishHeld{top:8px;left:8px;font-size:8.5px;letter-spacing:1.2px;padding:4px 7px}
   .plateGlyph{width:30px;height:30px}
   .shotFile{font-size:8.5px;max-width:112px}
-  .dishBody{padding:13px 14px}
-  .dishBody h4{font-size:16.5px}
-  .dishBody p{font-size:12.5px;margin-bottom:10px}
   .secBanner{--r:16/9}
   .menuWatermark{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='300'%3E%3Ctext x='260' y='160' text-anchor='middle' font-family='Georgia,Times New Roman,serif' font-size='36' font-weight='700' letter-spacing='2' fill='%23071A33' fill-opacity='0.07' transform='rotate(-26 260 150)'%3EHotel Paradise on the Nile%3C/text%3E%3C/svg%3E");background-size:520px 300px}
   .orderPanelHead{padding:18px}
@@ -576,6 +740,26 @@ tr:last-child td{border-bottom:0}
   .planner{padding:22px 18px}
   .linkBtn{font-size:12px}
   .trayQty button{width:32px;height:32px}
+  /* the detail view fills a phone, and the pickers pair up two across */
+  .modalPanel{max-height:100vh;height:100dvh}
+  .modalBody{padding:22px 18px 30px}
+  .modalTitle{padding-right:44px}
+  .modalPrice{font-size:25px;margin-bottom:14px}
+  .modalDesc{font-size:14.5px;padding-left:13px;margin-bottom:22px}
+  .pickLegend{margin-bottom:12px}
+  .pickLegend em{font-size:11.5px}
+  .pickGrid{grid-template-columns:1fr 1fr;gap:8px}
+  .pickCard{padding:10px 11px;gap:1px 9px}
+  .pickTick{width:20px;height:20px}
+  .pickText b{font-size:12.5px}
+  .pickText small{font-size:10px;line-height:1.35}
+  .pickPrice{margin-left:29px;font-size:10px;letter-spacing:.8px}
+  .modalBar{gap:14px;padding:15px 0 17px}
+  .qtyStep button{width:46px;height:48px}
+  .modalTotal{text-align:left}
+  .addBtnWide{padding:16px 18px;font-size:12px;letter-spacing:1.2px}
+  .askBox{padding:20px 18px}
+  .orderPill{left:12px;right:12px;bottom:calc(94px + env(safe-area-inset-bottom))}
   .dochead{padding:34px 18px}
   .docSection{padding:30px 18px 0}
   .docFoot{padding:24px 18px}
@@ -604,8 +788,9 @@ tr:last-child td{border-bottom:0}
   .mobileCta{padding:9px 3vw calc(9px + env(safe-area-inset-bottom))}
   .mobileCta .btn{padding:13px 6px;font-size:12px;letter-spacing:.6px}
   .heroDots{bottom:calc(76px + env(safe-area-inset-bottom))}
-  .dishCard .shot{width:108px}
+  .dishCard{grid-template-columns:108px 1fr}
   .shotFile{max-width:92px}
+  .pickGrid{grid-template-columns:1fr}
   .cardBody{padding:20px 17px}
   .card h3{font-size:21px}
   .contactCard{padding:24px 20px}
@@ -637,6 +822,22 @@ tr:last-child td{border-bottom:0}
   .drawerNav a{font-size:17px;padding:11px 30px 11px 2px}
   .drawerFoot{padding:14px 22px 20px}
   .drawerCall{margin:11px 0 2px;font-size:14px}
+  /* a phone on its side has no height to spare, so the plate is trimmed back
+     to a band and the words take the room that is left */
+  .modalPanel{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);max-height:94vh}
+  .modalMedia .shot{position:absolute;inset:0;--r:auto;height:100%}
+  .modalBody{padding:22px 22px 24px}
+  .modalTitle{font-size:24px;margin-bottom:8px}
+  .modalDesc{font-size:13.5px;margin-bottom:18px}
+  .pickSet{margin-bottom:18px}
+  .pickGrid{grid-template-columns:1fr 1fr;gap:7px}
+  .pickCard{padding:8px 10px;gap:0 8px}
+  .modalBar{padding:12px 0 14px}
+  .qtyStep button{width:38px;height:38px}
+  .qtyStep output{font-size:19px}
+  .modalTotal b{font-size:22px}
+  .addBtnWide{padding:13px 18px}
+  .modalNote{margin-top:10px}
 }
 
 /* --- pointers that are really fingers ------------------------------ */
@@ -650,6 +851,12 @@ tr:last-child td{border-bottom:0}
   .rfilter button,.menuCats button{padding:10px 16px}
   .curToggle button{padding:14px 28px}
   .dishFoot .addBtn{min-height:40px;display:inline-flex;align-items:center}
+  /* every choice in the detail view gets a thumb sized target */
+  .pickCard{padding:14px}
+  .pickTick{width:24px;height:24px}
+  .qtyStep button{width:46px;height:48px}
+  .modalClose{width:46px;height:46px}
+  .askCall{padding:16px 24px}
 }
 
 /* --- very large displays: hold the measure, do not stretch it ------ */
@@ -676,6 +883,14 @@ tr:last-child td{border-bottom:0}
   .card,.fact,.panel,.drawerPanel{border:1px solid CanvasText}
   .photoOverlay{background:Canvas}
   .photoOverlay *{color:CanvasText}
+  /* a picked choice has to be visible without the gold fill to show it */
+  .pickCard{border:1px solid CanvasText}
+  .pickCard:has(input:checked){outline:3px solid Highlight;outline-offset:-3px}
+  .pickTick{border:1px solid CanvasText;forced-color-adjust:none}
+  .pickCard:has(input:checked) .pickTick{background:Highlight;color:HighlightText}
+  .modalPanel{border:1px solid CanvasText}
+  .modalScrim{background:Canvas}
+  .modalScrim::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.55)}
 }
 @media(prefers-reduced-motion:no-preference){.card,.fact,.menuRow,.rateCard{transition:transform .25s ease,box-shadow .25s ease}.btn:hover{transform:translateY(-2px);background:#d8aa2e}.card:hover,.fact:hover,.menuRow:hover,.rateCard:hover{transform:translateY(-5px);box-shadow:0 20px 50px #071A3320}}
 @media(prefers-reduced-motion:reduce){
@@ -685,6 +900,12 @@ tr:last-child td{border-bottom:0}
   .heroSlide.active{transform:none}
   .heroPanel{transition:opacity .01s linear,visibility 0s}
   .dishCard:hover{transform:none}
+  /* the detail view and the order button arrive without any movement at all */
+  .modalScrim,.modalPanel{animation:none}
+  .orderPill.pop,.trayItem.fresh{animation:none}
+  .modalClose:hover{transform:none}
+  .modalBack:hover svg{transform:rotate(180deg)}
+  .pickCard:hover{transform:none}
 }
 
 /* the menu is designed to be printed as well as browsed */
@@ -692,7 +913,7 @@ tr:last-child td{border-bottom:0}
   @page{margin:12mm}
   html,body{background:#fff}
   body{padding-bottom:0}
-  .topbar,.nav,.drawer,.mobileCta,.menuJump,.orderPanelWrap,.printBtn,.heroBtns,.booking{display:none!important}
+  .topbar,.nav,.drawer,.mobileCta,.menuJump,.orderPanelWrap,.printBtn,.heroBtns,.booking,.modal,.orderPill,.dishOpen,.dishPeek{display:none!important}
   .pageHero{background:#fff!important;color:var(--navy)!important;padding:0 0 14mm;border-bottom:2px solid var(--gold)}
   .pageHero h1{color:var(--navy)!important;font-size:30pt}
   .pageHero p,.pageHero .eyebrow{color:#4a5666!important}
@@ -700,7 +921,12 @@ tr:last-child td{border-bottom:0}
   .menuWrap{padding-top:0}
   .menuMeta{color:#4a5666;margin-bottom:6mm}
   .menuWatermark{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360'%3E%3Ctext x='320' y='190' text-anchor='middle' font-family='Georgia,Times New Roman,serif' font-size='46' font-weight='700' letter-spacing='3' fill='%23071A33' fill-opacity='0.1' transform='rotate(-26 320 180)'%3EHotel Paradise on the Nile%3C/text%3E%3C/svg%3E")}
-  .dishCard{break-inside:avoid;box-shadow:none;border:1px solid #d8d2c4;break-inside:avoid-page}
+  .dishCard{break-inside:avoid;box-shadow:none;border:1px solid #d8d2c4;break-inside:avoid-page;display:flex;flex-direction:column}
+  .dishCard.held{border-color:#d8d2c4;box-shadow:none}
+  .dishHeld{display:none}
+  .dishOpenMedia .shot{--r:4/3;height:auto;border-bottom:1px solid #d8d2c4}
+  .dishOpenText{padding:12px 14px 0}
+  .dishBody{padding:7px 14px 12px}
   .secBlock{break-inside:auto;margin-bottom:8mm}
   .secHead h2{font-size:20pt}
   .secBanner{--r:16/9;box-shadow:none;break-after:avoid}

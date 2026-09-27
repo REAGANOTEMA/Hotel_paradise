@@ -109,27 +109,46 @@ if($act==='menu'){
 }
 
 if($act==='order'){
- $name=trim($body['name']??''); $phone=trim($body['phone']??'');
- $lines=$body['items']??[];
- if(!is_array($lines)||count($lines)===0){ $out(['ok'=>false,'error'=>'Your order is empty. Add at least one dish first.'],422); }
- if($name===''||$phone===''){ $out(['ok'=>false,'error'=>'Please provide your name and phone number so we can confirm your order.'],422); }
- $rows=[];
- foreach($lines as $ln){
-  $qty=(int)($ln['qty']??1);
-  if($qty<1){ continue; }
-  $mi=row('SELECT id,price FROM menu_items WHERE id=? AND active=1',[(int)($ln['id']??0)]);
-  if(!$mi){ $out(['ok'=>false,'error'=>'One of the dishes is no longer available. Please refresh the menu.'],422); }
-  if($mi['price']===null){ $out(['ok'=>false,'error'=>'That dish is priced on request. Please call +256 759 504 928 and the team will price it for you.'],422); }
-  $rows[]=['id'=>(int)$mi['id'],'qty'=>$qty,'price'=>(float)$mi['price']];
- }
- if(count($rows)===0){ $out(['ok'=>false,'error'=>'Your order is empty. Add at least one dish first.'],422); }
- $sub=array_sum(array_map(fn($r)=>$r['qty']*$r['price'],$rows));
- $num=next_number('ORD','orders','order_number');
- q('INSERT INTO orders(hotel_id,user_id,shift_id,order_number,outlet,order_type,status,subtotal,tax,total,created_at) VALUES(1,1,NULL,?,\'restaurant\',\'takeaway\',\'pending\',?,0,?,NOW())',[$num,$sub,$sub]);
- $oid=(int)db()->lastInsertId();
- foreach($rows as $r){ q('INSERT INTO order_items(order_id,menu_item_id,quantity,unit_price,total,notes) VALUES(?,?,?,?,?,?)',[$oid,$r['id'],$r['qty'],$r['price'],$r['qty']*$r['price'],'Web takeaway order from '.$name.', '.$phone]); }
- audit('web_order','order',$oid,['order_number'=>$num,'subtotal'=>$sub]);
- $out(['ok'=>true,'order_number'=>$num,'total'=>$sub,'message'=>'Please keep your phone nearby. We will call '.$phone.' to confirm collection and payment.']);
+  require_once __DIR__.'/app/menu_extras.php';
+  $name=trim($body['name']??''); $phone=trim($body['phone']??'');
+  $lines=$body['items']??[];
+  if(!is_array($lines)||count($lines)===0){ $out(['ok'=>false,'error'=>'Your order is empty. Add at least one dish first.'],422); }
+  if($name===''||$phone===''){ $out(['ok'=>false,'error'=>'Please provide your name and phone number so we can confirm your order.'],422); }
+  $rows=[];
+  foreach($lines as $ln){
+    $qty=(int)($ln['qty']??1);
+    if($qty<1){ continue; }
+    $mi=row('SELECT id,price FROM menu_items WHERE id=? AND active=1',[(int)($ln['id']??0)]);
+    if(!$mi){ $out(['ok'=>false,'error'=>'One of the dishes is no longer available. Please refresh the menu.'],422); }
+    if($mi['price']===null){ $out(['ok'=>false,'error'=>'That dish is priced on request. Please call +256 759 504 928 and the team will price it for you.'],422); }
+
+    // The companion and the salads are priced here, from the keys the guest
+    // was shown. An amount sent by the browser is never believed, and a key
+    // that is not on the list is simply dropped.
+    $comp=menu_extra((string)($ln['companion']??''),MENU_COMPANIONS);
+    $sides=[];
+    foreach((array)($ln['salads']??[]) as $sk){
+      $s=menu_extra((string)$sk,MENU_SALADS);
+      if($s){ $sides[]=$s; }
+    }
+    $sidesAdd=array_sum(array_column($sides,'add'));
+    $unit=(float)$mi['price']+($comp?(float)$comp['add']:0)+$sidesAdd;
+
+    $notes=[];
+    if($comp){ $notes[]='Companion: '.$comp['name']; }
+    if($sides){ $notes[]='Also: '.implode(', ',array_column($sides,'name')); }
+    $note='Web takeaway order from '.$name.', '.$phone.($notes?' — '.implode('. ',$notes).'.':'');
+
+    $rows[]=['id'=>(int)$mi['id'],'qty'=>$qty,'price'=>$unit,'base'=>(float)$mi['price'],'note'=>$note];
+  }
+  if(count($rows)===0){ $out(['ok'=>false,'error'=>'Your order is empty. Add at least one dish first.'],422); }
+  $sub=array_sum(array_map(fn($r)=>$r['qty']*$r['price'],$rows));
+  $num=next_number('ORD','orders','order_number');
+  q('INSERT INTO orders(hotel_id,user_id,shift_id,order_number,outlet,order_type,status,subtotal,tax,total,created_at) VALUES(1,1,NULL,?,\'restaurant\',\'takeaway\',\'pending\',?,0,?,NOW())',[$num,$sub,$sub]);
+  $oid=(int)db()->lastInsertId();
+  foreach($rows as $r){ q('INSERT INTO order_items(order_id,menu_item_id,quantity,unit_price,total,notes) VALUES(?,?,?,?,?,?)',[$oid,$r['id'],$r['qty'],$r['price'],$r['qty']*$r['price'],$r['note']]); }
+  audit('web_order','order',$oid,['order_number'=>$num,'subtotal'=>$sub]);
+  $out(['ok'=>true,'order_number'=>$num,'total'=>$sub,'message'=>'Please keep your phone nearby. We will call '.$phone.' to confirm collection and payment.']);
 }
 
 $out(['ok'=>false,'error'=>'Unknown request'],404);

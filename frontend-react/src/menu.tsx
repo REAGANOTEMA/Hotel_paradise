@@ -5,19 +5,29 @@ import {TopBar, PageNav, Footer, fmt, API} from './shared';
 import {SmartImage} from './SmartImage';
 import {
   MENU_REVISION,
+  addOnPrice,
+  companionsFor,
   dishImage,
+  linePrice,
   menuSections,
+  saladsFor,
   sectionImage,
   slugify,
+  tidySections,
   totalDishes,
+  ADD_ONS_INCLUDED,
+  type Choice,
   type MenuGroup,
   type MenuItem,
   type MenuSection
 } from './menuData';
 
-type Line = {dish: MenuItem; qty: number};
+type Line = {key: string; dish: MenuItem; qty: number; companion: Choice | null; salads: Choice[]};
 
 const CALL = '+256 759 504 928';
+
+/** The fallback menu, read the way it is going to be printed. */
+const FALLBACK: MenuSection[] = tidySections(menuSections);
 
 /**
  * Add ?photos=1 to any page to see the file name each slot is waiting for.
@@ -55,7 +65,11 @@ const toSections = (cats: Array<{name: string; eyebrow?: string; blurb?: string;
       };
     });
 
-/** Reserved plate drawn while a dish is still waiting for its photograph. */
+/* ------------------------------------------------------------------
+   The small marks on the page. Drawn here rather than pulled from an
+   icon set, so the menu carries nothing it does not use.
+   ------------------------------------------------------------------ */
+
 function PlateGlyph() {
   return (
     <svg className="plateGlyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
@@ -67,6 +81,41 @@ function PlateGlyph() {
   );
 }
 
+const PlusIcon = () => (
+  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+    <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+    <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+  </svg>
+);
+
+const ArrowIcon = () => (
+  <svg viewBox="0 0 18 12" fill="none" aria-hidden="true" focusable="false">
+    <path d="M1 6h15M11.5 1.5 16 6l-4.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false">
+    <path d="M2 7.4 5.4 11 12 3.6" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const PhoneIcon = () => (
+  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+    <path d="M3 1.8h2.4l1.3 3.3-1.6 1.1a9 9 0 0 0 3.7 3.7l1.1-1.6L13.3 9.6V12a1.6 1.6 0 0 1-1.7 1.6A11.4 11.4 0 0 1 1.4 3.5 1.6 1.6 0 0 1 3 1.8Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+  </svg>
+);
+
+/** A little garnish mark, drawn so a priced plate reads differently to a plain row. */
+function ValueMark({children}: {children: React.ReactNode}) {
+  return <span className="valueMark">{children}</span>;
+}
+
 /**
  * The photograph of one dish.
  *
@@ -74,24 +123,24 @@ function PlateGlyph() {
  * at whatever size the screen needs. Until then the card shows a warm, printed
  * plate rather than an empty box, so the menu still reads as a finished menu.
  */
-function DishShot({dish}: {dish: MenuItem}) {
+function DishShot({dish, large = false, hint = true}: {dish: MenuItem; large?: boolean; hint?: boolean}) {
   const file = dishImage(dish);
   return (
     <SmartImage
       group="dishes"
       name={file}
       alt={dish.name}
-      ratio="4 / 3"
-      widths={[320, 480, 640, 960]}
-      sizes="(max-width:640px) 132px, (max-width:1050px) 240px, (max-width:1400px) 300px, 340px"
+      ratio={large ? '16 / 10' : '4 / 3'}
+      widths={large ? [640, 1024, 1440] : [320, 480, 640, 960]}
+      sizes={large ? '(max-width:900px) 100vw, 46vw' : '(max-width:640px) 132px, (max-width:1050px) 240px, (max-width:1400px) 300px, 340px'}
       position="50% 52%"
-      zoom
-      className="shot"
+      zoom={!large}
+      className={large ? 'shot shotLarge' : 'shot'}
       placeholder={
         <div className="shotEmpty">
           <PlateGlyph/>
           <span className="shotNote">{dish.group}</span>
-          {SHOW_FILE_HINTS && <code className="shotFile">images/dishes/{file}</code>}
+          {hint && SHOW_FILE_HINTS && <code className="shotFile">images/dishes/{file}</code>}
         </div>
       }
     />
@@ -122,27 +171,290 @@ function SectionBanner({section, children}: {section: MenuSection; children: Rea
   );
 }
 
+/* ------------------------------------------------------------------
+   THE DISH DETAIL VIEW
+
+   Every dish on the menu opens here. The guest sees the plate at full
+   size, the whole description, where it sits in the menu, what comes
+   with it and what it comes to, and chooses a companion and a salad
+   before anything is added. Nothing is added by accident, and the
+   total always moves in front of the guest.
+   ------------------------------------------------------------------ */
+
+type PickProps = {
+  id: string;
+  legend: string;
+  hint: string;
+  list: Choice[];
+  /** A single choice, or a set of them. Which one depends on `multiple`. */
+  chosen: Choice | Choice[] | null;
+  multiple: boolean;
+  onChange: (next: Choice[]) => void;
+};
+
+function ChoicePicker({id, legend, hint, list, chosen, multiple, onChange}: PickProps) {
+  const picked = multiple ? (Array.isArray(chosen) ? chosen : []) : [];
+  const isOn = (c: Choice) => (multiple ? picked.some(x => x.key === c.key) : Array.isArray(chosen) ? false : chosen?.key === c.key);
+
+  const toggle = (c: Choice) => {
+    if (!multiple) return onChange([c]);
+    onChange(isOn(c) ? picked.filter(x => x.key !== c.key) : [...picked, c]);
+  };
+
+  return (
+    <fieldset className="pickSet">
+      <legend className="pickLegend">
+        <span>{legend}</span>
+        <em>{hint}</em>
+      </legend>
+      <div className="pickGrid">
+        {list.map(c => {
+          const free = addOnPrice(c) === 0;
+          return (
+            <label key={c.key} className={'pickCard' + (isOn(c) ? ' on' : '')}>
+              <input
+                type={multiple ? 'checkbox' : 'radio'}
+                name={id}
+                value={c.key}
+                checked={isOn(c)}
+                onChange={() => toggle(c)}
+              />
+              <span className="pickTick" aria-hidden="true"><CheckIcon/></span>
+              <span className="pickText">
+                <b>{c.name}</b>
+                <small>{c.note}</small>
+              </span>
+              <span className={'pickPrice' + (free ? ' incl' : '')}>{free ? 'Included' : '+ ' + fmt(addOnPrice(c))}</span>
+            </label>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+function DishDetail({
+  dish,
+  section,
+  groupName,
+  trayCount,
+  onAdd,
+  onClose
+}: {
+  dish: MenuItem;
+  section: MenuSection | null;
+  groupName: string;
+  trayCount: number;
+  onAdd: (dish: MenuItem, companion: Choice | null, salads: Choice[], qty: number) => void;
+  onClose: () => void;
+}) {
+  const companions = React.useMemo(() => companionsFor(dish), [dish]);
+  const salads = React.useMemo(() => saladsFor(dish), [dish]);
+  const [companion, setCompanion] = React.useState<Choice | null>(companions[0] ?? null);
+  const [pickedSalads, setPickedSalads] = React.useState<Choice[]>([]);
+  const [qty, setQty] = React.useState(1);
+  const panel = React.useRef<HTMLDivElement>(null);
+  const addBtn = React.useRef<HTMLButtonElement>(null);
+  const restoreTo = React.useRef<HTMLElement | null>(null);
+
+  const onRequest = dish.price === null;
+  const unit = linePrice(dish, companion, pickedSalads);
+  const total = unit * qty;
+
+  React.useEffect(() => {
+    restoreTo.current = document.activeElement as HTMLElement | null;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    (addBtn.current ?? panel.current)?.focus();
+    return () => {
+      document.body.style.overflow = prev;
+      restoreTo.current?.focus?.();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab' || !panel.current) return;
+      const nodes = Array.from(
+        panel.current.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])')
+      ).filter(n => n.offsetParent !== null);
+      if (!nodes.length) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  const breadcrumb = [section?.eyebrow, section?.name, groupName].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
+
+  return (
+    <div className="modal" role="presentation">
+      <div className="modalScrim" onClick={onClose}/>
+      <div
+        className="modalPanel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dishTitle"
+        ref={panel}
+      >
+        <button className="modalClose" onClick={onClose} aria-label="Close the details of this dish">
+          <CloseIcon/>
+        </button>
+
+        <div className="modalMedia">
+          <DishShot dish={dish} large hint={false}/>
+          <div className="modalMediaTag">
+            <ValueMark>{breadcrumb[0] ?? 'Our menu'}</ValueMark>
+          </div>
+        </div>
+
+        <div className="modalBody">
+          <p className="modalCrumb">{breadcrumb.join('  ›  ')}</p>
+          <h2 className="modalTitle" id="dishTitle">{dish.name}</h2>
+
+          <p className="modalPrice">
+            {onRequest
+              ? <span className="askPrice">Priced on request</span>
+              : <>{fmt(unit)}<small>per serving</small></>}
+          </p>
+
+          {dish.desc && <p className="modalDesc">{dish.desc}</p>}
+
+          {SHOW_FILE_HINTS && <code className="shotFile modalFile">images/dishes/{dishImage(dish)}</code>}
+
+          {onRequest ? (
+            <div className="askBox">
+              <h3>Priced by our team</h3>
+              <p>
+                The kitchen prices this one to the weight of what you order, so it is confirmed before it
+                reaches the pass. Call us and we will price it and take your order straight away.
+              </p>
+              <a className="btn askCall" href={'tel:' + CALL.replace(/\s/g, '')}><PhoneIcon/>Call {CALL}</a>
+            </div>
+          ) : (
+            <>
+              {companions.length > 0 && (
+                <ChoicePicker
+                  id={'companion-' + dish.id}
+                  legend="Choose your companion"
+                  hint="One comes with the dish, the rest are an upgrade"
+                  list={companions}
+                  chosen={companion}
+                  multiple={false}
+                  onChange={next => setCompanion(next[0] ?? null)}
+                />
+              )}
+
+              {salads.length > 0 && (
+                <ChoicePicker
+                  id={'salad-' + dish.id}
+                  legend="Add a salad or side"
+                  hint="Optional, choose as many as you like"
+                  list={salads}
+                  chosen={pickedSalads}
+                  multiple
+                  onChange={setPickedSalads}
+                />
+              )}
+
+              <div className="modalBar">
+                <div className="qtyBox">
+                  <span className="qtyLabel">How many</span>
+                  <div className="qtyStep">
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="One less">&minus;</button>
+                    <output aria-live="polite">{qty}</output>
+                    <button onClick={() => setQty(q => Math.min(30, q + 1))} aria-label="One more"><PlusIcon/></button>
+                  </div>
+                </div>
+                <div className="modalTotal">
+                  <span>Total</span>
+                  <b>{fmt(total)}</b>
+                </div>
+              </div>
+
+              <button className="btn addBtn addBtnWide" ref={addBtn} onClick={() => onAdd(dish, companion, pickedSalads, qty)}>
+                <PlusIcon/>{trayCount > 0 ? 'Add ' + qty + ' more, ' + trayCount + ' in your order' : 'Add to my order'}
+              </button>
+
+              <p className="modalNote">
+                {ADD_ONS_INCLUDED
+                  ? 'Companions and salads are served on the side at no extra charge. Prices include taxes.'
+                  : 'One companion comes with the dish, salads are on the side and charged as shown. Prices include taxes.'}
+              </p>
+            </>
+          )}
+
+          <a className="modalBack" href={'#sec-' + (section?.key ?? '')} onClick={onClose}>
+            <ArrowIcon/>Back to the {section?.name ?? 'menu'}
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   THE MENU
+   ------------------------------------------------------------------ */
+
 function MenuPage() {
-  const [sections, setSections] = React.useState<MenuSection[]>(menuSections);
+  const [sections, setSections] = React.useState<MenuSection[]>(FALLBACK);
   const [live, setLive] = React.useState(false);
   const [tray, setTray] = React.useState<Line[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [here, setHere] = React.useState(menuSections[0].key);
+  const [here, setHere] = React.useState(FALLBACK[0].key);
   const [name, setName] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
   const [busy, setBusy] = React.useState(false);
+  const [picked, setPicked] = React.useState<{dish: MenuItem; section: MenuSection | null; group: string} | null>(null);
+  const [justAdded, setJustAdded] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     fetch(API + '?act=menu')
       .then(r => r.json())
       .then(d => {
         if (d.ok && Array.isArray(d.categories) && d.categories.some((c: {items?: unknown[]}) => Array.isArray(c.items) && c.items.length)) {
-          const next = toSections(d.categories);
-          if (next.length) { setSections(next); setLive(true); }
+          const next = tidySections(toSections(d.categories));
+          if (next.length) { setSections(next); setLive(true); setHere(h => (next.some(s => s.key === h) ? h : next[0].key)); }
         }
       })
       .catch(() => {});
+  }, []);
+
+  // Deep link: menu.html?dish=mushroom-soup opens that plate straight away.
+  // Held back until the live menu has had its say, so a link to a dish that
+  // only the kitchen knows about still opens.
+  const deepLink = React.useRef(new URLSearchParams(location.search).get('dish'));
+  React.useEffect(() => {
+    const want = deepLink.current;
+    if (!want) return;
+    for (const s of sections) {
+      for (const g of s.groups) {
+        const hit = g.items.find(i => slugify(i.name) === want);
+        if (hit) { deepLink.current = null; setPicked({dish: hit, section: s, group: g.name}); return; }
+      }
+    }
+  }, [sections]);
+
+  const writeDishParam = (slug: string | null) => {
+    const u = new URL(location.href);
+    if (slug) u.searchParams.set('dish', slug); else u.searchParams.delete('dish');
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+  };
+
+  const openDish = (dish: MenuItem, section: MenuSection, group: string) => {
+    setPicked({dish, section, group});
+    writeDishParam(slugify(dish.name));
+  };
+
+  const closeDish = React.useCallback(() => {
+    setPicked(null);
+    writeDishParam(null);
   }, []);
 
   // Highlight the section currently under the sticky navigation.
@@ -159,23 +471,57 @@ function MenuPage() {
     return () => io.disconnect();
   }, [sections]);
 
-  const add = (dish: MenuItem) => {
+  // Keep the live chip of the jump bar in view as the guest reads down.
+  React.useEffect(() => {
+    const chip = document.querySelector<HTMLElement>('.menuJump a.active');
+    const rail = document.querySelector<HTMLElement>('.menuJumpInner');
+    if (!chip || !rail) return;
+    const want = chip.offsetLeft - (rail.clientWidth - chip.clientWidth) / 2;
+    rail.scrollTo({left: Math.max(0, want), behavior: 'smooth'});
+  }, [here]);
+
+  const lineKey = (dish: MenuItem, companion: Choice | null, salads: Choice[]): string =>
+    [dish.id, companion?.key ?? 'plain', salads.map(s => s.key).sort().join('+') || 'none'].join('|');
+
+  const add = (dish: MenuItem, companion: Choice | null = null, salads: Choice[] = [], qty = 1) => {
     if (dish.price === null) {
       setMsg({ok: false, text: dish.name + ' is priced on request. Please call ' + CALL + ' and the team will price it for you.'});
       return;
     }
     setMsg(null);
+    const key = lineKey(dish, companion, salads);
     setTray(t => {
-      const ex = t.find(x => x.dish.id === dish.id);
-      return ex ? t.map(x => x.dish.id === dish.id ? {...x, qty: x.qty + 1} : x) : [...t, {dish, qty: 1}];
+      const ex = t.find(x => x.key === key);
+      return ex ? t.map(x => (x.key === key ? {...x, qty: x.qty + qty} : x)) : [...t, {key, dish, qty, companion, salads}];
     });
+    setJustAdded(key);
+    window.setTimeout(() => setJustAdded(k => (k === key ? null : k)), 900);
   };
-  const bump = (id: number, d: number) => setTray(t => t.map(x => x.dish.id === id ? {...x, qty: Math.max(0, x.qty + d)} : x).filter(x => x.qty > 0));
-  const drop = (id: number) => setTray(t => t.filter(x => x.dish.id !== id));
-  const subtotal = tray.reduce((s, x) => s + x.qty * (x.dish.price || 0), 0);
+
+  const bump = (key: string, d: number) => setTray(t => t.map(x => (x.key === key ? {...x, qty: Math.max(0, x.qty + d)} : x)).filter(x => x.qty > 0));
+  const drop = (key: string) => setTray(t => t.filter(x => x.key !== key));
+  const sumLine = (x: Line) => linePrice(x.dish, x.companion, x.salads) * x.qty;
+  const subtotal = tray.reduce((s, x) => s + sumLine(x), 0);
   const count = tray.reduce((s, x) => s + x.qty, 0);
+  const inTray = (dish: MenuItem) => tray.filter(x => x.dish.id === dish.id).reduce((s, x) => s + x.qty, 0);
+
+  // The floating button stands in for the order panel only while the panel
+  // is off the screen, so the two are never both asking for the same tap.
+  const [orderAway, setOrderAway] = React.useState(true);
+  React.useEffect(() => {
+    const panel = document.getElementById('order');
+    if (!panel) return;
+    const io = new IntersectionObserver(([e]) => setOrderAway(e.intersectionRatio < .35), {threshold: [0, .35, 1]});
+    io.observe(panel);
+    return () => io.disconnect();
+  }, []);
 
   React.useEffect(() => { if (tray.length) setOpen(true); }, [tray.length]);
+
+  const goToOrder = () => {
+    setOpen(true);
+    document.getElementById('order')?.scrollIntoView({behavior: 'smooth', block: 'start'});
+  };
 
   const send = async () => {
     if (!tray.length) { setMsg({ok: false, text: 'Add at least one dish to your order first.'}); return; }
@@ -183,7 +529,13 @@ function MenuPage() {
     setBusy(true); setMsg(null);
     try {
       const res = await fetch(API + '?act=order', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
-        name: name.trim(), phone: phone.trim(), items: tray.map(x => ({id: x.dish.id, qty: x.qty}))
+        name: name.trim(), phone: phone.trim(),
+        items: tray.map(x => ({
+          id: x.dish.id,
+          qty: x.qty,
+          companion: x.companion?.key ?? '',
+          salads: x.salads.map(s => s.key)
+        }))
       })});
       const d = await res.json();
       if (d.ok) {
@@ -205,7 +557,11 @@ function MenuPage() {
     <section className="pageHero">
       <p className="eyebrow">DINING AND BAR</p>
       <h1>Our menu, your order.</h1>
-      <p>Every dish in its own section, with a photograph of each plate. Add what you fancy to your order and change or drop anything freely before it reaches the kitchen. Prices include taxes.</p>
+      <p>
+        Every dish in its own section, with a photograph of each plate. Open any dish to see it in full,
+        choose your companion and a salad, and add it to your order. Change or drop anything freely before
+        it reaches the kitchen. Prices include taxes.
+      </p>
     </section>
 
     <div className="menuJump" id="jump">
@@ -213,7 +569,7 @@ function MenuPage() {
         {sections.map(s => (
           <a key={s.key} className={here === s.key ? 'active' : ''} href={'#sec-' + s.key}>{s.name}</a>
         ))}
-        <button className="jumpOrder" onClick={() => { setOpen(true); document.getElementById('order')?.scrollIntoView({behavior: 'smooth', block: 'start'}); }}>
+        <button className="jumpOrder" onClick={goToOrder}>
           Your order{count > 0 && ' (' + count + ')'}
         </button>
       </div>
@@ -242,20 +598,40 @@ function MenuPage() {
             <div className="subGroup" key={section.key + '-' + gi}>
               <h3 className="subHead">{g.name}</h3>
               <div className="dishGrid">
-                {g.items.map(dish => (
-                  <article className="dishCard" key={section.key + '-' + dish.id + '-' + dish.name}>
-                    <DishShot dish={dish}/>
+                {g.items.map(dish => {
+                  const mine = inTray(dish);
+                  return (
+                  <article
+                    className={'dishCard' + (mine > 0 ? ' held' : '')}
+                    key={section.key + '-' + dish.id + '-' + dish.name}
+                  >
+                    <div className="dishOpenMedia">
+                      <DishShot dish={dish}/>
+                      <span className="dishPeek" aria-hidden="true">Open<ArrowIcon/></span>
+                      {mine > 0 && <span className="dishHeld">{mine} in your order</span>}
+                    </div>
+                    <div className="dishOpenText">
+                      <h4 className="dishTitle">{dish.name}</h4>
+                      {dish.desc && <p className="dishDesc">{dish.desc}</p>}
+                    </div>
                     <div className="dishBody">
-                      <h4>{dish.name}</h4>
-                      {dish.desc && <p>{dish.desc}</p>}
                       <div className="dishFoot">
-                        <b className={dish.price === null ? 'askPrice' : ''}>{dish.price === null ? 'Price on request' : fmt(dish.price)}</b>
-                        {dish.price !== null && live &&
-                          <button className="addBtn" onClick={() => add(dish)}>Add</button>}
+                        <b className={dish.price === null ? 'askPrice' : ''}>
+                          {dish.price === null ? 'Price on request' : fmt(dish.price)}
+                        </b>
+                        <button className="addBtn" onClick={() => openDish(dish, section, g.name)}>
+                          <PlusIcon/>{mine > 0 ? 'Add more' : 'Add'}
+                        </button>
                       </div>
                     </div>
+                    <button
+                      className="dishOpen"
+                      onClick={() => openDish(dish, section, g.name)}
+                      aria-label={'See the details of ' + dish.name}
+                    />
                   </article>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -270,24 +646,35 @@ function MenuPage() {
         <button className="orderPanelHead" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-controls="orderBody">
           <span className="orderPanelTitle">
             <b>Your order</b>
-            <em>{tray.length === 0 ? 'Nothing added yet. Tap Add on any dish.' : count + ' item' + (count === 1 ? '' : 's') + ' · UGX ' + Math.round(subtotal).toLocaleString()}</em>
+            <em>{tray.length === 0 ? 'Nothing added yet. Open any dish to add it.' : count + ' item' + (count === 1 ? '' : 's') + ' · UGX ' + Math.round(subtotal).toLocaleString()}</em>
           </span>
           <span className="orderPanelToggle">{open ? 'Collapse' : 'Open'}</span>
         </button>
 
         {open && <div className="orderPanelBody" id="orderBody">
           {tray.length === 0 ? (
-            <div className="trayEmpty"><p>Your order is empty. Add a dish from the menu and it will appear here. You can drop or change anything freely before you send.</p></div>
+            <div className="trayEmpty"><p>Your order is empty. Open any dish to see it in full, choose your companion and a salad, and it will appear here. You can drop or change anything freely before you send.</p></div>
           ) : (
             <div className="trayList">
-              {tray.map(x => (
-                <div className="trayItem" key={x.dish.id}>
-                  <div className="trayInfo"><b>{x.dish.name}</b><span>{fmt(x.dish.price || 0)}</span></div>
-                  <div className="trayQty"><button onClick={() => bump(x.dish.id, -1)} aria-label="One less">−</button><em>{x.qty}</em><button onClick={() => bump(x.dish.id, 1)} aria-label="One more">+</button></div>
-                  <span className="lineTotal">{fmt(x.qty * (x.dish.price || 0))}</span>
-                  <button className="dropBtn" onClick={() => drop(x.dish.id)} title="Drop this dish">Drop</button>
-                </div>
-              ))}
+              {tray.map(x => {
+                const unit = linePrice(x.dish, x.companion, x.salads);
+                return (
+                  <div className={'trayItem' + (justAdded === x.key ? ' fresh' : '')} key={x.key}>
+                    <div className="trayInfo">
+                      <b>{x.dish.name}</b>
+                      {(x.companion || x.salads.length > 0) && <span className="traySides">
+                        {x.companion && <>with {x.companion.name.toLowerCase()}</>}
+                        {x.companion && x.salads.length > 0 && ' · '}
+                        {x.salads.length > 0 && x.salads.map(s => s.name).join(', ').toLowerCase()}
+                      </span>}
+                      <span>{fmt(unit)} each</span>
+                    </div>
+                    <div className="trayQty"><button onClick={() => bump(x.key, -1)} aria-label="One less">&minus;</button><em>{x.qty}</em><button onClick={() => bump(x.key, 1)} aria-label="One more">+</button></div>
+                    <span className="lineTotal">{fmt(sumLine(x))}</span>
+                    <button className="dropBtn" onClick={() => drop(x.key)} title="Drop this dish">Drop</button>
+                  </div>
+                );
+              })}
               <div className="trayTotal"><span>Total</span><b>{fmt(subtotal)}</b></div>
             </div>
           )}
@@ -306,10 +693,31 @@ function MenuPage() {
           )}
 
           {msg && <div className={msg.ok ? 'bookMsg ok' : 'bookMsg'}>{msg.text}</div>}
-          <p className="plannerNote">You are in full control. Change quantities or drop any dish before you send your order. No payment is taken here.</p>
+          <p className="plannerNote">You are in full control. Open any dish to change its companion or salad, or change quantities and drop any line before you send your order. No payment is taken here.</p>
         </div>}
       </div>
     </section>
+
+    {count > 0 && orderAway && (
+      <button className={'orderPill' + (justAdded ? ' pop' : '')} onClick={goToOrder}>
+        <span className="orderPillDot">{count}</span>
+        <span className="orderPillText">
+          <b>Your order</b>
+          <em>{fmt(subtotal)}</em>
+        </span>
+      </button>
+    )}
+
+    {picked && (
+      <DishDetail
+        dish={picked.dish}
+        section={picked.section}
+        groupName={picked.group}
+        trayCount={inTray(picked.dish)}
+        onAdd={(d, c, s, q) => { add(d, c, s, q); closeDish(); goToOrder(); }}
+        onClose={closeDish}
+      />
+    )}
 
     <Footer/>
   </div>;

@@ -48,7 +48,117 @@ const item = (name: string, desc: string, price: number | null, group: string, i
   group
 });
 
-export const MENU_REVISION = 'Proposed a la carte menu, January 2026';
+export const MENU_REVISION = 'A la carte menu, January 2026';
+
+/* ------------------------------------------------------------------
+   COMPANIONS AND SALADS
+
+   The kitchen already writes its accompaniments into the dish copy, for
+   example "served with an accompaniment of your choice" or "rice or
+   chips". Rather than repeat that by hand on eighty one rows, the
+   dish detail view reads the wording and offers exactly the
+   accompaniments that wording allows. A dish that is served plain, or
+   needs no starch at all, is simply offered none.
+
+   One companion comes with the dish, which is the house standard, and
+   is marked "included". Everything else is an upgrade and carries a
+   small add on price. To make every accompaniment free, set
+   ADD_ONS_INCLUDED to true below: the pickers stay, the totals do not
+   move.
+   ------------------------------------------------------------------ */
+
+/** Set to true to price every companion and salad at no extra charge. */
+export const ADD_ONS_INCLUDED = false;
+
+export type Choice = {
+  key: string;
+  name: string;
+  /** Ugandan shillings added to the dish price. 0 means it comes with it. */
+  add: number;
+  /** Shown under the name to explain the choice. */
+  note: string;
+};
+
+export const COMPANIONS: Choice[] = [
+  {key: 'chips', name: 'Chips', add: 0, note: 'House standard, included'},
+  {key: 'rice', name: 'Steamed rice', add: 0, note: 'House standard, included'},
+  {key: 'fries', name: 'French fries', add: 3000, note: 'Thick cut, salted'},
+  {key: 'wedges', name: 'Potato wedges', add: 4000, note: 'Rosemary and garlic'},
+  {key: 'pilau', name: 'Brown pilau rice', add: 4000, note: 'Cooked in spiced stock'},
+  {key: 'matoke', name: 'Matoke', add: 4000, note: 'Simmered in groundnut'},
+  {key: 'chapatti', name: 'Chapatti', add: 3000, note: 'Rolled by hand'},
+  {key: 'ugali', name: 'Ugali', add: 3000, note: 'Cassava and maize flour'},
+  {key: 'cassava', name: 'Cassava', add: 3000, note: 'Steamed, with tomato sauce'},
+  {key: 'garlic', name: 'Garlic bread', add: 5000, note: 'Baked with parsley butter'},
+  {key: 'naan', name: 'Naan', add: 5000, note: 'Tandoor baked'}
+];
+
+export const SALADS: Choice[] = [
+  {key: 'coleslaw', name: 'Coleslaw', add: 5000, note: 'Cabbage, carrot and cream'},
+  {key: 'green', name: 'Green salad', add: 5000, note: 'Lettuce, cucumber and tomato'},
+  {key: 'cucumber', name: 'Cucumber and tomato', add: 5000, note: 'Onion, oregano and olive oil'},
+  {key: 'caesar', name: 'Caesar salad', add: 9000, note: 'Parmesan, croutons, egg'},
+  {key: 'russian', name: 'Russian salad', add: 8000, note: 'Potato, egg, carrot, mayonnaise'},
+  {key: 'veggie', name: 'Grilled Veggies Salad', add: 18000, note: 'Pepper, zucchini, cashew flakes'},
+  {key: 'tuna', name: 'Tuna Salad', add: 20000, note: 'Tuna, avocado on lettuce'}
+];
+
+const choice = (list: Choice[], keys: string[]): Choice[] =>
+  keys.map(k => list.find(c => c.key === k)).filter((c): c is Choice => Boolean(c));
+
+/** An empty picker, used for the dishes that are served as they are. */
+export const NO_COMPANIONS: Choice[] = [];
+export const NO_SALADS: Choice[] = [];
+
+/** A dish with no photograph still needs a dish, not a table of starches. */
+const servedPlain = /\b(served plain|baked to order|three scoops|two scoops|a pair of|a slice of|a generous and visually|chocolate syrup)\b/i;
+
+/**
+ * Which accompaniments a dish may be ordered with, taken from its own copy.
+ * Ordered from the most specific wording down, because a line such as
+ * "served with chips" also contains the word "with".
+ */
+export function companionsFor(dish: MenuItem): Choice[] {
+  const d = dish.desc || '';
+  if (servedPlain.test(d)) return NO_COMPANIONS;
+  if (/two accompaniments/i.test(d)) return COMPANIONS;
+  if (/accompaniment of your choice/i.test(d)) return COMPANIONS;
+  if (/rice or chapatti/i.test(d)) return choice(COMPANIONS, ['rice', 'chapatti', 'pilau', 'matoke', 'naan']);
+  if (/rice or mashed potatoes/i.test(d)) return choice(COMPANIONS, ['rice', 'chapatti', 'cassava', 'ugali', 'matoke']);
+  if (/rice or chips/i.test(d)) return choice(COMPANIONS, ['rice', 'chips', 'pilau', 'matoke', 'wedges', 'fries']);
+  if (/with chips/i.test(d)) return choice(COMPANIONS, ['chips', 'fries', 'wedges', 'matoke']);
+  if (/with rice/i.test(d)) return choice(COMPANIONS, ['rice', 'pilau', 'matoke', 'cassava']);
+  if (/toast/i.test(d)) return choice(COMPANIONS, ['garlic', 'chapatti', 'naan']);
+  if (/with a bread roll|served with a bread roll/i.test(d)) return choice(COMPANIONS, ['garlic', 'chapatti', 'naan']);
+  if (/served with/i.test(d)) return choice(COMPANIONS, ['chips', 'rice', 'wedges', 'fries', 'matoke', 'pilau']);
+  if (/^pizza$|^calzone$/i.test(dish.group)) return choice(COMPANIONS, ['garlic']);
+  return NO_COMPANIONS;
+}
+
+/**
+ * A salad is a plate in its own right, so it is offered with anything that
+ * arrives on a starch or a plate, and with the pizza, and never with a
+ * pudding or a cup of soup.
+ */
+export function saladsFor(dish: MenuItem): Choice[] {
+  const d = dish.desc || '';
+  if (servedPlain.test(d)) return NO_SALADS;
+  if (/^pizza$|^calzone$/i.test(dish.group)) return SALADS;
+  if (/^soups$|ice cream|crepe|fruit/i.test(dish.group)) return NO_SALADS;
+  if (companionsFor(dish).length) return SALADS;
+  if (/served with|rice|chips/i.test(d)) return SALADS;
+  return NO_SALADS;
+}
+
+/** The money an add on contributes, which is nothing when they are all free. */
+export const addOnPrice = (c: Choice): number => (ADD_ONS_INCLUDED ? 0 : c.add);
+
+/** What one serving of this dish comes to once the guest has chosen. */
+export const linePrice = (dish: MenuItem, companion: Choice | null, salads: Choice[]): number => {
+  const base = dish.price ?? 0;
+  const sides = (companion ? addOnPrice(companion) : 0) + salads.reduce((sum, s) => sum + addOnPrice(s), 0);
+  return base + sides;
+};
 
 export const menuSections: MenuSection[] = [
   {
@@ -376,3 +486,44 @@ export const sectionImage = (s: MenuSection): string => s.image || 'section-' + 
 
 export const totalDishes = (list: MenuSection[]): number =>
   list.reduce((n, s) => n + s.groups.reduce((m, g) => m + g.items.length, 0), 0);
+
+/* ------------------------------------------------------------------
+   THE ARRANGEMENT
+
+   The kitchen groups a section by its dishes rather than by a second
+   layer of headings, so the printed menu repeats itself: Burgers above
+   Burgers, Desserts above Desserts, a Calzone group holding one
+   Calzone. Two headings that say the same thing are noise, so they are
+   lifted away here, once, for the whole menu, rather than one page at
+   a time.
+
+   The data is left exactly as the kitchen filed it. tidySections only
+   decides what is worth printing, and a section with nothing left in it
+   simply does not appear.
+   ------------------------------------------------------------------ */
+
+const sameWords = (a: string, b: string): boolean =>
+  slugify(a) === slugify(b);
+
+/** A heading that only repeats the section above it, or a lone dish. */
+const headingIsNoise = (section: MenuSection, group: MenuGroup): boolean => {
+  if (sameWords(group.name, section.name)) return true;
+  if (group.name.toLowerCase() === section.eyebrow.toLowerCase() && section.eyebrow !== '') return true;
+  if (group.items.length === 1 && sameWords(group.items[0].name, group.name)) return true;
+  return false;
+};
+
+/**
+ * The menu as it should be read: one section banner, then the headings
+ * underneath it that actually tell the guest something they cannot
+ * already see. Applied to the live menu from the kitchen as well as to
+ * the fallback, so the two always read the same way.
+ */
+export function tidySections(list: MenuSection[]): MenuSection[] {
+  return list
+    .map(section => ({
+      ...section,
+      groups: section.groups.filter(g => g.items.length && !headingIsNoise(section, g))
+    }))
+    .filter(section => section.groups.length);
+}
