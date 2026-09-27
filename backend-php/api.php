@@ -118,7 +118,7 @@ if($act==='order'){
   foreach($lines as $ln){
     $qty=(int)($ln['qty']??1);
     if($qty<1){ continue; }
-    $mi=row('SELECT id,price FROM menu_items WHERE id=? AND active=1',[(int)($ln['id']??0)]);
+    $mi=row('SELECT id,name,price FROM menu_items WHERE id=? AND active=1',[(int)($ln['id']??0)]);
     if(!$mi){ $out(['ok'=>false,'error'=>'One of the dishes is no longer available. Please refresh the menu.'],422); }
     if($mi['price']===null){ $out(['ok'=>false,'error'=>'That dish is priced on request. Please call +256 759 504 928 and the team will price it for you.'],422); }
 
@@ -131,8 +131,10 @@ if($act==='order'){
       $s=menu_extra((string)$sk,MENU_SALADS);
       if($s){ $sides[]=$s; }
     }
-    $sidesAdd=array_sum(array_column($sides,'add'));
-    $unit=(float)$mi['price']+($comp?(float)$comp['add']:0)+$sidesAdd;
+    $compAdd=$comp?menu_extra_add((string)$mi['name'],$comp):0;
+    $sidesAdd=0;
+    foreach($sides as $s){ $sidesAdd+=menu_extra_add((string)$mi['name'],$s); }
+    $unit=(float)$mi['price']+$compAdd+$sidesAdd;
 
     $notes=[];
     if($comp){ $notes[]='Companion: '.$comp['name']; }

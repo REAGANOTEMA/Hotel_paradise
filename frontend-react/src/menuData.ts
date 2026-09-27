@@ -125,6 +125,22 @@ const servedPlain = /\b(served plain|baked to order|three scoops|two scoops|a pa
 const MAIN_PLATE = /^(whole fish|fish fillets|chicken lovers|steaks|pork|house specials|curries|biryani|snacks|egg dishes|burgers)$/i;
 
 /**
+ * A few dishes name more than one accompaniment in their own copy. Those are
+ * the ones that come with the plate, so they are held at the card price here
+ * and in backend-php/app/menu_extras.php, which must be kept in step.
+ */
+const SERVED_WITH: Record<string, string[]> = {
+  'paradise-lusaniya': ['pilau', 'matoke', 'wedges'],
+};
+
+/** Applies a dish's own included list to the choices it may be ordered with. */
+function withIncluded(dish: MenuItem, list: Choice[]): Choice[] {
+  const free = SERVED_WITH[dish.id];
+  if (!free) return list;
+  return list.map(c => (free.includes(c.key) && c.add ? {...c, add: 0} : c));
+}
+
+/**
  * Which accompaniments a dish may be ordered with, taken from its own copy.
  * Ordered from the most specific wording down, because a line such as
  * "served with chips" also contains the word "with".
@@ -135,7 +151,15 @@ const MAIN_PLATE = /^(whole fish|fish fillets|chicken lovers|steaks|pork|house s
 export function companionsFor(dish: MenuItem): Choice[] {
   const d = dish.desc || '';
   const g = dish.group || '';
+  const list = companionList(dish);
+  return withIncluded(dish, list);
+}
+
+function companionList(dish: MenuItem): Choice[] {
+  const d = dish.desc || '';
+  const g = dish.group || '';
   if (servedPlain.test(d)) return NO_COMPANIONS;
+  if (/pilau, matoke or potato wedges/i.test(d)) return choice(COMPANIONS, ['pilau', 'matoke', 'wedges', 'rice', 'chips']);
   if (/two accompaniments/i.test(d)) return COMPANIONS;
   if (/accompaniment of your choice/i.test(d)) return COMPANIONS;
   if (/rice or chapatti/i.test(d)) return choice(COMPANIONS, ['rice', 'chapatti', 'pilau', 'matoke', 'naan']);

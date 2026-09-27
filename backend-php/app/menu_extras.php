@@ -42,8 +42,31 @@ const MENU_SALADS=[
   'tuna'    =>['name'=>'Tuna Salad',            'add'=>20000]
 ];
 
+/**
+ * A dish that names more than one of its own accompaniments holds them at the
+ * price already printed on the card, so the guest is not charged again for
+ * something the description has given them. Held by dish name, because the
+ * website knows the name and the number of an item is not the same in every
+ * copy of the menu. Must be kept in step with SERVED_WITH in
+ * frontend-react/src/menuData.ts.
+ */
+const MENU_SERVED_WITH=[
+  'Paradise Lusaniya'=>['pilau','matoke','wedges']
+];
+
 /** A key that exists, or null. Never returns anything the guest made up. */
 function menu_extra(string $key, array $list): ?array{
   $k=strtolower(trim($key));
   return ($k!==''&&isset($list[$k]))?$list[$k]+['key'=>$k]:null;
+}
+
+/**
+ * The price a companion or salad adds to a particular dish, which is nothing
+ * when the dish already comes with it.
+ */
+function menu_extra_add(string $dishName, array $extra): int{
+  foreach(MENU_SERVED_WITH as $dish=>$keys){
+    if(strcasecmp(trim($dish),trim($dishName))===0&&in_array($extra['key'],$keys,true)){ return 0; }
+  }
+  return (int)$extra['add'];
 }
