@@ -1,0 +1,4 @@
+-- Owners module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: owner_accounts, owner_approvals, owner_alerts, owner_dashboard
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

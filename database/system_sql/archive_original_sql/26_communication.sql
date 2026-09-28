@@ -1,0 +1,4 @@
+-- Communication module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: department_threads, department_messages, message_reads, call_logs
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

@@ -1,0 +1,4 @@
+-- Reservations module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: reservations, reservation_rooms, booking_sources
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

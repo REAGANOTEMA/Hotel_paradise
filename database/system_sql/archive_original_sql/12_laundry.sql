@@ -1,0 +1,4 @@
+-- Laundry module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: laundry_orders, laundry_items, laundry_status
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

@@ -1,0 +1,4 @@
+-- Rooms module
+-- Authoritative tables are created by ../INSTALL.sql.
+-- Owned tables: rooms, room_types, room_status_history
+-- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.
