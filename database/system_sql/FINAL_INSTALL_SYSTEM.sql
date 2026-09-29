@@ -601,7 +601,7 @@ SELECT 1, i.id, 'Main Store', s.qty FROM inventory_items i JOIN (
   UNION ALL SELECT 'NVG-MNT-001',6 UNION ALL SELECT 'NVG-MNT-002',15
   UNION ALL SELECT 'NVG-STN-001',8 UNION ALL SELECT 'NVG-STN-002',25
  ) t
-) s ON s.code=i.code;
+) s ON s.code=i.code ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), item_id=VALUES(item_id), location=VALUES(location), quantity=VALUES(quantity);
 
 INSERT INTO suppliers(hotel_id,name,contact_person,phone,email,address,tax_id) VALUES
 (1,'Nile Distributors Ltd','Charles Okello','+256 771 220 001','orders@niledistributors.ug','Nasser Road, Jinja','NP-0001'),
