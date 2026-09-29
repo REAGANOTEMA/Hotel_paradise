@@ -559,7 +559,7 @@ SELECT 1, c.id, m.name, m.dsc, m.price, m.track FROM menu_categories c JOIN (
  UNION ALL SELECT 'Wines and Spirits','Local Spirit','Uganda Waragi or other local spirit',15000,1
  UNION ALL SELECT 'Room Service','Room Service Breakfast','Full breakfast delivered to your room',28000,1
  UNION ALL SELECT 'Room Service','Room Service Platter','Nile grilled selection delivered to your room',45000,1
-) m ON m.cat=c.name;
+) m ON m.cat=c.name ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), description=VALUES(description), price=VALUES(price), stock_tracked=VALUES(stock_tracked);
 
 INSERT INTO inventory_categories(name) VALUES
 ('Beverages'),('Kitchen'),('Housekeeping Supplies'),('Maintenance'),('Stationery')
@@ -582,7 +582,7 @@ SELECT 1,c.id,x.code,x.name,x.unit,x.reorder,1 FROM inventory_categories c JOIN 
  UNION ALL SELECT 'Maintenance','NVG-MNT-002','LED Bulb 9W','piece',10
  UNION ALL SELECT 'Stationery','NVG-STN-001','A4 Printer Paper','ream',5
  UNION ALL SELECT 'Stationery','NVG-STN-002','Receipt Roll 80mm','roll',20
-) x ON x.cat=c.name;
+) x ON x.cat=c.name ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), code=VALUES(code), name=VALUES(name), unit=VALUES(unit), reorder_level=VALUES(reorder_level), active=VALUES(active);
 
 INSERT INTO stock_levels(hotel_id,item_id,location,quantity)
 SELECT 1, i.id, 'Main Store', s.qty FROM inventory_items i JOIN (
