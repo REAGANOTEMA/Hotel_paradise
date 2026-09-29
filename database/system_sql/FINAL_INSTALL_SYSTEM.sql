@@ -433,7 +433,8 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO roles(name) VALUES
 ('super_admin'),('director'),('general_manager'),('accountant'),('cashier'),
 ('receptionist'),('waiter'),('bar_staff'),('kitchen'),('storekeeper'),
-('procurement'),('housekeeping'),('maintenance'),('events_manager'),('marketing'),('auditor');
+('procurement'),('housekeeping'),('maintenance'),('events_manager'),('marketing'),('auditor')
+ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 INSERT INTO departments(name,code) VALUES
 ('Front Desk','FD'),('Housekeeping','HK'),('Restaurant','RT'),('Bar','BB'),
@@ -526,7 +527,8 @@ FROM room_types rt JOIN (
 INSERT INTO menu_categories(hotel_id,outlet,name) VALUES
 (1,'restaurant','Breakfast'),(1,'restaurant','Main Meals'),(1,'restaurant','Snacks'),
 (1,'bar','Soft Drinks'),(1,'bar','Cocktails'),(1,'bar','Beers and Ciders'),(1,'bar','Wines and Spirits'),
-(1,'room_service','Room Service');
+(1,'room_service','Room Service')
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), outlet=VALUES(outlet), name=VALUES(name);
 
 INSERT INTO menu_items(hotel_id,category_id,name,description,price,stock_tracked)
 SELECT 1, c.id, m.name, m.dsc, m.price, m.track FROM menu_categories c JOIN (

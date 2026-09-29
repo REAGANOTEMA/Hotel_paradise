@@ -24,7 +24,13 @@ UPDATE menu_items mi
   SET mi.active = 0
   WHERE mc.outlet = 'restaurant';
 
-DELETE FROM menu_categories WHERE outlet = 'restaurant';
+-- A category that still has a dish under it cannot be removed while
+-- order_items points at that dish, and dropping the link would cost the
+-- order history. Those are left in place, out of service.
+DELETE mc FROM menu_categories mc
+ WHERE mc.outlet = 'restaurant'
+   AND NOT EXISTS (SELECT 1 FROM menu_items mi WHERE mi.category_id = mc.id);
+
 
 -- ---------------------------------------------------------------------------
 -- 1. SECTIONS
@@ -44,7 +50,8 @@ INSERT INTO menu_categories(hotel_id,outlet,name,eyebrow,blurb,sort_order) VALUE
 (1,'restaurant','House Specials','FOR THE TABLE','Platters built for sharing, served with two accompaniments.',120),
 (1,'restaurant','Asian Delicacies','FAR EAST','Mild creamy curries, biryani and coconut dishes with rice or chapatti.',130),
 (1,'restaurant','Desserts','SWEET FINISH','Fresh fruit, ice cream and a little sugar.',140),
-(1,'restaurant','Pizzeria Section','PIZZA','Baked to order on a stone base, 12 inch.',150);
+(1,'restaurant','Pizzeria Section','PIZZA','Baked to order on a stone base, 12 inch.',150)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), outlet=VALUES(outlet), name=VALUES(name), eyebrow=VALUES(eyebrow), blurb=VALUES(blurb), sort_order=VALUES(sort_order);
 
 -- ---------------------------------------------------------------------------
 -- 2. ITEMS
@@ -62,7 +69,8 @@ INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,so
 (1,(SELECT id FROM menu_categories WHERE name='Starters'),'Paradise Club Sandwich','Sandwich Corner','Triple decker of grilled beef, chicken breast, bacon, cheese, onions and mayo, served with chips.',30000,60,0),
 (1,(SELECT id FROM menu_categories WHERE name='Starters'),'Grilled Veggies Salad','Salads','Assorted seasoned grilled vegetables with bell pepper, carrots, zucchini and onions, laced with cashew nut flakes and dots.',18000,70,0),
 (1,(SELECT id FROM menu_categories WHERE name='Starters'),'Grilled Chicken Salad','Salads','Grilled boneless chicken strips married with onions, carrots, cucumber and tomato, garnished with black olives on a bed of lettuce.',15000,80,0),
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Tuna Salad','Salads','Tuna fish, red onion and tomato infused in fresh mayonnaise, layered on lettuce with avocado slices.',20000,90,0);
+(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Tuna Salad','Salads','Tuna fish, red onion and tomato infused in fresh mayonnaise, layered on lettuce with avocado slices.',20000,90,0)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.2 Egg Dishes ----------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES

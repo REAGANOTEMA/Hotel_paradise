@@ -9,7 +9,8 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO roles(name) VALUES
 ('super_admin'),('director'),('general_manager'),('receptionist'),('cashier'),
 ('accountant'),('waiter'),('bar_staff'),('kitchen'),('housekeeping'),
-('maintenance'),('inventory_manager'),('events_manager'),('marketing'),('guest');
+('maintenance'),('inventory_manager'),('events_manager'),('marketing'),('guest')
+ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 INSERT INTO menu_categories(hotel_id,outlet,name) VALUES
 (1,'restaurant','Breakfast'),
@@ -19,4 +20,5 @@ INSERT INTO menu_categories(hotel_id,outlet,name) VALUES
 (1,'bar','Cocktails'),
 (1,'bar','Beers & Ciders'),
 (1,'bar','Wines & Spirits'),
-(1,'room_service','Room Service');
+(1,'room_service','Room Service')
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), outlet=VALUES(outlet), name=VALUES(name);
