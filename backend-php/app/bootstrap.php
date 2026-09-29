@@ -132,17 +132,111 @@ function db_config(): array{
  ];
 }
 
+/**
+ * Removes anything secret from a driver message before it is shown or logged.
+ *
+ * A PDOException message is safe on its own, but the exception it is thrown from
+ * carries the arguments of the new PDO() call in its stack trace, and those
+ * arguments are the DSN, the user name and the password. With display_errors on,
+ * which is the default in a local XAMPP install, that trace is printed straight
+ * into the browser, so a database that would not open printed the production
+ * password to whoever happened to load the page. Nothing that leaves this file
+ * is allowed to carry a configured password, so every message goes through here
+ * first, whatever it came from.
+ */
+function db_scrub(string $text): string{
+  $cfg=db_config();
+  foreach([$cfg['pass'],$cfg['web']['pass']] as $secret){
+   if(is_string($secret)&&$secret!=='') $text=str_replace($secret,'[redacted]',$text);
+  }
+  return $text;
+}
+
+/**
+ * The one sentence a person can act on.
+ *
+ * "Access denied for user 'x'@'localhost' (using password: YES)" does not say
+ * which of the three possible causes is true, and the two most common ones look
+ * identical on screen: the account does not exist, or the password in config.php
+ * is not the password the account has. Saying that plainly saves the reader the
+ * only part of the job that is actually hard.
+ */
+function db_failure_reason(PDOException $e,string $dbName,string $user): string{
+  $m=$e->getMessage();
+  if(stripos($m,'access denied')!==false)
+   return 'MySQL refused the password for user "'.$user.'" on database "'.$dbName.'". The account either does not exist, or its password is not the one in backend-php/config.php.';
+  if(stripos($m,'unknown database')!==false)
+   return 'The database "'.$dbName.'" does not exist. The schema has not been installed into it.';
+  if(stripos($m,'connection refused')!==false||stripos($m,'no connection could be made')!==false)
+   return 'MySQL could not be reached on '.db_config()['host'].'. The MySQL service is probably not running.';
+  if(stripos($m,'no such file or directory')!==false)
+   return 'MySQL could not be reached. The host in backend-php/config.php is not a socket this PHP can open.';
+  return 'MySQL did not accept the request: '.db_scrub($m);
+}
+
 /** Opens a connection and says clearly in the log which one could not open. */
 function db_connect(string $dsn,string $dbName,string $user,string $pass): PDO{
- try{
-  return new PDO($dsn.';dbname='.$dbName,$user,$pass,[
-   PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
-   PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC
-  ]);
- }catch(PDOException $e){
-  error_log('[hotel db] cannot open '.$dbName.' as '.$user.'@'.db_config()['host'].': '.$e->getMessage());
-  throw $e;
- }
+  try{
+   return new PDO($dsn.';dbname='.$dbName,$user,$pass,[
+    PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC
+   ]);
+  }catch(PDOException $e){
+   $reason=db_failure_reason($e,$dbName,$user);
+   // The log keeps the SQLSTATE, which is what tells a wrong password (1045)
+   // apart from a missing database (1049) when reading it back days later.
+   error_log('[hotel db] cannot open '.$dbName.' as '.$user.'@'.db_config()['host']
+    .' [SQLSTATE '.$e->getCode().']: '.$reason);
+   // A new exception, not the original. Re-throwing the driver's would put the
+   // PDO arguments back on the page through the new stack trace.
+   throw new RuntimeException($reason,0);
+  }
+}
+
+/**
+ * The page shown when the hotel database cannot be opened at all.
+ *
+ * Without this the console died on an uncaught PDOException, which meant a
+ * configuration mistake reached the visitor as a PHP stack trace instead of as
+ * an explanation. It is a standalone page with its own styling because the real
+ * console layout is built by functions that need the very database that is
+ * missing, and cannot be used to report its own absence.
+ *
+ * The fix steps sit inside a collapsed section, so a live site shows one calm
+ * sentence while a person setting the site up can open the rest.
+ */
+function db_setup_page(string $reason): void{
+  http_response_code(503);
+  header('Content-Type: text/html; charset=utf-8');
+  $cfg=db_config();
+  $steps=[
+   'Is MySQL running? Open the XAMPP Control Panel and start MySQL, or run "net start MySQL".',
+   'Do the database and the user exist? Run: php tools/install-databases.php',
+   'Are the credentials right? backend-php/config.php holds the user name and the password. The password there has to match the one the MySQL account was created with.',
+   'Did the host change on hosting? A host that is not localhost almost always wants a user name with the account prefix on it, for example yourname_'.$cfg['user'].'.',
+   'Has something been overridden? The environment variables HP_DB_HOST, HP_DB_PORT, HP_DB_NAME, HP_DB_USER and HP_DB_PASS win over config.php, and HP_WEB_DB_NAME, HP_WEB_DB_USER and HP_WEB_DB_PASS do the same for the website database.'
+  ];
+  echo '<!doctype html><html lang="en"><head><meta charset="utf-8">';
+  echo '<meta name="viewport" content="width=device-width,initial-scale=1">';
+  echo '<title>Database unavailable | Hotel Paradise on the Nile</title>';
+  echo '<style>body{margin:0;background:#f4f6f9;color:#1E3A5F;font:15px/1.6 "DM Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif}'
+   .'.wrap{max-width:640px;margin:8vh auto;padding:0 20px}'
+   .'h1{font-size:22px;margin:0 0 6px}p.lead{margin:0 0 18px;color:#475569}'
+   .'box{background:#fff;border:1px solid #dfe4ec;border-left:4px solid #b26a00;border-radius:6px;padding:18px 20px}'
+   .'code,pre{font-family:ui-monospace,Consolas,monospace;font-size:13px}'
+   .'pre{background:#0f172a;color:#e2e8f0;padding:12px 14px;border-radius:5px;overflow-x:auto}'
+   .'ol{margin:8px 0 0;padding-left:20px}li{margin-bottom:8px}'
+   .'small{color:#64748b;font-size:13px;margin-top:20px}</style></head><body><div class="wrap">';
+  echo '<h1>The management system cannot reach its database</h1>';
+  echo '<p class="lead">Nothing has been changed and no data was lost. The site needs its MySQL database before it can sign anyone in.</p>';
+  echo '<div class="box"><p>'.e($reason).'</p>';
+  echo '<details><summary style="cursor:pointer;font-weight:600;margin-top:14px">How to fix this</summary><ol>';
+  foreach($steps as $s) echo '<li>'.e($s).'</li>';
+  echo '</ol><p class="small">The exact command for this machine is:</p>';
+  echo '<pre>php tools/install-databases.php</pre></details>';
+  echo '<p class="small">Details are in the Apache and PHP error log.</p>';
+  echo '</div></div></body></html>';
+  exit;
 }
 
 /**
@@ -151,13 +245,30 @@ function db_connect(string $dsn,string $dbName,string $user,string $pass): PDO{
  * kitchen receives and the row the till settles have to be the same rows.
  */
 function db(): PDO{
- static $pdo=null;
- if($pdo===null){
-  $c=db_config();
-  $pdo=db_connect($c['dsn'],$c['name'],$c['user'],$c['pass']);
- }
- return $pdo;
+  static $pdo=null;
+  if($pdo===null){
+   $c=db_config();
+   try{
+    $pdo=db_connect($c['dsn'],$c['name'],$c['user'],$c['pass']);
+   }catch(RuntimeException $e){
+    // The whole console reads and writes the hotel database, so there is no
+    // part of a page that can be shown without it. Answer with the explanation
+    // rather than letting the request end in a fatal error.
+    db_setup_page($e->getMessage());
+   }
+  }
+  return $pdo;
 }
+
+/**
+ * The website's own database, used only for website specific tables.
+ *
+ * Unlike the hotel database this one is not made of page furniture: only the
+ * health check reads it, and it reports the failure as part of its own answer.
+ * So the sanitised exception is passed on and the caller decides, which is why
+ * a website database that is down degrades the health check instead of blanking
+ * the console.
+ */
 
 /** The website's own database, used only for website specific tables. */
 function web_db(): PDO{

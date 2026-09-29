@@ -1,0 +1,65 @@
+# Hotel Paradise on the Nile
+#
+# Two jobs, both of which this folder was missing before.
+#
+# Needs mod_rewrite. XAMPP has it loaded, and htdocs is set to AllowOverride All,
+# so this file is read. On hosting, confirm the same; if mod_rewrite is absent
+# the rules below do nothing and the site falls back to what it did before.
+
+# ---------------------------------------------------------------------------
+# 1. Keep these folders off the web.
+#
+#    tools/      the installer creates databases, users and grants
+#    database/   the full schema and the seed data
+#    docs/, expanded-system-blueprint/, python-services/  project notes
+#
+#    The command line tools now refuse a web request themselves, but a file that
+#    does not need serving should not be reachable at all. Denying it here also
+#    means a new file dropped into tools/ is private by default rather than by
+#    whoever remembers to add a guard to it.
+#
+#    [F] is Forbidden. The pattern has no leading slash, because inside a
+#    .htaccess it is matched against the path relative to this directory, which
+#    is what a leading slash quietly broke before: the rule never matched, and
+#    /docs/ served a full index of itself.
+# ---------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(tools|database|docs|expanded-system-blueprint|python-services)(/|$) - [F,L]
+</IfModule>
+
+# Nothing sensitive of its own, but .env files and shell droppings have no
+# business being fetched either.
+<FilesMatch "^\.(env|git|htaccess)|~$|\.(bak|old|orig|sql|log|ini)$">
+    Require all denied
+</FilesMatch>
+
+# ---------------------------------------------------------------------------
+# 2. Make the site's own addresses work.
+#
+#    The public site is a React app: index.html loads, then the router draws
+#    /rooms, /dining, /contact, /about and so on without asking the server for
+#    anything. Clicking through worked. Opening one of those addresses directly,
+#    refreshing, bookmarking, or sending the link to anybody returned 404,
+#    because Apache had nothing to serve for /rooms.
+#
+#    So an unmatched address with no file extension is handed index.html and
+#    the router takes over.
+# ---------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Something that really is there wins: the built assets in assets/, the
+    # images, backend-php/, system/.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # A real request for something that is missing stays missing. Without this
+    # the rule below would answer a missing stylesheet, a wrong API path or a
+    # mistyped .php with the whole application and an HTTP 200, and the fault
+    # would show up as a blank page instead of a 404 in the log.
+    RewriteCond %{REQUEST_URI} !\.(php|json|js|mjs|css|map|png|jpe?g|gif|svg|ico|webp|avif|woff2?|ttf|eot|mp4|webm|txt|xml|map)$ [NC]
+
+    RewriteRule ^ index.html [L]
+</IfModule>

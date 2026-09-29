@@ -4,6 +4,20 @@ Everything below is done in the hosting panel's **phpMyAdmin**, by pasting one
 file at a time into the **SQL** tab and pressing **Go**. Five pastes, in this
 order. Do not skip a step or reorder them; each one depends on the last.
 
+> **On a machine you control, do not do this by hand.** Run
+> `php tools/install-databases.php` instead. It does all five steps in the only
+> order that works, reads the passwords from `backend-php/config.php` so there
+> is nothing to copy and no way for the two to disagree, and finishes by
+> connecting as the site does and saying so. It is safe to run again.
+>
+> The reason this page exists as a manual list is that the order is not
+> optional. Step 2 grants rights on tables named inside `hotelpardise_system`,
+> and a grant on a table that is not there yet is refused without a word. So
+> running the grants before the schema looks like it worked, and then the site
+> cannot sign in hours later for a reason that has nothing to do with the
+> grants. `tools/install-databases.php` puts the schema first precisely so that
+> trap cannot be stepped in.
+
 ## Before you start
 
 You need the database names and passwords from the hosting panel. Open
@@ -14,6 +28,29 @@ the database and the user with your account name, so the real name may be
 That prefix matters. If you change it anywhere, change it in **all** the files
 below *and* in `backend-php/config.php`, or the site will connect to an empty
 database and quietly show its built-in menu instead of your real one.
+
+## Step 0 — check before you seed
+
+Paste `database/00_CHECK_BEFORE_SEEDING.sql` and press **Go**, before anything
+else.
+
+It changes nothing. If the database is empty it says so, and you carry on. If
+it is already installed it stops with a message telling you to leave it alone
+and run `php tools/install-databases.php --check` instead.
+
+Do not skip this. Step 3 is plain `INSERT` statements with no
+`IF NOT EXISTS`, so pasting it into a database that already has the hotel in it
+fails on its first line with
+
+```
+#1062 Duplicate entry 'hotel-paradise-on-the-nile' for key 'slug'
+```
+
+and that error is not a problem to be fixed. It means the seed was already
+applied. Deleting the first row to get past it makes it worse, not better:
+`rooms`, `guests` and `suppliers` have no unique key, so the rest of the file
+would be inserted alongside the rows already there and come out **doubled**,
+with the console showing 138 rooms and two of everything else.
 
 ## Step 1 — the hotel's tables
 
@@ -113,7 +150,9 @@ https://your-domain/backend-php/api.php?act=health
 
 You are looking for `"ok":true`, and for both databases to show
 `"connected":true`. If it says `"ok":false`, the message under `hotel` or
-`website` says why, in plain words.
+`website` says why, in plain words. The same answer is what the management
+system itself shows now, as a page rather than as a PHP error, if it cannot
+reach the database at all.
 
 Then the menu:
 
@@ -121,8 +160,10 @@ Then the menu:
 https://your-domain/backend-php/api.php?act=menu
 ```
 
-`"menu_item_count"` of 81 on the health page, and 15 sections in the menu
-response, means the database is installed correctly.
+`"menu_items"` of 81 under `hotel` on the health page, and 15 sections in the
+menu response, means the database is installed correctly. If that number is
+small, `database/07_FULL_MENU_SEED.sql` has not been run, or was run before the
+schema gained the `published` column.
 
 ## Where the files go
 
@@ -160,6 +201,66 @@ hosting panel.
 **`Unknown database 'hotelpardise_system'`.** The prefix issue above. The
 database is really called something like `reagan_hotelpardise_system`.
 
+**`#1062 Duplicate entry 'hotel-paradise-on-the-nile' for key 'slug'`.**
+The seed is being pasted into a database that already has the hotel in it. The
+error is the seed doing its job, not a fault to be worked round.
+
+Two things cause it, and they need opposite answers:
+
+- *The site is already installed.* Stop. Nothing is broken. Run
+  `php tools/install-databases.php --check`, and if it says the site is
+  installed correctly, you are done. Do not run the seed.
+- *You are installing onto a database that is not empty*, because it is left
+  over from an earlier attempt or a different project. Either drop it and start
+  again from step 0, or point the site at it deliberately.
+
+**Do not delete the duplicate row to get past this.** `rooms`, `guests`,
+`suppliers`, `reservation_rooms` and `payments` have no unique key, so once the
+first statement is removed the rest of the seed is inserted alongside the rows
+already there and the database ends up with 138 rooms, two of every guest and
+two of every supplier. There is no error to stop it, because nothing about it
+is wrong as far as MySQL is concerned. Step 0 exists to catch this before that
+happens rather than after.
+
+**A file that says `USE hotel_paradise_nile;`.** That is the original database
+name, and it is wrong. Anything under `database/system_sql/` is archived and
+must not be run; the live install files are the four in `database/`, and they
+all say `USE hotelpardise_system;`. If phpMyAdmin is pointed at
+`hotel_paradise_nile`, you are in a database the application never connects to,
+and the seed will collide with itself there.
+
 **Everything looks right but the menu is empty.** Check
 `published_sections` from step 4. If it is 0, step 4 did not run against the
 database you are looking at.
+
+**`#1227 Access denied; you need (at least one of) the CREATE USER privilege(s)`.**
+The account being used cannot create MySQL accounts. This is not a problem with
+the hotel: it is the account. MySQL gives out `GRANT ALL` on a *single* database
+to hosting accounts and to this project's own `hotelpardise_system` user, and
+that is not the same thing as the right to create a user, which lives on `*.*`.
+
+Seen in phpMyAdmin, it almost always means the session is logged in as some
+other project's account. This server holds accounts for several sites, and the
+one phpMyAdmin signed in with has rights on *its* database, not on `*.*`. The
+fix is the logout link at the top of phpMyAdmin, then sign in again as `root`
+with an empty password, which is what XAMPP's root has.
+
+If the site is *already* installed correctly, none of this is needed. Run this
+and stop:
+
+```
+C:\xampp\php\php.exe tools\install-databases.php --check
+```
+
+It changes nothing and reports whether both databases open with the passwords in
+`config.php`. On a correctly installed XAMPP copy it answers *"the site is
+installed correctly: both databases open, both accounts work"*, and the accounts
+`hotelpardise_system` and `hotelpardise_website` already exist for both
+`@localhost` and `@127.0.0.1` with every grant below already applied. Running
+`database/system_sql/00_CREATE_DATABASE_USERS.sql` by hand in that situation
+achieves nothing, and if its placeholders have not been replaced it actively
+breaks the site by setting both passwords to the placeholder text.
+
+**The management system will not sign in, and the health page is `"ok":true`.**
+The database is fine and the problem is a password or a role, not a connection.
+`--check` will say so explicitly.

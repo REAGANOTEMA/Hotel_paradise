@@ -1,7 +1,32 @@
+-- ===========================================================================
+-- RUN database/00_CHECK_BEFORE_SEEDING.sql FIRST, IN phpMyAdmin.
+--
+-- This file is for a DATABASE THAT IS STILL EMPTY. It is plain INSERT
+-- statements with no IF NOT EXISTS, so running it against a database that
+-- already has the hotel in it stops dead on the first line:
+--
+--   #1062 Duplicate entry 'hotel-paradise-on-the-nile' for key 'slug'
+--
+-- and stops there for a reason. The error is the seed doing its job. Do not
+-- work round it, and do not delete the first row to make room: the rest of
+-- this file would then collide with the rooms, the menu and the reservations
+-- that are already there, and hotel_paradise_nile, suppliers and guests have no
+-- unique key, so those come out DOUBLED rather than refused.
+--
+-- If you have reached this point and the database is already populated, you
+-- want tools/install-databases.php, which notices that and does nothing:
+--
+--   C:\xampp\php\php.exe tools\install-databases.php --check
+--
+-- ===========================================================================
+
 USE hotelpardise_system;
 
 INSERT INTO hotels(name,slug,city,country,currency,timezone) VALUES
-('Hotel Paradise on the Nile','hotel-paradise-on-the-nile','Jinja','Uganda','UGX','Africa/Kampala');
+('Hotel Paradise on the Nile','hotel-paradise-on-the-nile','Jinja','Uganda','UGX','Africa/Kampala')
+ON DUPLICATE KEY UPDATE
+  name=VALUES(name), city=VALUES(city), country=VALUES(country),
+  currency=VALUES(currency), timezone=VALUES(timezone);
 
 INSERT INTO roles(name) VALUES
 ('super_admin'),('director'),('general_manager'),('accountant'),('cashier'),

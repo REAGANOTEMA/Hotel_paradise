@@ -1182,9 +1182,9 @@ CREATE TABLE IF NOT EXISTS system_settings (
 ) ENGINE=InnoDB;
 
 -- ---------- SEED MASTER DATA ----------
-INSERT INTO hotel_groups (id,name,legal_name,currency) VALUES
-(1,'Hotel Paradise on the Nile Group','Hotel Paradise on the Nile','UGX')
-ON DUPLICATE KEY UPDATE name=VALUES(name);
+INSERT INTO hotel_groups (id,name,legal_name) VALUES
+(1,'Hotel Paradise on the Nile Group','Hotel Paradise on the Nile')
+ON DUPLICATE KEY UPDATE name=VALUES(name), legal_name=VALUES(legal_name);
 
 INSERT INTO properties (id,hotel_group_id,name,code,city,country,currency,timezone)
 VALUES (1,1,'Hotel Paradise on the Nile','HPN-JINJA','Jinja','Uganda','UGX','Africa/Kampala')

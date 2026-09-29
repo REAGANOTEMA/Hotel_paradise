@@ -436,7 +436,10 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 USE hotelpardise_system;
 
 INSERT INTO hotels(name,slug,city,country,currency,timezone) VALUES
-('Hotel Paradise on the Nile','hotel-paradise-on-the-nile','Jinja','Uganda','UGX','Africa/Kampala');
+('Hotel Paradise on the Nile','hotel-paradise-on-the-nile','Jinja','Uganda','UGX','Africa/Kampala')
+ON DUPLICATE KEY UPDATE
+  name=VALUES(name), city=VALUES(city), country=VALUES(country),
+  currency=VALUES(currency), timezone=VALUES(timezone);
 
 INSERT INTO roles(name) VALUES
 ('super_admin'),('director'),('general_manager'),('accountant'),('cashier'),
@@ -657,8 +660,9 @@ INSERT INTO payments(hotel_id,user_id,invoice_id,reservation_id,amount,method,st
 USE hotelpardise_system;
 
 -- Keep the old front of house menu out of the way, keep the bar.
-DELETE mi FROM menu_items mi
+UPDATE menu_items mi
   JOIN menu_categories mc ON mc.id = mi.category_id
+  SET mi.active = 0
   WHERE mc.outlet = 'restaurant';
 
 DELETE FROM menu_categories WHERE outlet = 'restaurant';

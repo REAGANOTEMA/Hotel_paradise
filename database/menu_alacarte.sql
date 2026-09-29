@@ -19,8 +19,9 @@
 USE hotel_paradise_nile;
 
 -- Keep the old front of house menu out of the way, keep the bar.
-DELETE mi FROM menu_items mi
+UPDATE menu_items mi
   JOIN menu_categories mc ON mc.id = mi.category_id
+  SET mi.active = 0
   WHERE mc.outlet = 'restaurant';
 
 DELETE FROM menu_categories WHERE outlet = 'restaurant';
