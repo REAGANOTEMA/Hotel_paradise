@@ -482,43 +482,50 @@ INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('S', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
 FROM room_types rt JOIN (
  SELECT 101 n UNION ALL SELECT 102 UNION ALL SELECT 103 UNION ALL SELECT 104 UNION ALL SELECT 105 UNION ALL SELECT 106
-) num WHERE rt.name='Suite';
+) num WHERE rt.name='Suite'
+ON DUPLICATE KEY UPDATE room_type_id=VALUES(room_type_id), floor=VALUES(floor), status=VALUES(status);
 
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('F', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
 FROM room_types rt JOIN (
  SELECT 101 n UNION ALL SELECT 102 UNION ALL SELECT 103 UNION ALL SELECT 104 UNION ALL SELECT 105 UNION ALL SELECT 106 UNION ALL SELECT 107
-) num WHERE rt.name='Family Room';
+) num WHERE rt.name='Family Room'
+ON DUPLICATE KEY UPDATE room_type_id=VALUES(room_type_id), floor=VALUES(floor), status=VALUES(status);
 
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('T', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
 FROM room_types rt JOIN (
  SELECT 201 n UNION ALL SELECT 202 UNION ALL SELECT 203 UNION ALL SELECT 204 UNION ALL SELECT 205 UNION ALL SELECT 206 UNION ALL SELECT 207 UNION ALL SELECT 208 UNION ALL SELECT 209 UNION ALL SELECT 210 UNION ALL SELECT 211 UNION ALL SELECT 212
-) num WHERE rt.name='Triple Room';
+) num WHERE rt.name='Triple Room'
+ON DUPLICATE KEY UPDATE room_type_id=VALUES(room_type_id), floor=VALUES(floor), status=VALUES(status);
 
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('ED', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
 FROM room_types rt JOIN (
  SELECT 201 n UNION ALL SELECT 202 UNION ALL SELECT 203 UNION ALL SELECT 204 UNION ALL SELECT 205 UNION ALL SELECT 206 UNION ALL SELECT 207 UNION ALL SELECT 208 UNION ALL SELECT 209 UNION ALL SELECT 210
-) num WHERE rt.name='Executive Deluxe';
+) num WHERE rt.name='Executive Deluxe'
+ON DUPLICATE KEY UPDATE room_type_id=VALUES(room_type_id), floor=VALUES(floor), status=VALUES(status);
 
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('DD', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
 FROM room_types rt JOIN (
  SELECT 301 n UNION ALL SELECT 302 UNION ALL SELECT 303 UNION ALL SELECT 304 UNION ALL SELECT 305 UNION ALL SELECT 306 UNION ALL SELECT 307 UNION ALL SELECT 308 UNION ALL SELECT 309 UNION ALL SELECT 310 UNION ALL SELECT 311 UNION ALL SELECT 312 UNION ALL SELECT 313 UNION ALL SELECT 314
-) num WHERE rt.name='Deluxe Double';
+) num WHERE rt.name='Deluxe Double'
+ON DUPLICATE KEY UPDATE room_type_id=VALUES(room_type_id), floor=VALUES(floor), status=VALUES(status);
 
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('TW', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
 FROM room_types rt JOIN (
  SELECT 301 n UNION ALL SELECT 302 UNION ALL SELECT 303 UNION ALL SELECT 304 UNION ALL SELECT 305 UNION ALL SELECT 306 UNION ALL SELECT 307 UNION ALL SELECT 308 UNION ALL SELECT 309 UNION ALL SELECT 310 UNION ALL SELECT 311 UNION ALL SELECT 312
-) num WHERE rt.name='Standard Twin';
+) num WHERE rt.name='Standard Twin'
+ON DUPLICATE KEY UPDATE room_type_id=VALUES(room_type_id), floor=VALUES(floor), status=VALUES(status);
 
 INSERT INTO rooms(hotel_id,room_type_id,room_number,floor,status)
 SELECT 1, rt.id, CONCAT('SG', num.n), CONCAT('Floor ', FLOOR(num.n/100)), 'available'
 FROM room_types rt JOIN (
  SELECT 301 n UNION ALL SELECT 302 UNION ALL SELECT 303 UNION ALL SELECT 304 UNION ALL SELECT 305 UNION ALL SELECT 306 UNION ALL SELECT 307 UNION ALL SELECT 308
-) num WHERE rt.name='Standard Single';
+) num WHERE rt.name='Standard Single'
+ON DUPLICATE KEY UPDATE room_type_id=VALUES(room_type_id), floor=VALUES(floor), status=VALUES(status);
 
 INSERT INTO menu_categories(hotel_id,outlet,name) VALUES
 (1,'restaurant','Breakfast'),(1,'restaurant','Main Meals'),(1,'restaurant','Snacks'),
