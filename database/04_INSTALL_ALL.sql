@@ -449,7 +449,8 @@ ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 INSERT INTO departments(name,code) VALUES
 ('Front Desk','FD'),('Housekeeping','HK'),('Restaurant','RT'),('Bar','BB'),
-('Kitchen','KC'),('Maintenance','MT'),('Events','EV'),('Administration','AD'),('Laundry','LD');
+('Kitchen','KC'),('Maintenance','MT'),('Events','EV'),('Administration','AD'),('Laundry','LD')
+ON DUPLICATE KEY UPDATE name=VALUES(name), code=VALUES(code);
 
 INSERT INTO users(hotel_id,name,email,phone,password_hash,status) VALUES
 (1,'Reagan Otema (Administrator)','admin@hotelparadiseonthenile.info','0772 514 889','$2y$10$liAwR45r6zD/Vl8yzASI3ueZfJGKLnt3PSE2PRPjbL0vogo4Db5A2','active'),
@@ -464,7 +465,8 @@ INSERT INTO users(hotel_id,name,email,phone,password_hash,status) VALUES
 (1,'Storekeeper','store@hotelparadiseonthenile.info','+256 774 000 009','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active'),
 (1,'Procurement Officer','procurement@hotelparadiseonthenile.info','+256 774 000 010','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active'),
 (1,'Housekeeping','housekeeping@hotelparadiseonthenile.info','+256 774 000 011','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active'),
-(1,'Internal Auditor','auditor@hotelparadiseonthenile.info','+256 774 000 012','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active');
+(1,'Internal Auditor','auditor@hotelparadiseonthenile.info','+256 774 000 012','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active')
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), name=VALUES(name), email=VALUES(email), phone=VALUES(phone), password_hash=VALUES(password_hash), status=VALUES(status);
 
 INSERT INTO user_roles(user_id,role_id)
 SELECT u.id,r.id FROM users u JOIN roles r ON r.name =
@@ -482,7 +484,8 @@ SELECT u.id,r.id FROM users u JOIN roles r ON r.name =
     WHEN 'procurement@hotelparadiseonthenile.info' THEN 'procurement'
     WHEN 'housekeeping@hotelparadiseonthenile.info' THEN 'housekeeping'
     WHEN 'auditor@hotelparadiseonthenile.info' THEN 'auditor'
-    ELSE 'super_admin' END);
+    ELSE 'super_admin' END)
+ON DUPLICATE KEY UPDATE user_id=VALUES(user_id), role_id=VALUES(role_id);
 
 INSERT INTO room_types(hotel_id,name,description,max_guests,base_rate,active) VALUES
 (1,'Suite','The most spacious option at the hotel, ideal for a memorable stay.',3,248000,TRUE),
@@ -570,7 +573,8 @@ SELECT 1, c.id, m.name, m.dsc, m.price, m.track FROM menu_categories c JOIN (
 ) m ON m.cat=c.name;
 
 INSERT INTO inventory_categories(name) VALUES
-('Beverages'),('Kitchen'),('Housekeeping Supplies'),('Maintenance'),('Stationery');
+('Beverages'),('Kitchen'),('Housekeeping Supplies'),('Maintenance'),('Stationery')
+ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 INSERT INTO inventory_items(hotel_id,category_id,code,name,unit,reorder_level,active)
 SELECT 1,c.id,x.code,x.name,x.unit,x.reorder,1 FROM inventory_categories c JOIN (
@@ -621,7 +625,8 @@ INSERT INTO reservations(hotel_id,guest_id,booking_number,source,check_in,check_
 (1,1,'HPN-20260925-001','phone','2026-09-25 14:00','2026-09-28 11:00',2,0,'checked_in',248000,3,744000,0,744000,744000,'Birthday weekend by the Nile',NOW()),
 (1,2,'HPN-20260925-002','website','2026-10-02 14:00','2026-10-04 11:00',2,1,'confirmed',202000,2,404000,0,404000,0,'',NOW()),
 (1,3,'HPN-20260925-003','walk_in','2026-10-05 14:00','2026-10-07 11:00',3,0,'confirmed',213000,2,426000,0,426000,0,'',NOW()),
-(1,4,'HPN-20260925-004','agent','2026-09-20 14:00','2026-09-23 11:00',2,0,'checked_out',314000,3,942000,0,942000,942000,'Family holiday',NOW());
+(1,4,'HPN-20260925-004','agent','2026-09-20 14:00','2026-09-23 11:00',2,0,'checked_out',314000,3,942000,0,942000,942000,'Family holiday',NOW())
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), guest_id=VALUES(guest_id), booking_number=VALUES(booking_number), source=VALUES(source), check_in=VALUES(check_in), check_out=VALUES(check_out), adults=VALUES(adults), children=VALUES(children), status=VALUES(status), room_rate=VALUES(room_rate), nights=VALUES(nights), subtotal=VALUES(subtotal), tax=VALUES(tax), total=VALUES(total), paid=VALUES(paid), notes=VALUES(notes), created_at=VALUES(created_at);
 
 INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate)
 SELECT r.id, rt.id, rn.id, 1, r.room_rate FROM reservations r JOIN room_types rt ON rt.name='Suite' JOIN rooms rn ON rn.room_type_id=rt.id AND rn.room_number='S101' WHERE r.guest_id=1;
@@ -636,7 +641,8 @@ INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,night
 SELECT r.id, rt.id, rn.id, 1, r.room_rate FROM reservations r JOIN room_types rt ON rt.name='Family Room' JOIN rooms rn ON rn.room_type_id=rt.id AND rn.room_number='F101' WHERE r.guest_id=4;
 
 INSERT INTO invoices(hotel_id,guest_id,invoice_number,subtotal,tax,total,status) VALUES
-(1,1,'INV-HPN-20260925-0001',744000,0,744000,'paid');
+(1,1,'INV-HPN-20260925-0001',744000,0,744000,'paid')
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), guest_id=VALUES(guest_id), invoice_number=VALUES(invoice_number), subtotal=VALUES(subtotal), tax=VALUES(tax), total=VALUES(total), status=VALUES(status);
 
 INSERT INTO payments(hotel_id,user_id,invoice_id,reservation_id,amount,method,status) VALUES
 (1,6,1,1,744000,'cash','successful');
@@ -693,7 +699,8 @@ INSERT INTO menu_categories(hotel_id,outlet,name,eyebrow,blurb,sort_order) VALUE
 (1,'restaurant','House Specials','FOR THE TABLE','Platters built for sharing, served with two accompaniments.',120),
 (1,'restaurant','Asian Delicacies','FAR EAST','Mild creamy curries, biryani and coconut dishes with rice or chapatti.',130),
 (1,'restaurant','Desserts','SWEET FINISH','Fresh fruit, ice cream and a little sugar.',140),
-(1,'restaurant','Pizzeria Section','PIZZA','Baked to order on a stone base, 12 inch.',150);
+(1,'restaurant','Pizzeria Section','PIZZA','Baked to order on a stone base, 12 inch.',150)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), outlet=VALUES(outlet), name=VALUES(name), eyebrow=VALUES(eyebrow), blurb=VALUES(blurb), sort_order=VALUES(sort_order);
 
 -- ---------------------------------------------------------------------------
 -- 2. ITEMS
@@ -702,55 +709,61 @@ INSERT INTO menu_categories(hotel_id,outlet,name,eyebrow,blurb,sort_order) VALUE
 
 -- 2.1 Starters -----------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Mushroom Soup','Soups','Creamy forest mushroom soup, homemade style, served with a bread roll.',12000,10,0),
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Clear Chicken and Beef Noodle Soup','Soups','Fresh aromatic clear soup of julienned chicken, zucchini, carrots, onions and fresh noodles.',15000,20,0),
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Classic BLT Sandwich','Sandwich Corner','Crisp bacon, lettuce and ripe tomato in a toasted roll.',25000,30,0),
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Three Decker Sandwich','Sandwich Corner','Three decker of bacon, lettuce and tomato, served with chips.',NULL, -- suggested 28000
+(1,(SELECT id FROM menu_categories WHERE name = 'Starters' LIMIT 1),'Mushroom Soup','Soups','Creamy forest mushroom soup, homemade style, served with a bread roll.',12000,10,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Starters' LIMIT 1),'Clear Chicken and Beef Noodle Soup','Soups','Fresh aromatic clear soup of julienned chicken, zucchini, carrots, onions and fresh noodles.',15000,20,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Starters' LIMIT 1),'Classic BLT Sandwich','Sandwich Corner','Crisp bacon, lettuce and ripe tomato in a toasted roll.',25000,30,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Starters' LIMIT 1),'Three Decker Sandwich','Sandwich Corner','Three decker of bacon, lettuce and tomato, served with chips.',NULL, -- suggested 28000
  40,0),
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Tuna Melt','Sandwich Corner','Tuna chunks folded with mayonnaise, red onion, tomato and lettuce.',25000,50,0),
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Paradise Club Sandwich','Sandwich Corner','Triple decker of grilled beef, chicken breast, bacon, cheese, onions and mayo, served with chips.',30000,60,0),
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Grilled Veggies Salad','Salads','Assorted seasoned grilled vegetables with bell pepper, carrots, zucchini and onions, laced with cashew nut flakes and dots.',18000,70,0),
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Grilled Chicken Salad','Salads','Grilled boneless chicken strips married with onions, carrots, cucumber and tomato, garnished with black olives on a bed of lettuce.',15000,80,0),
-(1,(SELECT id FROM menu_categories WHERE name='Starters'),'Tuna Salad','Salads','Tuna fish, red onion and tomato infused in fresh mayonnaise, layered on lettuce with avocado slices.',20000,90,0);
+(1,(SELECT id FROM menu_categories WHERE name = 'Starters' LIMIT 1),'Tuna Melt','Sandwich Corner','Tuna chunks folded with mayonnaise, red onion, tomato and lettuce.',25000,50,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Starters' LIMIT 1),'Paradise Club Sandwich','Sandwich Corner','Triple decker of grilled beef, chicken breast, bacon, cheese, onions and mayo, served with chips.',30000,60,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Starters' LIMIT 1),'Grilled Veggies Salad','Salads','Assorted seasoned grilled vegetables with bell pepper, carrots, zucchini and onions, laced with cashew nut flakes and dots.',18000,70,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Starters' LIMIT 1),'Grilled Chicken Salad','Salads','Grilled boneless chicken strips married with onions, carrots, cucumber and tomato, garnished with black olives on a bed of lettuce.',15000,80,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Starters' LIMIT 1),'Tuna Salad','Salads','Tuna fish, red onion and tomato infused in fresh mayonnaise, layered on lettuce with avocado slices.',20000,90,0)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.2 Egg Dishes ----------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Egg Dishes'),'Spanish Omelet','Egg Dishes','Traditional eggs with red onion, mushroom, green pepper and tomato, served with chips.',15000,10,0),
-(1,(SELECT id FROM menu_categories WHERE name='Egg Dishes'),'Avocado with an Egg','Egg Dishes','Avocado and a fried egg on toasted bread with a garnish.',13000,20,0),
-(1,(SELECT id FROM menu_categories WHERE name='Egg Dishes'),'Bacon and Cheese Omelet','Egg Dishes','Crunchy bacon folded into eggs, infused with cheese and a touch of pepper sauce, served with fries.',NULL, -- suggested 18000
- 30,0);
+(1,(SELECT id FROM menu_categories WHERE name = 'Egg Dishes' LIMIT 1),'Spanish Omelet','Egg Dishes','Traditional eggs with red onion, mushroom, green pepper and tomato, served with chips.',15000,10,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Egg Dishes' LIMIT 1),'Avocado with an Egg','Egg Dishes','Avocado and a fried egg on toasted bread with a garnish.',13000,20,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Egg Dishes' LIMIT 1),'Bacon and Cheese Omelet','Egg Dishes','Crunchy bacon folded into eggs, infused with cheese and a touch of pepper sauce, served with fries.',NULL, -- suggested 18000
+ 30,0)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.3 Burgers -------------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Burgers'),'Vegetable Burger','Burgers','Crumbed fried vegetable patty with tomato, lettuce, onion and chili sauce.',20000,10,0),
-(1,(SELECT id FROM menu_categories WHERE name='Burgers'),'Chicken and Beef Burger','Burgers','Grilled chicken or beef patty, regular or Cajun, with lettuce, onion, tomato and chili mayo.',NULL, -- 75,000 in the draft, confirm before printing
+(1,(SELECT id FROM menu_categories WHERE name = 'Burgers' LIMIT 1),'Vegetable Burger','Burgers','Crumbed fried vegetable patty with tomato, lettuce, onion and chili sauce.',20000,10,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Burgers' LIMIT 1),'Chicken and Beef Burger','Burgers','Grilled chicken or beef patty, regular or Cajun, with lettuce, onion, tomato and chili mayo.',NULL, -- 75,000 in the draft, confirm before printing
  20,1),
-(1,(SELECT id FROM menu_categories WHERE name='Burgers'),'BBQ Beef and Chicken Patty','Burgers','Grilled beef or chicken patty finished in a tangy barbecue sauce.',NULL, -- suggested 30000
+(1,(SELECT id FROM menu_categories WHERE name = 'Burgers' LIMIT 1),'BBQ Beef and Chicken Patty','Burgers','Grilled beef or chicken patty finished in a tangy barbecue sauce.',NULL, -- suggested 30000
  30,1),
-(1,(SELECT id FROM menu_categories WHERE name='Burgers'),'Double Beef and Bacon Burger','Burgers','Double beef, bacon, cheese, caramelized lettuce, pickles and tomato.',NULL, -- suggested 32000
- 40,1);
+(1,(SELECT id FROM menu_categories WHERE name = 'Burgers' LIMIT 1),'Double Beef and Bacon Burger','Burgers','Double beef, bacon, cheese, caramelized lettuce, pickles and tomato.',NULL, -- suggested 32000
+ 40,1)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.4 Wraps ---------------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Wraps and Rolex'),'Chicken Wrap','Wraps','Shredded chicken, crispy lettuce, onion, tomato and avocado in mayo or sweet chili, rolled in a tortilla, served plain.',20000,10,0),
-(1,(SELECT id FROM menu_categories WHERE name='Wraps and Rolex'),'Crunchy Vegetable Wrap','Wraps','Sautéed vegetables with a touch of cheddar cheese, served plain.',14000,20,0),
-(1,(SELECT id FROM menu_categories WHERE name='Wraps and Rolex'),'Chicken and Beef Rolex','Wraps','Eggs, chicken or beef cubes, red onion, tomato and green pepper, served plain.',15000,30,0);
+(1,(SELECT id FROM menu_categories WHERE name = 'Wraps and Rolex' LIMIT 1),'Chicken Wrap','Wraps','Shredded chicken, crispy lettuce, onion, tomato and avocado in mayo or sweet chili, rolled in a tortilla, served plain.',20000,10,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Wraps and Rolex' LIMIT 1),'Crunchy Vegetable Wrap','Wraps','Sautéed vegetables with a touch of cheddar cheese, served plain.',14000,20,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Wraps and Rolex' LIMIT 1),'Chicken and Beef Rolex','Wraps','Eggs, chicken or beef cubes, red onion, tomato and green pepper, served plain.',15000,30,0)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.5 Snacks -------------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Snacks'),'Chilli Beef and Veggie Chips','Snacks','Chips tossed in mild Indian spices, finished with tomato sauce and fresh coriander. Beef or vegetarian.',NULL, -- suggested 20000
+(1,(SELECT id FROM menu_categories WHERE name = 'Snacks' LIMIT 1),'Chilli Beef and Veggie Chips','Snacks','Chips tossed in mild Indian spices, finished with tomato sauce and fresh coriander. Beef or vegetarian.',NULL, -- suggested 20000
  10,0),
-(1,(SELECT id FROM menu_categories WHERE name='Snacks'),'Chicken Spring Rolls','Snacks','A pair of crisp chicken spring rolls.',6000,20,0),
-(1,(SELECT id FROM menu_categories WHERE name='Snacks'),'Liver with Shredded Vegetables','Snacks','Flakes of liver tossed with shredded vegetables, served with rice or chips.',30000,30,0),
-(1,(SELECT id FROM menu_categories WHERE name='Snacks'),'Fish Fingers with Chips','Snacks','Crisp breaded fish fingers with a portion of chips.',30000,40,1),
-(1,(SELECT id FROM menu_categories WHERE name='Snacks'),'Chicken Wings with Chips','Snacks','Crispy chicken wings with a portion of chips.',28000,50,1),
-(1,(SELECT id FROM menu_categories WHERE name='Snacks'),'Chicken Lollipops with Chips','Snacks','Chicken lollipops with a portion of chips.',30000,60,1);
+(1,(SELECT id FROM menu_categories WHERE name = 'Snacks' LIMIT 1),'Chicken Spring Rolls','Snacks','A pair of crisp chicken spring rolls.',6000,20,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Snacks' LIMIT 1),'Liver with Shredded Vegetables','Snacks','Flakes of liver tossed with shredded vegetables, served with rice or chips.',30000,30,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Snacks' LIMIT 1),'Fish Fingers with Chips','Snacks','Crisp breaded fish fingers with a portion of chips.',30000,40,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Snacks' LIMIT 1),'Chicken Wings with Chips','Snacks','Crispy chicken wings with a portion of chips.',28000,50,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Snacks' LIMIT 1),'Chicken Lollipops with Chips','Snacks','Chicken lollipops with a portion of chips.',30000,60,1)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.6 Italian Special Pastas -----------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Italian Special Pastas'),'Pasta Arrabbiata','Pasta','Pasta in tomato and fresh chili sauce, topped with melted cheese and served with toast.',20000,10,0),
-(1,(SELECT id FROM menu_categories WHERE name='Italian Special Pastas'),'Pasta Bolognese','Pasta','Pasta with minced meat, garlic, tomato and red wine sauce, topped with melted cheese and served with toast.',25000,20,0),
-(1,(SELECT id FROM menu_categories WHERE name='Italian Special Pastas'),'Pasta Carbonara','Pasta','Pasta with egg and bacon cream sauce, topped with cheese and served with toast.',30000,30,0);
+(1,(SELECT id FROM menu_categories WHERE name = 'Italian Special Pastas' LIMIT 1),'Pasta Arrabbiata','Pasta','Pasta in tomato and fresh chili sauce, topped with melted cheese and served with toast.',20000,10,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Italian Special Pastas' LIMIT 1),'Pasta Bolognese','Pasta','Pasta with minced meat, garlic, tomato and red wine sauce, topped with melted cheese and served with toast.',25000,20,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Italian Special Pastas' LIMIT 1),'Pasta Carbonara','Pasta','Pasta with egg and bacon cream sauce, topped with cheese and served with toast.',30000,30,0)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.7 Fisherman's Offer ---------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
@@ -763,23 +776,26 @@ INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,so
 (1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer'),'Large Whole Tilapia, Fried or Steamed','Whole Fish','Large king tilapia, fried or steamed, served with chips.',NULL, -- suggested 65000
  40,1),
 (1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer'),'Grilled Tilapia Fillet, Spinach and Cheese','Whole Fish','Grilled tilapia fillet in a creamy spinach and cheese sauce, with an accompaniment of your choice.',NULL, -- suggested 40000
- 50,1);
+ 50,1)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.8 Fish Fillets ---------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Fish Fillets'),'Paradise Rustica Fish','Fish Fillets','Grilled tilapia fillet layered on guacamole and salsa with hot chili, served with rustica sauce, garnished with black olives.',32000,10,1),
-(1,(SELECT id FROM menu_categories WHERE name='Fish Fillets'),'Mombasa Fish','Fish Fillets','Tilapia fillet crumbed in coconut and fried to your liking, served with chips or rice.',32000,20,1),
-(1,(SELECT id FROM menu_categories WHERE name='Fish Fillets'),'Deep Fried or Pan Grilled Fillet','Fish Fillets','Coated tilapia fillet, deep fried or pan grilled, served with rice or chips.',32000,30,1),
-(1,(SELECT id FROM menu_categories WHERE name='Fish Fillets'),'Catch of the Day','Fish Fillets','Pan grilled Nile perch fillet served with rice or chips.',NULL, -- suggested 38000
- 40,1);
+(1,(SELECT id FROM menu_categories WHERE name = 'Fish Fillets' LIMIT 1),'Paradise Rustica Fish','Fish Fillets','Grilled tilapia fillet layered on guacamole and salsa with hot chili, served with rustica sauce, garnished with black olives.',32000,10,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Fish Fillets' LIMIT 1),'Mombasa Fish','Fish Fillets','Tilapia fillet crumbed in coconut and fried to your liking, served with chips or rice.',32000,20,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Fish Fillets' LIMIT 1),'Deep Fried or Pan Grilled Fillet','Fish Fillets','Coated tilapia fillet, deep fried or pan grilled, served with rice or chips.',32000,30,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Fish Fillets' LIMIT 1),'Catch of the Day','Fish Fillets','Pan grilled Nile perch fillet served with rice or chips.',NULL, -- suggested 38000
+ 40,1)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.9 Chicken Lovers --------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Chicken Lovers'),'Chicken Saute','Chicken Lovers','Sautéed chicken with brown mushroom and spring onion, served with mushroom sauce and an accompaniment of your choice.',30000,10,1),
-(1,(SELECT id FROM menu_categories WHERE name='Chicken Lovers'),'BBQ Chicken Drumstick','Chicken Lovers','Three well marinated tender chicken drumsticks, fried and tossed in barbecue sauce with a touch of fresh coriander.',30000,20,1),
-(1,(SELECT id FROM menu_categories WHERE name='Chicken Lovers'),'Grilled Quarter Chicken Breast or Thigh','Chicken Lovers','Well marinated charcoal or oven roasted tender chicken, served with chips or an accompaniment of your choice.',45000,30,1),
-(1,(SELECT id FROM menu_categories WHERE name='Chicken Lovers'),'Paradise Grilled Farm Chicken','Chicken Lovers','A well marinated chicken grilled to perfection with aromatic seasonings.',40000,40,1),
-(1,(SELECT id FROM menu_categories WHERE name='Chicken Lovers'),'Pan Fried Boneless Chicken Breast','Chicken Lovers','Fresh pan fried boneless chicken breast resting in mushroom sauce.',43000,50,1);
+(1,(SELECT id FROM menu_categories WHERE name = 'Chicken Lovers' LIMIT 1),'Chicken Saute','Chicken Lovers','Sautéed chicken with brown mushroom and spring onion, served with mushroom sauce and an accompaniment of your choice.',30000,10,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Chicken Lovers' LIMIT 1),'BBQ Chicken Drumstick','Chicken Lovers','Three well marinated tender chicken drumsticks, fried and tossed in barbecue sauce with a touch of fresh coriander.',30000,20,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Chicken Lovers' LIMIT 1),'Grilled Quarter Chicken Breast or Thigh','Chicken Lovers','Well marinated charcoal or oven roasted tender chicken, served with chips or an accompaniment of your choice.',45000,30,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Chicken Lovers' LIMIT 1),'Paradise Grilled Farm Chicken','Chicken Lovers','A well marinated chicken grilled to perfection with aromatic seasonings.',40000,40,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Chicken Lovers' LIMIT 1),'Pan Fried Boneless Chicken Breast','Chicken Lovers','Fresh pan fried boneless chicken breast resting in mushroom sauce.',43000,50,1)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.10 Steaks and Grills -----------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
@@ -791,61 +807,67 @@ INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,so
 (1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Honey Glazed Hawaiian Beef Skewers','Steaks','Three skewered beef sticks with pineapple and vegetable condiments, laced with natural honey, served with chips.',35000,60,1),
 (1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Beef Wet Fry','Steaks','Tender well seasoned beef fillet infused in a flavoured black peppercorn sauce, served with rice.',15000,70,1),
 (1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Goat Muchomo','Steaks','Well marinated chunks of goat roasted in organic fresh vegetables with a touch of tomato and barbecue sauce.',NULL, -- suggested 32000
- 80,1);
+ 80,1)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.11 Pork ---------------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Pork'),'Paradise Grilled Pork Chops','Pork','Perfectly marinated tender pork chops grilled to your liking, served with an accompaniment of your choice.',NULL, -- suggested 35000
+(1,(SELECT id FROM menu_categories WHERE name = 'Pork' LIMIT 1),'Paradise Grilled Pork Chops','Pork','Perfectly marinated tender pork chops grilled to your liking, served with an accompaniment of your choice.',NULL, -- suggested 35000
  10,1),
-(1,(SELECT id FROM menu_categories WHERE name='Pork'),'Honey Mustard Glazed Pork Ribs','Pork','Tender juicy ribs of pork roasted in onion rings and honey.',NULL, -- suggested 38000
+(1,(SELECT id FROM menu_categories WHERE name = 'Pork' LIMIT 1),'Honey Mustard Glazed Pork Ribs','Pork','Tender juicy ribs of pork roasted in onion rings and honey.',NULL, -- suggested 38000
  20,1),
-(1,(SELECT id FROM menu_categories WHERE name='Pork'),'Pork Muchomo','Pork','Boneless chunks of pork roasted in aromatic vegetables, served with chips.',NULL, -- suggested 28000
+(1,(SELECT id FROM menu_categories WHERE name = 'Pork' LIMIT 1),'Pork Muchomo','Pork','Boneless chunks of pork roasted in aromatic vegetables, served with chips.',NULL, -- suggested 28000
  30,1),
-(1,(SELECT id FROM menu_categories WHERE name='Pork'),'Sweet and Sour Pork','Pork','Well seasoned chunks of pork glazed in a tangy sweet and sour sauce, sprinkled with spring onion, served with an accompaniment of your choice.',NULL, -- suggested 30000
+(1,(SELECT id FROM menu_categories WHERE name = 'Pork' LIMIT 1),'Sweet and Sour Pork','Pork','Well seasoned chunks of pork glazed in a tangy sweet and sour sauce, sprinkled with spring onion, served with an accompaniment of your choice.',NULL, -- suggested 30000
  40,1),
-(1,(SELECT id FROM menu_categories WHERE name='Pork'),'Pork Muchomo and Chops Platter','Pork','A combination of pork muchomo and pork chops on a single platter, served with an accompaniment of your choice.',35000,50,1);
+(1,(SELECT id FROM menu_categories WHERE name = 'Pork' LIMIT 1),'Pork Muchomo and Chops Platter','Pork','A combination of pork muchomo and pork chops on a single platter, served with an accompaniment of your choice.',35000,50,1)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.12 House Specials -----------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='House Specials'),'Paradise Lusaniya','House Specials','A family platter for three to four, with grilled chicken, beef steak and goat muchomo, served with brown pilau, matoke or potato wedges.',100000,10,1),
-(1,(SELECT id FROM menu_categories WHERE name='House Specials'),'Mixed Grill Platter','House Specials','A platter for two with grilled chicken, beef muchomo and roasted goat, served with two accompaniments of your choice.',80000,20,1);
+(1,(SELECT id FROM menu_categories WHERE name = 'House Specials' LIMIT 1),'Paradise Lusaniya','House Specials','A family platter for three to four, with grilled chicken, beef steak and goat muchomo, served with brown pilau, matoke or potato wedges.',100000,10,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'House Specials' LIMIT 1),'Mixed Grill Platter','House Specials','A platter for two with grilled chicken, beef muchomo and roasted goat, served with two accompaniments of your choice.',80000,20,1)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.13 Asian Delicacies ----------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Asian Delicacies'),'Mixed Vegetable Curry','Curries','Assorted vegetables in a creamy sauce, served with white rice or mashed potatoes.',20000,10,0),
-(1,(SELECT id FROM menu_categories WHERE name='Asian Delicacies'),'Vegetable Korma','Curries','Mixed vegetables cooked in a mild creamy almond and cashew nut sauce, served with rice or chapatti.',25000,20,0),
-(1,(SELECT id FROM menu_categories WHERE name='Asian Delicacies'),'Veggie Biryani','Biryani','Spiced diced mixed vegetables cooked in a creamy sauce and mixed with rice.',25000,30,0),
-(1,(SELECT id FROM menu_categories WHERE name='Asian Delicacies'),'Chicken, Fish or Goat Biryani','Biryani','Cubes of chicken, fish or goat cooked in a creamy sauce and mixed with rice.',32000,40,1),
-(1,(SELECT id FROM menu_categories WHERE name='Asian Delicacies'),'Chicken Coconut Curry','Curries','Grilled and cubed boneless chicken in a golden sauce infused with coconut, served with rice or chapatti.',32000,50,1);
+(1,(SELECT id FROM menu_categories WHERE name = 'Asian Delicacies' LIMIT 1),'Mixed Vegetable Curry','Curries','Assorted vegetables in a creamy sauce, served with white rice or mashed potatoes.',20000,10,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Asian Delicacies' LIMIT 1),'Vegetable Korma','Curries','Mixed vegetables cooked in a mild creamy almond and cashew nut sauce, served with rice or chapatti.',25000,20,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Asian Delicacies' LIMIT 1),'Veggie Biryani','Biryani','Spiced diced mixed vegetables cooked in a creamy sauce and mixed with rice.',25000,30,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Asian Delicacies' LIMIT 1),'Chicken, Fish or Goat Biryani','Biryani','Cubes of chicken, fish or goat cooked in a creamy sauce and mixed with rice.',32000,40,1),
+(1,(SELECT id FROM menu_categories WHERE name = 'Asian Delicacies' LIMIT 1),'Chicken Coconut Curry','Curries','Grilled and cubed boneless chicken in a golden sauce infused with coconut, served with rice or chapatti.',32000,50,1)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.14 Desserts -----------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Desserts'),'Fresh Fruit Platter','Desserts','A generous and visually appealing presentation of seasonal fruit such as mango, papaya, melon, orange, grapes and passion fruit.',NULL, -- suggested 20000
+(1,(SELECT id FROM menu_categories WHERE name = 'Desserts' LIMIT 1),'Fresh Fruit Platter','Desserts','A generous and visually appealing presentation of seasonal fruit such as mango, papaya, melon, orange, grapes and passion fruit.',NULL, -- suggested 20000
  10,0),
-(1,(SELECT id FROM menu_categories WHERE name='Desserts'),'Fruit Salad','Desserts','A combination of diced fruits sprinkled with passion fruit syrup.',15000,20,0),
-(1,(SELECT id FROM menu_categories WHERE name='Desserts'),'Banana Crepe','Desserts','A very thin pancake filled with sliced banana and chocolate syrup, garnished with orange slices.',15000,30,0),
-(1,(SELECT id FROM menu_categories WHERE name='Desserts'),'Ice Cream','Desserts','Three scoops, chocolate, vanilla or strawberry.',9000,40,0),
-(1,(SELECT id FROM menu_categories WHERE name='Desserts'),'Cake of the Day','Desserts','A slice of the cake of the day, chocolate, marble, lemon, banana, red velvet and more.',7000,50,0),
-(1,(SELECT id FROM menu_categories WHERE name='Desserts'),'Affogato Espresso Ice Cream','Desserts','Two scoops of ice cream of your choice with 60ml of espresso coffee.',15000,60,0),
-(1,(SELECT id FROM menu_categories WHERE name='Desserts'),'Banana Split','Desserts','Banana and ice cream garnished with chocolate sauce, whipped cream, flaked almonds and cherries.',15000,70,0);
+(1,(SELECT id FROM menu_categories WHERE name = 'Desserts' LIMIT 1),'Fruit Salad','Desserts','A combination of diced fruits sprinkled with passion fruit syrup.',15000,20,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Desserts' LIMIT 1),'Banana Crepe','Desserts','A very thin pancake filled with sliced banana and chocolate syrup, garnished with orange slices.',15000,30,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Desserts' LIMIT 1),'Ice Cream','Desserts','Three scoops, chocolate, vanilla or strawberry.',9000,40,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Desserts' LIMIT 1),'Cake of the Day','Desserts','A slice of the cake of the day, chocolate, marble, lemon, banana, red velvet and more.',7000,50,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Desserts' LIMIT 1),'Affogato Espresso Ice Cream','Desserts','Two scoops of ice cream of your choice with 60ml of espresso coffee.',15000,60,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Desserts' LIMIT 1),'Banana Split','Desserts','Banana and ice cream garnished with chocolate sauce, whipped cream, flaked almonds and cherries.',15000,70,0)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- 2.15 Pizzeria ------------------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Classic Margherita','Pizza','Tomato, fresh basil, oregano and mozzarella.',27000,10,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Sweet Vegetarian','Pizza','Red, yellow and green bell pepper, sweet corn and mozzarella.',27000,20,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Quattro Stagioni','Pizza','Ham, olives, mushroom, artichokes and mozzarella.',30000,30,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Pepperoni','Pizza','Tomato, green pepper, onion, pepperoni and mozzarella.',30000,40,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Hawaiian','Pizza','Ham or bacon, pineapple and mozzarella.',NULL, -- suggested 32000
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Classic Margherita','Pizza','Tomato, fresh basil, oregano and mozzarella.',27000,10,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Sweet Vegetarian','Pizza','Red, yellow and green bell pepper, sweet corn and mozzarella.',27000,20,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Quattro Stagioni','Pizza','Ham, olives, mushroom, artichokes and mozzarella.',30000,30,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Pepperoni','Pizza','Tomato, green pepper, onion, pepperoni and mozzarella.',30000,40,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Hawaiian','Pizza','Ham or bacon, pineapple and mozzarella.',NULL, -- suggested 32000
  50,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Farmer''s','Pizza','Chicken, mushroom and mozzarella.',30000,60,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Tuna','Pizza','Tuna fillet, tomato, green pepper and mozzarella, topped with a boiled egg.',NULL, -- suggested 34000
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Farmer''s','Pizza','Chicken, mushroom and mozzarella.',30000,60,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Tuna','Pizza','Tuna fillet, tomato, green pepper and mozzarella, topped with a boiled egg.',NULL, -- suggested 34000
  70,1),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Diavola','Pizza','Tomato, chili salami and mozzarella.',30000,80,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Bolognese','Pizza','Spicy minced meat, tomato and mozzarella.',NULL, -- 10,000 in the draft, confirm
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Diavola','Pizza','Tomato, chili salami and mozzarella.',30000,80,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Bolognese','Pizza','Spicy minced meat, tomato and mozzarella.',NULL, -- 10,000 in the draft, confirm
  90,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Capricciosa','Pizza','Salami, black olives, artichokes, capers, mushroom and mozzarella.',30000,100,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Calzone','Calzone','Minced meat, green pepper and capsicum rolled in a half moon of bread.',30000,110,0),
-(1,(SELECT id FROM menu_categories WHERE name='Pizzeria Section'),'Assorted Meat and Salami','Pizza','Assorted meat, salami, mushroom, green pepper, onion and mozzarella.',35000,120,0);
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Capricciosa','Pizza','Salami, black olives, artichokes, capers, mushroom and mozzarella.',30000,100,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Calzone','Calzone','Minced meat, green pepper and capsicum rolled in a half moon of bread.',30000,110,0),
+(1,(SELECT id FROM menu_categories WHERE name = 'Pizzeria Section' LIMIT 1),'Assorted Meat and Salami','Pizza','Assorted meat, salami, mushroom, green pepper, onion and mozzarella.',35000,120,0)
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
 -- ---------------------------------------------------------------------------
 -- 3. VERIFICATION — everything still waiting on a rate

@@ -14,7 +14,8 @@ ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 INSERT INTO departments(name,code) VALUES
 ('Front Desk','FD'),('Housekeeping','HK'),('Restaurant','RT'),('Bar','BB'),
-('Kitchen','KC'),('Maintenance','MT'),('Events','EV'),('Administration','AD'),('Laundry','LD');
+('Kitchen','KC'),('Maintenance','MT'),('Events','EV'),('Administration','AD'),('Laundry','LD')
+ON DUPLICATE KEY UPDATE name=VALUES(name), code=VALUES(code);
 
 INSERT INTO users(hotel_id,name,email,phone,password_hash,status) VALUES
 (1,'Reagan Otema (Administrator)','admin@hotelparadiseonthenile.info','0772 514 889','$2y$10$liAwR45r6zD/Vl8yzASI3ueZfJGKLnt3PSE2PRPjbL0vogo4Db5A2','active'),
@@ -29,7 +30,8 @@ INSERT INTO users(hotel_id,name,email,phone,password_hash,status) VALUES
 (1,'Storekeeper','store@hotelparadiseonthenile.info','+256 774 000 009','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active'),
 (1,'Procurement Officer','procurement@hotelparadiseonthenile.info','+256 774 000 010','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active'),
 (1,'Housekeeping','housekeeping@hotelparadiseonthenile.info','+256 774 000 011','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active'),
-(1,'Internal Auditor','auditor@hotelparadiseonthenile.info','+256 774 000 012','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active');
+(1,'Internal Auditor','auditor@hotelparadiseonthenile.info','+256 774 000 012','$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2','active')
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), name=VALUES(name), email=VALUES(email), phone=VALUES(phone), password_hash=VALUES(password_hash), status=VALUES(status);
 
 INSERT INTO user_roles(user_id,role_id)
 SELECT u.id,r.id FROM users u JOIN roles r ON r.name =
@@ -47,7 +49,8 @@ SELECT u.id,r.id FROM users u JOIN roles r ON r.name =
     WHEN 'procurement@hotelparadiseonthenile.info' THEN 'procurement'
     WHEN 'housekeeping@hotelparadiseonthenile.info' THEN 'housekeeping'
     WHEN 'auditor@hotelparadiseonthenile.info' THEN 'auditor'
-    ELSE 'super_admin' END);
+    ELSE 'super_admin' END)
+ON DUPLICATE KEY UPDATE user_id=VALUES(user_id), role_id=VALUES(role_id);
 
 INSERT INTO room_types(hotel_id,name,description,max_guests,base_rate,active) VALUES
 (1,'Suite','The most spacious option at the hotel, ideal for a memorable stay.',3,248000,TRUE),
@@ -135,7 +138,8 @@ SELECT 1, c.id, m.name, m.dsc, m.price, m.track FROM menu_categories c JOIN (
 ) m ON m.cat=c.name;
 
 INSERT INTO inventory_categories(name) VALUES
-('Beverages'),('Kitchen'),('Housekeeping Supplies'),('Maintenance'),('Stationery');
+('Beverages'),('Kitchen'),('Housekeeping Supplies'),('Maintenance'),('Stationery')
+ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 INSERT INTO inventory_items(hotel_id,category_id,code,name,unit,reorder_level,active)
 SELECT 1,c.id,x.code,x.name,x.unit,x.reorder,1 FROM inventory_categories c JOIN (
@@ -186,7 +190,8 @@ INSERT INTO reservations(hotel_id,guest_id,booking_number,source,check_in,check_
 (1,1,'HPN-20260925-001','phone','2026-09-25 14:00','2026-09-28 11:00',2,0,'checked_in',248000,3,744000,0,744000,744000,'Birthday weekend by the Nile',NOW()),
 (1,2,'HPN-20260925-002','website','2026-10-02 14:00','2026-10-04 11:00',2,1,'confirmed',202000,2,404000,0,404000,0,'',NOW()),
 (1,3,'HPN-20260925-003','walk_in','2026-10-05 14:00','2026-10-07 11:00',3,0,'confirmed',213000,2,426000,0,426000,0,'',NOW()),
-(1,4,'HPN-20260925-004','agent','2026-09-20 14:00','2026-09-23 11:00',2,0,'checked_out',314000,3,942000,0,942000,942000,'Family holiday',NOW());
+(1,4,'HPN-20260925-004','agent','2026-09-20 14:00','2026-09-23 11:00',2,0,'checked_out',314000,3,942000,0,942000,942000,'Family holiday',NOW())
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), guest_id=VALUES(guest_id), booking_number=VALUES(booking_number), source=VALUES(source), check_in=VALUES(check_in), check_out=VALUES(check_out), adults=VALUES(adults), children=VALUES(children), status=VALUES(status), room_rate=VALUES(room_rate), nights=VALUES(nights), subtotal=VALUES(subtotal), tax=VALUES(tax), total=VALUES(total), paid=VALUES(paid), notes=VALUES(notes), created_at=VALUES(created_at);
 
 INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate)
 SELECT r.id, rt.id, rn.id, 1, r.room_rate FROM reservations r JOIN room_types rt ON rt.name='Suite' JOIN rooms rn ON rn.room_type_id=rt.id AND rn.room_number='S101' WHERE r.guest_id=1;
@@ -201,7 +206,8 @@ INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,night
 SELECT r.id, rt.id, rn.id, 1, r.room_rate FROM reservations r JOIN room_types rt ON rt.name='Family Room' JOIN rooms rn ON rn.room_type_id=rt.id AND rn.room_number='F101' WHERE r.guest_id=4;
 
 INSERT INTO invoices(hotel_id,guest_id,invoice_number,subtotal,tax,total,status) VALUES
-(1,1,'INV-HPN-20260925-0001',744000,0,744000,'paid');
+(1,1,'INV-HPN-20260925-0001',744000,0,744000,'paid')
+ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), guest_id=VALUES(guest_id), invoice_number=VALUES(invoice_number), subtotal=VALUES(subtotal), tax=VALUES(tax), total=VALUES(total), status=VALUES(status);
 
 INSERT INTO payments(hotel_id,user_id,invoice_id,reservation_id,amount,method,status) VALUES
 (1,6,1,1,744000,'cash','successful');

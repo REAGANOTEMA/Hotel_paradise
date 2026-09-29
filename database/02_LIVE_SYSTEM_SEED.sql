@@ -83,7 +83,8 @@ SELECT u.id,r.id FROM users u JOIN roles r ON r.name =
     ELSE 'super_admin' END)
 WHERE NOT EXISTS (
   SELECT 1 FROM user_roles ur WHERE ur.user_id = u.id AND ur.role_id = r.id
-);
+)
+ON DUPLICATE KEY UPDATE user_id=VALUES(user_id), role_id=VALUES(role_id);
 
 -- room_types has no unique key, so this one needs the anti-join form.
 INSERT INTO room_types(hotel_id,name,description,max_guests,base_rate,active)
