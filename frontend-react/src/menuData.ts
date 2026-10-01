@@ -509,11 +509,11 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
       {
         name: 'Pork Courses',
         items: [
-          item('Pork Muchomo', 'Boneless pork chunks roasted and tossed in aromatic vegetables.', 27000, 'Pork Courses'),
-          item('Paradise Grilled Pork Chop', 'Marinated pork chops, grilled to perfection.', 32000, 'Pork Courses'),
-          item('Honey Mustard Glazed Pork Ribs', 'Pork ribs tossed in onion rings and honey.', 32000, 'Pork Courses'),
-          item('Sweet and Sour Pork Chops', 'Pork chunks glazed in a sweet and sour sauce with spring onions and a side.', 38000, 'Pork Courses'),
-          item('Trio of Pork Platter', 'A combination of pork ribs, pork muchomo and pork chops with a side.', 45000, 'Pork Courses')
+          item('Pork Muchomo', 'Boneless pork chunks roasted and tossed in aromatic vegetables.', 30000, 'Pork Courses'),
+          item('Paradise Grilled Pork Chops', 'Perfectly marinated tender pork chops, grilled to satisfaction.', 35000, 'Pork Courses'),
+          item('Honey Mustard Glazed Pork Ribs', 'Tender and juicy pork ribs tossed in onion rings and honey.', 35000, 'Pork Courses'),
+          item('Sweet and Sour Pork', 'Well seasoned pork chunks glazed in a tangy sweet and sour sauce with spring onions.', 38000, 'Pork Courses'),
+          item('Trio of Pork', 'A combination of pork ribs, pork muchomo and pork chops on a single platter.', 45000, 'Pork Courses')
         ]
       }
     ]
@@ -560,10 +560,11 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
       {
         name: 'Italian Pastas',
         items: [
-          item('Pasta a la Arrabiata', 'Pasta in tomato and fresh chili sauce.', 18000, 'Italian Pastas'),
+          item('Pasta Arabiata', 'Pasta in a tomato and fresh chili sauce, topped with cheese.', 20000, 'Italian Pastas'),
           item('Pasta a la Napolitana', 'Pasta in herby tomato and cheese sauce.', 18000, 'Italian Pastas'),
           item('Pasta Genovese', 'Pasta in pesto sauce.', 22000, 'Italian Pastas'),
-          item('Pasta a la Carbonara', 'Pasta with egg and bacon in a creamy sauce.', 22000, 'Italian Pastas'),
+          item('Pasta a la Carbonara', 'Pasta with egg and bacon in a creamy sauce, topped with cheese.', 25000, 'Italian Pastas'),
+          item('Pasta Classic Bolognaise', 'Pasta in a minced meat, garlic, tomato and red wine sauce, topped with cheese.', 25000, 'Italian Pastas'),
           item('Pasta ala Cavolfiore e Salsiccia', 'Pasta with cauliflower and sausage in an egg and bacon creamy sauce.', 22000, 'Italian Pastas'),
           item('Pasta a la Contadina', 'Pasta in chicken, garlic, coriander, white wine and a creamy coconut sauce.', 25000, 'Italian Pastas')
         ]
