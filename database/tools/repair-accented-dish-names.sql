@@ -57,7 +57,7 @@ USE `hotelpardise_system`;
 
 -- 1. Before: show what is there now, so the change can be compared.
 SELECT id, name, HEX(name) AS hex, published
-  FROM menu_items
+  FROM hotelpardise_system.menu_items
  WHERE id IN (62, 1570, 1588, 1601, 2802, 2871, 2872, 2873)
  ORDER BY id;
 
@@ -66,7 +66,7 @@ SELECT id, name, HEX(name) AS hex, published
 --    "Sauté" and correcting a name in place fails with #1062 against a row
 --    that looks nothing like it. These temporary names are plain ASCII so
 --    this statement cannot itself be the thing that breaks.
-UPDATE menu_items
+UPDATE hotelpardise_system.menu_items
    SET name = CONCAT('ZZ RETIRED ', id,
                      ' - mojibake name, correct dish is id ',
                      CASE id WHEN 2802 THEN '62' ELSE '1570, 1588 or 1601' END),
@@ -77,20 +77,20 @@ UPDATE menu_items
 --    publish it. Written with HEX and CONVERT because an unprintable byte in a
 --    SQL file is the failure this file exists to undo:
 --    436869636B656E2053617574C3A9 is "Chicken Sauté" in utf8mb4.
-UPDATE menu_items
+UPDATE hotelpardise_system.menu_items
    SET name = CONVERT(UNHEX('436869636B656E2053617574C3A9') USING utf8mb4),
        published = 1
  WHERE id = 62 AND hotel_id = 1;
 
 -- 4. Republish the three Chinese Corner dishes. Their names were already
 --    correct and are left exactly as they are.
-UPDATE menu_items SET published = 1
+UPDATE hotelpardise_system.menu_items SET published = 1
  WHERE hotel_id = 1 AND id IN (1570, 1588, 1601);
 
 -- 6. After. 62, 1570, 1588 and 1601 must be published with clean names. The
 --    four retired rows must all read "ZZ RETIRED" and be unpublished.
 SELECT id, name, HEX(name) AS hex, published, price, category_id
-  FROM menu_items
+  FROM hotelpardise_system.menu_items
  WHERE id IN (62, 1570, 1588, 1601, 2802, 2871, 2872, 2873)
  ORDER BY id;
 
@@ -113,6 +113,6 @@ SELECT
 --    characters is itself mangled by whichever client sends it, which reports
 --    a clean database as dirty.
 SELECT COUNT(*) AS mojibake_names
-  FROM menu_items
+  FROM hotelpardise_system.menu_items
  WHERE hotel_id = 1 AND published = 1
    AND HEX(name) REGEXP 'C383|C382|C3A2E282AC';
