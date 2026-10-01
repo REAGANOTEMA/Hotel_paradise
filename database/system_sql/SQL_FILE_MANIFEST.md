@@ -57,7 +57,7 @@ SQL files: 47
 Every file in this list that carries the a la carte menu is superseded and
 now opens with a banner saying so. It is the old proposed menu: 15 sections
 and 81 dishes, many of them with no rate. The kitchen has since filed the real
-menu, 19 sections and 225 dishes, every one of them priced.
+menu, 19 sections and 251 dishes, every one of them priced.
 
 The menu you install is the generated seed, one folder up:
 

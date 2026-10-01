@@ -2,7 +2,10 @@
   "restaurant": {
     "name": "Hotel Paradise on the Nile Ltd",
     "location": "Plot 12, 19 & 25, Kiira Lane, Jinja, Uganda",
-    "phone": ["+256 759 504928", "+256 773 565 668"],
+    "phone": [
+      "+256 759 504 928",
+      "+256 773 565 668"
+    ],
     "email": "hotel@hotelparadiseonthenile.info",
     "website": "www.hotelparadiseonthenile.info",
     "certification": "UNBS Certified (US 130:2017)"
@@ -11,326 +14,1258 @@
     {
       "category": "Starters & Salads",
       "items": [
-        { "name": "Mixed Garden Salad", "price_ugx": 12000, "description": "Mixed lettuce, cucumber, tomatoes, onions, and avocado." },
-        { "name": "Greek Salad", "price_ugx": 15000, "description": "Tomatoes, red onions, cucumber, lettuce, feta cheese, black olives, and red cabbage." },
-        { "name": "Avocado & Lettuce Salad", "price_ugx": 15000, "description": "Well-designed platter of lettuce, avocado, onions, cherry tomatoes, carrot shavings, finished with 1000 Island dressing." },
-        { "name": "Tuna Salad", "price_ugx": 20000, "description": "White tuna with mayo, boiled eggs, cucumber, celery, and tomatoes on a bed of fresh lettuce." },
-        { "name": "Chicken Oriental Salad", "price_ugx": 20000, "description": "Chicken with mayo, cucumber, pineapple, celery, and tomatoes." },
-        { "name": "Caesar Salad", "price_ugx": 22000, "description": "Grilled chicken cubes, avocado, carrot, lettuce, tomato, croutons, and Parmesan cheese shavings." },
-        { "name": "Chef Salad", "price_ugx": 22000, "description": "Crunchy lettuce, chicken flakes, beef strips, tomatoes, onions, bell peppers, topped with boiled Irish potatoes and a hard-boiled egg." }
+        {
+          "name": "Mixed Garden Salad",
+          "price_ugx": 12000,
+          "description": "Mixed lettuce, cucumber, tomatoes, onions, and avocado."
+        },
+        {
+          "name": "Greek Salad",
+          "price_ugx": 15000,
+          "description": "Tomatoes, red onions, cucumber, lettuce, feta cheese, black olives, and red cabbage."
+        },
+        {
+          "name": "Avocado & Lettuce Salad",
+          "price_ugx": 15000,
+          "description": "Well-designed platter of lettuce, avocado, onions, cherry tomatoes, carrot shavings, finished with 1000 Island dressing."
+        },
+        {
+          "name": "Tuna Salad",
+          "price_ugx": 20000,
+          "description": "Tuna fish, red onion, tomatoes, infused in fresh mayonnaise layered on a base of lettuce with avocado slices."
+        },
+        {
+          "name": "Chicken Oriental Salad",
+          "price_ugx": 20000,
+          "description": "Chicken with mayo, cucumber, pineapple, celery, and tomatoes."
+        },
+        {
+          "name": "Caesar Salad",
+          "price_ugx": 22000,
+          "description": "Grilled chicken cubes, avocado, carrot, lettuce, tomato, croutons, and Parmesan cheese shavings."
+        },
+        {
+          "name": "Chef Salad",
+          "price_ugx": 22000,
+          "description": "Crunchy lettuce, chicken flakes, beef strips, tomatoes, onions, bell peppers, topped with boiled Irish potatoes and a hard-boiled egg."
+        },
+        {
+          "name": "Grilled Vegetables Salad",
+          "price_ugx": 18000,
+          "description": "Assorted seasoned grilled vegetables with bell pepper, carrots, zucchini, onions, laced with cashew nut flakes and dates."
+        },
+        {
+          "name": "Grilled Chicken Salad",
+          "price_ugx": 20000,
+          "description": "Grilled boneless chicken strips married with onions, carrots, cucumber, and tomatoes, garnished with black olives on a bed of lettuce."
+        }
       ]
     },
     {
       "category": "Soups",
       "items": [
-        { "name": "Mushroom Soup", "price_ugx": 12000, "description": "Creamy or clear freshly made forest mushroom homemade style. Served with a bread roll." },
-        { "name": "Clear Vegetable Broth", "price_ugx": 12000, "description": "Fresh homemade vegetable soup served with garlic bread roll." },
-        { "name": "Cream of Tomato Soup", "price_ugx": 12000, "description": "Puree of tomatoes finished with dairy cream, accompanied with croutons." },
-        { "name": "Ginger Carrot Soup", "price_ugx": 12000, "description": "Creamy soup with a hint of ginger and dairy cream, accompanied with toast." },
-        { "name": "Beef / Chicken Broth", "price_ugx": 15000, "description": "Clear chicken or beef simmered in aromatic vegetables. Served with bread roll or toast." },
-        { "name": "Chicken Noodle Soup", "price_ugx": 15000, "description": "Aromatic clear soup with julienne chicken, zucchini, carrots, onions, and fresh noodles." }
+        {
+          "name": "Mushroom Soup",
+          "price_ugx": 12000,
+          "description": "Clear/Cream freshly forest mushroom, homemade style served with a Bread roll."
+        },
+        {
+          "name": "Clear Vegetable Broth",
+          "price_ugx": 12000,
+          "description": "Fresh homemade vegetable soup served with garlic bread roll."
+        },
+        {
+          "name": "Cream of Tomato Soup",
+          "price_ugx": 12000,
+          "description": "Puree of tomatoes finished with dairy cream, accompanied with croutons."
+        },
+        {
+          "name": "Ginger Carrot Soup",
+          "price_ugx": 12000,
+          "description": "Creamy soup with a hint of ginger and dairy cream, accompanied with toast."
+        },
+        {
+          "name": "Clear Beef Noodle Soup",
+          "price_ugx": 15000,
+          "description": "Fresh aromatic clear soup comprising julienne of beef, zucchini, carrots, onions, and fresh noodles."
+        },
+        {
+          "name": "Clear Chicken Noodle Soup",
+          "price_ugx": 15000,
+          "description": "Fresh aromatic clear soup comprising julienne of chicken, zucchini, carrots, onions, and fresh noodles."
+        }
       ]
     },
     {
       "category": "Omelets & Snacks",
       "note": "All omelets are served with chips.",
       "items": [
-        { "name": "French Cinnamon Toast", "price_ugx": 12000, "description": "Garnished with mini fruit." },
-        { "name": "Eggs and Toast", "price_ugx": 12000, "description": "Two eggs cooked to your style with home fries." },
-        { "name": "Mushroom and Cheese Omelet", "price_ugx": 15000, "description": "Savory mushroom and cheddar topped with a grilled tomato." },
-        { "name": "Mexican Omelet", "price_ugx": 15000, "description": "Mushroom, green pepper, cheese, tomato, and green chili." },
-        { "name": "Spanish Omelet", "price_ugx": 15000, "description": "Traditional egg with red onion, mushroom, green pepper, and tomatoes." },
-        { "name": "Bacon Cheese Omelet", "price_ugx": 17000, "description": "Crunchy bacon in three eggs infused in cheese with a touch of pepper spice." },
-        { "name": "Yummy Chicken Omelet", "price_ugx": 17000, "description": "Diced chicken with a hint of cheese infused with onions and tomatoes." },
-        { "name": "Chicken Gizzards", "price_ugx": 18000, "description": "Boiled, fried, and finished in homemade tomato sauce. Served with chips." },
-        { "name": "Fish Fingers", "price_ugx": 25000, "description": "Tender breaded fish served with tartar sauce." },
-        { "name": "Chicken Wings / Lollipops", "price_ugx": 28000, "description": "Eight fried winglets in tomato sauce with your choice of side." },
-        { "name": "Liver Princess", "price_ugx": 25000, "description": "Flakes of liver sautéed with shredded vegetables. Served with rice, chips, or matooke." },
-        { "name": "Mushroom Fries", "price_ugx": 12000, "description": "Crispy chips tossed in brown mushroom sauce." },
-        { "name": "Masala Chips", "price_ugx": 14000, "description": "Chips tossed in hot or mild Indian spices, tomato sauce, and coriander leaves." },
-        { "name": "Bacon Cheese Fries", "price_ugx": 22000, "description": "Diced bacon, spring onions, tomato sauce, tossed with chips and finished with cheese." },
-        { "name": "Vegetable Spring Rolls (Set)", "price_ugx": 3000 },
-        { "name": "Beef / Vegetable Samosas (Set)", "price_ugx": 4000 },
-        { "name": "Chicken Samosas (Pair)", "price_ugx": 5000 },
-        { "name": "Chicken Spring Rolls (Pair)", "price_ugx": 5000 }
+        {
+          "name": "French Cinnamon Toast",
+          "price_ugx": 12000,
+          "description": "Garnished with mini fruit."
+        },
+        {
+          "name": "Eggs and Toast",
+          "price_ugx": 12000,
+          "description": "Two eggs cooked to your style with home fries."
+        },
+        {
+          "name": "Mushroom and Cheese Omelet",
+          "price_ugx": 15000,
+          "description": "Savory mushroom and cheddar topped with a grilled tomato."
+        },
+        {
+          "name": "Mexican Omelet",
+          "price_ugx": 15000,
+          "description": "Mushroom, green pepper, cheese, tomato, and green chili."
+        },
+        {
+          "name": "Spanish Omelet",
+          "price_ugx": 15000,
+          "description": "Traditional egg with red onion, mushroom, green pepper, and tomatoes served with chips."
+        },
+        {
+          "name": "Bacon Cheese Omelet",
+          "price_ugx": 18000,
+          "description": "Crunchy bacon in eggs, infused in cheese with a touch of pepper spice, served with fries."
+        },
+        {
+          "name": "Yummy Chicken Omelet",
+          "price_ugx": 17000,
+          "description": "Diced chicken with a hint of cheese infused with onions and tomatoes."
+        },
+        {
+          "name": "Chicken Gizzards",
+          "price_ugx": 18000,
+          "description": "Boiled, fried, and finished in homemade tomato sauce. Served with chips."
+        },
+        {
+          "name": "Fish Fingers",
+          "price_ugx": 25000,
+          "description": "Tender breaded fish served with tartar sauce."
+        },
+        {
+          "name": "Chicken Wings with Chips",
+          "price_ugx": 28000,
+          "description": "Chicken wings served with chips."
+        },
+        {
+          "name": "Chicken Lollipops with Chips",
+          "price_ugx": 30000,
+          "description": "Chicken lollipops served with chips."
+        },
+        {
+          "name": "Mushroom Fries",
+          "price_ugx": 12000,
+          "description": "Crispy chips tossed in brown mushroom sauce."
+        },
+        {
+          "name": "Masala Chips",
+          "price_ugx": 15000,
+          "description": "Chips toasted in hot/mild Indian spices finished with tomato sauce and fresh coriander."
+        },
+        {
+          "name": "Bacon Cheese Fries",
+          "price_ugx": 22000,
+          "description": "Diced bacon, spring onions, tomato sauce, tossed with chips and finished with cheese."
+        },
+        {
+          "name": "Vegetable Spring Rolls",
+          "price_ugx": 5000,
+          "description": "Vegetable spring rolls."
+        },
+        {
+          "name": "Trio of Samosas (Beef)",
+          "price_ugx": 5000,
+          "description": "Three pieces of beef samosas."
+        },
+        {
+          "name": "Trio of Samosas (Vegetable)",
+          "price_ugx": 5000,
+          "description": "Three pieces of vegetable samosas."
+        },
+        {
+          "name": "Chicken Samosas (Pair)",
+          "price_ugx": 5000
+        },
+        {
+          "name": "Pair of Chicken Spring Rolls",
+          "price_ugx": 6000,
+          "description": "Two chicken spring rolls."
+        },
+        {
+          "name": "Avocado with an Egg",
+          "price_ugx": 15000,
+          "description": "Avocado with an egg and toasted bread with a garnish."
+        },
+        {
+          "name": "Plain Chips with Garnish",
+          "price_ugx": 10000,
+          "description": "Plain chips with garnish."
+        },
+        {
+          "name": "Chapatti Plain",
+          "price_ugx": 6000,
+          "description": "Plain chapatti."
+        }
       ]
     },
     {
       "category": "Sandwiches",
       "note": "All sandwiches come with chips or salad.",
       "items": [
-        { "name": "Tomato, Cheese & Avocado Sandwich", "price_ugx": 18000, "description": "Grated cheddar cheese, tomatoes, lettuce, and avocado on whole wheat, white bread, or French loaf." },
-        { "name": "Pulled Pork Sandwich", "price_ugx": 24000, "description": "Pork flakes in mayo or sweet chili sauce, lettuce, brown onions, tomatoes, and cucumber pickles." },
-        { "name": "Chicken Salad Sandwich", "price_ugx": 24000, "description": "Chicken with mayo, lettuce, onions, celery, and tomatoes on a three-decker toast." },
-        { "name": "Classic BLT Sandwich", "price_ugx": 25000, "description": "Three-decker bacon, lettuce, and tomato sandwich." },
-        { "name": "Steak Cheese Sandwich", "price_ugx": 25000, "description": "Tender steak with cheese, tomato, and lettuce." },
-        { "name": "BBQ Beef Sandwich", "price_ugx": 25000, "description": "Beef strips sautéed with vegetables, onions, bell pepper, and mushroom in tangy BBQ sauce." },
-        { "name": "Tuna Melt Sandwich", "price_ugx": 25000, "description": "Tuna chunks with mayo, red onions, tomatoes, and lettuce." },
-        { "name": "Paradise Club Sandwich", "price_ugx": 27000, "description": "Triple-decker sandwich with sliced grilled beef, chicken breast, bacon, cheese, onions, and mayo." }
+        {
+          "name": "Tomato, Cheese & Avocado Sandwich",
+          "price_ugx": 18000,
+          "description": "Grated cheddar cheese, tomatoes, lettuce, and avocado on whole wheat, white bread, or French loaf."
+        },
+        {
+          "name": "Pulled Pork Sandwich",
+          "price_ugx": 24000,
+          "description": "Pork flakes in mayo or sweet chili sauce, lettuce, brown onions, tomatoes, and cucumber pickles."
+        },
+        {
+          "name": "Chicken Salad Sandwich",
+          "price_ugx": 24000,
+          "description": "Chicken with mayo, lettuce, onions, celery, and tomatoes on a three-decker toast."
+        },
+        {
+          "name": "Classic BLT Sandwich",
+          "price_ugx": 25000,
+          "description": "Three-decker bacon, lettuce, and tomato sandwich served with chips."
+        },
+        {
+          "name": "Steak Cheese Sandwich",
+          "price_ugx": 25000,
+          "description": "Tender steak with cheese, tomato, and lettuce."
+        },
+        {
+          "name": "BBQ Beef Sandwich",
+          "price_ugx": 25000,
+          "description": "Beef strips sautÃ©ed with vegetables, onions, bell pepper, and mushroom in tangy BBQ sauce."
+        },
+        {
+          "name": "Tuna Melt Sandwich",
+          "price_ugx": 25000,
+          "description": "Tuna chunks flavored with mayo, red onions, tomatoes, and lettuce."
+        },
+        {
+          "name": "Paradise Club Sandwich",
+          "price_ugx": 30000,
+          "description": "Triple-decker sandwich of sliced grilled beef, chicken breast, bacon, cheese, onions, and mayo served with chips."
+        }
       ]
     },
     {
       "category": "Burgers",
       "note": "Burgers can be served with chips and salad.",
       "items": [
-        { "name": "BBQ Burger", "price_ugx": 18000, "description": "Grilled beef or chicken patty finished in a tangy BBQ sauce." },
-        { "name": "Chicken Burger", "price_ugx": 20000, "description": "Grilled regular or Cajun chicken patty with lettuce, onions, tomatoes, and chili mayo." },
-        { "name": "Vegetable Burger", "price_ugx": 20000, "description": "Crumbed fried vegetable patty with tomatoes, lettuce, onions, and chili mayo." },
-        { "name": "Mushroom & Cheese Burger", "price_ugx": 22000, "description": "Grilled beef patty topped with melted cheese and creamy mushroom sauce." },
-        { "name": "King Burger", "price_ugx": 27000, "description": "Double patty, bacon, cheese, caramelized onions, lettuce, pickles, and tomato." }
+        {
+          "name": "BBQ Burger",
+          "price_ugx": 27000,
+          "description": "Grilled beef or chicken patty finished in a tangy BBQ sauce."
+        },
+        {
+          "name": "Chicken Burger",
+          "price_ugx": 25000,
+          "description": "Grilled chicken patty (regular or Cajun) with lettuce, onions, tomatoes, and chili mayo."
+        },
+        {
+          "name": "Vegetable Burger",
+          "price_ugx": 20000,
+          "description": "Crumbed fried vegetable patty with tomatoes, lettuce, onions, and chili mayo sauce."
+        },
+        {
+          "name": "Mushroom & Cheese Burger",
+          "price_ugx": 22000,
+          "description": "Grilled beef patty topped with melted cheese and creamy mushroom sauce."
+        },
+        {
+          "name": "King Burger",
+          "price_ugx": 35000,
+          "description": "Double patty, bacon, cheese, caramelized onions, lettuce, pickles, and tomatoes."
+        },
+        {
+          "name": "Beef Burger",
+          "price_ugx": 25000,
+          "description": "Grilled beef patty (regular or Cajun) with lettuce, onions, tomatoes, and chili mayo."
+        }
       ]
     },
     {
       "category": "Rolex Wraps & Burritos",
       "items": [
-        { "name": "Crunchy Vegetable Wrap", "price_ugx": 12000, "description": "Sautéed vegetables and lettuce with cheddar cheese wrapped in a plain tortilla." },
-        { "name": "Beef Rolex", "price_ugx": 13000, "description": "Combination of eggs, beef, red onions, tomatoes, and green pepper." },
-        { "name": "Chicken Rolex", "price_ugx": 14000, "description": "Combination of three eggs, grilled chicken cubes, red onions, tomatoes, and green pepper." },
-        { "name": "Chicken Wrap", "price_ugx": 17000, "description": "Crispy lettuce, shredded chicken, onions, tomatoes, avocado, in mayo or sweet chili wrapped in tortilla." },
-        { "name": "Classic BLT Wrap", "price_ugx": 17000, "description": "Crispy bacon, lettuce, and tomatoes in a tortilla." },
-        { "name": "Chicken / Beef Burrito", "price_ugx": 27000, "description": "Grilled tender strips with white onions wrapped in tortilla, topped with cheese, served with guacamole." },
-        { "name": "Fajita Chicken / Beef", "price_ugx": 30000, "description": "Sautéed with coriander, onions, and oyster sauce. Choice of tortilla or sizzler plate, served with rice." }
+        {
+          "name": "Crunchy Vegetable Wrap",
+          "price_ugx": 14000,
+          "description": "Sautéed vegetables with a touch of cheddar cheese, served plain."
+        },
+        {
+          "name": "Beef Rolex",
+          "price_ugx": 15000,
+          "description": "A flavorful combination of eggs, beef cubes, red onions, tomatoes, and green pepper, served plain."
+        },
+        {
+          "name": "Chicken Rolex",
+          "price_ugx": 15000,
+          "description": "A flavorful combination of eggs, chicken cubes, red onions, tomatoes, and green pepper, served plain."
+        },
+        {
+          "name": "Chicken Wrap",
+          "price_ugx": 20000,
+          "description": "Shredded chicken, crispy lettuce, onions, tomatoes, avocado infused in mayo or sweet chili wrapped in a tortilla, served plain."
+        },
+        {
+          "name": "Classic BLT Wrap",
+          "price_ugx": 17000,
+          "description": "Crispy bacon, lettuce, and tomatoes in a tortilla."
+        },
+        {
+          "name": "Chicken / Beef Burrito",
+          "price_ugx": 27000,
+          "description": "Grilled tender strips with white onions wrapped in tortilla, topped with cheese, served with guacamole."
+        },
+        {
+          "name": "Fajita Chicken / Beef",
+          "price_ugx": 30000,
+          "description": "Sautéed with coriander, onions, and oyster sauce. Choice of tortilla or sizzler plate, served with rice."
+        }
       ]
     },
     {
       "category": "Fisherman's Offer (Seafood)",
       "items": [
-        { "name": "Fish Florentine", "price_ugx": 30000, "description": "Grilled tilapia fillet with creamy spinach and cheese." },
-        { "name": "Poached Fish", "price_ugx": 30000, "description": "Tilapia fillet gently cooked in rich fish stock with fresh mushrooms and potatoes." },
-        { "name": "Mombasa Fish", "price_ugx": 30000, "description": "Tilapia fillet crumbed with coconut and fried." },
-        { "name": "Catch of the Day (Nile Perch)", "price_ugx": 30000, "description": "Fresh Nile perch fillet grilled to perfection." },
-        { "name": "Paradise Rustica Fish", "price_ugx": 32000, "description": "Grilled tilapia fillet layered on guacamole, salsa with hot chili, rustica sauce, and black olives." },
-        { "name": "Premium Whole Fish", "price_ugx": 37000, "description": "Steamed or fried whole fish." },
-        { "name": "King Size Whole Fish", "price_ugx": 42000, "description": "Fish fillet (English, grilled, or crumbed) on spinach drizzled with mushroom sauce." },
-        { "name": "Fried King Prawns", "price_ugx": 45000, "description": "King prawns prepared in seasoned butter sauce." },
-        { "name": "Golden Grilled Salmon", "price_ugx": 45000, "description": "Grilled salmon on a bed of spinach, laced with white mushroom sauce." }
+        {
+          "name": "Fish Florentine",
+          "price_ugx": 32000,
+          "description": "Grilled tilapia fillet with creamy spinach and cheese served with any food accompaniment of your choice."
+        },
+        {
+          "name": "Poached Fish",
+          "price_ugx": 30000,
+          "description": "Tilapia fillet gently cooked in rich fish stock with fresh mushrooms and potatoes."
+        },
+        {
+          "name": "Mombasa Fish",
+          "price_ugx": 32000,
+          "description": "A tilapia fillet crumbed with coconut and fried to perfection served with chips or rice."
+        },
+        {
+          "name": "Catch of the Day (Nile Perch)",
+          "price_ugx": 32000,
+          "description": "Pan-grilled Nile Perch fillet served with rice or chips."
+        },
+        {
+          "name": "Paradise Rustica Fish",
+          "price_ugx": 32000,
+          "description": "Grilled tilapia fillet layered on top of guacamole, salsa with hot chili, served with rustica sauce garnished with black olives."
+        },
+        {
+          "name": "Premium Whole Fish",
+          "price_ugx": 37000,
+          "description": "Steamed or fried whole fish."
+        },
+        {
+          "name": "King Size Whole Fish",
+          "price_ugx": 42000,
+          "description": "Fish fillet (English, grilled, or crumbed) on spinach drizzled with mushroom sauce."
+        },
+        {
+          "name": "Fried King Prawns",
+          "price_ugx": 45000,
+          "description": "King prawns prepared in seasoned butter sauce."
+        },
+        {
+          "name": "Golden Grilled Salmon",
+          "price_ugx": 45000,
+          "description": "Grilled salmon on a bed of spinach, laced with white mushroom sauce."
+        },
+        {
+          "name": "Medium Fried Tilapia",
+          "price_ugx": 38000,
+          "description": "Medium fried tilapia served with chips."
+        },
+        {
+          "name": "Medium Steamed Tilapia",
+          "price_ugx": 38000,
+          "description": "Medium steamed tilapia served with chips."
+        },
+        {
+          "name": "Premium Wet Fried Tilapia",
+          "price_ugx": 40000,
+          "description": "Premium wet fried tilapia."
+        },
+        {
+          "name": "Grilled Premium Fish",
+          "price_ugx": 43000,
+          "description": "Whole oven-grilled oil-free premium tilapia served with an accompaniment of your choice."
+        },
+        {
+          "name": "Large Fried Tilapia",
+          "price_ugx": 43000,
+          "description": "Large fried tilapia served with chips."
+        },
+        {
+          "name": "Large Steamed Tilapia",
+          "price_ugx": 43000,
+          "description": "Large steamed tilapia served with chips."
+        },
+        {
+          "name": "King Wet Fried Tilapia",
+          "price_ugx": 45000,
+          "description": "King wet fried tilapia."
+        },
+        {
+          "name": "Grilled King Fish",
+          "price_ugx": 48000,
+          "description": "Whole oven-grilled oil-free king tilapia served with an accompaniment of your choice."
+        },
+        {
+          "name": "Deep Fried Fish Fillet",
+          "price_ugx": 32000,
+          "description": "Coated tilapia fish fillet served with either rice or chips."
+        },
+        {
+          "name": "Pan Grilled Fish Fillet",
+          "price_ugx": 32000,
+          "description": "Coated tilapia fish fillet served with either rice or chips."
+        },
+        {
+          "name": "Fish Fingers with Chips",
+          "price_ugx": 30000,
+          "description": "Fish fingers accompanied with chips."
+        }
       ]
     },
     {
       "category": "House Specials & Platters",
       "items": [
-        { "name": "Mixed Grill Platter (2 Pax)", "price_ugx": 80000, "description": "Platter for 2 with grilled chicken, beef muchomo, roasted goat, pair of sausages, and choice of side." },
-        { "name": "Paradise Lusaniya (3-4 Pax)", "price_ugx": 100000, "description": "Family platter for 3-4 people: grilled chicken, beef steak, goat muchomo, brown pilau, matooke or wedges." }
+        {
+          "name": "Mixed Grill Platter",
+          "price_ugx": 80000,
+          "description": "A platter for 2 pax comprising grilled chicken, beef muchomo, and roasted goat served with 2 food accompaniments of your choice."
+        },
+        {
+          "name": "Paradise Lusaniya",
+          "price_ugx": 100000,
+          "description": "A family platter for 3-4 pax comprising grilled chicken, beef steak, goat mochomo, accompanied with brown pilau, matooke, or potato wedges."
+        }
       ]
     },
     {
       "category": "Chicken Dishes",
       "items": [
-        { "name": "Chicken Sauté", "price_ugx": 27000, "description": "Sautéed chicken with brown mushroom, spring onions, served with mushroom sauce." },
-        { "name": "BBQ Chicken Drumsticks", "price_ugx": 27000, "description": "3 marinated chicken drumsticks fried and tossed in BBQ sauce with fresh Dania." },
-        { "name": "Grilled Quarter Chicken", "price_ugx": 27000, "description": "Marinated charcoal-grilled tender chicken." },
-        { "name": "Mushroom Chicken", "price_ugx": 27000, "description": "Pan-fried chicken cubes infused in creamy white mushroom sauce and spring onions." },
-        { "name": "Supreme Chicken", "price_ugx": 28000, "description": "Fresh pan-fried chicken breast in mushroom sauce." },
-        { "name": "Paradise 1/2 Grilled Farm Chicken", "price_ugx": 40000, "description": "Half chicken grilled with aromatic seasonings." }
+        {
+          "name": "Chicken Sauté",
+          "price_ugx": 30000,
+          "description": "Sautéed chicken with brown mushroom, spring onion, served with mushroom sauce and an accompaniment of your choice."
+        },
+        {
+          "name": "BBQ Chicken Drumstick",
+          "price_ugx": 30000,
+          "description": "Well-marinated 3 tender chicken drumsticks, fried and toasted in BBQ sauce with a touch of fresh Dania."
+        },
+        {
+          "name": "Grilled Quarter Chicken (Breast)",
+          "price_ugx": 30000,
+          "description": "Well-marinated charcoal/oven roasted tender chicken breast served with chips or food of choice."
+        },
+        {
+          "name": "Grilled Quarter Chicken (Thigh)",
+          "price_ugx": 30000,
+          "description": "Well-marinated charcoal/oven roasted tender chicken thigh served with chips or food of choice."
+        },
+        {
+          "name": "Mushroom Chicken",
+          "price_ugx": 32000,
+          "description": "Marinated pan-fried chicken cubes infused in creamy white mushroom sauce and garnished with spring onions."
+        },
+        {
+          "name": "Supreme Chicken",
+          "price_ugx": 32000,
+          "description": "Fresh pan-fried boneless chicken breast resting in mushroom sauce."
+        },
+        {
+          "name": "Paradise Grilled Farm Chicken",
+          "price_ugx": 45000,
+          "description": "A well-marinated chicken grilled to perfection with aromatic seasonings."
+        }
       ]
     },
     {
       "category": "Beef & Goat Main Courses",
       "items": [
-        { "name": "Goat Sizzler", "price_ugx": 27000, "description": "Stir-fried dry goat flakes with vegetables and rosemary." },
-        { "name": "Goat Muchomo", "price_ugx": 27000, "description": "Marinated goat chunks roasted and tossed in fresh vegetables, tomato, and BBQ sauce." },
-        { "name": "Beef Stir Fry", "price_ugx": 30000, "description": "Beef strips grilled with vegetables and tomato sauce." },
-        { "name": "Beef Wet Fry", "price_ugx": 30000, "description": "Seasoned diced beef with assorted vegetables." },
-        { "name": "Honey Glazed Hawaiian Beef Skewers", "price_ugx": 30000, "description": "Three beef skewers with pineapple, vegetables, natural honey, and organic herbs." },
-        { "name": "Beef Stroganoff", "price_ugx": 30000, "description": "Slow-cooked beef in mushroom and red wine sauce, finished with fresh cream." },
-        { "name": "Beef in Guinness", "price_ugx": 30000, "description": "Simmered steak in Guinness beer and creamy sauce." },
-        { "name": "Goat Rack Tender", "price_ugx": 32000, "description": "Pan-fried rib rack." },
-        { "name": "Mushroom Steak", "price_ugx": 32000, "description": "Marinated tender beef steak infused in creamy brown mushroom sauce." },
-        { "name": "Pepper Steak", "price_ugx": 32000, "description": "Tenderloin of beef fillet infused in black peppercorn sauce." },
-        { "name": "King Steak", "price_ugx": 32000, "description": "Beef fillet pan-fried to preference, topped with a fried egg." },
-        { "name": "Paradise Mixed Grill", "price_ugx": 45000, "description": "Mixture of grills: chicken, steak, fish fillet topped with a fried egg." }
+        {
+          "name": "Goat Sizzler",
+          "price_ugx": 27000,
+          "description": "Stir-fried dry goat flakes with vegetables and rosemary."
+        },
+        {
+          "name": "Goat Muchomo",
+          "price_ugx": 30000,
+          "description": "Well-marinated chunks of goat meat, roasted and toasted in organic fresh vegetables with a touch of tomato and BBQ sauce."
+        },
+        {
+          "name": "Beef Stir Fry",
+          "price_ugx": 35000,
+          "description": "Tender beef strips grilled to perfection with aromatized vegetables with a hint of tomato sauce."
+        },
+        {
+          "name": "Beef Wet Fry",
+          "price_ugx": 35000,
+          "description": "Tender well-seasoned beef fillet, infused in flavored black peppercorn sauce served with rice."
+        },
+        {
+          "name": "Honey Glazed Hawaiian Beef Skewers",
+          "price_ugx": 35000,
+          "description": "Three skewered beef sticks with pineapple and vegetable condiments laced with natural honey, served with chips."
+        },
+        {
+          "name": "Beef Stroganoff",
+          "price_ugx": 35000,
+          "description": "Slow-cooked beef in mushroom and red wine sauce finished with cream."
+        },
+        {
+          "name": "Beef in Guinness",
+          "price_ugx": 30000,
+          "description": "Simmered steak in Guinness beer and creamy sauce."
+        },
+        {
+          "name": "Goat Rack Tender",
+          "price_ugx": 32000,
+          "description": "Pan-fried rib rack."
+        },
+        {
+          "name": "Beef Fillet Steak (Mushroom Sauce)",
+          "price_ugx": 35000,
+          "description": "Beef fillet steak served with mushroom sauce and an accompaniment of your choice."
+        },
+        {
+          "name": "Beef Fillet Steak (Pepper Sauce)",
+          "price_ugx": 35000,
+          "description": "Beef fillet steak served with pepper sauce and an accompaniment of your choice."
+        },
+        {
+          "name": "King Steak",
+          "price_ugx": 40000,
+          "description": "Apportioned beef fillet pan-fried to preference, topped with a fried egg and served with an accompaniment of your choice."
+        },
+        {
+          "name": "Paradise Mixed Grill",
+          "price_ugx": 47000,
+          "description": "A mixture of grills: chicken, steak, fish fillet, topped with a fried egg and served with chips."
+        },
+        {
+          "name": "Beef Fillet Steak (Dry Onion)",
+          "price_ugx": 35000,
+          "description": "Beef fillet steak served with dry onion and an accompaniment of your choice."
+        },
+        {
+          "name": "Liver Princess",
+          "price_ugx": 30000,
+          "description": "Flakes of liver toasted with shredded vegetables accompanied with either rice or chips."
+        }
       ]
     },
     {
       "category": "Pork Courses",
       "items": [
-        { "name": "Pork Muchomo", "price_ugx": 27000, "description": "Boneless pork chunks roasted and tossed in aromatic vegetables." },
-        { "name": "Paradise Grilled Pork Chop", "price_ugx": 32000, "description": "Marinated pork chops grilled to perfection." },
-        { "name": "Honey Mustard Glazed Pork Ribs", "price_ugx": 32000, "description": "Pork ribs tossed in onion rings and honey." },
-        { "name": "Sweet and Sour Pork Chops", "price_ugx": 38000, "description": "Pork chunks glazed in sweet & sour sauce with spring onions and a side." },
-        { "name": "Trio of Pork Platter", "price_ugx": 45000, "description": "Combination of pork ribs, pork muchomo, and pork chops with a side." }
+        {
+          "name": "Pork Muchomo",
+          "price_ugx": 30000,
+          "description": "Boneless chunks of pork roasted and toasted in aromatic vegetables, served with chips."
+        },
+        {
+          "name": "Paradise Grilled Pork Chops",
+          "price_ugx": 35000,
+          "description": "Perfectly marinated tender pork chops grilled to satisfaction, served with an accompaniment of your choice."
+        },
+        {
+          "name": "Honey Mustard Glazed Pork Ribs",
+          "price_ugx": 35000,
+          "description": "Tender and juicy ribs of pork toasted in onion rings and honey."
+        },
+        {
+          "name": "Sweet and Sour Pork",
+          "price_ugx": 38000,
+          "description": "Well-seasoned chunks of pork glazed in tangy sweet and sour sauce, sprinkled with spring onions served with an accompaniment of your choice."
+        },
+        {
+          "name": "Trio of Pork",
+          "price_ugx": 45000,
+          "description": "A combination of pork ribs, pork muchomo, and pork chops on a single platter with an accompaniment of your choice."
+        }
       ]
     },
     {
       "category": "Pizzeria (Pizza)",
       "items": [
-        { "name": "Classico e Margherita", "price_ugx": 24000, "description": "Tomato, fresh basil, oregano, and mozzarella." },
-        { "name": "Sweet Vegetarian", "price_ugx": 24000, "description": "Red, yellow & green bell peppers, sweet corn, and mozzarella." },
-        { "name": "Pugliese", "price_ugx": 24000, "description": "Tomato, black olives, oregano, and cheese." },
-        { "name": "Pata", "price_ugx": 26000, "description": "Chips, tomato, and cheese." },
-        { "name": "Daviolla", "price_ugx": 26000, "description": "Tomato, chili, salami, and mozzarella." },
-        { "name": "Salami", "price_ugx": 26000, "description": "Tomato, cheese, salami." },
-        { "name": "Quattro Stagioni", "price_ugx": 26000, "description": "Ham, olives, mushroom, artichokes, and mozzarella." },
-        { "name": "Prosciutto Funghi", "price_ugx": 26000, "description": "Ham, mushroom, and cheese." },
-        { "name": "Prosciutto", "price_ugx": 27000, "description": "Cooked ham, tomato, and mozzarella." },
-        { "name": "Bolognaise", "price_ugx": 27000, "description": "Spicy minced meat, mozzarella, and tomato." },
-        { "name": "Capricciosa", "price_ugx": 27000, "description": "Black olives, artichokes, capers, mushroom, and salads." },
-        { "name": "Pepperoni", "price_ugx": 27000, "description": "Tomato, green pepper, onions, pepperoni, and mozzarella." },
-        { "name": "Hawaiian", "price_ugx": 27000, "description": "Ham or bacon, pineapple, and mozzarella." },
-        { "name": "Pollo Pizza", "price_ugx": 27000, "description": "Italian chicken pizza with green pepper, onions, and mushroom." },
-        { "name": "Tunno", "price_ugx": 28000, "description": "Tuna, tomato, onions, green pepper, mozzarella, topped with a boiled egg." },
-        { "name": "Calzone Pizza", "price_ugx": 30000, "description": "Minced meat, carrots, and green pepper folded into a semi-circular bread shape." },
-        { "name": "Farmer's Pizza", "price_ugx": 30000, "description": "Chicken and mushroom." },
-        { "name": "Paradise Special Pizza", "price_ugx": 35000, "description": "Minced meat, salami, ham, mushroom, green pepper, and onions." }
+        {
+          "name": "Classico e Margherita",
+          "price_ugx": 24000,
+          "description": "Tomato, fresh basil, oregano, and mozzarella."
+        },
+        {
+          "name": "Sweet Vegetarian",
+          "price_ugx": 24000,
+          "description": "Red, yellow & green bell peppers, sweet corn, and mozzarella."
+        },
+        {
+          "name": "Pugliese",
+          "price_ugx": 24000,
+          "description": "Tomato, black olives, oregano, and cheese."
+        },
+        {
+          "name": "Pata",
+          "price_ugx": 26000,
+          "description": "Chips, tomato, and cheese."
+        },
+        {
+          "name": "Daviolla",
+          "price_ugx": 26000,
+          "description": "Tomato, chili, salami, and mozzarella."
+        },
+        {
+          "name": "Salami",
+          "price_ugx": 26000,
+          "description": "Tomato, cheese, salami."
+        },
+        {
+          "name": "Quattro Stagioni",
+          "price_ugx": 26000,
+          "description": "Ham, olives, mushroom, artichokes, and mozzarella."
+        },
+        {
+          "name": "Prosciutto Funghi",
+          "price_ugx": 26000,
+          "description": "Ham, mushroom, and cheese."
+        },
+        {
+          "name": "Prosciutto",
+          "price_ugx": 27000,
+          "description": "Cooked ham, tomato, and mozzarella."
+        },
+        {
+          "name": "Bolognaise",
+          "price_ugx": 27000,
+          "description": "Spicy minced meat, mozzarella, and tomato."
+        },
+        {
+          "name": "Capricciosa",
+          "price_ugx": 27000,
+          "description": "Black olives, artichokes, capers, mushroom, and salads."
+        },
+        {
+          "name": "Pepperoni",
+          "price_ugx": 27000,
+          "description": "Tomato, green pepper, onions, pepperoni, and mozzarella."
+        },
+        {
+          "name": "Hawaiian",
+          "price_ugx": 27000,
+          "description": "Ham or bacon, pineapple, and mozzarella."
+        },
+        {
+          "name": "Pollo Pizza",
+          "price_ugx": 27000,
+          "description": "Italian chicken pizza with green pepper, onions, and mushroom."
+        },
+        {
+          "name": "Tunno",
+          "price_ugx": 28000,
+          "description": "Tuna, tomato, onions, green pepper, mozzarella, topped with a boiled egg."
+        },
+        {
+          "name": "Calzone Pizza",
+          "price_ugx": 30000,
+          "description": "Minced meat, carrots, and green pepper folded into a semi-circular bread shape."
+        },
+        {
+          "name": "Farmer's Pizza",
+          "price_ugx": 30000,
+          "description": "Chicken and mushroom."
+        },
+        {
+          "name": "Paradise Special Pizza",
+          "price_ugx": 35000,
+          "description": "Minced meat, salami, ham, mushroom, green pepper, and onions."
+        }
       ]
     },
     {
       "category": "Italian Pastas",
       "note": "Pasta choices available: Spaghetti, Penne, Fettuccine, Farfalle, or Spirulina.",
       "items": [
-        { "name": "Pasta a la Arrabiata", "price_ugx": 18000, "description": "Pasta in tomato and fresh chili sauce." },
-        { "name": "Pasta a la Napolitana", "price_ugx": 18000, "description": "Pasta in herby tomato and cheese sauce." },
-        { "name": "Pasta Genovese", "price_ugx": 22000, "description": "Pasta in pesto sauce." },
-        { "name": "Pasta a la Carbonara", "price_ugx": 22000, "description": "Pasta with egg and bacon creamy sauce." },
-        { "name": "Pasta ala Cavolfiore e Salsiccia", "price_ugx": 22000, "description": "Pasta with egg and bacon creamy sauce." },
-        { "name": "Pasta a la Contadina", "price_ugx": 25000, "description": "Pasta in chicken, garlic, coriander, white wine, and creamy coconut sauce." }
+        {
+          "name": "Pasta Arabiata",
+          "price_ugx": 20000,
+          "description": "Pasta in tomato sauce and fresh chili sauce topped with cheese melt and a toast."
+        },
+        {
+          "name": "Pasta a la Napolitana",
+          "price_ugx": 18000,
+          "description": "Pasta in herby tomato and cheese sauce."
+        },
+        {
+          "name": "Pasta Genovese",
+          "price_ugx": 22000,
+          "description": "Pasta in pesto sauce."
+        },
+        {
+          "name": "Pasta a la Carbonara",
+          "price_ugx": 25000,
+          "description": "Pasta with egg and bacon cream sauce topped with cheese and toast."
+        },
+        {
+          "name": "Pasta ala Cavolfiore e Salsiccia",
+          "price_ugx": 22000,
+          "description": "Pasta with egg and bacon creamy sauce."
+        },
+        {
+          "name": "Pasta a la Contadina",
+          "price_ugx": 25000,
+          "description": "Pasta in chicken, garlic, coriander, white wine, and creamy coconut sauce."
+        },
+        {
+          "name": "Pasta Classic Bolognaise",
+          "price_ugx": 25000,
+          "description": "Pasta in minced meat, garlic, tomato, and red wine sauce topped with cheese melt and toast."
+        }
       ]
     },
     {
       "category": "Asian & Indian Curries",
       "note": "Non-veg curries served with a choice of 1 or 2 accompaniments.",
       "items": [
-        { "name": "Aloo Mutter", "price_ugx": 18000, "description": "Diced potatoes and cowpeas prepared in a creamy sauce." },
-        { "name": "Mixed Vegetable Curry", "price_ugx": 20000, "description": "Assorted vegetables in creamy sauce, served with white rice or mash." },
-        { "name": "Veggie Biryani", "price_ugx": 20000, "description": "Diced mixed vegetables in creamy curry sauce mixed with rice." },
-        { "name": "Vegetable Chow Mein", "price_ugx": 20000, "description": "Noodles with oyster and soy sauce, tossed with fresh vegetables." },
-        { "name": "Vegetable Korma", "price_ugx": 20000, "description": "Mixed vegetables in mild creamy almond and cashew nut sauce." },
-        { "name": "Chicken Tikka", "price_ugx": 28000 },
-        { "name": "Chili Chicken", "price_ugx": 28000 },
-        { "name": "Chicken / Fish / Mutton Biryani", "price_ugx": 30000, "description": "Chicken, fish, or mutton cooked in creamy sauce mixed with rice." },
-        { "name": "Coconut Chicken Curry", "price_ugx": 30000, "description": "Grilled boneless chicken in golden sauce infused with coconut." },
-        { "name": "Chicken Tikka Masala", "price_ugx": 30000 },
-        { "name": "Chicken Makhani", "price_ugx": 30000, "description": "Boneless tandoori-marinated chicken cooked in butter and tomato gravy." },
-        { "name": "Fish Curry Diamond", "price_ugx": 30000 },
-        { "name": "Fish Tikka", "price_ugx": 30000 },
-        { "name": "Fish Tikka Masala", "price_ugx": 32000 },
-        { "name": "Half Tandoori Chicken", "price_ugx": 37000, "description": "Chicken marinated with yogurt, ginger, garlic, and spices, roasted in clay oven." },
-        { "name": "Full Tandoori Chicken", "price_ugx": 47000, "description": "Full chicken marinated with yogurt, ginger, garlic, and spices, roasted in clay oven." }
+        {
+          "name": "Aloo Mutter",
+          "price_ugx": 18000,
+          "description": "Diced potatoes and cowpeas prepared in a creamy sauce."
+        },
+        {
+          "name": "Mixed Vegetable Curry",
+          "price_ugx": 20000,
+          "description": "A mixture of assorted vegetables in creamy sauce served with white rice or mashed potatoes."
+        },
+        {
+          "name": "Veggie Biryani",
+          "price_ugx": 25000,
+          "description": "Spiced diced mixed vegetables cooked in creamy sauce, mixed with rice."
+        },
+        {
+          "name": "Vegetable Chow Mein",
+          "price_ugx": 20000,
+          "description": "Noodles with oyster and soy sauce, tossed with fresh vegetables."
+        },
+        {
+          "name": "Vegetable Korma",
+          "price_ugx": 25000,
+          "description": "Mixed vegetables cooked in mild creamy almond and cashew nut sauce served with rice or chapatti."
+        },
+        {
+          "name": "Chicken Tikka",
+          "price_ugx": 28000
+        },
+        {
+          "name": "Chili Chicken",
+          "price_ugx": 28000
+        },
+        {
+          "name": "Chicken Biryani",
+          "price_ugx": 32000,
+          "description": "Cubes of chicken cooked in creamy sauce mixed with rice."
+        },
+        {
+          "name": "Fish Biryani",
+          "price_ugx": 32000,
+          "description": "Cubes of fish cooked in creamy sauce mixed with rice."
+        },
+        {
+          "name": "Goat Biryani",
+          "price_ugx": 32000,
+          "description": "Cubes of goat cooked in creamy sauce mixed with rice."
+        },
+        {
+          "name": "Chicken Coconut Curry",
+          "price_ugx": 32000,
+          "description": "Grilled and cubed boneless chicken prepared in a golden sauce infused with coconut, served with rice or chapatti."
+        },
+        {
+          "name": "Chicken Tikka Masala",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Chicken Makhani",
+          "price_ugx": 30000,
+          "description": "Boneless tandoori-marinated chicken cooked in butter and tomato gravy."
+        },
+        {
+          "name": "Fish Curry Diamond",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Fish Tikka",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Fish Tikka Masala",
+          "price_ugx": 32000
+        },
+        {
+          "name": "Half Tandoori Chicken",
+          "price_ugx": 37000,
+          "description": "Chicken marinated with yogurt, ginger, garlic, and spices, roasted in clay oven."
+        },
+        {
+          "name": "Full Tandoori Chicken",
+          "price_ugx": 47000,
+          "description": "Full chicken marinated with yogurt, ginger, garlic, and spices, roasted in clay oven."
+        }
       ]
     },
     {
       "category": "Chinese Corner",
       "items": [
-        { "name": "Vegetable Spring Roll (1pc)", "price_ugx": 1000 },
-        { "name": "Chicken Spring Roll (1pc)", "price_ugx": 2500 },
-        { "name": "Pork Spring Roll (1pc)", "price_ugx": 2500 },
-        { "name": "Vegetable Wanton", "price_ugx": 5000 },
-        { "name": "Special Chicken Wings (1pc)", "price_ugx": 7000 },
-        { "name": "Fried Wanton (Chicken or Beef)", "price_ugx": 8000 },
-        { "name": "Golden Fried Cauliflower", "price_ugx": 10000 },
-        { "name": "Fried Chips Plain", "price_ugx": 10000 },
-        { "name": "Special Beef Simsim", "price_ugx": 15000 },
-        { "name": "Smoked Fish", "price_ugx": 15000 },
-        { "name": "Salty Chicken / Beef", "price_ugx": 15000 },
-        { "name": "Foil Wrapped Chicken", "price_ugx": 15000 },
-        { "name": "French Fries with Garlic Sauce", "price_ugx": 15000 },
-        { "name": "Fried Egg Rolled Chicken (Pair)", "price_ugx": 18000 },
-        { "name": "Fried Chicken Wings", "price_ugx": 20000 },
-        { "name": "Crispy Chicken Legs", "price_ugx": 20000 },
-        { "name": "Golden Fried Prawns", "price_ugx": 20000 },
-        { "name": "Fried Baby Corn with Cashew Nuts", "price_ugx": 20000 },
-        { "name": "Fried Summary Chicken", "price_ugx": 25000 },
-        { "name": "Sauté Chicken Sichuan Style", "price_ugx": 25000 },
-        { "name": "Chicken Curry", "price_ugx": 25000 },
-        { "name": "Fried French Beans with Garlic Sauce", "price_ugx": 25000 },
-        { "name": "Chinese Cabbage Sichuan Style (Hot)", "price_ugx": 25000 },
-        { "name": "Mixed Vegetables (Onions, Cabbage, Carrots, Pepper, Mushroom)", "price_ugx": 25000 },
-        { "name": "Stir-Fried Chicken with Cashew Nuts", "price_ugx": 30000 },
-        { "name": "Spicy Half Chicken with Vegetables", "price_ugx": 30000 },
-        { "name": "Fried Chicken with Chinese Black Bean Sauce", "price_ugx": 30000 },
-        { "name": "Sweet and Sour Chicken", "price_ugx": 30000 },
-        { "name": "Sliced Chicken with Garlic Sauce", "price_ugx": 30000 },
-        { "name": "Sliced Beef with Chinese Cabbage", "price_ugx": 30000 },
-        { "name": "Shredded Beef with Onions", "price_ugx": 30000 },
-        { "name": "Sweet and Sour Beef", "price_ugx": 30000 },
-        { "name": "Sliced Beef in Oyster Sauce", "price_ugx": 30000 },
-        { "name": "Shredded Beef with Vegetables", "price_ugx": 30000 },
-        { "name": "Sliced Beef with Pineapple Sauce", "price_ugx": 30000 },
-        { "name": "Beef Curry", "price_ugx": 30000 },
-        { "name": "Sweet and Sour Pork", "price_ugx": 30000 },
-        { "name": "Shredded Pork with Green Pepper", "price_ugx": 30000 },
-        { "name": "Sauté Pork Sichuan Style (Hot)", "price_ugx": 30000 },
-        { "name": "Spicy Pork with Garlic Sauce", "price_ugx": 30000 },
-        { "name": "Sweet and Sour Fish Finger", "price_ugx": 30000 },
-        { "name": "Spicy Fish with Ginger & Garlic Sauce", "price_ugx": 30000 },
-        { "name": "Sliced Fish with Vegetables", "price_ugx": 30000 },
-        { "name": "Sliced Fish in Special Hot Sweet & Sour Sauce", "price_ugx": 30000 },
-        { "name": "Special Mixed Vegetables & Sprouts", "price_ugx": 30000 },
-        { "name": "Fried Mixed Chicken, Beef & Goat Meat", "price_ugx": 35000 },
-        { "name": "Fried Shredded Chicken with Bamboo Shoots", "price_ugx": 35000 },
-        { "name": "Sliced Pork with Mushroom and Bamboo Shoots", "price_ugx": 35000 },
-        { "name": "Fried Beijing Duck with Vegetables", "price_ugx": 35000 },
-        { "name": "Fried Duck with Bamboo Shoots", "price_ugx": 35000 },
-        { "name": "Fried Prawns with Cashew Nuts", "price_ugx": 45000 },
-        { "name": "Sauté Prawns with Black Bean Sauce", "price_ugx": 45000 },
-        { "name": "Fried Prawns with Chinese Black Beans", "price_ugx": 50000 },
-        { "name": "Beijing Roasted Duck (Whole)", "price_ugx": 100000 }
+        {
+          "name": "Vegetable Spring Roll (1pc)",
+          "price_ugx": 1000
+        },
+        {
+          "name": "Chicken Spring Roll (1pc)",
+          "price_ugx": 2500
+        },
+        {
+          "name": "Pork Spring Roll (1pc)",
+          "price_ugx": 2500
+        },
+        {
+          "name": "Vegetable Wanton",
+          "price_ugx": 5000
+        },
+        {
+          "name": "Special Chicken Wings (1pc)",
+          "price_ugx": 7000
+        },
+        {
+          "name": "Fried Wanton (Chicken or Beef)",
+          "price_ugx": 8000
+        },
+        {
+          "name": "Golden Fried Cauliflower",
+          "price_ugx": 10000
+        },
+        {
+          "name": "Fried Chips Plain",
+          "price_ugx": 10000
+        },
+        {
+          "name": "Special Beef Simsim",
+          "price_ugx": 15000
+        },
+        {
+          "name": "Smoked Fish",
+          "price_ugx": 15000
+        },
+        {
+          "name": "Salty Chicken / Beef",
+          "price_ugx": 15000
+        },
+        {
+          "name": "Foil Wrapped Chicken",
+          "price_ugx": 15000
+        },
+        {
+          "name": "French Fries with Garlic Sauce",
+          "price_ugx": 15000
+        },
+        {
+          "name": "Fried Egg Rolled Chicken (Pair)",
+          "price_ugx": 18000
+        },
+        {
+          "name": "Fried Chicken Wings",
+          "price_ugx": 20000
+        },
+        {
+          "name": "Crispy Chicken Legs",
+          "price_ugx": 20000
+        },
+        {
+          "name": "Golden Fried Prawns",
+          "price_ugx": 20000
+        },
+        {
+          "name": "Fried Baby Corn with Cashew Nuts",
+          "price_ugx": 20000
+        },
+        {
+          "name": "Fried Summary Chicken",
+          "price_ugx": 25000
+        },
+        {
+          "name": "Sauté Chicken Sichuan Style",
+          "price_ugx": 25000
+        },
+        {
+          "name": "Chicken Curry",
+          "price_ugx": 25000
+        },
+        {
+          "name": "Fried French Beans with Garlic Sauce",
+          "price_ugx": 25000
+        },
+        {
+          "name": "Chinese Cabbage Sichuan Style (Hot)",
+          "price_ugx": 25000
+        },
+        {
+          "name": "Mixed Vegetables (Onions, Cabbage, Carrots, Pepper, Mushroom)",
+          "price_ugx": 25000
+        },
+        {
+          "name": "Stir-Fried Chicken with Cashew Nuts",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Spicy Half Chicken with Vegetables",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Fried Chicken with Chinese Black Bean Sauce",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sweet and Sour Chicken",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sliced Chicken with Garlic Sauce",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sliced Beef with Chinese Cabbage",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Shredded Beef with Onions",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sweet and Sour Beef",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sliced Beef in Oyster Sauce",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Shredded Beef with Vegetables",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sliced Beef with Pineapple Sauce",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Beef Curry",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sweet and Sour Pork (Chinese)",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Shredded Pork with Green Pepper",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sauté Pork Sichuan Style (Hot)",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Spicy Pork with Garlic Sauce",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sweet and Sour Fish Finger",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Spicy Fish with Ginger & Garlic Sauce",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sliced Fish with Vegetables",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sliced Fish in Special Hot Sweet & Sour Sauce",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Special Mixed Vegetables & Sprouts",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Fried Mixed Chicken, Beef & Goat Meat",
+          "price_ugx": 35000
+        },
+        {
+          "name": "Fried Shredded Chicken with Bamboo Shoots",
+          "price_ugx": 35000
+        },
+        {
+          "name": "Sliced Pork with Mushroom and Bamboo Shoots",
+          "price_ugx": 35000
+        },
+        {
+          "name": "Fried Beijing Duck with Vegetables",
+          "price_ugx": 35000
+        },
+        {
+          "name": "Fried Duck with Bamboo Shoots",
+          "price_ugx": 35000
+        },
+        {
+          "name": "Fried Prawns with Cashew Nuts",
+          "price_ugx": 45000
+        },
+        {
+          "name": "Sauté Prawns with Black Bean Sauce",
+          "price_ugx": 45000
+        },
+        {
+          "name": "Fried Prawns with Chinese Black Beans",
+          "price_ugx": 50000
+        },
+        {
+          "name": "Beijing Roasted Duck (Whole)",
+          "price_ugx": 100000
+        }
       ]
     },
     {
       "category": "Sizzler Hot Plates",
       "items": [
-        { "name": "Sizzler Vegetables Plate", "price_ugx": 30000 },
-        { "name": "Sizzler Pork Plate", "price_ugx": 35000 },
-        { "name": "Sizzler Beef Plate", "price_ugx": 35000 },
-        { "name": "Sizzler Chicken Plate", "price_ugx": 35000 },
-        { "name": "Sizzler Shrimps / Prawns Plate", "price_ugx": 50000 }
+        {
+          "name": "Sizzler Vegetables Plate",
+          "price_ugx": 30000
+        },
+        {
+          "name": "Sizzler Pork Plate",
+          "price_ugx": 35000
+        },
+        {
+          "name": "Sizzler Beef Plate",
+          "price_ugx": 35000
+        },
+        {
+          "name": "Sizzler Chicken Plate",
+          "price_ugx": 35000
+        },
+        {
+          "name": "Sizzler Shrimps / Prawns Plate",
+          "price_ugx": 50000
+        }
       ]
     },
     {
       "category": "Rice & Noodles Side Options",
       "items": [
-        { "name": "Steamed Rice", "price_ugx": 8000 },
-        { "name": "Fried Rice", "price_ugx": 8000 },
-        { "name": "Ginger Fried Rice", "price_ugx": 8000 },
-        { "name": "Vegetable Fried Rice", "price_ugx": 10000 },
-        { "name": "Vegetable Fried Noodles", "price_ugx": 12000 },
-        { "name": "Egg Fried Rice", "price_ugx": 15000 },
-        { "name": "Chicken Fried Rice", "price_ugx": 25000 },
-        { "name": "Chicken / Beef / Pork Fried Noodles", "price_ugx": 25000 }
+        {
+          "name": "Steamed Rice",
+          "price_ugx": 8000
+        },
+        {
+          "name": "Fried Rice",
+          "price_ugx": 8000
+        },
+        {
+          "name": "Ginger Fried Rice",
+          "price_ugx": 8000
+        },
+        {
+          "name": "Vegetable Fried Rice",
+          "price_ugx": 10000
+        },
+        {
+          "name": "Vegetable Fried Noodles",
+          "price_ugx": 12000
+        },
+        {
+          "name": "Egg Fried Rice",
+          "price_ugx": 15000
+        },
+        {
+          "name": "Chicken Fried Rice",
+          "price_ugx": 25000
+        },
+        {
+          "name": "Chicken / Beef / Pork Fried Noodles",
+          "price_ugx": 25000
+        }
       ]
     },
     {
       "category": "Accompaniments / Side Add-Ons",
       "items": [
-        { "name": "Mushroom Extra", "price_ugx": 4000 },
-        { "name": "Avocado Extra", "price_ugx": 4000 },
-        { "name": "Fried Egg Extra", "price_ugx": 4000 },
-        { "name": "Bacon Extra", "price_ugx": 7000 },
-        { "name": "Cheese Extra", "price_ugx": 7000 }
+        {
+          "name": "Extra Mushroom",
+          "price_ugx": 4000,
+          "description": "Extra topping"
+        },
+        {
+          "name": "Extra Avocado",
+          "price_ugx": 4000,
+          "description": "Extra topping"
+        },
+        {
+          "name": "Extra Fried Egg",
+          "price_ugx": 4000,
+          "description": "Extra topping"
+        },
+        {
+          "name": "Extra Bacon",
+          "price_ugx": 7000,
+          "description": "Extra topping"
+        },
+        {
+          "name": "Extra Cheese",
+          "price_ugx": 7000,
+          "description": "Extra topping"
+        }
       ]
     },
     {
       "category": "Desserts & Bakery",
       "items": [
-        { "name": "Cookies", "price_ugx": 1000 },
-        { "name": "Croissant", "price_ugx": 2000 },
-        { "name": "Beef / Chicken Pie", "price_ugx": 5000 },
-        { "name": "Sausage Roll", "price_ugx": 5000 },
-        { "name": "Bread Loaf", "price_ugx": 6000 },
-        { "name": "Marble Cake Slice", "price_ugx": 7000 },
-        { "name": "Chocolate Cake Slice", "price_ugx": 7000 },
-        { "name": "Strawberry Cake Slice", "price_ugx": 7000 },
-        { "name": "Lemon Cake Slice", "price_ugx": 7000 },
-        { "name": "Vanilla Cake Slice", "price_ugx": 7000 },
-        { "name": "Butter Bread", "price_ugx": 7000 },
-        { "name": "French Bread", "price_ugx": 7000 },
-        { "name": "Cinnamon Roll", "price_ugx": 8000 },
-        { "name": "Golden Fried Banana", "price_ugx": 10000 },
-        { "name": "Banana Crepe", "price_ugx": 12000 },
-        { "name": "Special Banana with Honey Sauce", "price_ugx": 12000 },
-        { "name": "Pineapple Upside-Down Cake", "price_ugx": 14000 },
-        { "name": "Tropical Fruit Platter", "price_ugx": 15000 },
-        { "name": "Tropical Fruit Salad", "price_ugx": 15000 },
-        { "name": "Lemon Tart", "price_ugx": 15000 },
-        { "name": "Banana Split", "price_ugx": 15000 },
-        { "name": "Mango Tart", "price_ugx": 16000 },
-        { "name": "White Forest Cake", "price_ugx": 16000 },
-        { "name": "Profiteroles", "price_ugx": 16000 },
-        { "name": "Chocolate Fudge Slice", "price_ugx": 17000 },
-        { "name": "Black Forest Cake (pc)", "price_ugx": 17000 },
-        { "name": "Classic Carrot Cake", "price_ugx": 19000 },
-        { "name": "Chocolate Mousse", "price_ugx": 20000 }
+        {
+          "name": "Cookies",
+          "price_ugx": 1000
+        },
+        {
+          "name": "Croissant",
+          "price_ugx": 2000
+        },
+        {
+          "name": "Beef / Chicken Pie",
+          "price_ugx": 5000
+        },
+        {
+          "name": "Sausage Roll",
+          "price_ugx": 5000
+        },
+        {
+          "name": "Bread Loaf",
+          "price_ugx": 6000
+        },
+        {
+          "name": "Marble Cake Slice",
+          "price_ugx": 7000
+        },
+        {
+          "name": "Chocolate Cake Slice",
+          "price_ugx": 7000
+        },
+        {
+          "name": "Strawberry Cake Slice",
+          "price_ugx": 7000
+        },
+        {
+          "name": "Lemon Cake Slice",
+          "price_ugx": 7000
+        },
+        {
+          "name": "Vanilla Cake Slice",
+          "price_ugx": 7000
+        },
+        {
+          "name": "Butter Bread",
+          "price_ugx": 7000
+        },
+        {
+          "name": "French Bread",
+          "price_ugx": 7000
+        },
+        {
+          "name": "Cinnamon Roll",
+          "price_ugx": 8000
+        },
+        {
+          "name": "Golden Fried Banana",
+          "price_ugx": 10000
+        },
+        {
+          "name": "Banana Crepe",
+          "price_ugx": 15000,
+          "description": "A thin pancake filled with sliced bananas and chocolate syrup garnished with orange slices."
+        },
+        {
+          "name": "Special Banana with Honey Sauce",
+          "price_ugx": 12000
+        },
+        {
+          "name": "Pineapple Upside-Down Cake",
+          "price_ugx": 14000
+        },
+        {
+          "name": "Tropical Fruit Platter",
+          "price_ugx": 15000,
+          "description": "A presentation of fresh seasonal fruits like mango, pineapple, melon, orange, grapes, and passion fruit."
+        },
+        {
+          "name": "Fruit Salad",
+          "price_ugx": 15000,
+          "description": "A combination of various cubed fruits sprinkled with passion fruit syrup."
+        },
+        {
+          "name": "Lemon Tart",
+          "price_ugx": 15000
+        },
+        {
+          "name": "Banana Split",
+          "price_ugx": 15000,
+          "description": "Banana and ice cream garnished with chocolate sauce, whipped cream, flaked almonds, and cherries."
+        },
+        {
+          "name": "Mango Tart",
+          "price_ugx": 16000
+        },
+        {
+          "name": "White Forest Cake",
+          "price_ugx": 16000
+        },
+        {
+          "name": "Profiteroles",
+          "price_ugx": 16000
+        },
+        {
+          "name": "Chocolate Fudge Slice",
+          "price_ugx": 17000
+        },
+        {
+          "name": "Black Forest Cake (pc)",
+          "price_ugx": 17000
+        },
+        {
+          "name": "Classic Carrot Cake",
+          "price_ugx": 19000
+        },
+        {
+          "name": "Chocolate Mousse",
+          "price_ugx": 20000
+        },
+        {
+          "name": "Ice Cream (3 Scoops)",
+          "price_ugx": 9000,
+          "description": "A bowl of 3 scoops with choices from chocolate, vanilla, or strawberry."
+        },
+        {
+          "name": "Affogato / Espresso Ice Cream",
+          "price_ugx": 15000,
+          "description": "2 scoops of ice cream of choice served with 60ml of espresso coffee."
+        }
       ]
     }
   ]

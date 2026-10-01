@@ -97,14 +97,14 @@ This loads the hotel, the staff roles, the room types and a first menu.
 
 With `hotelpardise_system` selected, paste `database/07_FULL_MENU_SEED.sql`.
 
-This loads all 19 sections and all 225 dishes exactly as the website shows them.
+This loads all 19 sections and all 251 dishes exactly as the website shows them.
 Every dish carries a rate, so nothing is published as "Priced on request".
 It finishes with six checks. Read them:
 
 | check | must read |
 |---|---|
 | `published_sections` | 19 |
-| `published_dishes` | 225 |
+| `published_dishes` | 251 |
 | `priced_on_request` | 0 |
 | `sections_covered` | 19 |
 | `published_dish_with_no_section` | 0 |
@@ -166,7 +166,7 @@ Then the menu:
 https://your-domain/backend-php/api.php?act=menu
 ```
 
-`"menu_items"` of 225 under `hotel` on the health page, and 19 sections in the
+`"menu_items"` of 251 under `hotel` on the health page, and 19 sections in the
 menu response, means the database is installed correctly. If that number is
 small, `database/07_FULL_MENU_SEED.sql` has not been run, or was run before the
 schema gained the `published` column.

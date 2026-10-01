@@ -4,7 +4,7 @@
 -- The schema and seed below are still useful reference, but the a la carte
 -- menu in this file is the old proposed one: 15 sections and 81 dishes, many of
 -- them with no rate. The kitchen has since filed the real menu, which is 19
--- sections and 225 dishes, every one of them priced. Installing this file would
+-- sections and 251 dishes, every one of them priced. Installing this file would
 -- publish a menu the restaurant does not serve.
 --
 -- Install the schema and seed from these, and the menu from the generated seed:
@@ -778,15 +778,15 @@ ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_i
 
 -- 2.7 Fisherman's Offer ---------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer'),'Premium Whole Tilapia, Fried or Steamed','Whole Fish','Medium premium tilapia, fried or steamed, served with chips.',NULL, -- 8,000 in the draft, confirm the weight band and rate
+(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer' LIMIT 1),'Premium Whole Tilapia, Fried or Steamed','Whole Fish','Medium premium tilapia, fried or steamed, served with chips.',NULL, -- 8,000 in the draft, confirm the weight band and rate
  10,1),
-(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer'),'Premium Wet Fried Tilapia','Whole Fish','Premium tilapia in a seasoned wet fry.',NULL, -- suggested 38000
+(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer' LIMIT 1),'Premium Wet Fried Tilapia','Whole Fish','Premium tilapia in a seasoned wet fry.',NULL, -- suggested 38000
  20,1),
-(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer'),'Grilled Premium Tilapia','Whole Fish','Whole oven grilled, oil free, premium tilapia, with an accompaniment of your choice.',NULL, -- suggested 42000
+(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer' LIMIT 1),'Grilled Premium Tilapia','Whole Fish','Whole oven grilled, oil free, premium tilapia, with an accompaniment of your choice.',NULL, -- suggested 42000
  30,1),
-(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer'),'Large Whole Tilapia, Fried or Steamed','Whole Fish','Large king tilapia, fried or steamed, served with chips.',NULL, -- suggested 65000
+(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer' LIMIT 1),'Large Whole Tilapia, Fried or Steamed','Whole Fish','Large king tilapia, fried or steamed, served with chips.',NULL, -- suggested 65000
  40,1),
-(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer'),'Grilled Tilapia Fillet, Spinach and Cheese','Whole Fish','Grilled tilapia fillet in a creamy spinach and cheese sauce, with an accompaniment of your choice.',NULL, -- suggested 40000
+(1,(SELECT id FROM menu_categories WHERE name='Fisherman''s Offer' LIMIT 1),'Grilled Tilapia Fillet, Spinach and Cheese','Whole Fish','Grilled tilapia fillet in a creamy spinach and cheese sauce, with an accompaniment of your choice.',NULL, -- suggested 40000
  50,1)
 ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 
@@ -810,14 +810,14 @@ ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_i
 
 -- 2.10 Steaks and Grills -----------------------------------------------------------
 INSERT INTO menu_items(hotel_id,category_id,name,group_name,description,price,sort_order,stock_tracked) VALUES
-(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Beef Fillet Steak','Steaks','Beef fillet steak, choose pepper, mushroom or dry onion sauce, served with an accompaniment of your choice.',35000,10,1),
-(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'King Steak','Steaks','Apportioned beef fillet, pan fried to your preference, topped with a fried egg and served with an accompaniment of your choice.',40000,20,1),
-(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Beef Stroganoff','Steaks','Slow cooked beef in mushroom and red wine sauce, finished with cream.',15000,30,1),
-(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Beef Stir Fry','Steaks','Tender beef strips grilled to perfection with aromatised vegetables and a hint of tomato sauce.',35000,40,1),
-(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Paradise Mixed Grill','Steaks','A mixture of grills, chicken, steak and fish fillet, topped with a fried egg and served with chips.',47000,50,1),
-(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Honey Glazed Hawaiian Beef Skewers','Steaks','Three skewered beef sticks with pineapple and vegetable condiments, laced with natural honey, served with chips.',35000,60,1),
-(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Beef Wet Fry','Steaks','Tender well seasoned beef fillet infused in a flavoured black peppercorn sauce, served with rice.',15000,70,1),
-(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies'),'Goat Muchomo','Steaks','Well marinated chunks of goat roasted in organic fresh vegetables with a touch of tomato and barbecue sauce.',NULL, -- suggested 32000
+(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies' LIMIT 1),'Beef Fillet Steak','Steaks','Beef fillet steak, choose pepper, mushroom or dry onion sauce, served with an accompaniment of your choice.',35000,10,1),
+(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies' LIMIT 1),'King Steak','Steaks','Apportioned beef fillet, pan fried to your preference, topped with a fried egg and served with an accompaniment of your choice.',40000,20,1),
+(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies' LIMIT 1),'Beef Stroganoff','Steaks','Slow cooked beef in mushroom and red wine sauce, finished with cream.',15000,30,1),
+(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies' LIMIT 1),'Beef Stir Fry','Steaks','Tender beef strips grilled to perfection with aromatised vegetables and a hint of tomato sauce.',35000,40,1),
+(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies' LIMIT 1),'Paradise Mixed Grill','Steaks','A mixture of grills, chicken, steak and fish fillet, topped with a fried egg and served with chips.',47000,50,1),
+(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies' LIMIT 1),'Honey Glazed Hawaiian Beef Skewers','Steaks','Three skewered beef sticks with pineapple and vegetable condiments, laced with natural honey, served with chips.',35000,60,1),
+(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies' LIMIT 1),'Beef Wet Fry','Steaks','Tender well seasoned beef fillet infused in a flavoured black peppercorn sauce, served with rice.',15000,70,1),
+(1,(SELECT id FROM menu_categories WHERE name='Paradise Hunter''s Delicacies' LIMIT 1),'Goat Muchomo','Steaks','Well marinated chunks of goat roasted in organic fresh vegetables with a touch of tomato and barbecue sauce.',NULL, -- suggested 32000
  80,1)
 ON DUPLICATE KEY UPDATE hotel_id=VALUES(hotel_id), category_id=VALUES(category_id), name=VALUES(name), group_name=VALUES(group_name), description=VALUES(description), price=VALUES(price), sort_order=VALUES(sort_order), stock_tracked=VALUES(stock_tracked);
 

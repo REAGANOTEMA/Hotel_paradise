@@ -4,7 +4,7 @@
 -- The schema and seed below are still useful reference, but the a la carte
 -- menu in this file is the old proposed one: 15 sections and 81 dishes, many of
 -- them with no rate. The kitchen has since filed the real menu, which is 19
--- sections and 225 dishes, every one of them priced. Installing this file would
+-- sections and 251 dishes, every one of them priced. Installing this file would
 -- publish a menu the restaurant does not serve.
 --
 -- Install the schema and seed from these, and the menu from the generated seed:

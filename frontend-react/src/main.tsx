@@ -7,7 +7,7 @@ import {heroShots, SmartImage, type HeroShot} from './SmartImage';
 const dining = [
  {name: 'Breakfast', price: 'UGX 25,000', note: 'For non residents, or children above six years sharing a room with their parents'},
  {name: 'Buffet meal', price: 'UGX 40,000', note: 'Served daily around lunch and dinner'},
- {name: 'A la carte menu', price: 'UGX 1,000 to 100,000', note: '225 dishes, from light bites to full platters'},
+ {name: 'A la carte menu', price: 'UGX 1,000 to 100,000', note: '251 dishes, from light bites to full platters'},
  {name: 'Baby cots', price: 'Free', note: 'Available on request for your little one'}
 ];
 

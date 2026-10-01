@@ -183,9 +183,9 @@ const CATEGORY_SALADS: string[] = [
  * and in backend-php/app/menu_extras.php, which must be kept in step.
  */
 export const SERVED_WITH: Record<string, string[]> = {
-  'Paradise Lusaniya (3-4 Pax)': ['pilau', 'matoke', 'wedges'],
+  'Paradise Lusaniya': ['pilau', 'matoke', 'wedges'],
   'Liver Princess': ['rice', 'chips', 'matoke'],
-  'Mixed Grill Platter (2 Pax)': ['chips', 'rice', 'fries', 'wedges']
+  'Mixed Grill Platter': ['chips', 'rice', 'fries', 'wedges']
 };
 
 /** The accompaniments a dish is given with, whether by name or by its section. */
@@ -583,13 +583,15 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
         items: [
           item('Aloo Mutter', 'Diced potatoes and cowpeas prepared in a creamy sauce.', 18000, 'Asian & Indian Curries'),
           item('Mixed Vegetable Curry', 'Assorted vegetables in a creamy sauce, served with white rice or mash.', 20000, 'Asian & Indian Curries'),
-          item('Veggie Biryani', 'Diced mixed vegetables in a creamy curry sauce, mixed with rice.', 20000, 'Asian & Indian Curries'),
+          item('Veggie Biryani', 'Diced mixed vegetables in a creamy curry sauce, mixed with rice.', 25000, 'Asian & Indian Curries'),
           item('Vegetable Chow Mein', 'Noodles with oyster and soy sauce, tossed with fresh vegetables.', 20000, 'Asian & Indian Curries'),
-          item('Vegetable Korma', 'Mixed vegetables in a mild creamy almond and cashew nut sauce.', 20000, 'Asian & Indian Curries'),
+          item('Vegetable Korma', 'Mixed vegetables in a mild creamy almond and cashew nut sauce.', 25000, 'Asian & Indian Curries'),
           item('Chicken Tikka', '', 28000, 'Asian & Indian Curries'),
           item('Chili Chicken', '', 28000, 'Asian & Indian Curries'),
-          item('Chicken / Fish / Mutton Biryani', 'Chicken, fish or mutton cooked in a creamy sauce, mixed with rice.', 30000, 'Asian & Indian Curries'),
-          item('Coconut Chicken Curry', 'Grilled boneless chicken in a golden sauce infused with coconut.', 30000, 'Asian & Indian Curries'),
+          item('Chicken Biryani', 'Cubes of chicken cooked in a creamy sauce, mixed with rice.', 32000, 'Asian & Indian Curries'),
+          item('Fish Biryani', 'Cubes of fish cooked in a creamy sauce, mixed with rice.', 32000, 'Asian & Indian Curries'),
+          item('Goat Biryani', 'Cubes of goat cooked in a creamy sauce, mixed with rice.', 32000, 'Asian & Indian Curries'),
+          item('Chicken Coconut Curry', 'Grilled and cubed boneless chicken in a golden sauce infused with coconut.', 32000, 'Asian & Indian Curries'),
           item('Chicken Tikka Masala', '', 30000, 'Asian & Indian Curries'),
           item('Chicken Makhani', 'Boneless tandoori marinated chicken cooked in butter and tomato gravy.', 30000, 'Asian & Indian Curries'),
           item('Fish Curry Diamond', '', 30000, 'Asian & Indian Curries'),
@@ -647,7 +649,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
           item('Shredded Beef with Vegetables', '', 30000, 'Chinese Corner'),
           item('Sliced Beef with Pineapple Sauce', '', 30000, 'Chinese Corner'),
           item('Beef Curry', '', 30000, 'Chinese Corner'),
-          item('Sweet and Sour Pork', '', 30000, 'Chinese Corner'),
+          item('Sweet and Sour Pork (Chinese)', '', 30000, 'Chinese Corner'),
           item('Shredded Pork with Green Pepper', '', 30000, 'Chinese Corner'),
           item('Sauté Pork Sichuan Style (Hot)', '', 30000, 'Chinese Corner'),
           item('Spicy Pork with Garlic Sauce', '', 30000, 'Chinese Corner'),
@@ -720,11 +722,11 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
       {
         name: 'Accompaniments & Extras',
         items: [
-          item('Mushroom Extra', '', 4000, 'Accompaniments & Extras'),
-          item('Avocado Extra', '', 4000, 'Accompaniments & Extras'),
-          item('Fried Egg Extra', '', 4000, 'Accompaniments & Extras'),
-          item('Bacon Extra', '', 7000, 'Accompaniments & Extras'),
-          item('Cheese Extra', '', 7000, 'Accompaniments & Extras')
+          item('Extra Mushroom', '', 4000, 'Accompaniments & Extras'),
+          item('Extra Avocado', '', 4000, 'Accompaniments & Extras'),
+          item('Extra Fried Egg', '', 4000, 'Accompaniments & Extras'),
+          item('Extra Bacon', '', 7000, 'Accompaniments & Extras'),
+          item('Extra Cheese', '', 7000, 'Accompaniments & Extras')
         ]
       }
     ]
@@ -752,14 +754,16 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
           item('Butter Bread', '', 7000, 'Desserts & Bakery'),
           item('French Bread', '', 7000, 'Desserts & Bakery'),
           item('Cinnamon Roll', '', 8000, 'Desserts & Bakery'),
+          item('Ice Cream (3 Scoops)', 'A bowl of three scoops, with a choice of chocolate, vanilla or strawberry.', 9000, 'Desserts & Bakery'),
           item('Golden Fried Banana', '', 10000, 'Desserts & Bakery'),
-          item('Banana Crepe', '', 12000, 'Desserts & Bakery'),
+          item('Banana Crepe', 'A thin pancake filled with sliced bananas and chocolate syrup, garnished with orange slices.', 15000, 'Desserts & Bakery'),
+          item('Affogato / Espresso Ice Cream', 'Two scoops of ice cream of choice served with 60ml of espresso coffee.', 15000, 'Desserts & Bakery'),
           item('Special Banana with Honey Sauce', '', 12000, 'Desserts & Bakery'),
           item('Pineapple Upside-Down Cake', '', 14000, 'Desserts & Bakery'),
-          item('Tropical Fruit Platter', '', 15000, 'Desserts & Bakery'),
-          item('Tropical Fruit Salad', '', 15000, 'Desserts & Bakery'),
+          item('Tropical Fruit Platter', 'A presentation of fresh seasonal fruit: mango, pineapple, melon, orange, grapes and passion fruit.', 15000, 'Desserts & Bakery'),
+          item('Fruit Salad', 'A combination of cubed fresh fruit sprinkled with passion fruit syrup.', 15000, 'Desserts & Bakery'),
           item('Lemon Tart', '', 15000, 'Desserts & Bakery'),
-          item('Banana Split', '', 15000, 'Desserts & Bakery'),
+          item('Banana Split', 'Banana and ice cream garnished with chocolate sauce, whipped cream, flaked almonds and cherries.', 15000, 'Desserts & Bakery'),
           item('Mango Tart', '', 16000, 'Desserts & Bakery'),
           item('White Forest Cake', '', 16000, 'Desserts & Bakery'),
           item('Profiteroles', '', 16000, 'Desserts & Bakery'),

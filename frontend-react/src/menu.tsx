@@ -187,6 +187,14 @@ type PickProps = {
   onChange: (next: Choice[]) => void;
 };
 
+/** Stands in for a companion photograph until one is filed under images/dishes. */
+const SideGlyph = () => (
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="8.5" />
+    <circle cx="12" cy="12" r="4.5" />
+  </svg>
+);
+
 function ChoicePicker({id, legend, hint, list, chosen, multiple, onChange}: PickProps) {
   const picked = multiple ? (Array.isArray(chosen) ? chosen : []) : [];
   const isOn = (c: Choice) => (multiple ? picked.some(x => x.key === c.key) : Array.isArray(chosen) ? false : chosen?.key === c.key);
@@ -214,10 +222,22 @@ function ChoicePicker({id, legend, hint, list, chosen, multiple, onChange}: Pick
                 checked={isOn(c)}
                 onChange={() => toggle(c)}
               />
+              <span className="pickShot">
+                <SmartImage
+                  group="dishes"
+                  name={'side-' + c.key}
+                  alt={c.name}
+                  ratio="1/1"
+                  widths={[160, 320]}
+                  sizes="44px"
+                  placeholder={<span className="pickShotGlyph" aria-hidden="true"><SideGlyph/></span>}
+                />
+              </span>
               <span className="pickTick" aria-hidden="true"><CheckIcon/></span>
               <span className="pickText">
                 <b>{c.name}</b>
                 <small>{c.note}</small>
+                {SHOW_FILE_HINTS && <code className="shotFile">images/dishes/side-{c.key}.jpg</code>}
               </span>
               <span className={'pickPrice' + (free ? ' incl' : '')}>{free ? 'Included' : '+ ' + fmt(addOnPrice(c))}</span>
             </label>

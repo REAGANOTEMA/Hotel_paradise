@@ -71,10 +71,16 @@ sections.forEach((s, i) => {
     `  sort_order=VALUES(sort_order), published=1;`
   );
 
+  // ORDER BY id LIMIT 1 is what makes this file safe on a database that has
+  // duplicate category rows. A scalar subquery that matches two rows raises
+  // #1242 and aborts the whole import, and duplicates are easy to arrive at:
+  // most of the schema files in this repository create menu_categories without
+  // a unique key, so importing an older menu file twice duplicates all of them.
+  // The oldest row wins, which is the one any past orders already point at.
   const rows = s.groups
     .flatMap(g => g.items)
     .map((d, j) =>
-      `  (${HOTEL_ID},(SELECT id FROM menu_categories WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)} AND name=${q(s.name)}),` +
+      `  (${HOTEL_ID},(SELECT id FROM menu_categories WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)} AND name=${q(s.name)} ORDER BY id LIMIT 1),` +
       `${q(d.name)},${q(d.group || null)},${q(d.desc || null)},${n(d.price)},${q(d.image || null)},${j + 1},1,1)`
     )
     .join(',\n');
@@ -100,7 +106,7 @@ statements.push(
   `-- hotel's own and are left alone.\n` +
   `UPDATE menu_items SET published = 0\n` +
   `WHERE hotel_id = ${HOTEL_ID} AND published = 1 AND name NOT IN (${names})\n` +
-  `  AND category_id IN (SELECT id FROM menu_categories WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)});`
+  `  AND category_id IN (SELECT id FROM menu_categories WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)} ORDER BY id LIMIT 1);`
 );
 
 const catNames = sections.map(s => q(s.name)).join(',');
@@ -168,6 +174,18 @@ SELECT COUNT(*) AS published_section_with_no_dish
 SELECT outlet, SUM(i.active = 1) AS sellable, SUM(i.published = 1) AS on_website
   FROM menu_items i JOIN menu_categories c ON c.id = i.category_id
  WHERE i.hotel_id = ${HOTEL_ID} GROUP BY outlet;
+
+-- Must be zero. A section name that appears twice means two rows are fighting
+-- over one section: the website shows the section, but a dish added under one
+-- row is invisible under the other. Only database/01_LIVE_SYSTEM_SCHEMA.sql
+-- creates menu_categories with a UNIQUE key, so importing one of the older menu
+-- files twice will quietly produce these. Every lookup in this file is written
+-- to survive it, but the duplicates themselves still need database/
+-- tools/fix-duplicate-menu-categories.sql to clear them.
+SELECT name, COUNT(*) AS rows_found
+  FROM menu_categories
+ WHERE hotel_id = ${HOTEL_ID} AND outlet = ${q(OUTLET)}
+ GROUP BY name HAVING COUNT(*) > 1;
 `;
 
 mkdirSync(join(root, 'database'), {recursive: true});

@@ -51,9 +51,9 @@ const MENU_SALADS=[
  * frontend-react/src/menuData.ts.
  */
 const MENU_SERVED_WITH=[
-  'Paradise Lusaniya (3-4 Pax)'=>['pilau','matoke','wedges'],
-  'Liver Princess'=>['rice','chips','matoke'],
-  'Mixed Grill Platter (2 Pax)'=>['chips','rice','fries','wedges']
+'Paradise Lusaniya'=>['pilau','matoke','wedges'],
+ 'Liver Princess'=>['rice','chips','matoke'],
+ 'Mixed Grill Platter'=>['chips','rice','fries','wedges']
 ];
 
 /** A key that exists, or null. Never returns anything the guest made up. */

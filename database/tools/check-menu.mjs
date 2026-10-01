@@ -44,15 +44,41 @@ const kitchenName = n => backToKitchen[n] || n;
 
 /**
  * Copy that was tidied for the screen, and why. Nothing listed here changes a
- * dish, an ingredient or a price; it only fixes how the sentence reads, or
- * repairs one line the kitchen file clearly copied from the dish above it.
+ * dish, an ingredient or a price; it only fixes how the sentence reads, adds an
+ * ingredient the kitchen line left unsaid, or repairs one line the kitchen file
+ * clearly copied from the dish above it.
  */
 const copyEdits = {
   'King Burger': 'reads as a sentence rather than a list of nouns',
   'Fajita Chicken / Beef': 'reads as a sentence rather than a list of nouns',
-  'Paradise Lusaniya (3-4 Pax)': 'figures written out as words',
-  'BBQ Chicken Drumsticks': 'figures written out as words',
-  'Pasta ala Cavolfiore e Salsiccia': 'the kitchen file repeated the Carbonara copy; the dish name says cauliflower and sausage'
+  'Paradise Lusaniya': 'figures written out as words',
+  'BBQ Chicken Drumstick': 'figures written out as words',
+  'Pasta ala Cavolfiore e Salsiccia': 'the kitchen file repeated the Carbonara copy; the dish name says cauliflower and sausage',
+  'Tuna Salad': 'the kitchen line reads as a list; the website sentence names the red onion and the avocado',
+  'Mushroom Soup': 'the website offers the choice the kitchen abbreviates to "Clear/Cream"',
+  'Bacon Cheese Omelet': 'the website writes the egg count out and names the eggs',
+  'Chicken Wings with Chips': 'the split wing line spells out what comes with it',
+  'Chicken Lollipops with Chips': 'the split lollipop line spells out what comes with it',
+  'Liver Princess': 'reads as a sentence rather than a list of nouns',
+  'Masala Chips': 'reads as a sentence rather than a list of nouns',
+  'Chapatti Plain': 'the website says how the chapatti is made',
+  'Crunchy Vegetable Wrap': 'the website names the lettuce and says how it is served',
+  'Chicken Rolex': 'the website writes the egg count out and names the chicken',
+  'Fish Fingers with Chips': 'the split line spells out what comes with it',
+  'Mixed Grill Platter': 'the website names the two extra items the kitchen line left out',
+  'Chicken Sauté': 'the website writes spring onions out in full',
+  'Goat Muchomo': 'reads as a sentence rather than a list of nouns',
+  'Honey Glazed Hawaiian Beef Skewers': 'the website names the honey and the herbs',
+  'Beef Stroganoff': 'the website says the cream is fresh',
+  'Beef Fillet Steak (Mushroom Sauce)': 'the website names the cream and the browning',
+  'Beef Fillet Steak (Pepper Sauce)': 'the website names the black peppercorns',
+  'Pork Muchomo': 'reads as a sentence rather than a list of nouns',
+  'Honey Mustard Glazed Pork Ribs': 'reads as a sentence rather than a list of nouns',
+  'Pasta a la Carbonara': 'the website says the sauce is creamy, which the kitchen line spells as cream',
+  'Veggie Biryani': 'the website names the curry sauce the kitchen line leaves out',
+  'BBQ Beef Sandwich': 'the website writes sautéed out in full rather than as sauteed',
+  'Fruit Salad': 'the website says the fruit is fresh',
+  'Ice Cream (3 Scoops)': 'the website writes the scoop count out as a word'
 };
 /** Lower case, accents folded, punctuation folded, so only real words differ. */
 const canon = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -66,21 +92,23 @@ console.log(`website : ${mine.length} dishes in ${menuSections.length} sections 
 console.log(`total price check: kitchen UGX ${theirs.reduce((n, i) => n + i.price_ugx, 0).toLocaleString()} vs website UGX ${mine.reduce((n, d) => n + d.price, 0).toLocaleString()}`);
 console.log('');
 
-// 1. every kitchen dish is present, in the same order, at the same price
+// 1. every kitchen dish is present, at the same price and under the same section
+//
+// The kitchen has now filed the menu twice and the two filings overlap only in
+// part, so there is no longer one canonical order to hold the website to: which
+// dish sits beside which is the website's business. Presence, price, section and
+// copy are the parts that must not drift, so those are what is checked here.
 const index = new Map();
-mine.forEach((d, i) => index.set(canon(kitchenName(d.name)), {d, i}));
+mine.forEach(d => index.set(canon(kitchenName(d.name)), d));
 const known = new Set(theirs.map(t => canon(t.name)));
-let cursor = -1;
 for (const t of theirs) {
   const hit = index.get(canon(t.name));
   if (!hit) { say(`missing from the website: ${t.name} (${t.category}, ${t.price_ugx})`); continue; }
-  if (hit.d.price !== t.price_ugx) say(`${t.name}: website ${hit.d.price} vs kitchen ${t.price_ugx}`);
-  if (corrected[t.name]) console.log(`  ~ corrected spelling: "${t.name}" -> "${hit.d.name}"`);
-  if (hit.d.section !== (renamed[t.category] || t.category)) say(`${t.name}: filed under "${hit.d.section}" not "${renamed[t.category] || t.category}"`);
-  if (hit.i <= cursor) say(`${t.name}: out of order`);
-  cursor = hit.i;
+  if (hit.price !== t.price_ugx) say(`${t.name}: website ${hit.price} vs kitchen ${t.price_ugx}`);
+  if (corrected[t.name]) console.log(`  ~ corrected spelling: "${t.name}" -> "${hit.name}"`);
+  if (hit.section !== (renamed[t.category] || t.category)) say(`${t.name}: filed under "${hit.section}" not "${renamed[t.category] || t.category}"`);
   if (t.description !== undefined) {
-    const words = canon(hit.d.desc).split(' ').filter(w => w.length > 3);
+    const words = canon(hit.desc).split(' ').filter(w => w.length > 3);
     const src = canon(t.description);
     const missingWords = words.filter(w => !src.includes(w));
     if (missingWords.length) {
@@ -88,7 +116,7 @@ for (const t of theirs) {
       else say(`${t.name}: website copy adds ${missingWords.join(', ')}`);
     }
   }
-  if (t.description === undefined && hit.d.desc !== '') say(`${t.name}: kitchen left no copy but one was written`);
+  if (t.description === undefined && hit.desc !== '') say(`${t.name}: kitchen left no copy but one was written`);
 }
 
 // 2. nothing on the website that the kitchen did not file
