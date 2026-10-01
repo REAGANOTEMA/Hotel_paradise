@@ -63,9 +63,11 @@ SELECT dup.name,
 --    orphaned. MIN(id) is the survivor, so the row a past order already points
 --    at is the one that stays.
 --
---    The aliases are c_old and c_keep rather than "old" and "keep" because OLD
---    is a reserved word in MySQL and MariaDB and the statement is refused with
---    #1064 if it is used as an identifier.
+--    Two mistakes are avoided here, both of which cost real time. The aliases
+--    are c_old and c_keep rather than "old" and "keep" because OLD is a
+--    reserved word in MySQL and MariaDB, and using it as an identifier is
+--    refused with #1064. And the SET clause is not optional: a multi-table
+--    UPDATE with a WHERE but no SET is refused with #1064 in the same place.
 UPDATE hotelpardise_system.menu_items i
   JOIN hotelpardise_system.menu_categories c_old ON c_old.id = i.category_id
   JOIN hotelpardise_system.menu_categories c_keep
@@ -74,6 +76,7 @@ UPDATE hotelpardise_system.menu_items i
                      WHERE k.hotel_id = c_old.hotel_id
                        AND k.outlet   = c_old.outlet
                        AND k.name     = c_old.name)
+   SET i.category_id = c_keep.id
  WHERE i.category_id <> c_keep.id;
 
 -- 3. Delete duplicate section rows, but only once they hold nothing, so this
@@ -88,21 +91,34 @@ DELETE dup
  WHERE NOT EXISTS (SELECT 1 FROM hotelpardise_system.menu_items i
                     WHERE i.category_id = dup.id);
 
--- 4. Add the key that stops this returning. Guarded, because a plain
---    ALTER TABLE ADD UNIQUE KEY fails with #1061 on the second run.
-SET @has_key := (SELECT COUNT(*) FROM information_schema.statistics
-                  WHERE table_schema = 'hotelpardise_system'
-                    AND table_name   = 'menu_categories'
-                    AND index_name   = 'uq_menu_categories');
-SET @add_key := IF(@has_key = 0,
-                   'ALTER TABLE hotelpardise_system.menu_categories
-                      ADD UNIQUE KEY uq_menu_categories (hotel_id, outlet, name)',
-                   'DO 0');
-PREPARE add_uq FROM @add_key;
-EXECUTE add_uq;
-DEALLOCATE PREPARE add_uq;
+-- 4. The state of the key that stops this returning, and the result of the
+--    repair. Every statement in this file is now safe to paste on its own, in
+--    any order, with any database selected. None of them can fail, so there is
+--    nothing here to skip and nothing to remember.
+--
+--    On a database built from database/01_LIVE_SYSTEM_SCHEMA.sql this returns
+--    existing_key_columns 3, because a three-column index reports one row per
+--    column. A single 0 means the key was never added, and that is the only
+--    state in which duplicates can start appearing again; see the note at the
+--    end of this file for adding it.
+--
+--    This file deliberately contains no ALTER TABLE. An earlier version ended
+--    with ADD UNIQUE KEY and told you to run it only when the key was missing,
+--    which is a rule that has to be remembered and was remembered wrongly: it
+--    fails with #1061 "Duplicate key name" the moment the key is already there,
+--    which is the normal case on a correctly built database. A repair file that
+--    errors when run against a healthy database is worse than no repair file.
+--    Two further attempts to make the ALTER self-guard were worse again:
+--    a stored procedure raises #1064 in any tool that splits on semicolons, and
+--    SET @var := ... with PREPARE only works within one connection, so a single
+--    pasted statement gets @var as NULL and EXECUTE fails with #1243
+--    "Unknown prepared statement handler".
+SELECT COUNT(*) AS existing_key_columns
+  FROM information_schema.statistics
+ WHERE table_schema = 'hotelpardise_system'
+   AND table_name   = 'menu_categories'
+   AND index_name   = 'uq_menu_categories';
 
--- 5. The key is now in place, or was already there. Both counts must be zero.
 SELECT
   (SELECT COUNT(*) FROM (SELECT name FROM hotelpardise_system.menu_categories
                           WHERE hotel_id = 1 AND outlet = 'restaurant'
