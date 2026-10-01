@@ -37,9 +37,21 @@ CREATE TABLE IF NOT EXISTS website_booking_requests (
  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- The hotel's own details, written down once here so that the website, the
+-- printed menu and the kitchen all quote the same address and the same two
+-- telephone numbers. The web address is hotelparadiseonthenile.info: it is a
+-- .info and must not be recorded anywhere as a .com.
 INSERT INTO website_settings(setting_key,setting_value)
 VALUES ('domain','https://hotelparadiseonthenile.info'),
+       ('website','www.hotelparadiseonthenile.info'),
        ('hotel_name','Hotel Paradise on the Nile'),
+       ('legal_name','Hotel Paradise on the Nile Ltd'),
+       ('address','Plot 12, 19 & 25 Kiira Lane, Jinja, Uganda'),
+       ('po_box','P.O. Box 1139, Jinja, Uganda'),
+       ('phone_primary','+256 759 504 928'),
+       ('phone_secondary','+256 773 565 668'),
+       ('email','hotel@hotelparadiseonthenile.info'),
+       ('certification','UNBS Certified (US 130:2017)'),
        ('designer','Reagansoft Innovation Limited'),
        ('system_path','/system/')
 ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value);

@@ -1,13 +1,13 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, LOGO} from './shared';
+import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, LOGO, HOTEL, CALL, telHref} from './shared';
 import {heroShots, SmartImage, type HeroShot} from './SmartImage';
 
 const dining = [
  {name: 'Breakfast', price: 'UGX 25,000', note: 'For non residents, or children above six years sharing a room with their parents'},
  {name: 'Buffet meal', price: 'UGX 40,000', note: 'Served daily around lunch and dinner'},
- {name: 'A la carte menu', price: 'UGX 10,000 to 45,000', note: 'A wide selection, from light bites to full plates'},
+ {name: 'A la carte menu', price: 'UGX 1,000 to 100,000', note: '225 dishes, from light bites to full platters'},
  {name: 'Baby cots', price: 'Free', note: 'Available on request for your little one'}
 ];
 
@@ -20,8 +20,9 @@ const facts = [
  {t: 'Wellness', d: 'Health club with a swimming pool'}
 ];
 
-const MAP_EMBED = 'https://www.google.com/maps?q=' + encodeURIComponent('Hotel Paradise on the Nile, 19 Kiira Rd, Jinja, Uganda') + '&output=embed';
-const MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Hotel Paradise on the Nile, 19 Kiira Rd, Jinja, Uganda');
+const MAP_QUERY = HOTEL.shortName + ', ' + HOTEL.addressForMap;
+const MAP_EMBED = 'https://www.google.com/maps?q=' + encodeURIComponent(MAP_QUERY) + '&output=embed';
+const MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(MAP_QUERY);
 
 const HERO_WIDTHS = [640, 1024, 1440, 1920, 2560];
 
@@ -119,7 +120,7 @@ const HERO_COPY: HeroCopy[] = [
     title: 'Your room is waiting.',
     text: 'Book online in a moment, or call the front desk. Someone answers the phone at every hour of the day.',
     primary: {label: 'Book your stay', href: './rooms.html'},
-    secondary: {label: 'Call +256 759 504 928', href: 'tel:+256759504928'}
+    secondary: {label: 'Call ' + CALL, href: telHref(CALL)}
   }
 ];
 
@@ -380,22 +381,24 @@ function Home() {
    <div className="center">
     <p className="eyebrow">BOOKINGS AND ENQUIRIES</p>
     <h2>How to reach us</h2>
-    <p className="intro">We are at 19 Kiira Road, a few minutes from the river. Call, write or email the front desk to confirm availability, check in times and current rates.</p>
-   </div>
-   <div className="contactWrap">
-    <div className="contactCard">
-     <div className="contactRow"><b>HOTEL</b><span>Hotel Paradise on the Nile Ltd</span></div>
-     <div className="contactRow"><b>ADDRESS</b><span>19 Kiira Rd, Jinja, Uganda</span></div>
-     <div className="contactRow"><b>POST</b><span>P.O. Box 1139, Jinja, Uganda</span></div>
-     <div className="contactRow"><b>TELEPHONE</b><span>+256 759 504 928</span></div>
-     <div className="contactRow"><b>EMAIL</b><span>hotel@hotelparadiseonthenile.info</span></div>
-     <div className="contactRow"><b>FRONT DESK</b><span>Open every day, 24 hours</span></div>
+     <p className="intro">We are at Plot 12, 19 &amp; 25 Kiira Lane, a few minutes from the river. Call, write or email the front desk to confirm availability, check in times and current rates.</p>
     </div>
-    <div className="mapBox">
-     <iframe title="Hotel Paradise on the Nile on Google Maps" src={MAP_EMBED} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen/>
-     <p>Hotel Paradise on the Nile, 19 Kiira Rd, Jinja. <a href={MAP_LINK} target="_blank" rel="noreferrer">Open in Google Maps</a></p>
+    <div className="contactWrap">
+     <div className="contactCard">
+      <div className="contactRow"><b>HOTEL</b><span>{HOTEL.legalName}</span></div>
+      <div className="contactRow"><b>ADDRESS</b><span>{HOTEL.address}</span></div>
+      <div className="contactRow"><b>POST</b><span>{HOTEL.poBox}</span></div>
+      <div className="contactRow"><b>TELEPHONE</b><span>{HOTEL.phones.map((p, i) => <React.Fragment key={p}>{i > 0 && <><br/></>}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>)}</span></div>
+      <div className="contactRow"><b>EMAIL</b><span><a className="footLink" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a></span></div>
+      <div className="contactRow"><b>WEBSITE</b><span><a className="footLink" href={'https://' + HOTEL.website} target="_blank" rel="noopener noreferrer">{HOTEL.website}</a></span></div>
+      <div className="contactRow"><b>STANDARD</b><span>{HOTEL.certification}</span></div>
+      <div className="contactRow"><b>FRONT DESK</b><span>Open every day, 24 hours</span></div>
+     </div>
+     <div className="mapBox">
+      <iframe title="Hotel Paradise on the Nile on Google Maps" src={MAP_EMBED} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen/>
+      <p>{HOTEL.address}. <a href={MAP_LINK} target="_blank" rel="noreferrer">Open in Google Maps</a></p>
+     </div>
     </div>
-   </div>
   </section>
 
   <Footer/>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmt, apiUrl} from './shared';
+import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, telHref} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {
   MENU_REVISION,
@@ -24,8 +24,6 @@ import {
 } from './menuData';
 
 type Line = {key: string; dish: MenuItem; qty: number; companion: Choice | null; salads: Choice[]};
-
-const CALL = '+256 759 504 928';
 
 /** The fallback menu, read the way it is going to be printed. */
 const FALLBACK: MenuSection[] = tidySections(menuSections);
@@ -330,7 +328,7 @@ function DishDetail({
                 The kitchen prices this one to the weight of what you order, so it is confirmed before it
                 reaches the pass. Call us and we will price it and take your order straight away.
               </p>
-              <a className="btn askCall" href={'tel:' + CALL.replace(/\s/g, '')}><PhoneIcon/>Call {CALL}</a>
+              <a className="btn askCall" href={telHref(CALL)}><PhoneIcon/>Call {CALL}</a>
             </div>
           ) : (
             <>
@@ -686,7 +684,7 @@ function MenuPage() {
             </div>
           ) : (
             <div className="trayForm">
-              <div className="bookMsg">Online ordering is briefly unavailable. Your list is still here — call <a href={'tel:' + CALL.replace(/\s/g, '')}>{CALL}</a> to place it.</div>
+              <div className="bookMsg">Online ordering is briefly unavailable. Your list is still here — call <a href={telHref(CALL)}>{CALL}</a> to place it.</div>
             </div>
           )}
 

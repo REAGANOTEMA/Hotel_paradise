@@ -97,19 +97,25 @@ This loads the hotel, the staff roles, the room types and a first menu.
 
 With `hotelpardise_system` selected, paste `database/07_FULL_MENU_SEED.sql`.
 
-This loads all 15 sections and all 81 dishes exactly as the website shows them.
-It finishes with five checks. Read them:
+This loads all 19 sections and all 225 dishes exactly as the website shows them.
+Every dish carries a rate, so nothing is published as "Priced on request".
+It finishes with six checks. Read them:
 
 | check | must read |
 |---|---|
-| `published_sections` | 15 |
-| `published_dishes` | 81 |
-| `sections_covered` | 15 |
+| `published_sections` | 19 |
+| `published_dishes` | 225 |
+| `priced_on_request` | 0 |
+| `sections_covered` | 19 |
 | `published_dish_with_no_section` | 0 |
 | `published_section_with_no_dish` | 0 |
 
 The last two are the ones that matter. Anything above zero means a dish the
-guest cannot reach, or a section that opens to nothing.
+guest cannot reach, or a section that opens to nothing. `priced_on_request` must
+be 0: if it is not, a dish reached the menu without a rate.
+
+The closing `outlet` summary is a bystander, not a check. The till's own menu
+must not change when this file runs.
 
 **Re-running this file is safe.** It matches dishes by name and updates them in
 place, so you can run it again whenever the kitchen changes the menu. It never
@@ -160,7 +166,7 @@ Then the menu:
 https://your-domain/backend-php/api.php?act=menu
 ```
 
-`"menu_items"` of 81 under `hotel` on the health page, and 15 sections in the
+`"menu_items"` of 225 under `hotel` on the health page, and 19 sections in the
 menu response, means the database is installed correctly. If that number is
 small, `database/07_FULL_MENU_SEED.sql` has not been run, or was run before the
 schema gained the `published` column.

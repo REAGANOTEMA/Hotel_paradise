@@ -1,4 +1,32 @@
 -- ============================================================================
+-- SUPERSEDED. THE MENU IN THIS FILE IS NO LONGER THE MENU.
+--
+-- This file carries the old proposed a la carte menu: 15 sections and 81
+-- dishes, several of them with no rate at all. The kitchen has since filed the
+-- real menu, which is 19 sections and 225 dishes, every one of them priced.
+-- Installing this file would publish a menu the restaurant does not serve.
+--
+-- Use the generated seed instead, which is rebuilt from the single source of
+-- truth every time the menu changes:
+--
+--     database/07_FULL_MENU_SEED.sql
+--
+-- and install it in this order:
+--
+--     1. database/01_LIVE_SYSTEM_SCHEMA.sql
+--     2. database/05_HOSTING_INSTALL.sql
+--     3. database/02_LIVE_SYSTEM_SEED.sql
+--     4. database/07_FULL_MENU_SEED.sql                    <- the real menu
+--     5. database/website_sql/01_WEBSITE_INTEGRATION_SCHEMA.sql
+--
+-- To change the menu, edit frontend-react/src/menuData.ts and re-run
+--     node database/tools/build-menu-seed.mjs .
+-- To check the website copy against the kitchen's own file, re-run
+--     node database/tools/check-menu.mjs . database/tools/kitchen-menu-source.json
+--
+-- Everything below this banner is kept exactly as it was, for reference only.
+-- ============================================================================
+-- ============================================================================
 -- HOTEL PARADISE ON THE NILE — PROPOSED A LA CARTE MENU, JANUARY 2026
 -- ============================================================================
 -- Run AFTER schema.sql and seed.sql.

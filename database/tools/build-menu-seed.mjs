@@ -12,8 +12,9 @@ const HOTEL_ID = 1;
 const OUTLET = 'restaurant';
 
 // esbuild ships with Vite, so it is resolved from the frontend rather than
-// added as a dependency of its own
-const require = createRequire(join(root, 'frontend-react', 'package.json'));
+// added as a dependency of its own. createRequire wants a file URL or an
+// absolute path, and the root may well have been passed in as ".".
+const require = createRequire(pathToFileURL(join(root, 'frontend-react', 'package.json')));
 const {build} = await import(pathToFileURL(require.resolve('esbuild')).href);
 const built = await build({
   entryPoints: [src],
@@ -112,9 +113,9 @@ const sql = `-- HOTEL PARADISE ON THE NILE - COMPLETE MENU SEED
 -- Generated from frontend-react/src/menuData.ts by database/tools/build-menu-seed.mjs
 -- Do not hand edit. Re-run the generator instead.
 --
--- ${sections.length} sections, ${dishes.length} dishes for hotel ${HOTEL_ID}. A dish priced on
--- request is stored as NULL, which is what the website reads as
--- "Priced on request".
+-- ${sections.length} sections, ${dishes.length} dishes for hotel ${HOTEL_ID}, every one of them carrying a rate
+-- in Ugandan shillings. A dish with no rate is stored as NULL, which is what
+-- the website reads as "Priced on request"; there are ${dishes.filter(d => d.price === null).length} of those.
 --
 -- Safe to run on a hotel that is already trading. Dishes are matched on their
 -- name, so a reload updates the existing rows in place and keeps the ids that
@@ -124,6 +125,13 @@ const sql = `-- HOTEL PARADISE ON THE NILE - COMPLETE MENU SEED
 --
 -- Run it inside a transaction if you would rather see the whole result or none
 -- of it.
+--
+-- Sauté and Sautéed carry an accent, and the dishes are matched on their name.
+-- The line below tells the client to read this file as UTF-8; without it a
+-- client that defaults to latin1 will store a mangled name, fail to match the
+-- existing row on a reload, and quietly publish the same dish twice.
+
+SET NAMES utf8mb4;
 
 USE \`hotelpardise_system\`;
 

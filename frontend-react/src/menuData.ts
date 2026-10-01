@@ -1,9 +1,16 @@
 /**
- * PROPOSED A LA CARTE MENU — JANUARY 2026
- * Hotel Paradise on the Nile, 19 Kiira Road, Jinja.
+ * A LA CARTE RESTAURANT MENU
+ * Hotel Paradise on the Nile Ltd, Plot 12, 19 & 25 Kiira Lane, Jinja, Uganda.
+ * UNBS Certified, US 130:2017.
+ *
+ * Nineteen sections, two hundred and twenty five dishes, exactly as the
+ * kitchen filed them. Where the kitchen left a dish without copy the copy is
+ * left empty here too, because inventing a description is worse than an
+ * honest blank space.
  *
  * This is the fallback dataset used when the kitchen database is unreachable.
- * database/menu_alacarte.sql holds the same menu for the live database.
+ * database/07_FULL_MENU_SEED.sql is generated from this file by
+ * database/tools/build-menu-seed.mjs and holds the same menu in the database.
  *
  * PHOTOS
  * Drop a picture into /images/dishes/ named after the item, for example
@@ -54,21 +61,24 @@ const item = (name: string, desc: string, price: number | null, group: string, i
   group
 });
 
-export const MENU_REVISION = 'A la carte menu, January 2026';
+export const MENU_REVISION = 'A la carte restaurant menu';
 
 /* ------------------------------------------------------------------
    COMPANIONS AND SALADS
 
-   The kitchen already writes its accompaniments into the dish copy, for
-   example "served with an accompaniment of your choice" or "rice or
-   chips". Rather than repeat that by hand on eighty one rows, the
-   dish detail view reads the wording and offers exactly the
-   accompaniments that wording allows. A dish that is served plain, or
-   needs no starch at all, is simply offered none.
+   The kitchen states the accompaniment once for the whole section rather
+   than repeating it on every dish: omelets come with chips, sandwiches
+   come with chips or salad, burgers may be served with chips and salad,
+   pasta is offered in five shapes, and non veg curries come with a
+   choice of one or two accompaniments. So the rule is held per section
+   below, keyed on the section name, and the dish detail view offers
+   exactly what its own section allows.
 
-   One companion comes with the dish, which is the house standard, and
-   is marked "included". Everything else is an upgrade and carries a
-   small add on price. To make every accompaniment free, set
+   One companion comes with the dish, which is the house standard, and is
+   marked "included". Every list below therefore leads with a companion
+   that costs nothing, so the plate a guest opens is never quietly dearer
+   than the price printed on the card. Everything else is an upgrade and
+   carries a small add on price. To make every accompaniment free, set
    ADD_ONS_INCLUDED to true below: the pickers stay, the totals do not
    move.
    ------------------------------------------------------------------ */
@@ -119,65 +129,104 @@ export const NO_COMPANIONS: Choice[] = [];
 export const NO_SALADS: Choice[] = [];
 
 /** A dish with no photograph still needs a dish, not a table of starches. */
-const servedPlain = /\b(served plain|baked to order|three scoops|two scoops|a pair of|a slice of|a generous and visually|chocolate syrup)\b/i;
-
-/** The sections that are a full plate of food, whatever the copy leaves out. */
-const MAIN_PLATE = /^(whole fish|fish fillets|chicken lovers|steaks|pork|house specials|curries|biryani|snacks|egg dishes|burgers)$/i;
+const servedPlain = /\b(served plain|as it comes|nothing added)\b/i;
 
 /**
- * A few dishes name more than one accompaniment in their own copy. Those are
- * the ones that come with the plate, so they are held at the card price here
+ * The accompaniments each section is allowed, keyed on the section name.
+ * A section that is not named here is served as it comes, so the picker is
+ * left off the dish altogether rather than filled with guesses.
+ */
+const CATEGORY_COMPANIONS: Record<string, string[]> = {
+  Soups: ['roll', 'garlic'],
+  'Omelets & Snacks': ['chips', 'fries', 'wedges', 'matoke'],
+  Sandwiches: ['chips', 'fries', 'wedges', 'matoke'],
+  Burgers: ['chips', 'fries', 'wedges', 'matoke'],
+  'Rolex Wraps & Burritos': ['none', 'chips', 'fries', 'wedges'],
+  "Fisherman's Offer": ['chips', 'rice', 'fries', 'wedges', 'matoke', 'pilau'],
+  'House Specials & Platters': ['chips', 'rice', 'fries', 'wedges', 'pilau', 'matoke'],
+  'Chicken Dishes': ['chips', 'rice', 'fries', 'wedges', 'pilau', 'matoke', 'chapatti'],
+  'Beef & Goat Main Courses': ['chips', 'rice', 'fries', 'wedges', 'pilau', 'matoke', 'chapatti'],
+  'Pork Courses': ['chips', 'rice', 'fries', 'wedges', 'pilau', 'matoke', 'chapatti'],
+  Pizzeria: ['none', 'garlic'],
+  'Italian Pastas': ['none', 'garlic', 'roll'],
+  'Asian & Indian Curries': ['rice', 'naan', 'chapatti', 'ugali', 'cassava', 'matoke'],
+  'Chinese Corner': ['none', 'rice', 'chips', 'fries', 'wedges'],
+  'Sizzler Hot Plates': ['rice', 'chips', 'fries', 'wedges']
+};
+
+/**
+ * The sections a salad may be added to. A salad is a plate in its own right,
+ * so it is offered with anything that arrives on a starch or a plate, and
+ * never with a soup, with a rice dish, with the extras themselves, nor with
+ * the salads in the first section, which are already salads.
+ */
+const CATEGORY_SALADS: string[] = [
+  'Omelets & Snacks',
+  'Sandwiches',
+  'Burgers',
+  'Rolex Wraps & Burritos',
+  "Fisherman's Offer",
+  'House Specials & Platters',
+  'Chicken Dishes',
+  'Beef & Goat Main Courses',
+  'Pork Courses',
+  'Pizzeria',
+  'Italian Pastas',
+  'Asian & Indian Curries',
+  'Chinese Corner',
+  'Sizzler Hot Plates'
+];
+
+/**
+ * A few dishes name more than one accompaniment in their own copy, and those
+ * are the ones that come with the plate. They are held at the card price here
  * and in backend-php/app/menu_extras.php, which must be kept in step.
  */
 export const SERVED_WITH: Record<string, string[]> = {
-  'Paradise Lusaniya': ['pilau', 'matoke', 'wedges'],
+  'Paradise Lusaniya (3-4 Pax)': ['pilau', 'matoke', 'wedges'],
+  'Liver Princess': ['rice', 'chips', 'matoke'],
+  'Mixed Grill Platter (2 Pax)': ['chips', 'rice', 'fries', 'wedges']
 };
 
-/** Applies a dish's own included list to the choices it may be ordered with. */
+/** The accompaniments a dish is given with, whether by name or by its section. */
+function includedKeysFor(dish: MenuItem): string[] {
+  const byName = SERVED_WITH[dish.name] || [];
+  const byCopy = /served with rice, chips, or matooke/i.test(dish.desc || '') ? ['rice', 'chips', 'matoke'] : [];
+  return [...new Set([...byName, ...byCopy])];
+}
+
+/**
+ * Applies a dish's own included list to the choices it may be ordered with,
+ * adding any accompaniment the dish names in its own copy but its section
+ * did not offer, so the guest is never quoted for something already served.
+ */
 function withIncluded(dish: MenuItem, list: Choice[]): Choice[] {
   // Keyed on the dish's name, because that is what identifies a dish here and
   // what MENU_SERVED_WITH in backend-php/app/menu_extras.php is keyed on too.
   // The two lists must be kept in step, or the guest is shown one price and
   // charged another.
-  const free = SERVED_WITH[dish.name];
-  if (!free) return list;
-  return list.map(c => (free.includes(c.key) && c.add ? {...c, add: 0} : c));
+  const free = includedKeysFor(dish);
+  if (!free.length) return list;
+  const kept = list.map(c => (free.includes(c.key) && c.add ? {...c, add: 0} : c));
+  const named = free
+    .filter(k => !list.some(c => c.key === k))
+    .map(k => COMPANIONS.find(c => c.key === k))
+    .filter((c): c is Choice => Boolean(c))
+    .map(c => (c.add ? {...c, add: 0} : c));
+  return [...kept, ...named];
 }
 
 /**
- * Which accompaniments a dish may be ordered with, taken from its own copy.
- * Ordered from the most specific wording down, because a line such as
- * "served with chips" also contains the word "with".
- *
+ * Which accompaniments a dish may be ordered with, taken from its section.
  * Every list leads with something that comes with the dish, so the plate a
  * guest opens is never quietly dearer than the price printed on the card.
  */
 export function companionsFor(dish: MenuItem): Choice[] {
-  return withIncluded(dish, companionList(dish));
-}
-
-function companionList(dish: MenuItem): Choice[] {
   const d = dish.desc || '';
-  const g = dish.group || '';
   if (servedPlain.test(d)) return NO_COMPANIONS;
-  if (/pilau, matoke or potato wedges/i.test(d)) return choice(COMPANIONS, ['pilau', 'matoke', 'wedges', 'rice', 'chips']);
-  if (/two accompaniments/i.test(d)) return COMPANIONS;
-  if (/accompaniment of your choice/i.test(d)) return COMPANIONS;
-  if (/rice or chapatti/i.test(d)) return choice(COMPANIONS, ['rice', 'chapatti', 'pilau', 'matoke', 'naan']);
-  if (/rice or mashed potatoes/i.test(d)) return choice(COMPANIONS, ['rice', 'chapatti', 'cassava', 'ugali', 'matoke']);
-  if (/(?:rice|chips)\s+or\s+(?:rice|chips)/i.test(d)) return choice(COMPANIONS, ['rice', 'chips', 'pilau', 'matoke', 'wedges', 'fries']);
-  if (/with chips/i.test(d)) return choice(COMPANIONS, ['chips', 'fries', 'wedges', 'matoke']);
-  if (/with rice/i.test(d)) return choice(COMPANIONS, ['rice', 'pilau', 'matoke', 'cassava']);
-  if (/bread roll|toasted bread|toasted roll|toast/i.test(d)) return choice(COMPANIONS, ['roll', 'garlic', 'chapatti', 'naan']);
-  if (/served with/i.test(d)) return choice(COMPANIONS, ['chips', 'rice', 'wedges', 'fries', 'matoke', 'pilau']);
-  // a pizza is a whole meal on its own, so it only ever offers a side
-  if (/^pizza$|^calzone$/i.test(g)) return choice(COMPANIONS, ['none', 'garlic']);
-  // a sandwich that names its own bread still takes an upgrade in its place
-  if (/sandwich/i.test(g)) return choice(COMPANIONS, ['roll', 'garlic', 'naan']);
-  // a stew, a grill or a platter is always served on something, even where the
-  // copy has not troubled to say what
-  if (MAIN_PLATE.test(g)) return choice(COMPANIONS, ['rice', 'chips', 'fries', 'wedges', 'pilau', 'matoke', 'chapatti', 'ugali', 'cassava', 'garlic', 'naan']);
-  return NO_COMPANIONS;
+  const keys = CATEGORY_COMPANIONS[dish.group];
+  if (!keys) return NO_COMPANIONS;
+  return withIncluded(dish, choice(COMPANIONS, keys));
 }
 
 /** What the detail view starts on: the first accompaniment that is included. */
@@ -188,17 +237,13 @@ export function defaultCompanion(dish: MenuItem): Choice | null {
 
 /**
  * A salad is a plate in its own right, so it is offered with anything that
- * arrives on a starch or a plate, and with the pizza, and never with a
- * pudding or a cup of soup.
+ * arrives on a starch or a plate, and never with a soup, with a rice dish,
+ * with the extras themselves, nor with the salads in the first section.
  */
 export function saladsFor(dish: MenuItem): Choice[] {
   const d = dish.desc || '';
-  const g = dish.group || '';
   if (servedPlain.test(d)) return NO_SALADS;
-  if (/^pizza$|^calzone$/i.test(g)) return SALADS;
-  if (/^soups$/i.test(g) || /ice cream|crepe|fruit|salad/i.test(g)) return NO_SALADS;
-  if (companionsFor(dish).length) return SALADS;
-  if (/served with|rice|chips/i.test(d)) return SALADS;
+  if (companionsFor(dish).length) return CATEGORY_SALADS.includes(dish.group) ? SALADS : NO_SALADS;
   return NO_SALADS;
 }
 
@@ -215,50 +260,101 @@ export const linePrice = (dish: MenuItem, companion: Choice | null, salads: Choi
 export const menuSections: MenuSection[] = [
   {
     key: 'starters',
-    name: 'Starters',
+    name: 'Starters & Salads',
     eyebrow: 'To begin',
-    blurb: 'Warm soups, the sandwich corner and freshly dressed salads.',
+    blurb: 'Fresh greens, tossed to order and dressed at the table.',
     image: '',
     groups: [
       {
-        name: 'Soups',
+        name: 'Starters & Salads',
         items: [
-          item('Mushroom Soup', 'Creamy forest mushroom soup, homemade style, served with a bread roll.', 12000, 'Soups'),
-          item('Clear Chicken and Beef Noodle Soup', 'Fresh aromatic clear soup of julienned chicken, zucchini, carrots, onions and fresh noodles.', 15000, 'Soups')
-        ]
-      },
-      {
-        name: 'Sandwich Corner',
-        items: [
-          item('Classic BLT Sandwich', 'Crisp bacon, lettuce and ripe tomato in a toasted roll.', 25000, 'Sandwich Corner'),
-          item('Three Decker Sandwich', 'Three decker of bacon, lettuce and tomato, served with chips.', null, 'Sandwich Corner'),
-          item('Tuna Melt', 'Tuna chunks folded with mayonnaise, red onion, tomato and lettuce.', 25000, 'Sandwich Corner'),
-          item('Paradise Club Sandwich', 'Triple decker of grilled beef, chicken breast, bacon, cheese, onions and mayo, served with chips.', 30000, 'Sandwich Corner')
-        ]
-      },
-      {
-        name: 'Salads',
-        items: [
-          item('Grilled Veggies Salad', 'Assorted seasoned grilled vegetables with bell pepper, carrots, zucchini and onions, laced with cashew nut flakes and dots.', 18000, 'Salads'),
-          item('Grilled Chicken Salad', 'Grilled boneless chicken strips married with onions, carrots, cucumber and tomato, garnished with black olives on a bed of lettuce.', 15000, 'Salads'),
-          item('Tuna Salad', 'Tuna fish, red onion and tomato infused in fresh mayonnaise, layered on lettuce with avocado slices.', 20000, 'Salads')
+          item('Mixed Garden Salad', 'Mixed lettuce, cucumber, tomatoes, onions and avocado.', 12000, 'Starters & Salads'),
+          item('Greek Salad', 'Tomatoes, red onions, cucumber, lettuce, feta cheese, black olives and red cabbage.', 15000, 'Starters & Salads'),
+          item('Avocado & Lettuce Salad', 'A well designed platter of lettuce, avocado, onions, cherry tomatoes and carrot shavings, finished with 1,000 Island dressing.', 15000, 'Starters & Salads'),
+          item('Tuna Salad', 'Tuna fish, red onion and tomatoes infused in fresh mayonnaise, layered on a base of lettuce with avocado slices.', 20000, 'Starters & Salads'),
+          item('Chicken Oriental Salad', 'Chicken with mayo, cucumber, pineapple, celery and tomatoes.', 20000, 'Starters & Salads'),
+          item('Caesar Salad', 'Grilled chicken cubes, avocado, carrot, lettuce, tomato, croutons and Parmesan cheese shavings.', 22000, 'Starters & Salads'),
+          item('Chef Salad', 'Crunchy lettuce, chicken flakes, beef strips, tomatoes, onions and bell peppers, topped with boiled Irish potatoes and a hard boiled egg.', 22000, 'Starters & Salads'),
+          item('Grilled Vegetables Salad', 'Assorted seasoned grilled vegetables with bell pepper, carrots, zucchini and onions, laced with cashew nut flakes and dates.', 18000, 'Starters & Salads'),
+          item('Grilled Chicken Salad', 'Grilled boneless chicken strips with onions, carrots, cucumber and tomatoes, garnished with black olives on a bed of lettuce.', 20000, 'Starters & Salads')
         ]
       }
     ]
   },
   {
-    key: 'eggs',
-    name: 'Egg Dishes',
-    eyebrow: 'From the pan',
-    blurb: 'Classic egg plates finished to order.',
+    key: 'soups',
+    name: 'Soups',
+    eyebrow: 'Warmed through',
+    blurb: 'Made fresh every morning and served with bread.',
     image: '',
     groups: [
       {
-        name: 'Egg Dishes',
+        name: 'Soups',
         items: [
-          item('Spanish Omelet', 'Traditional eggs with red onion, mushroom, green pepper and tomato, served with chips.', 15000, 'Egg Dishes'),
-          item('Avocado with an Egg', 'Avocado and a fried egg on toasted bread with a garnish.', 13000, 'Egg Dishes'),
-          item('Bacon and Cheese Omelet', 'Crunchy bacon folded into eggs, infused with cheese and a touch of pepper sauce, served with fries.', null, 'Egg Dishes')
+          item('Mushroom Soup', 'Creamy or clear freshly made forest mushroom, homemade style. Served with a bread roll.', 12000, 'Soups'),
+          item('Clear Vegetable Broth', 'Fresh homemade vegetable soup, served with a garlic bread roll.', 12000, 'Soups'),
+          item('Cream of Tomato Soup', 'A puree of tomatoes finished with dairy cream, accompanied with croutons.', 12000, 'Soups'),
+          item('Ginger Carrot Soup', 'A creamy soup with a hint of ginger and dairy cream, accompanied with toast.', 12000, 'Soups'),
+          item('Clear Beef Noodle Soup', 'Fresh aromatic clear soup comprising julienne of beef, zucchini, carrots, onions and fresh noodles.', 15000, 'Soups'),
+          item('Clear Chicken Noodle Soup', 'Fresh aromatic clear soup comprising julienne of chicken, zucchini, carrots, onions and fresh noodles.', 15000, 'Soups')
+        ]
+      }
+    ]
+  },
+  {
+    key: 'omelets',
+    name: 'Omelets & Snacks',
+    eyebrow: 'From the pan',
+    blurb: 'All omelets are served with chips.',
+    image: '',
+    groups: [
+      {
+        name: 'Omelets & Snacks',
+        items: [
+          item('French Cinnamon Toast', 'Garnished with mini fruit.', 12000, 'Omelets & Snacks'),
+          item('Eggs and Toast', 'Two eggs cooked to your style with home fries.', 12000, 'Omelets & Snacks'),
+          item('Mushroom and Cheese Omelet', 'Savory mushroom and cheddar, topped with a grilled tomato.', 15000, 'Omelets & Snacks'),
+          item('Mexican Omelet', 'Mushroom, green pepper, cheese, tomato and green chili.', 15000, 'Omelets & Snacks'),
+          item('Spanish Omelet', 'Traditional egg with red onion, mushroom, green pepper and tomatoes.', 15000, 'Omelets & Snacks'),
+          item('Bacon Cheese Omelet', 'Crunchy bacon in three eggs, infused with cheese and a touch of pepper spice.', 18000, 'Omelets & Snacks'),
+          item('Avocado with an Egg', 'Avocado with an egg and toasted bread, with a garnish.', 15000, 'Omelets & Snacks'),
+          item('Yummy Chicken Omelet', 'Diced chicken with a hint of cheese, infused with onions and tomatoes.', 17000, 'Omelets & Snacks'),
+          item('Chicken Gizzards', 'Boiled, fried and finished in homemade tomato sauce. Served with chips.', 18000, 'Omelets & Snacks'),
+          item('Fish Fingers', 'Tender breaded fish, served with tartar sauce.', 25000, 'Omelets & Snacks'),
+          item('Chicken Wings with Chips', 'Eight fried winglets tossed in tomato sauce, served with chips.', 28000, 'Omelets & Snacks'),
+          item('Chicken Lollipops with Chips', 'Crispy fried chicken lollipops, served with chips.', 30000, 'Omelets & Snacks'),
+          item('Mushroom Fries', 'Crispy chips tossed in brown mushroom sauce.', 12000, 'Omelets & Snacks'),
+          item('Plain Chips with Garnish', 'Plain chips with a garnish.', 10000, 'Omelets & Snacks'),
+          item('Masala Chips', 'Chips tossed in hot or mild Indian spices, tomato sauce and coriander leaves.', 15000, 'Omelets & Snacks'),
+          item('Bacon Cheese Fries', 'Diced bacon, spring onions and tomato sauce, tossed with chips and finished with cheese.', 22000, 'Omelets & Snacks'),
+          item('Chapatti Plain', 'A plain hand rolled chapatti.', 6000, 'Omelets & Snacks'),
+          item('Vegetable Spring Rolls', 'Vegetable spring rolls.', 5000, 'Omelets & Snacks'),
+          item('Pair of Chicken Spring Rolls', 'Two chicken spring rolls.', 6000, 'Omelets & Snacks'),
+          item('Trio of Samosas (Beef)', 'Three pieces of beef samosas.', 5000, 'Omelets & Snacks'),
+          item('Trio of Samosas (Vegetable)', 'Three pieces of vegetable samosas.', 5000, 'Omelets & Snacks'),
+          item('Chicken Samosas (Pair)', '', 5000, 'Omelets & Snacks')
+        ]
+      }
+    ]
+  },
+  {
+    key: 'sandwiches',
+    name: 'Sandwiches',
+    eyebrow: 'The sandwich corner',
+    blurb: 'All sandwiches come with chips or salad.',
+    image: '',
+    groups: [
+      {
+        name: 'Sandwiches',
+        items: [
+          item('Tomato, Cheese & Avocado Sandwich', 'Grated cheddar cheese, tomatoes, lettuce and avocado on whole wheat, white bread or French loaf.', 18000, 'Sandwiches'),
+          item('Pulled Pork Sandwich', 'Pork flakes in mayo or sweet chili sauce, lettuce, brown onions, tomatoes and cucumber pickles.', 24000, 'Sandwiches'),
+          item('Chicken Salad Sandwich', 'Chicken with mayo, lettuce, onions, celery and tomatoes on a three decker toast.', 24000, 'Sandwiches'),
+          item('Classic BLT Sandwich', 'A three decker bacon, lettuce and tomato sandwich.', 25000, 'Sandwiches'),
+          item('Steak Cheese Sandwich', 'Tender steak with cheese, tomato and lettuce.', 25000, 'Sandwiches'),
+          item('BBQ Beef Sandwich', 'Beef strips sautéed with vegetables, onions, bell pepper and mushroom in tangy BBQ sauce.', 25000, 'Sandwiches'),
+          item('Tuna Melt Sandwich', 'Tuna chunks with mayo, red onions, tomatoes and lettuce.', 25000, 'Sandwiches'),
+          item('Paradise Club Sandwich', 'A triple decker sandwich with sliced grilled beef, chicken breast, bacon, cheese, onions and mayo.', 30000, 'Sandwiches')
         ]
       }
     ]
@@ -267,259 +363,409 @@ export const menuSections: MenuSection[] = [
     key: 'burgers',
     name: 'Burgers',
     eyebrow: 'The grill',
-    blurb: 'Charcoal patties, regular or Cajun, in a soft toasted bun.',
+    blurb: 'Burgers can be served with chips and salad.',
     image: '',
     groups: [
       {
         name: 'Burgers',
         items: [
-          item('Vegetable Burger', 'Crumbed fried vegetable patty with tomato, lettuce, onion and chili sauce.', 20000, 'Burgers'),
-          item('Chicken and Beef Burger', 'Grilled chicken or beef patty, regular or Cajun, with lettuce, onion, tomato and chili mayo.', null, 'Burgers'),
-          item('BBQ Beef and Chicken Patty', 'Grilled beef or chicken patty finished in a tangy barbecue sauce.', null, 'Burgers'),
-          item('Double Beef and Bacon Burger', 'Double beef, bacon, cheese, caramelized lettuce, pickles and tomato.', null, 'Burgers')
+          item('BBQ Burger', 'A grilled beef or chicken patty finished in a tangy BBQ sauce.', 27000, 'Burgers'),
+          item('Chicken Burger', 'A grilled regular or Cajun chicken patty with lettuce, onions, tomatoes and chili mayo.', 25000, 'Burgers'),
+          item('Beef Burger', 'A grilled regular or Cajun beef patty with lettuce, onions, tomatoes and chili mayo.', 25000, 'Burgers'),
+          item('Vegetable Burger', 'A crumbed fried vegetable patty with tomatoes, lettuce, onions and chili mayo.', 20000, 'Burgers'),
+          item('Mushroom & Cheese Burger', 'A grilled beef patty topped with melted cheese and a creamy mushroom sauce.', 22000, 'Burgers'),
+          item('King Burger', 'A double patty with bacon, cheese, caramelized onions, lettuce, pickles and tomato.', 35000, 'Burgers')
         ]
       }
     ]
   },
   {
     key: 'wraps',
-    name: 'Wraps and Rolex',
-    eyebrow: 'Rolled fresh',
-    blurb: 'Shredded fillings rolled warm in a soft tortilla.',
+    name: 'Rolex Wraps & Burritos',
+    eyebrow: 'Rolled to order',
+    blurb: 'Warm tortillas, filled as you like them.',
     image: '',
     groups: [
       {
-        name: 'Wraps',
+        name: 'Rolex Wraps & Burritos',
         items: [
-          item('Chicken Wrap', 'Shredded chicken, crispy lettuce, onion, tomato and avocado in mayo or sweet chili, rolled in a tortilla, served plain.', 20000, 'Wraps'),
-          item('Crunchy Vegetable Wrap', 'Sautéed vegetables with a touch of cheddar cheese, served plain.', 14000, 'Wraps'),
-          item('Chicken and Beef Rolex', 'Eggs, chicken or beef cubes, red onion, tomato and green pepper, served plain.', 15000, 'Wraps')
+          item('Crunchy Vegetable Wrap', 'Sautéed vegetables and lettuce with cheddar cheese, wrapped in a plain tortilla.', 14000, 'Rolex Wraps & Burritos'),
+          item('Beef Rolex', 'A combination of eggs, beef, red onions, tomatoes and green pepper.', 15000, 'Rolex Wraps & Burritos'),
+          item('Chicken Rolex', 'A combination of three eggs, grilled chicken cubes, red onions, tomatoes and green pepper.', 15000, 'Rolex Wraps & Burritos'),
+          item('Chicken Wrap', 'Crispy lettuce, shredded chicken, onions, tomatoes and avocado, in mayo or sweet chili, wrapped in a tortilla.', 20000, 'Rolex Wraps & Burritos'),
+          item('Classic BLT Wrap', 'Crispy bacon, lettuce and tomatoes in a tortilla.', 17000, 'Rolex Wraps & Burritos'),
+          item('Chicken / Beef Burrito', 'Grilled tender strips with white onions wrapped in a tortilla, topped with cheese and served with guacamole.', 27000, 'Rolex Wraps & Burritos'),
+          item('Fajita Chicken / Beef', 'Sautéed with coriander, onions and oyster sauce. Your choice of tortilla or sizzler plate, served with rice.', 30000, 'Rolex Wraps & Burritos')
         ]
       }
     ]
   },
   {
-    key: 'snacks',
-    name: 'Snacks',
-    eyebrow: 'Light bites',
-    blurb: 'Served with a choice of rice or chips.',
-    image: '',
-    groups: [
-      {
-        name: 'Snacks',
-        items: [
-          item('Chilli Beef and Veggie Chips', 'Chips tossed in mild Indian spices, finished with tomato sauce and fresh coriander. Beef or vegetarian.', null, 'Snacks'),
-          item('Chicken Spring Rolls', 'A pair of crisp chicken spring rolls.', 6000, 'Snacks'),
-          item('Liver with Shredded Vegetables', 'Flakes of liver tossed with shredded vegetables, served with rice or chips.', 30000, 'Snacks'),
-          item('Fish Fingers with Chips', 'Crisp breaded fish fingers with a portion of chips.', 30000, 'Snacks'),
-          item('Chicken Wings with Chips', 'Crispy chicken wings with a portion of chips.', 28000, 'Snacks'),
-          item('Chicken Lollipops with Chips', 'Chicken lollipops with a portion of chips.', 30000, 'Snacks')
-        ]
-      }
-    ]
-  },
-  {
-    key: 'pasta',
-    name: 'Italian Special Pastas',
-    eyebrow: 'From Napoli',
-    blurb: 'Fresh pasta finished with melted cheese and a slice of toast.',
-    image: '',
-    groups: [
-      {
-        name: 'Pasta',
-        items: [
-          item('Pasta Arrabbiata', 'Pasta in tomato and fresh chili sauce, topped with melted cheese and served with toast.', 20000, 'Pasta'),
-          item('Pasta Bolognese', 'Pasta with minced meat, garlic, tomato and red wine sauce, topped with melted cheese and served with toast.', 25000, 'Pasta'),
-          item('Pasta Carbonara', 'Pasta with egg and bacon cream sauce, topped with cheese and served with toast.', 30000, 'Pasta')
-        ]
-      }
-    ]
-  },
-  {
-    key: 'wholefish',
+    key: 'seafood',
     name: "Fisherman's Offer",
     eyebrow: 'Fresh from the Nile',
-    blurb: 'Whole tilapia, fried, steamed or grilled. Oil free off the grill.',
+    blurb: 'Tilapia and Nile perch, grilled, poached, crumbed or steamed.',
     image: '',
     groups: [
       {
-        name: 'Whole Fish',
+        name: "Fisherman's Offer",
         items: [
-          item('Premium Whole Tilapia, Fried or Steamed', 'Medium premium tilapia, fried or steamed, served with chips.', 30000, 'Whole Fish'),
-          item('Premium Wet Fried Tilapia', 'Premium tilapia in a seasoned wet fry.', 38000, 'Whole Fish'),
-          item('Grilled Premium Tilapia', 'Whole oven grilled, oil free, premium tilapia, with an accompaniment of your choice.', null, 'Whole Fish'),
-          item('Large Whole Tilapia, Fried or Steamed', 'Large king tilapia, fried or steamed, served with chips.', 40000, 'Whole Fish'),
-          item('Grilled Tilapia Fillet, Spinach and Cheese', 'Grilled tilapia fillet in a creamy spinach and cheese sauce, with an accompaniment of your choice.', 43000, 'Whole Fish')
-        ]
-      }
-    ]
-  },
-  {
-    key: 'fillets',
-    name: 'Fish Fillets',
-    eyebrow: 'The catch',
-    blurb: 'Breaded, battered or simply grilled, with rice or chips.',
-    image: '',
-    groups: [
-      {
-        name: 'Fish Fillets',
-        items: [
-          item('Paradise Rustica Fish', 'Grilled tilapia fillet layered on guacamole and salsa with hot chili, served with rustica sauce, garnished with black olives.', 32000, 'Fish Fillets'),
-          item('Mombasa Fish', 'Tilapia fillet crumbed in coconut and fried to your liking, served with chips or rice.', 32000, 'Fish Fillets'),
-          item('Deep Fried or Pan Grilled Fillet', 'Coated tilapia fillet, deep fried or pan grilled, served with rice or chips.', 32000, 'Fish Fillets'),
-          item('Catch of the Day', 'Pan grilled Nile perch fillet served with rice or chips.', 32000, 'Fish Fillets')
-        ]
-      }
-    ]
-  },
-  {
-    key: 'chicken',
-    name: 'Chicken Lovers',
-    eyebrow: 'Poultry',
-    blurb: 'Marinated overnight, then grilled, pan fried or tossed in sauce.',
-    image: '',
-    groups: [
-      {
-        name: 'Chicken Lovers',
-        items: [
-          item('Chicken Saute', 'Sautéed chicken with brown mushroom and spring onion, served with mushroom sauce and an accompaniment of your choice.', 30000, 'Chicken Lovers'),
-          item('BBQ Chicken Drumstick', 'Three well marinated tender chicken drumsticks, fried and tossed in barbecue sauce with a touch of fresh coriander.', 30000, 'Chicken Lovers'),
-          item('Grilled Quarter Chicken Breast or Thigh', 'Well marinated charcoal or oven roasted tender chicken, served with chips or an accompaniment of your choice.', 45000, 'Chicken Lovers'),
-          item('Paradise Grilled Farm Chicken', 'A well marinated chicken grilled to perfection with aromatic seasonings.', 40000, 'Chicken Lovers'),
-          item('Pan Fried Boneless Chicken Breast', 'Fresh pan fried boneless chicken breast resting in mushroom sauce.', 43000, 'Chicken Lovers')
-        ]
-      }
-    ]
-  },
-  {
-    key: 'steaks',
-    name: "Paradise Hunter's Delicacies",
-    eyebrow: 'Steaks and grills',
-    blurb: "Prime beef fillet, skewers and the hunter's favourites.",
-    image: '',
-    groups: [
-      {
-        name: 'Steaks',
-        items: [
-          item('Beef Fillet Steak', 'Beef fillet steak, choose pepper, mushroom or dry onion sauce, served with an accompaniment of your choice.', 35000, 'Steaks'),
-          item('King Steak', 'Apportioned beef fillet, pan fried to your preference, topped with a fried egg and served with an accompaniment of your choice.', 40000, 'Steaks'),
-          item('Beef Stroganoff', 'Slow cooked beef in mushroom and red wine sauce, finished with cream.', 15000, 'Steaks'),
-          item('Beef Stir Fry', 'Tender beef strips grilled to perfection with aromatised vegetables and a hint of tomato sauce.', 35000, 'Steaks'),
-          item('Paradise Mixed Grill', 'A mixture of grills, chicken, steak and fish fillet, topped with a fried egg and served with chips.', 47000, 'Steaks'),
-          item('Honey Glazed Hawaiian Beef Skewers', 'Three skewered beef sticks with pineapple and vegetable condiments, laced with natural honey, served with chips.', 35000, 'Steaks'),
-          item('Beef Wet Fry', 'Tender well seasoned beef fillet infused in a flavoured black peppercorn sauce, served with rice.', 15000, 'Steaks'),
-          item('Goat Muchomo', 'Well marinated chunks of goat roasted in organic fresh vegetables with a touch of tomato and barbecue sauce.', null, 'Steaks')
-        ]
-      }
-    ]
-  },
-  {
-    key: 'pork',
-    name: 'Pork',
-    eyebrow: 'Pork',
-    blurb: 'Slow roasted, glazed and grilled to your liking.',
-    image: '',
-    groups: [
-      {
-        name: 'Pork',
-        items: [
-          item('Paradise Grilled Pork Chops', 'Perfectly marinated tender pork chops grilled to your liking, served with an accompaniment of your choice.', null, 'Pork'),
-          item('Honey Mustard Glazed Pork Ribs', 'Tender juicy ribs of pork roasted in onion rings and honey.', null, 'Pork'),
-          item('Pork Muchomo', 'Boneless chunks of pork roasted in aromatic vegetables, served with chips.', null, 'Pork'),
-          item('Sweet and Sour Pork', 'Well seasoned chunks of pork glazed in a tangy sweet and sour sauce, sprinkled with spring onion, served with an accompaniment of your choice.', null, 'Pork'),
-          item('Pork Muchomo and Chops Platter', 'A combination of pork muchomo and pork chops on a single platter, served with an accompaniment of your choice.', 35000, 'Pork')
+          item('Fish Florentine', 'Grilled tilapia fillet with creamy spinach and cheese.', 32000, "Fisherman's Offer"),
+          item('Poached Fish', 'Tilapia fillet gently cooked in rich fish stock with fresh mushrooms and potatoes.', 30000, "Fisherman's Offer"),
+          item('Mombasa Fish', 'A tilapia fillet crumbed with coconut and fried to perfection.', 32000, "Fisherman's Offer"),
+          item('Catch of the Day (Nile Perch)', 'Pan grilled Nile perch fillet.', 32000, "Fisherman's Offer"),
+          item('Deep Fried Fish Fillet', 'A coated tilapia fish fillet.', 32000, "Fisherman's Offer"),
+          item('Pan Grilled Fish Fillet', 'A coated tilapia fish fillet.', 32000, "Fisherman's Offer"),
+          item('Fish Fingers with Chips', 'Fish fingers served with chips.', 30000, "Fisherman's Offer"),
+          item('Paradise Rustica Fish', 'Grilled tilapia fillet layered on guacamole and salsa with hot chili, rustica sauce and black olives.', 32000, "Fisherman's Offer"),
+          item('Medium Fried Tilapia', 'Medium fried tilapia served with chips.', 38000, "Fisherman's Offer"),
+          item('Medium Steamed Tilapia', 'Medium steamed tilapia served with chips.', 38000, "Fisherman's Offer"),
+          item('Premium Wet Fried Tilapia', 'Premium wet fried tilapia.', 40000, "Fisherman's Offer"),
+          item('Premium Whole Fish', 'Steamed or fried whole fish.', 37000, "Fisherman's Offer"),
+          item('Grilled Premium Fish', 'Whole oven grilled oil free premium tilapia.', 43000, "Fisherman's Offer"),
+          item('Large Fried Tilapia', 'Large fried tilapia served with chips.', 43000, "Fisherman's Offer"),
+          item('Large Steamed Tilapia', 'Large steamed tilapia served with chips.', 43000, "Fisherman's Offer"),
+          item('King Wet Fried Tilapia', 'King wet fried tilapia.', 45000, "Fisherman's Offer"),
+          item('King Size Whole Fish', 'A fish fillet, English, grilled or crumbed, on spinach drizzled with mushroom sauce.', 42000, "Fisherman's Offer"),
+          item('Grilled King Fish', 'Whole oven grilled oil free king tilapia.', 48000, "Fisherman's Offer"),
+          item('Fried King Prawns', 'King prawns prepared in a seasoned butter sauce.', 45000, "Fisherman's Offer"),
+          item('Golden Grilled Salmon', 'Grilled salmon on a bed of spinach, laced with white mushroom sauce.', 45000, "Fisherman's Offer")
         ]
       }
     ]
   },
   {
     key: 'house',
-    name: 'House Specials',
+    name: 'House Specials & Platters',
     eyebrow: 'For the table',
-    blurb: 'Platters built for sharing, served with two accompaniments.',
+    blurb: 'Platters built for sharing, with a side of your choice.',
     image: '',
     groups: [
       {
-        name: 'House Specials',
+        name: 'House Specials & Platters',
         items: [
-          item('Paradise Lusaniya', 'A family platter for three to four, with grilled chicken, beef steak and goat muchomo, served with brown pilau, matoke or potato wedges.', 100000, 'House Specials'),
-          item('Mixed Grill Platter', 'A platter for two with grilled chicken, beef muchomo and roasted goat, served with two accompaniments of your choice.', 80000, 'House Specials')
+          item('Mixed Grill Platter', 'A platter for two with grilled chicken, beef muchomo, roasted goat, a pair of sausages and a choice of side.', 80000, 'House Specials & Platters'),
+          item('Paradise Lusaniya', 'A family platter for three to four: grilled chicken, beef steak, goat muchomo, brown pilau, matooke or wedges.', 100000, 'House Specials & Platters')
         ]
       }
     ]
   },
   {
-    key: 'asian',
-    name: 'Asian Delicacies',
-    eyebrow: 'Far East',
-    blurb: 'Mild creamy curries, biryani and coconut dishes with rice or chapatti.',
+    key: 'chicken',
+    name: 'Chicken Dishes',
+    eyebrow: 'Poultry',
+    blurb: 'Marinated overnight, then grilled, pan fried or tossed in sauce.',
     image: '',
     groups: [
       {
-        name: 'Curries',
+        name: 'Chicken Dishes',
         items: [
-          item('Mixed Vegetable Curry', 'Assorted vegetables in a creamy sauce, served with white rice or mashed potatoes.', 20000, 'Curries'),
-          item('Vegetable Korma', 'Mixed vegetables cooked in a mild creamy almond and cashew nut sauce, served with rice or chapatti.', 25000, 'Curries'),
-          item('Chicken Coconut Curry', 'Grilled and cubed boneless chicken in a golden sauce infused with coconut, served with rice or chapatti.', 32000, 'Curries')
-        ]
-      },
-      {
-        name: 'Biryani',
-        items: [
-          item('Veggie Biryani', 'Spiced diced mixed vegetables cooked in a creamy sauce and mixed with rice.', 25000, 'Biryani'),
-          item('Chicken, Fish or Goat Biryani', 'Cubes of chicken, fish or goat cooked in a creamy sauce and mixed with rice.', 32000, 'Biryani')
+item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, served with mushroom sauce.', 30000, 'Chicken Dishes'),
+          item('BBQ Chicken Drumstick', 'Three well marinated chicken drumsticks, fried and tossed in BBQ sauce with fresh Dania.', 30000, 'Chicken Dishes'),
+          item('Grilled Quarter Chicken (Breast)', 'Well marinated charcoal or oven roasted tender chicken breast.', 30000, 'Chicken Dishes'),
+          item('Grilled Quarter Chicken (Thigh)', 'Well marinated charcoal or oven roasted tender chicken thigh.', 30000, 'Chicken Dishes'),
+          item('Mushroom Chicken', 'Pan fried chicken cubes infused in a creamy white mushroom sauce and spring onions.', 32000, 'Chicken Dishes'),
+          item('Supreme Chicken', 'Fresh pan fried boneless chicken breast in mushroom sauce.', 32000, 'Chicken Dishes'),
+          item('Paradise Grilled Farm Chicken', 'A well marinated chicken grilled to perfection with aromatic seasonings.', 45000, 'Chicken Dishes')
         ]
       }
     ]
   },
   {
-    key: 'desserts',
-    name: 'Desserts',
-    eyebrow: 'Sweet finish',
-    blurb: 'Fresh fruit, ice cream and a little sugar.',
+    key: 'beef',
+    name: 'Beef & Goat Main Courses',
+    eyebrow: 'Steaks and grills',
+    blurb: 'Prime beef fillet, tender goat and the hunter’s favourites.',
     image: '',
     groups: [
       {
-        name: 'Desserts',
+        name: 'Beef & Goat Main Courses',
         items: [
-          item('Fresh Fruit Platter', 'A generous and visually appealing presentation of seasonal fruit such as mango, papaya, melon, orange, grapes and passion fruit.', null, 'Desserts'),
-          item('Fruit Salad', 'A combination of diced fruits sprinkled with passion fruit syrup.', 15000, 'Desserts'),
-          item('Banana Crepe', 'A very thin pancake filled with sliced banana and chocolate syrup, garnished with orange slices.', 15000, 'Desserts'),
-          item('Ice Cream', 'Three scoops, chocolate, vanilla or strawberry.', 9000, 'Desserts'),
-          item('Cake of the Day', 'A slice of the cake of the day, chocolate, marble, lemon, banana, red velvet and more.', 7000, 'Desserts'),
-          item('Affogato Espresso Ice Cream', 'Two scoops of ice cream of your choice with 60ml of espresso coffee.', 15000, 'Desserts'),
-          item('Banana Split', 'Banana and ice cream garnished with chocolate sauce, whipped cream, flaked almonds and cherries.', 15000, 'Desserts')
+          item('Goat Sizzler', 'Stir fried dry goat flakes with vegetables and rosemary.', 27000, 'Beef & Goat Main Courses'),
+          item('Goat Muchomo', 'Well marinated chunks of goat roasted and tossed in fresh vegetables, tomato and BBQ sauce.', 30000, 'Beef & Goat Main Courses'),
+          item('Beef Stir Fry', 'Tender beef strips grilled with vegetables and a hint of tomato sauce.', 35000, 'Beef & Goat Main Courses'),
+          item('Beef Wet Fry', 'Tender well seasoned beef fillet infused in a black peppercorn sauce.', 35000, 'Beef & Goat Main Courses'),
+          item('Honey Glazed Hawaiian Beef Skewers', 'Three beef skewers with pineapple, vegetables, natural honey and organic herbs.', 35000, 'Beef & Goat Main Courses'),
+          item('Beef Stroganoff', 'Slow cooked beef in a mushroom and red wine sauce, finished with fresh cream.', 35000, 'Beef & Goat Main Courses'),
+          item('Beef in Guinness', 'Steak simmered in Guinness beer and a creamy sauce.', 30000, 'Beef & Goat Main Courses'),
+          item('Goat Rack Tender', 'Pan fried rib rack.', 32000, 'Beef & Goat Main Courses'),
+          item('Liver Princess', 'Flakes of liver toasted with shredded vegetables.', 30000, 'Beef & Goat Main Courses'),
+          item('Beef Fillet Steak (Pepper Sauce)', 'Beef fillet steak in a black peppercorn sauce.', 35000, 'Beef & Goat Main Courses'),
+          item('Beef Fillet Steak (Mushroom Sauce)', 'Beef fillet steak in a creamy brown mushroom sauce.', 35000, 'Beef & Goat Main Courses'),
+          item('Beef Fillet Steak (Dry Onion)', 'Beef fillet steak with dry onion.', 35000, 'Beef & Goat Main Courses'),
+          item('King Steak', 'Apportioned beef fillet pan fried to preference, topped with a fried egg.', 40000, 'Beef & Goat Main Courses'),
+          item('Paradise Mixed Grill', 'A mixture of grills: chicken, steak and fish fillet, topped with a fried egg.', 47000, 'Beef & Goat Main Courses')
+        ]
+      }
+    ]
+  },
+  {
+    key: 'pork',
+    name: 'Pork Courses',
+    eyebrow: 'Pork',
+    blurb: 'Slow roasted, glazed and grilled to your liking.',
+    image: '',
+    groups: [
+      {
+        name: 'Pork Courses',
+        items: [
+          item('Pork Muchomo', 'Boneless pork chunks roasted and tossed in aromatic vegetables.', 27000, 'Pork Courses'),
+          item('Paradise Grilled Pork Chop', 'Marinated pork chops, grilled to perfection.', 32000, 'Pork Courses'),
+          item('Honey Mustard Glazed Pork Ribs', 'Pork ribs tossed in onion rings and honey.', 32000, 'Pork Courses'),
+          item('Sweet and Sour Pork Chops', 'Pork chunks glazed in a sweet and sour sauce with spring onions and a side.', 38000, 'Pork Courses'),
+          item('Trio of Pork Platter', 'A combination of pork ribs, pork muchomo and pork chops with a side.', 45000, 'Pork Courses')
         ]
       }
     ]
   },
   {
     key: 'pizza',
-    name: 'Pizzeria Section',
+    name: 'Pizzeria',
     eyebrow: 'Pizza',
-    blurb: 'Baked to order on a stone base, 12 inch.',
+    blurb: 'Baked to order on a stone base. A whole meal on its own, add garlic bread or a salad.',
     image: '',
     groups: [
       {
-        name: 'Pizza',
+        name: 'Pizzeria',
         items: [
-          item('Classic Margherita', 'Tomato, fresh basil, oregano and mozzarella.', 27000, 'Pizza'),
-          item('Sweet Vegetarian', 'Red, yellow and green bell pepper, sweet corn and mozzarella.', 27000, 'Pizza'),
-          item('Quattro Stagioni', 'Ham, olives, mushroom, artichokes and mozzarella.', 30000, 'Pizza'),
-          item('Pepperoni', 'Tomato, green pepper, onion, pepperoni and mozzarella.', 30000, 'Pizza'),
-          item('Hawaiian', 'Ham or bacon, pineapple and mozzarella.', null, 'Pizza'),
-          item("Farmer's", 'Chicken, mushroom and mozzarella.', 30000, 'Pizza'),
-          item('Tuna', 'Tuna fillet, tomato, green pepper and mozzarella, topped with a boiled egg.', null, 'Pizza'),
-          item('Diavola', 'Tomato, chili salami and mozzarella.', 30000, 'Pizza'),
-          item('Bolognese', 'Spicy minced meat, tomato and mozzarella.', null, 'Pizza'),
-          item('Capricciosa', 'Salami, black olives, artichokes, capers, mushroom and mozzarella.', 30000, 'Pizza'),
-          item('Assorted Meat and Salami', 'Assorted meat, salami, mushroom, green pepper, onion and mozzarella.', 35000, 'Pizza')
+          item('Classico e Margherita', 'Tomato, fresh basil, oregano and mozzarella.', 24000, 'Pizzeria', 'classic-margherita.jpg'),
+          item('Sweet Vegetarian', 'Red, yellow and green bell pepper, sweet corn and mozzarella.', 24000, 'Pizzeria'),
+          item('Pugliese', 'Tomato, black olives, oregano and cheese.', 24000, 'Pizzeria'),
+          item('Pata', 'Chips, tomato and cheese.', 26000, 'Pizzeria'),
+          item('Diavola', 'Tomato, chili, salami and mozzarella.', 26000, 'Pizzeria'),
+          item('Salami', 'Tomato, cheese and salami.', 26000, 'Pizzeria'),
+          item('Quattro Stagioni', 'Ham, olives, mushroom, artichokes and mozzarella.', 26000, 'Pizzeria'),
+          item('Prosciutto Funghi', 'Ham, mushroom and cheese.', 26000, 'Pizzeria'),
+          item('Prosciutto', 'Cooked ham, tomato and mozzarella.', 27000, 'Pizzeria'),
+          item('Bolognaise', 'Spicy minced meat, mozzarella and tomato.', 27000, 'Pizzeria'),
+          item('Capricciosa', 'Black olives, artichokes, capers, mushroom and salad.', 27000, 'Pizzeria'),
+          item('Pepperoni', 'Tomato, green pepper, onions, pepperoni and mozzarella.', 27000, 'Pizzeria'),
+          item('Hawaiian', 'Ham or bacon, pineapple and mozzarella.', 27000, 'Pizzeria'),
+          item('Pollo Pizza', 'Italian chicken pizza with green pepper, onions and mushroom.', 27000, 'Pizzeria'),
+          item('Tuna', 'Tuna, tomato, onions, green pepper and mozzarella, topped with a boiled egg.', 28000, 'Pizzeria'),
+          item('Calzone Pizza', 'Minced meat, carrots and green pepper, folded into a semi circular bread shape.', 30000, 'Pizzeria'),
+          item("Farmer's Pizza", 'Chicken and mushroom.', 30000, 'Pizzeria'),
+          item('Paradise Special Pizza', 'Minced meat, salami, ham, mushroom, green pepper and onions.', 35000, 'Pizzeria')
         ]
-      },
+      }
+    ]
+  },
+  {
+    key: 'pasta',
+    name: 'Italian Pastas',
+    eyebrow: 'From Napoli',
+    blurb: 'Pasta choices: spaghetti, penne, fettuccine, farfalle or spirulina.',
+    image: '',
+    groups: [
       {
-        name: 'Calzone',
+        name: 'Italian Pastas',
         items: [
-          item('Calzone', 'Minced meat, green pepper and capsicum rolled in a half moon of bread.', 30000, 'Calzone')
+          item('Pasta a la Arrabiata', 'Pasta in tomato and fresh chili sauce.', 18000, 'Italian Pastas'),
+          item('Pasta a la Napolitana', 'Pasta in herby tomato and cheese sauce.', 18000, 'Italian Pastas'),
+          item('Pasta Genovese', 'Pasta in pesto sauce.', 22000, 'Italian Pastas'),
+          item('Pasta a la Carbonara', 'Pasta with egg and bacon in a creamy sauce.', 22000, 'Italian Pastas'),
+          item('Pasta ala Cavolfiore e Salsiccia', 'Pasta with cauliflower and sausage in an egg and bacon creamy sauce.', 22000, 'Italian Pastas'),
+          item('Pasta a la Contadina', 'Pasta in chicken, garlic, coriander, white wine and a creamy coconut sauce.', 25000, 'Italian Pastas')
+        ]
+      }
+    ]
+  },
+  {
+    key: 'asian',
+    name: 'Asian & Indian Curries',
+    eyebrow: 'Far East and sub continent',
+    blurb: 'Non veg curries are served with a choice of 1 or 2 accompaniments.',
+    image: '',
+    groups: [
+      {
+        name: 'Asian & Indian Curries',
+        items: [
+          item('Aloo Mutter', 'Diced potatoes and cowpeas prepared in a creamy sauce.', 18000, 'Asian & Indian Curries'),
+          item('Mixed Vegetable Curry', 'Assorted vegetables in a creamy sauce, served with white rice or mash.', 20000, 'Asian & Indian Curries'),
+          item('Veggie Biryani', 'Diced mixed vegetables in a creamy curry sauce, mixed with rice.', 20000, 'Asian & Indian Curries'),
+          item('Vegetable Chow Mein', 'Noodles with oyster and soy sauce, tossed with fresh vegetables.', 20000, 'Asian & Indian Curries'),
+          item('Vegetable Korma', 'Mixed vegetables in a mild creamy almond and cashew nut sauce.', 20000, 'Asian & Indian Curries'),
+          item('Chicken Tikka', '', 28000, 'Asian & Indian Curries'),
+          item('Chili Chicken', '', 28000, 'Asian & Indian Curries'),
+          item('Chicken / Fish / Mutton Biryani', 'Chicken, fish or mutton cooked in a creamy sauce, mixed with rice.', 30000, 'Asian & Indian Curries'),
+          item('Coconut Chicken Curry', 'Grilled boneless chicken in a golden sauce infused with coconut.', 30000, 'Asian & Indian Curries'),
+          item('Chicken Tikka Masala', '', 30000, 'Asian & Indian Curries'),
+          item('Chicken Makhani', 'Boneless tandoori marinated chicken cooked in butter and tomato gravy.', 30000, 'Asian & Indian Curries'),
+          item('Fish Curry Diamond', '', 30000, 'Asian & Indian Curries'),
+          item('Fish Tikka', '', 30000, 'Asian & Indian Curries'),
+          item('Fish Tikka Masala', '', 32000, 'Asian & Indian Curries'),
+          item('Half Tandoori Chicken', 'Chicken marinated with yogurt, ginger, garlic and spices, roasted in a clay oven.', 37000, 'Asian & Indian Curries'),
+          item('Full Tandoori Chicken', 'A full chicken marinated with yogurt, ginger, garlic and spices, roasted in a clay oven.', 47000, 'Asian & Indian Curries')
+        ]
+      }
+    ]
+  },
+  {
+    key: 'chinese',
+    name: 'Chinese Corner',
+    eyebrow: 'Wok and steam',
+    blurb: 'Sizzling plates, deep fried bites and the full sweet and sour house.',
+    image: '',
+    groups: [
+      {
+        name: 'Chinese Corner',
+        items: [
+          item('Vegetable Spring Roll (1pc)', '', 1000, 'Chinese Corner'),
+          item('Chicken Spring Roll (1pc)', '', 2500, 'Chinese Corner'),
+          item('Pork Spring Roll (1pc)', '', 2500, 'Chinese Corner'),
+          item('Vegetable Wanton', '', 5000, 'Chinese Corner'),
+          item('Special Chicken Wings (1pc)', '', 7000, 'Chinese Corner'),
+          item('Fried Wanton (Chicken or Beef)', '', 8000, 'Chinese Corner'),
+          item('Golden Fried Cauliflower', '', 10000, 'Chinese Corner'),
+          item('Fried Chips Plain', '', 10000, 'Chinese Corner'),
+          item('Special Beef Simsim', '', 15000, 'Chinese Corner'),
+          item('Smoked Fish', '', 15000, 'Chinese Corner'),
+          item('Salty Chicken / Beef', '', 15000, 'Chinese Corner'),
+          item('Foil Wrapped Chicken', '', 15000, 'Chinese Corner'),
+          item('French Fries with Garlic Sauce', '', 15000, 'Chinese Corner'),
+          item('Fried Egg Rolled Chicken (Pair)', '', 18000, 'Chinese Corner'),
+          item('Fried Chicken Wings', '', 20000, 'Chinese Corner'),
+          item('Crispy Chicken Legs', '', 20000, 'Chinese Corner'),
+          item('Golden Fried Prawns', '', 20000, 'Chinese Corner'),
+          item('Fried Baby Corn with Cashew Nuts', '', 20000, 'Chinese Corner'),
+          item('Fried Summary Chicken', '', 25000, 'Chinese Corner'),
+          item('Sauté Chicken Sichuan Style', '', 25000, 'Chinese Corner'),
+          item('Chicken Curry', '', 25000, 'Chinese Corner'),
+          item('Fried French Beans with Garlic Sauce', '', 25000, 'Chinese Corner'),
+          item('Chinese Cabbage Sichuan Style (Hot)', '', 25000, 'Chinese Corner'),
+          item('Mixed Vegetables (Onions, Cabbage, Carrots, Pepper, Mushroom)', '', 25000, 'Chinese Corner'),
+          item('Stir-Fried Chicken with Cashew Nuts', '', 30000, 'Chinese Corner'),
+          item('Spicy Half Chicken with Vegetables', '', 30000, 'Chinese Corner'),
+          item('Fried Chicken with Chinese Black Bean Sauce', '', 30000, 'Chinese Corner'),
+          item('Sweet and Sour Chicken', '', 30000, 'Chinese Corner'),
+          item('Sliced Chicken with Garlic Sauce', '', 30000, 'Chinese Corner'),
+          item('Sliced Beef with Chinese Cabbage', '', 30000, 'Chinese Corner'),
+          item('Shredded Beef with Onions', '', 30000, 'Chinese Corner'),
+          item('Sweet and Sour Beef', '', 30000, 'Chinese Corner'),
+          item('Sliced Beef in Oyster Sauce', '', 30000, 'Chinese Corner'),
+          item('Shredded Beef with Vegetables', '', 30000, 'Chinese Corner'),
+          item('Sliced Beef with Pineapple Sauce', '', 30000, 'Chinese Corner'),
+          item('Beef Curry', '', 30000, 'Chinese Corner'),
+          item('Sweet and Sour Pork', '', 30000, 'Chinese Corner'),
+          item('Shredded Pork with Green Pepper', '', 30000, 'Chinese Corner'),
+          item('Sauté Pork Sichuan Style (Hot)', '', 30000, 'Chinese Corner'),
+          item('Spicy Pork with Garlic Sauce', '', 30000, 'Chinese Corner'),
+          item('Sweet and Sour Fish Finger', '', 30000, 'Chinese Corner'),
+          item('Spicy Fish with Ginger & Garlic Sauce', '', 30000, 'Chinese Corner'),
+          item('Sliced Fish with Vegetables', '', 30000, 'Chinese Corner'),
+          item('Sliced Fish in Special Hot Sweet & Sour Sauce', '', 30000, 'Chinese Corner'),
+          item('Special Mixed Vegetables & Sprouts', '', 30000, 'Chinese Corner'),
+          item('Fried Mixed Chicken, Beef & Goat Meat', '', 35000, 'Chinese Corner'),
+          item('Fried Shredded Chicken with Bamboo Shoots', '', 35000, 'Chinese Corner'),
+          item('Sliced Pork with Mushroom and Bamboo Shoots', '', 35000, 'Chinese Corner'),
+          item('Fried Beijing Duck with Vegetables', '', 35000, 'Chinese Corner'),
+          item('Fried Duck with Bamboo Shoots', '', 35000, 'Chinese Corner'),
+          item('Fried Prawns with Cashew Nuts', '', 45000, 'Chinese Corner'),
+          item('Sauté Prawns with Black Bean Sauce', '', 45000, 'Chinese Corner'),
+          item('Fried Prawns with Chinese Black Beans', '', 50000, 'Chinese Corner'),
+          item('Beijing Roasted Duck (Whole)', '', 100000, 'Chinese Corner')
+        ]
+      }
+    ]
+  },
+  {
+    key: 'sizzlers',
+    name: 'Sizzler Hot Plates',
+    eyebrow: 'On a hot plate',
+    blurb: 'Brought to the table on a sizzling iron, with rice.',
+    image: '',
+    groups: [
+      {
+        name: 'Sizzler Hot Plates',
+        items: [
+          item('Sizzler Vegetables Plate', '', 30000, 'Sizzler Hot Plates'),
+          item('Sizzler Pork Plate', '', 35000, 'Sizzler Hot Plates'),
+          item('Sizzler Beef Plate', '', 35000, 'Sizzler Hot Plates'),
+          item('Sizzler Chicken Plate', '', 35000, 'Sizzler Hot Plates'),
+          item('Sizzler Shrimps / Prawns Plate', '', 50000, 'Sizzler Hot Plates')
+        ]
+      }
+    ]
+  },
+  {
+    key: 'rice-noodles',
+    name: 'Rice & Noodles',
+    eyebrow: 'Side options',
+    blurb: 'Everything to round off a main course.',
+    image: '',
+    groups: [
+      {
+        name: 'Rice & Noodles',
+        items: [
+          item('Steamed Rice', '', 8000, 'Rice & Noodles'),
+          item('Fried Rice', '', 8000, 'Rice & Noodles'),
+          item('Ginger Fried Rice', '', 8000, 'Rice & Noodles'),
+          item('Vegetable Fried Rice', '', 10000, 'Rice & Noodles'),
+          item('Vegetable Fried Noodles', '', 12000, 'Rice & Noodles'),
+          item('Egg Fried Rice', '', 15000, 'Rice & Noodles'),
+          item('Chicken Fried Rice', '', 25000, 'Rice & Noodles'),
+          item('Chicken / Beef / Pork Fried Noodles', '', 25000, 'Rice & Noodles')
+        ]
+      }
+    ]
+  },
+  {
+    key: 'accompaniments',
+    name: 'Accompaniments & Extras',
+    eyebrow: 'Side add ons',
+    blurb: 'Added to any main course, priced per portion.',
+    image: '',
+    groups: [
+      {
+        name: 'Accompaniments & Extras',
+        items: [
+          item('Mushroom Extra', '', 4000, 'Accompaniments & Extras'),
+          item('Avocado Extra', '', 4000, 'Accompaniments & Extras'),
+          item('Fried Egg Extra', '', 4000, 'Accompaniments & Extras'),
+          item('Bacon Extra', '', 7000, 'Accompaniments & Extras'),
+          item('Cheese Extra', '', 7000, 'Accompaniments & Extras')
+        ]
+      }
+    ]
+  },
+  {
+    key: 'desserts',
+    name: 'Desserts & Bakery',
+    eyebrow: 'Sweet finish',
+    blurb: 'Cakes, pastries and fruit from our own bakery.',
+    image: '',
+    groups: [
+      {
+        name: 'Desserts & Bakery',
+        items: [
+          item('Cookies', '', 1000, 'Desserts & Bakery'),
+          item('Croissant', '', 2000, 'Desserts & Bakery'),
+          item('Beef / Chicken Pie', '', 5000, 'Desserts & Bakery'),
+          item('Sausage Roll', '', 5000, 'Desserts & Bakery'),
+          item('Bread Loaf', '', 6000, 'Desserts & Bakery'),
+          item('Marble Cake Slice', '', 7000, 'Desserts & Bakery'),
+          item('Chocolate Cake Slice', '', 7000, 'Desserts & Bakery'),
+          item('Strawberry Cake Slice', '', 7000, 'Desserts & Bakery'),
+          item('Lemon Cake Slice', '', 7000, 'Desserts & Bakery'),
+          item('Vanilla Cake Slice', '', 7000, 'Desserts & Bakery'),
+          item('Butter Bread', '', 7000, 'Desserts & Bakery'),
+          item('French Bread', '', 7000, 'Desserts & Bakery'),
+          item('Cinnamon Roll', '', 8000, 'Desserts & Bakery'),
+          item('Golden Fried Banana', '', 10000, 'Desserts & Bakery'),
+          item('Banana Crepe', '', 12000, 'Desserts & Bakery'),
+          item('Special Banana with Honey Sauce', '', 12000, 'Desserts & Bakery'),
+          item('Pineapple Upside-Down Cake', '', 14000, 'Desserts & Bakery'),
+          item('Tropical Fruit Platter', '', 15000, 'Desserts & Bakery'),
+          item('Tropical Fruit Salad', '', 15000, 'Desserts & Bakery'),
+          item('Lemon Tart', '', 15000, 'Desserts & Bakery'),
+          item('Banana Split', '', 15000, 'Desserts & Bakery'),
+          item('Mango Tart', '', 16000, 'Desserts & Bakery'),
+          item('White Forest Cake', '', 16000, 'Desserts & Bakery'),
+          item('Profiteroles', '', 16000, 'Desserts & Bakery'),
+          item('Chocolate Fudge Slice', '', 17000, 'Desserts & Bakery'),
+          item('Black Forest Cake (pc)', '', 17000, 'Desserts & Bakery'),
+          item('Classic Carrot Cake', '', 19000, 'Desserts & Bakery'),
+          item('Chocolate Mousse', '', 20000, 'Desserts & Bakery')
         ]
       }
     ]

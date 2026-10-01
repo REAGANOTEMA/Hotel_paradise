@@ -97,6 +97,40 @@ export function BedGlyph({size = 120}: {size?: number}) {
  );
 }
 
+/* ------------------------------------------------------------------
+   THE HOTEL'S OWN DETAILS
+
+   Written down once, here, so that the top bar, the footer, the drawer,
+   the menu page and the booking page cannot drift apart. A phone number
+   that appears on one page and not another is the sort of thing a guest
+   notices at the moment they need it.
+
+   The web address is hotelparadiseonthenile.info. It is not a .com and
+   must never be written as one.
+   ------------------------------------------------------------------ */
+
+export const HOTEL = {
+  legalName: 'Hotel Paradise on the Nile Ltd',
+  shortName: 'Hotel Paradise on the Nile',
+  /** The full postal address, as it stands on the title deeds. */
+  address: 'Plot 12, 19 & 25 Kiira Lane, Jinja, Uganda',
+  /** Without the country, for a footer column that already says Uganda. */
+  addressShort: 'Plot 12, 19 & 25 Kiira Lane, Jinja',
+  /** What to hand to a map, which wants the comma after the plot numbers. */
+  addressForMap: 'Plot 12, 19 & 25, Kiira Lane, Jinja, Uganda',
+  poBox: 'P.O. Box 1139, Jinja, Uganda',
+  /** Front desk first, reservations second. Both are dialled, both are answered. */
+  phones: ['+256 759 504 928', '+256 773 565 668'],
+  email: 'hotel@hotelparadiseonthenile.info',
+  website: 'www.hotelparadiseonthenile.info',
+  certification: 'UNBS Certified, US 130:2017'
+} as const;
+
+/** A telephone number written for people to a form a dialler can use. */
+export const telHref = (phone: string): string => 'tel:+' + phone.replace(/\D/g, '');
+
+export const CALL = HOTEL.phones[0];
+
 export function Brand({light = false}: {light?: boolean}) {
   return (
    <a className={light ? 'brandL light' : 'brandL'} href="./index.html">
@@ -109,8 +143,8 @@ export function Brand({light = false}: {light?: boolean}) {
 export function TopBar() {
  return (
   <div className="topbar">
-   <span>HOTEL PARADISE ON THE NILE, 19 KIIRA RD, JINJA, UGANDA</span>
-   <span className="right">+256 759 504 928</span>
+   <span>HOTEL PARADISE ON THE NILE, PLOT 12, 19 &amp; 25 KIIRA LANE, JINJA, UGANDA</span>
+   <span className="right">{HOTEL.phones.join('  ·  ')}</span>
   </div>
  );
 }
@@ -142,9 +176,15 @@ export function Footer() {
       <Brand/>
       <p>Premium hospitality in Jinja, on the banks of the Nile.</p>
      </div>
-     <div><h4>HOTEL</h4><p>19 Kiira Road, Jinja</p><p>Rooms, dining, bar and events</p><p>P.O. Box 1139, Jinja, Uganda</p></div>
-     <div><h4>STAY</h4><p>Check in from 12 noon</p><p>Check out by 10 am</p><p>Breakfast included</p></div>
-     <div><h4>CONTACT</h4><p><a className="footLink" href="tel:+256759504928">+256 759 504 928</a></p><p><a className="footLink" href="mailto:hotel@hotelparadiseonthenile.info">hotel@hotelparadiseonthenile.info</a></p><p>Front desk open 24 hours</p></div>
+      <div><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>
+      <div><h4>STAY</h4><p>Check in from 12 noon</p><p>Check out by 10 am</p><p>Breakfast included</p></div>
+      <div><h4>CONTACT</h4>
+        <p>{HOTEL.phones.map((p, i) => (
+          <React.Fragment key={p}>{i > 0 && ' · '}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>
+        ))}</p>
+        <p><a className="footLink" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a></p>
+        <p>Front desk open 24 hours</p>
+      </div>
      <div className="footerStudio">
       <h4>BUILT BY</h4>
       <a className="studioLink" href={STUDIO.url} target="_blank" rel="noopener noreferrer">
@@ -202,16 +242,16 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
      <div className="drawerFoot">
       <a className="btn" href="./rooms.html" onClick={close}>Book now</a>
       <a className="drawerCall systemLink" href="./system/" onClick={close}>Management system</a>
-      <a className="drawerCall" href="tel:+256759504928">Call +256 759 504 928</a>
-      <p className="drawerNote">19 Kiira Rd, Jinja, Uganda</p>
-     </div>
-    </aside>
-   </div>
+       <a className="drawerCall" href={telHref(CALL)}>Call {CALL}</a>
+       <p className="drawerNote">{HOTEL.address}</p>
+      </div>
+     </aside>
+    </div>
 
-   <div className="mobileCta">
-    <a className="btn" href="./rooms.html">Book your stay</a>
-    <a className="btn ghost" href="tel:+256759504928">Call us</a>
-   </div>
+    <div className="mobileCta">
+     <a className="btn" href="./rooms.html">Book your stay</a>
+     <a className="btn ghost" href={telHref(CALL)}>Call us</a>
+    </div>
   </>
  );
 }

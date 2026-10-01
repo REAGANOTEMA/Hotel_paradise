@@ -1,3 +1,25 @@
+-- ============================================================================
+-- SUPERSEDED FOR THE MENU. DO NOT INSTALL THE MENU FROM THIS FILE.
+--
+-- The schema and seed below are still useful reference, but the a la carte
+-- menu in this file is the old proposed one: 15 sections and 81 dishes, many of
+-- them with no rate. The kitchen has since filed the real menu, which is 19
+-- sections and 225 dishes, every one of them priced. Installing this file would
+-- publish a menu the restaurant does not serve.
+--
+-- Install the schema and seed from these, and the menu from the generated seed:
+--
+--     1. database/01_LIVE_SYSTEM_SCHEMA.sql
+--     2. database/05_HOSTING_INSTALL.sql
+--     3. database/02_LIVE_SYSTEM_SEED.sql
+--     4. database/07_FULL_MENU_SEED.sql                    <- the real menu
+--     5. database/website_sql/01_WEBSITE_INTEGRATION_SCHEMA.sql
+--
+-- To change the menu, edit frontend-react/src/menuData.ts and re-run
+--     node database/tools/build-menu-seed.mjs .
+--
+-- Everything below this banner is kept exactly as it was, for reference only.
+-- ============================================================================
 -- ============================================================
 -- HOTEL PARADISE ON THE NILE — FINAL SYSTEM INSTALLER
 -- Reagansoft Innovation Limited

@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, apiUrl} from './shared';
+import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, apiUrl, CALL} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 
 /** The photographs each room is still waiting for, shown on request only. */
@@ -70,9 +70,9 @@ function RoomsPage() {
         + fmt(Number(d.total) || 0)
         + (Number(d.withdrawal_fee) > 0 ? ' (including a ' + fmt(Number(d.withdrawal_fee)) + ' ' + String(d.withdrawal_fee_label || fee.label).toLowerCase() + ')' : '')
         + '. ' + d.message)
-     : (d.error || 'Something went wrong. Please try again or call +256 759 504 928.')});
+     : (d.error || 'Something went wrong. Please try again or call ' + CALL + '.')});
   } catch {
-   setMsg({ok: false, text: 'Could not reach the booking service. Please call +256 759 504 928.'});
+   setMsg({ok: false, text: 'Could not reach the booking service. Please call ' + CALL + '.'});
   }
   setBusy(false);
  };
