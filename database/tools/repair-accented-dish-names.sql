@@ -96,14 +96,14 @@ SELECT id, name, HEX(name) AS hex, published, price, category_id
 
 -- 7. The numbers that decide whether the menu is whole. Expect 19, 251, 0, 0.
 SELECT
-  (SELECT COUNT(*) FROM menu_categories
+  (SELECT COUNT(*) FROM hotelpardise_system.menu_categories
     WHERE hotel_id = 1 AND published = 1) AS published_sections,
-  (SELECT COUNT(*) FROM menu_items
+  (SELECT COUNT(*) FROM hotelpardise_system.menu_items
     WHERE hotel_id = 1 AND published = 1) AS published_dishes,
-  (SELECT COUNT(*) FROM menu_items
+  (SELECT COUNT(*) FROM hotelpardise_system.menu_items
     WHERE hotel_id = 1 AND published = 1 AND price IS NULL) AS priced_on_request,
-  (SELECT COUNT(*) FROM menu_items i
-    LEFT JOIN menu_categories c ON c.id = i.category_id
+  (SELECT COUNT(*) FROM hotelpardise_system.menu_items i
+    LEFT JOIN hotelpardise_system.menu_categories c ON c.id = i.category_id
    WHERE i.hotel_id = 1 AND i.published = 1
      AND (c.id IS NULL OR c.published = 0)) AS published_dish_with_no_section;
 

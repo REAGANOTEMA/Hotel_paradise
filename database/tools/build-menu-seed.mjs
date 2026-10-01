@@ -59,12 +59,41 @@ for (const s of sections) {
   if (!s.groups.flatMap(g => g.items).length) fail(`section ${s.name} has no dishes`);
 }
 
+// Every table is written out in full, as <schema>.something, and the file also
+// opens with USE for good measure. Both are here because of how this file is run
+// in practice: phpMyAdmin holds one database at a time and will happily execute
+// a pasted statement against whichever one is selected, so an unqualified
+// "FROM menu_items" silently becomes a query against hotelparadise_website,
+// which has no such table, and stops with #1146. A fully qualified name makes
+// every statement independent of what is selected, so statements can be pasted
+// one at a time, in any order, into any database, and each one means what it
+// says.
+//
+// The schema is a parameter rather than a constant, and that is not cosmetic.
+// Hardwiring hotelpardise_system into every table name made this generator's
+// own test meaningless: the seed was run twice against a scratch database to
+// prove it was idempotent and safe, and because the names were pinned it wrote
+// to the live database twice instead and the scratch database stayed empty. It
+// happened to be harmless because the run was idempotent, but a test that
+// cannot fail is worse than no test. Passing the schema as an argument means a
+// throwaway copy can be used, and the live database is only ever named by the
+// person who means it.
+//
+//   node database/tools/build-menu-seed.mjs                 -> hotelpardise_system
+//   node database/tools/build-menu-seed.mjs . hp_gen        -> a scratch database
+const SCHEMA = process.argv[3] || 'hotelpardise_system';
+if (!/^[A-Za-z0-9_]+$/.test(SCHEMA)) {
+  fail(`schema name ${SCHEMA} is not a plain identifier`);
+}
+const T_CATEGORIES = `${SCHEMA}.menu_categories`;
+const T_ITEMS = `${SCHEMA}.menu_items`;
+
 const statements = [];
 
 sections.forEach((s, i) => {
   statements.push(
     `-- ${s.name}\n` +
-    `INSERT INTO menu_categories (hotel_id,outlet,name,eyebrow,blurb,image,sort_order,published)\n` +
+    `INSERT INTO ${T_CATEGORIES} (hotel_id,outlet,name,eyebrow,blurb,image,sort_order,published)\n` +
     `VALUES (${HOTEL_ID},${q(OUTLET)},${q(s.name)},${q(s.eyebrow || null)},${q(s.blurb || null)},${q(s.image || null)},${i + 1},1)\n` +
     `ON DUPLICATE KEY UPDATE\n` +
     `  eyebrow=VALUES(eyebrow), blurb=VALUES(blurb), image=VALUES(image),\n` +
@@ -80,13 +109,13 @@ sections.forEach((s, i) => {
   const rows = s.groups
     .flatMap(g => g.items)
     .map((d, j) =>
-      `  (${HOTEL_ID},(SELECT id FROM menu_categories WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)} AND name=${q(s.name)} ORDER BY id LIMIT 1),` +
+      `  (${HOTEL_ID},(SELECT id FROM ${T_CATEGORIES} WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)} AND name=${q(s.name)} ORDER BY id LIMIT 1),` +
       `${q(d.name)},${q(d.group || null)},${q(d.desc || null)},${n(d.price)},${q(d.image || null)},${j + 1},1,1)`
     )
     .join(',\n');
 
   statements.push(
-    `INSERT INTO menu_items (hotel_id,category_id,name,group_name,description,price,image,sort_order,active,published)\n` +
+    `INSERT INTO ${T_ITEMS} (hotel_id,category_id,name,group_name,description,price,image,sort_order,active,published)\n` +
     `VALUES\n${rows}\n` +
     `ON DUPLICATE KEY UPDATE\n` +
     `  category_id=VALUES(category_id), group_name=VALUES(group_name), description=VALUES(description),\n` +
@@ -104,17 +133,17 @@ statements.push(
   `-- Restaurant rows this file used to publish and no longer does. Only the\n` +
   `-- restaurant outlet is touched: the bar and room service menus are the\n` +
   `-- hotel's own and are left alone.\n` +
-  `UPDATE menu_items SET published = 0\n` +
+  `UPDATE ${T_ITEMS} SET published = 0\n` +
   `WHERE hotel_id = ${HOTEL_ID} AND published = 1 AND name NOT IN (${names})\n` +
   // A plain IN (...) takes any number of rows, so no LIMIT here: MariaDB rejects
   // #1235 on a LIMIT inside IN. Restricting to the oldest id per name would
   // also be wrong, because this is meant to catch every restaurant section.
-  `  AND category_id IN (SELECT id FROM menu_categories WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)});`
+  `  AND category_id IN (SELECT id FROM ${T_CATEGORIES} WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)});`
 );
 
 const catNames = sections.map(s => q(s.name)).join(',');
 statements.push(
-  `UPDATE menu_categories SET published = 0\n` +
+  `UPDATE ${T_CATEGORIES} SET published = 0\n` +
   `WHERE hotel_id = ${HOTEL_ID} AND outlet=${q(OUTLET)} AND published = 1 AND name NOT IN (${catNames});`
 );
 
@@ -142,7 +171,7 @@ const sql = `-- HOTEL PARADISE ON THE NILE - COMPLETE MENU SEED
 
 SET NAMES utf8mb4;
 
-USE \`hotelpardise_system\`;
+USE \`${SCHEMA}\`;
 
 ${statements.join('\n\n')}
 
@@ -150,32 +179,32 @@ ${statements.join('\n\n')}
 -- section the guest can open but not order from, or a dish published under no
 -- section at all, is a broken menu and shows up here.
 SELECT COUNT(*) AS published_sections
-  FROM menu_categories c
+  FROM ${T_CATEGORIES} c
  WHERE c.hotel_id = ${HOTEL_ID} AND c.published = 1
-   AND EXISTS (SELECT 1 FROM menu_items i WHERE i.category_id = c.id AND i.published = 1);
+   AND EXISTS (SELECT 1 FROM ${T_ITEMS} i WHERE i.category_id = c.id AND i.published = 1);
 
 SELECT COUNT(*) AS published_dishes,
        SUM(price IS NULL) AS priced_on_request,
        COUNT(DISTINCT category_id) AS sections_covered
-  FROM menu_items WHERE hotel_id = ${HOTEL_ID} AND published = 1;
+  FROM ${T_ITEMS} WHERE hotel_id = ${HOTEL_ID} AND published = 1;
 
 -- Must both be zero. A published dish in no published section cannot be ordered.
 SELECT COUNT(*) AS published_dish_with_no_section
-  FROM menu_items i
-  LEFT JOIN menu_categories c ON c.id = i.category_id
+  FROM ${T_ITEMS} i
+  LEFT JOIN ${T_CATEGORIES} c ON c.id = i.category_id
  WHERE i.hotel_id = ${HOTEL_ID} AND i.published = 1
    AND (c.id IS NULL OR c.published = 0);
 
 -- Must be zero. A published section with nothing in it opens to a blank list.
 SELECT COUNT(*) AS published_section_with_no_dish
-  FROM menu_categories c
+  FROM ${T_CATEGORIES} c
  WHERE c.hotel_id = ${HOTEL_ID} AND c.published = 1
-   AND NOT EXISTS (SELECT 1 FROM menu_items i WHERE i.category_id = c.id AND i.published = 1);
+   AND NOT EXISTS (SELECT 1 FROM ${T_ITEMS} i WHERE i.category_id = c.id AND i.published = 1);
 
 -- The till's view is untouched by this file. If this changes, the seed has gone
 -- outside its own business and taken the hotel's menu with it.
 SELECT outlet, SUM(i.active = 1) AS sellable, SUM(i.published = 1) AS on_website
-  FROM menu_items i JOIN menu_categories c ON c.id = i.category_id
+  FROM ${T_ITEMS} i JOIN ${T_CATEGORIES} c ON c.id = i.category_id
  WHERE i.hotel_id = ${HOTEL_ID} GROUP BY outlet;
 
 -- Must be zero. A section name that appears twice means two rows are fighting
@@ -186,7 +215,7 @@ SELECT outlet, SUM(i.active = 1) AS sellable, SUM(i.published = 1) AS on_website
 -- to survive it, but the duplicates themselves still need database/
 -- tools/fix-duplicate-menu-categories.sql to clear them.
 SELECT name, COUNT(*) AS rows_found
-  FROM menu_categories
+  FROM ${T_CATEGORIES}
  WHERE hotel_id = ${HOTEL_ID} AND outlet = ${q(OUTLET)}
  GROUP BY name HAVING COUNT(*) > 1;
 `;
