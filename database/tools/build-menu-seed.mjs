@@ -106,7 +106,10 @@ statements.push(
   `-- hotel's own and are left alone.\n` +
   `UPDATE menu_items SET published = 0\n` +
   `WHERE hotel_id = ${HOTEL_ID} AND published = 1 AND name NOT IN (${names})\n` +
-  `  AND category_id IN (SELECT id FROM menu_categories WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)} ORDER BY id LIMIT 1);`
+  // A plain IN (...) takes any number of rows, so no LIMIT here: MariaDB rejects
+  // #1235 on a LIMIT inside IN. Restricting to the oldest id per name would
+  // also be wrong, because this is meant to catch every restaurant section.
+  `  AND category_id IN (SELECT id FROM menu_categories WHERE hotel_id=${HOTEL_ID} AND outlet=${q(OUTLET)});`
 );
 
 const catNames = sections.map(s => q(s.name)).join(',');

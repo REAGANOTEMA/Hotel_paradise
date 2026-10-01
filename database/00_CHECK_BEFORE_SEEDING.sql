@@ -1,58 +1,76 @@
 -- ===========================================================================
--- STEP 0. RUN THIS BEFORE ANY SEED FILE, IN phpMyAdmin.
+-- STEP 0. RUN THIS BEFORE ANY SEED FILE.
 --
--- It changes nothing. It either says the database is empty and the seed is
--- safe to run, or it stops with the reason, before a single row has been
--- half-written.
+-- It changes nothing and it cannot fail. It only reports, so it is safe to run
+-- in phpMyAdmin, in phpMyAdmin's SQL box, from a command line, or pasted into
+-- any tool that splits a file into single statements.
 --
--- Why bother, when the seed's own first statement already fails on a populated
--- database: because "#1062 Duplicate entry 'hotel-paradise-on-the-nile' for
--- key 'slug'" is the symptom of running the seed twice, and the two halves of
--- that are very different problems.
+-- Read the last result set, result, before running anything else:
 --
---   The database is already installed, and the seed was run by mistake.
---       Nothing is broken. The fix is to stop, and to run this:
---         C:/xampp/php/php.exe tools/install-databases.php --check
+--   EMPTY       The database has no hotel and no schema tables. Start here:
+--               01_LIVE_SYSTEM_SCHEMA.sql, then 02_LIVE_SYSTEM_SEED.sql,
+--               then 07_FULL_MENU_SEED.sql.
 --
---   The database is empty and empty is what you wanted.
---       The fix is to carry on with 01_LIVE_SYSTEM_SCHEMA.sql, then this seed.
+--   INSTALLED   The hotel is already in place. Running the seed again adds
+--               nothing: it stops on #1062 for the hotel slug, and if that is
+--               worked around the guests, suppliers and rooms come out doubled.
+--               Nothing is broken. To update the menu alone, run
+--               07_FULL_MENU_SEED.sql and nothing else.
 --
--- phpMyAdmin sends this whole block to the server in one go, which is why the
--- procedure below has no DELIMITER line. Running it from a command line
--- instead needs one, because the mysql client splits statements on semicolons
--- and would cut the body in half:
+--   HALF_DONE   Some schema tables exist but the hotel row does not. That is an
+--               interrupted install. Finish it rather than seeding on top:
+--               C:/xampp/php/php.exe tools/install-databases.php
 --
---   mysql> DELIMITER //
---   (then paste the CREATE PROCEDURE and CALL lines, then DELIMITER ;)
+-- Why this file only reports, rather than refusing to run
+--   The earlier version of this file raised a MySQL error to stop you, which
+--   needed a stored procedure. Any client that splits a script on semicolons
+--   cuts the procedure body in half and reports #1064 "syntax error near '' ",
+--   which is a confusing way to learn that the database was never touched.
+--   Reporting the same three answers in plain queries works everywhere.
 --
--- Paths in the messages below are written with forward slashes on purpose.
--- MySQL treats a backslash inside SIGNAL MESSAGE_TEXT as an escape, so a
--- Windows path arrives on screen as C:xamppphpphp.exe.
+-- Paths in the messages below use forward slashes on purpose. MySQL treats a
+-- backslash inside a quoted string as an escape, so a Windows path would
+-- otherwise arrive on screen with its separators eaten.
 -- ===========================================================================
 
-USE hotelpardise_system;
+-- Which database this file is actually talking to. If database_name is not
+-- hotelpardise_system, stop: the rest of this file is reporting on the wrong
+-- database, and so would any seed file run from here.
+SELECT DATABASE() AS database_name,
+       DATABASE() = 'hotelpardise_system' AS is_the_right_database;
 
-DROP PROCEDURE IF EXISTS hp_seed_preflight;
+-- How many of the schema tables are present.
+SELECT COUNT(*) AS schema_tables_present
+  FROM information_schema.tables
+ WHERE table_schema = 'hotelpardise_system'
+   AND table_name IN ('users','rooms','menu_items','reservations','menu_categories');
 
-CREATE PROCEDURE hp_seed_preflight()
-BEGIN
-  IF EXISTS (SELECT 1 FROM hotels) THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT =
-      'STOP. This database already contains a hotel record, so the seed files have already been applied to it. Running them again will not add anything: it stops with #1062 on the first line, and if that is worked around the guests, suppliers and rooms come out doubled. Nothing is wrong with the database. Leave it alone, and run: C:/xampp/php/php.exe tools/install-databases.php --check';
-  END IF;
+-- The hotel row, if there is one.
+SELECT COUNT(*) AS hotel_rows
+  FROM information_schema.tables
+ WHERE table_schema = 'hotelpardise_system' AND table_name = 'hotels';
 
-  IF EXISTS (SELECT 1 FROM information_schema.tables
-             WHERE table_schema = 'hotelpardise_system'
-               AND table_name IN ('users','rooms','menu_items','reservations')) THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT =
-      'STOP. Some of the schema tables exist but the hotel row does not, so this is a half-finished install, not a clean one. Finish it with: C:/xampp/php/php.exe tools/install-databases.php';
-  END IF;
+-- The one line that decides what you do next.
+SELECT CASE
+         WHEN DATABASE() <> 'hotelpardise_system' THEN 'WRONG DATABASE - select hotelpardise_system and run this again'
+         WHEN (SELECT COUNT(*) FROM hotels) > 0 THEN 'INSTALLED - do not seed. To update the menu run 07_FULL_MENU_SEED.sql alone'
+         WHEN (SELECT COUNT(*) FROM information_schema.tables
+                WHERE table_schema = 'hotelpardise_system'
+                  AND table_name IN ('users','rooms','menu_items','reservations')) > 0
+           THEN 'HALF_DONE - an install was interrupted. Run: C:/xampp/php/php.exe tools/install-databases.php'
+         ELSE 'EMPTY - run 01_LIVE_SYSTEM_SCHEMA.sql, then 02_LIVE_SYSTEM_SEED.sql, then 07_FULL_MENU_SEED.sql'
+       END AS result;
 
-  SELECT 'OK. The database is empty. Run 01_LIVE_SYSTEM_SCHEMA.sql first, then 02_LIVE_SYSTEM_SEED.sql, then 07_FULL_MENU_SEED.sql.' AS result;
-END;
-
-CALL hp_seed_preflight();
-
--- Only the check is wanted here. Keeping the procedure would leave an object
--- in the database that the schema does not describe.
-DROP PROCEDURE hp_seed_preflight;
+-- Where the website's menu currently stands. Safe to read at any time, and
+-- useful after 07_FULL_MENU_SEED.sql: these are the numbers to check.
+SELECT
+  (SELECT COUNT(*) FROM menu_categories
+    WHERE hotel_id = 1 AND published = 1) AS published_sections,
+  (SELECT COUNT(*) FROM menu_items
+    WHERE hotel_id = 1 AND published = 1) AS published_dishes,
+  (SELECT COUNT(*) FROM menu_items
+    WHERE hotel_id = 1 AND published = 1 AND price IS NULL) AS priced_on_request,
+  (SELECT COUNT(*) FROM menu_items i
+    LEFT JOIN menu_categories c ON c.id = i.category_id
+   WHERE i.hotel_id = 1 AND i.published = 1
+     AND (c.id IS NULL OR c.published = 0)) AS published_dish_with_no_section;
