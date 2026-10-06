@@ -172,6 +172,11 @@ function scanHero(dir) {
 export function buildImageManifest(imagesRoot) {
   return {
     dishes: scanFolder(path.join(imagesRoot, 'dishes')),
+    // The kitchen keeps two working folders: /images/dishes (the files the menu
+    // is built from) and /images/food (a filing copy). A dish that has no plate
+    // in /images/dishes is served from /images/food, so a photograph the kitchen
+    // filed only once is never shown as an empty box.
+    food: scanFolder(path.join(imagesRoot, 'food')),
     rooms: scanFolder(path.join(imagesRoot, 'rooms')),
     gallery: scanFolder(path.join(imagesRoot, 'gallery')),
     hero: scanHero(imagesRoot)

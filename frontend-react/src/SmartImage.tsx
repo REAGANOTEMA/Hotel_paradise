@@ -6,11 +6,15 @@ export type ImageGroup = 'dishes' | 'rooms' | 'gallery';
 type Variant = {w: number; ext: string; h: number};
 type Entry = {ext: string; w: number; h: number; variants: Variant[]};
 
+/** The folder a photo may actually live in. */
+export type ImageHome = ImageGroup | 'food';
+
 /** The folder each group of photographs lives in. */
-export const IMAGE_DIR: Record<ImageGroup, string> = {
+export const IMAGE_DIR: Record<ImageHome, string> = {
   dishes: './images/dishes/',
   rooms: './images/rooms/',
-  gallery: './images/gallery/'
+  gallery: './images/gallery/',
+  food: './images/food/'
 };
 
 export type HeroShot = {slug: string; ext: string; w: number; h: number; variants: Variant[]};
@@ -20,7 +24,24 @@ export type HeroShot = {slug: string; ext: string; w: number; h: number; variant
  * carousel can lay its slides out before anything is fetched. Every other group
  * is keyed by slug, which is why HeroShot carries the extra field.
  */
-const LIB = manifest as Record<ImageGroup, Record<string, Entry>> & {hero: HeroShot[]};
+const LIB = manifest as Record<ImageGroup, Record<string, Entry>> & {hero: HeroShot[]; food?: Record<string, Entry>};
+
+/**
+ * Finds the photograph for a slot and the folder it actually lives in.
+ * The dish group keeps two folders on disk: /images/dishes (the files the menu
+ * is built from) and /images/food (the kitchen's working copy). A dish that has
+ * no plate in dishes is served from food, so a photo filed only once never
+ * shows as an empty box. The other groups read from their own folder alone.
+ */
+function entryFor(group: ImageGroup, slug: string): {entry: Entry | null; dir: ImageHome} {
+  const here = LIB[group]?.[slug];
+  if (here) return {entry: here, dir: group};
+  if (group === 'dishes') {
+    const filed = LIB.food?.[slug];
+    if (filed) return {entry: filed, dir: 'food'};
+  }
+  return {entry: null, dir: group};
+}
 
 /** What the build found in /images, already sorted into carousel order. */
 export const heroShots: HeroShot[] = LIB.hero || [];
@@ -75,14 +96,18 @@ function probe(group: ImageGroup, slug: string): Promise<Entry | null> {
     waiting.delete(slug);
   };
 
+  const homes: ImageHome[] = group === 'dishes' ? ['dishes', 'food'] : [group];
+
   (async () => {
-    for (const ext of EXTS) {
-      try {
-        // HEAD keeps a missing photo out of the browser console entirely.
-        const res = await fetch(IMAGE_DIR[group] + slug + '.' + ext, {method: 'HEAD'});
-        if (res.ok) return finish({ext, w: 0, h: 0, variants: []});
-      } catch {
-        /* not published yet, try the next extension */
+    for (const home of homes) {
+      for (const ext of EXTS) {
+        try {
+          // HEAD keeps a missing photo out of the browser console entirely.
+          const res = await fetch(IMAGE_DIR[home] + slug + '.' + ext, {method: 'HEAD'});
+          if (res.ok) return finish({ext, w: 0, h: 0, variants: []});
+        } catch {
+          /* not published yet, try the next extension */
+        }
       }
     }
     finish(null);
@@ -127,7 +152,7 @@ const bare = (name: string) =>
  * Builds a srcset from the widths the photograph really has, so nothing is ever
  * asked to scale up. A missing derivative simply drops out of the list.
  */
-function srcSetFor(entry: Entry, group: ImageGroup, slug: string, widths: number[]) {
+function srcSetFor(entry: Entry, dir: ImageHome, slug: string, widths: number[]) {
   const candidates: Array<{file: string; w: number}> = [];
   for (const w of widths) {
     const variant = entry.variants.find(v => v.w >= w);
@@ -140,7 +165,7 @@ function srcSetFor(entry: Entry, group: ImageGroup, slug: string, widths: number
   return candidates
     .filter(c => (seen.has(c.w) ? false : (seen.add(c.w), true)))
     .sort((a, b) => a.w - b.w)
-    .map(c => IMAGE_DIR[group] + c.file + ' ' + c.w + 'w')
+    .map(c => IMAGE_DIR[dir] + c.file + ' ' + c.w + 'w')
     .join(', ');
 }
 
@@ -160,7 +185,7 @@ export function SmartImage({
   children
 }: SmartImageProps) {
   const slug = bare(name);
-  const known = LIB[group]?.[slug];
+  const {entry: known, dir: home} = slug ? entryFor(group, slug) : {entry: undefined, dir: group};
 
   const [entry, setEntry] = React.useState<Entry | null | undefined>(known);
   const [failed, setFailed] = React.useState(false);
@@ -200,8 +225,8 @@ export function SmartImage({
     );
   }
 
-  const srcset = srcSetFor(entry, group, slug, w);
-  const src = IMAGE_DIR[group] + slug + '.' + entry.ext;
+  const srcset = srcSetFor(entry, home, slug, w);
+  const src = IMAGE_DIR[home] + slug + '.' + entry.ext;
 
   return (
     <div className={'photoBox ' + className + (zoom ? ' zooms' : '')} style={box}>
