@@ -244,4 +244,53 @@ if($act==='order'){
   $out(['ok'=>true,'order_number'=>$num,'total'=>$sub,'message'=>'Please keep your phone nearby. We will call '.$phone.' to confirm collection and payment.']);
 }
 
+/**
+ * Records the website guest's intent to pay after a booking or an order.
+ *
+ * Pesapal is the merchant of record, and its keys are not live yet. Until they
+ * are, a payment lands here as pending with the method the guest chose, and the
+ * front desk confirms it. The moment the gateway is switched on, this same
+ * checkout url and the callback marks the row
+ * successful - which is why the docket amount is read from the server first and
+ * never trusted from the browser, and method is forced onto an allowlist.
+ */
+if($act==='payment'){
+  $src=trim((string)($body['source']??'')); $ref=trim((string)($body['reference']??''));
+  $name=trim((string)($body['name']??'')); $phone=trim((string)($body['phone']??''));
+  $method=strtolower(trim((string)($body['method']??'')));
+  if(!in_array($method,['pesapal','mtn_momo','airtel_money','card'],true)){
+    $out(['ok'=>false,'error'=>'Please choose a payment method.'],422);
+  }
+  if($name===''||$phone===''){
+    $out(['ok'=>false,'error'=>'Please provide your name and phone number for the receipt.'],422);
+  }
+  $label=$src==='booking'?'booking':($src==='order'?'order':'');
+  if($label===''||$ref===''){ $out(['ok'=>false,'error'=>'Nothing to pay. Please start again from the rooms or the menu.'],422); }
+
+  $rid=null; $oid=null; $expected=0.0;
+  if($src==='booking'){
+    $r=row('SELECT id,total FROM reservations WHERE booking_number=?',[$ref]);
+    if(!$r){ $out(['ok'=>false,'error'=>'We could not find that booking reference. Please call +256 759 504 928.'],404); }
+    $rid=(int)$r['id']; $expected=(float)$r['total'];
+  }else{
+    $o=row('SELECT id,total FROM orders WHERE order_number=?',[$ref]);
+    if(!$o){ $out(['ok'=>false,'error'=>'We could not find that order reference. Please call +256 759 504 928.'],404); }
+    $oid=(int)$o['id']; $expected=(float)$o['total'];
+  }
+  if($expected<=0){ $out(['ok'=>false,'error'=>'There is nothing to pay on this reference.'],422); }
+
+  $payRef=next_number('PAY','payments','provider_reference');
+  $paymentCols=existing_columns('payments',['id','hotel_id','user_id','invoice_id','order_id','reservation_id','amount','method','provider','provider_reference','status','created_at']);
+  $ins=['hotel_id'=>1,'user_id'=>null,'invoice_id'=>null,'order_id'=>$oid,'reservation_id'=>$rid,
+    'amount'=>$expected,'method'=>$method,'provider'=>'pesapal','provider_reference'=>$payRef,'status'=>'pending'];
+  $ins=array_intersect_key($ins,array_flip($paymentCols));
+  $insCols=array_keys($ins);
+  q('INSERT INTO payments('.implode(',',$insCols).',created_at)'
+    .' VALUES('.implode(',',array_fill(0,count($insCols),'?')).',NOW())',array_values($ins));
+  $pid=(int)db()->lastInsertId();
+  audit('web_payment','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'pending']);
+  $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,
+    'message'=>'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.']);
+}
+
 $out(['ok'=>false,'error'=>'Unknown request'],404);

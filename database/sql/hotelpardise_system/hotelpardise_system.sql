@@ -3016,14 +3016,14 @@ INSERT INTO `menu_items` (`id`, `hotel_id`, `category_id`, `name`, `description`
 (2298, 1, 22, 'Pasta Bolognese', 'Pasta with minced meat, garlic, tomato and red wine sauce, topped with melted cheese and served with toast.', 25000.00, NULL, 'Pasta', 20, 1, 0),
 (2299, 1, 22, 'Pasta Carbonara', 'Pasta with egg and bacon cream sauce, topped with cheese and served with toast.', 30000.00, NULL, 'Pasta', 30, 1, 0),
 (2300, 1, 23, 'Premium Whole Tilapia, Fried or Steamed', 'Medium premium tilapia, fried or steamed, served with chips.', NULL, NULL, 'Whole Fish', 10, 1, 1),
-(2301, 1, 23, 'Premium Wet Fried Tilapia', 'Premium tilapia in a seasoned wet fry.', NULL, NULL, 'Whole Fish', 20, 1, 1),
+(2301, 1, 23, 'Premium Wet Fried Tilapia', 'Premium tilapia in a seasoned wet fry.', 58000.00, NULL, 'Whole Fish', 20, 1, 1),
 (2302, 1, 23, 'Grilled Premium Tilapia', 'Whole oven grilled, oil free, premium tilapia, with an accompaniment of your choice.', NULL, NULL, 'Whole Fish', 30, 1, 1),
 (2303, 1, 23, 'Large Whole Tilapia, Fried or Steamed', 'Large king tilapia, fried or steamed, served with chips.', NULL, NULL, 'Whole Fish', 40, 1, 1),
 (2304, 1, 23, 'Grilled Tilapia Fillet, Spinach and Cheese', 'Grilled tilapia fillet in a creamy spinach and cheese sauce, with an accompaniment of your choice.', NULL, NULL, 'Whole Fish', 50, 1, 1),
 (2305, 1, 24, 'Paradise Rustica Fish', 'Grilled tilapia fillet layered on guacamole and salsa with hot chili, served with rustica sauce, garnished with black olives.', 32000.00, NULL, 'Fish Fillets', 10, 1, 1),
 (2306, 1, 24, 'Mombasa Fish', 'Tilapia fillet crumbed in coconut and fried to your liking, served with chips or rice.', 32000.00, NULL, 'Fish Fillets', 20, 1, 1),
 (2307, 1, 24, 'Deep Fried or Pan Grilled Fillet', 'Coated tilapia fillet, deep fried or pan grilled, served with rice or chips.', 32000.00, NULL, 'Fish Fillets', 30, 1, 1),
-(2308, 1, 24, 'Catch of the Day', 'Pan grilled Nile perch fillet served with rice or chips.', NULL, NULL, 'Fish Fillets', 40, 1, 1),
+(2308, 1, 24, 'Catch of the Day', 'Pan grilled Nile perch fillet served with rice or chips.', 32000.00, NULL, 'Fish Fillets', 40, 1, 1),
 (2309, 1, 25, 'Chicken Saute', 'Sautéed chicken with brown mushroom and spring onion, served with mushroom sauce and an accompaniment of your choice.', 30000.00, NULL, 'Chicken Lovers', 10, 1, 1),
 (2310, 1, 25, 'BBQ Chicken Drumstick', 'Three well marinated tender chicken drumsticks, fried and tossed in barbecue sauce with a touch of fresh coriander.', 30000.00, NULL, 'Chicken Lovers', 20, 1, 1),
 (2311, 1, 25, 'Grilled Quarter Chicken Breast or Thigh', 'Well marinated charcoal or oven roasted tender chicken, served with chips or an accompaniment of your choice.', 45000.00, NULL, 'Chicken Lovers', 30, 1, 1),
@@ -3060,14 +3060,18 @@ INSERT INTO `menu_items` (`id`, `hotel_id`, `category_id`, `name`, `description`
 (2342, 1, 31, 'Sweet Vegetarian', 'Red, yellow and green bell pepper, sweet corn and mozzarella.', 27000.00, NULL, 'Pizza', 20, 1, 0),
 (2343, 1, 31, 'Quattro Stagioni', 'Ham, olives, mushroom, artichokes and mozzarella.', 30000.00, NULL, 'Pizza', 30, 1, 0),
 (2344, 1, 31, 'Pepperoni', 'Tomato, green pepper, onion, pepperoni and mozzarella.', 30000.00, NULL, 'Pizza', 40, 1, 0),
-(2345, 1, 31, 'Hawaiian', 'Ham or bacon, pineapple and mozzarella.', NULL, NULL, 'Pizza', 50, 1, 0),
+(2345, 1, 31, 'Hawaiian', 'Ham or bacon, pineapple and mozzarella.', 30000.00, NULL, 'Pizza', 50, 1, 0),
 (2346, 1, 31, 'Farmer\'s', 'Chicken, mushroom and mozzarella.', 30000.00, NULL, 'Pizza', 60, 1, 0),
-(2347, 1, 31, 'Tuna', 'Tuna fillet, tomato, green pepper and mozzarella, topped with a boiled egg.', NULL, NULL, 'Pizza', 70, 1, 1),
+(2347, 1, 31, 'Tuna', 'Tuna fillet, tomato, green pepper and mozzarella, topped with a boiled egg.', 30000.00, NULL, 'Pizza', 70, 1, 1),
 (2348, 1, 31, 'Diavola', 'Tomato, chili salami and mozzarella.', 30000.00, NULL, 'Pizza', 80, 1, 0),
 (2349, 1, 31, 'Bolognese', 'Spicy minced meat, tomato and mozzarella.', NULL, NULL, 'Pizza', 90, 1, 0),
 (2350, 1, 31, 'Capricciosa', 'Salami, black olives, artichokes, capers, mushroom and mozzarella.', 30000.00, NULL, 'Pizza', 100, 1, 0),
 (2351, 1, 31, 'Calzone', 'Minced meat, green pepper and capsicum rolled in a half moon of bread.', 30000.00, NULL, 'Calzone', 110, 1, 0),
 (2352, 1, 31, 'Assorted Meat and Salami', 'Assorted meat, salami, mushroom, green pepper, onion and mozzarella.', 35000.00, NULL, 'Pizza', 120, 1, 0);
+
+INSERT INTO `menu_items` (`id`, `hotel_id`, `category_id`, `name`, `description`, `price`, `image`, `group_name`, `sort_order`, `active`, `stock_tracked`) VALUES
+(2353, 1, 25, 'Mushroom Chicken', 'Pan fried chicken cubes infused in a creamy white mushroom sauce and spring onions.', 32000.00, NULL, 'Chicken Lovers', 60, 1, 1),
+(2354, 1, 23, 'Grilled King Tilapia', 'Whole oven grilled, oil free, king tilapia, with an accompaniment of your choice.', 48000.00, NULL, 'Whole Fish', 60, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -3816,6 +3820,9 @@ INSERT INTO `room_types` (`id`, `hotel_id`, `name`, `description`, `max_guests`,
 (61, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
 (62, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
 (63, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1);
+
+INSERT INTO `room_types` (`id`, `hotel_id`, `name`, `description`, `max_guests`, `base_rate`, `active`) VALUES
+(64, 1, 'Standard Double', 'A well kept double room with a comfortable bed, in an easy reach of the front desk.', 2, 155000.00, 1);
 
 -- --------------------------------------------------------
 
@@ -5492,7 +5499,7 @@ ALTER TABLE `menu_categories`
 -- AUTO_INCREMENT for table `menu_items`
 --
 ALTER TABLE `menu_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2353;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2355;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -5654,7 +5661,7 @@ ALTER TABLE `room_status_history`
 -- AUTO_INCREMENT for table `room_types`
 --
 ALTER TABLE `room_types`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `shifts`

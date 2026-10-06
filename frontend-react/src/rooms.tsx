@@ -65,12 +65,20 @@ function RoomsPage() {
     room_type: sel.type, adults: parseInt(form.adults) || 1
    })});
     const d = await res.json();
-    setMsg({ok: !!d.ok, text: d.ok
-     ? ('You have chosen the ' + sel.type + '. Request ' + d.booking_number + ' received. Total '
-        + fmt(Number(d.total) || 0)
-        + (Number(d.withdrawal_fee) > 0 ? ' (including a ' + fmt(Number(d.withdrawal_fee)) + ' ' + String(d.withdrawal_fee_label || fee.label).toLowerCase() + ')' : '')
-        + '. ' + d.message)
-     : (d.error || 'Something went wrong. Please try again or call ' + CALL + '.')});
+    if (d.ok) {
+     // The booking exists on the server. Hand the guest to the checkout page,
+     // which carries the reference, the total and their details so the payment
+     // and the docket can never disagree with the booking.
+     const p = new URLSearchParams({
+      src: 'booking', ref: String(d.booking_number || ''),
+      amt: String(Math.round(Number(d.total) || 0)),
+      item: sel.type, qty: String(nights || 1), unit: 'night',
+      name: form.name, phone: form.phone, email: form.email
+     });
+     window.location.assign('./pay.html?' + p.toString());
+     return;
+    }
+    setMsg({ok: false, text: d.error || 'Something went wrong. Please try again or call ' + CALL + '.'});
   } catch {
    setMsg({ok: false, text: 'Could not reach the booking service. Please call ' + CALL + '.'});
   }

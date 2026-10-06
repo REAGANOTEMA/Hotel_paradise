@@ -67,8 +67,8 @@ Character set: `utf8mb4`. Press **Go**.
 
 When it finishes you should have **102 tables**, and it should end without an
 error. This file carries the tables *and* the rows together: the hotel, the
-staff, the rooms, the reservations, and the whole menu — 1,930 dishes in 119
-categories across the restaurant, the bar and room service, of which 642 are
+staff, the rooms, the reservations, and the whole menu — 1,932 dishes in 119
+categories across the restaurant, the bar and room service, of which 644 are
 active.
 
 ## Step 3 — the website's data
@@ -182,7 +182,7 @@ Then the menu:
 https://your-domain/backend-php/api.php?act=menu
 ```
 
-`"menu_items"` of 642 under `hotel` on the health page, and 63 categories in
+`"menu_items"` of 644 under `hotel` on the health page, and 63 categories in
 the menu response, means the database is installed correctly. A zero under
 `website` is normal: the website's own database holds the settings, not the
 menu.

@@ -555,8 +555,16 @@ function MenuPage() {
       })});
       const d = await res.json();
       if (d.ok) {
-        setMsg({ok: true, text: 'Your order ' + d.order_number + ' is with the kitchen. ' + d.message});
-        setTray([]); setName(''); setPhone('');
+        // The order is with the kitchen and its total is fixed on the server.
+        // Hand the guest to checkout so the payment follows the order number.
+        const p = new URLSearchParams({
+         src: 'order', ref: String(d.order_number || ''),
+         amt: String(Math.round(Number(d.total) || subtotal || 0)),
+         item: count + ' dish' + (count === 1 ? '' : 'es'), qty: String(count), unit: 'meal',
+         name: name.trim(), phone: phone.trim()
+        });
+        window.location.assign('./pay.html?' + p.toString());
+        return;
       } else {
         setMsg({ok: false, text: d.error || 'Something went wrong. Please call ' + CALL + '.'});
       }

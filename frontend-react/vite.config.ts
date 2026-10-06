@@ -49,7 +49,8 @@ export default defineConfig({
       input: {
         home: 'index.html',
         rooms: 'rooms.html',
-        menu: 'menu.html'
+        menu: 'menu.html',
+        pay: 'pay.html'
       }
     }
   }
