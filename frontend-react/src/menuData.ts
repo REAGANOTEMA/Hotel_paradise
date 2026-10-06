@@ -9,8 +9,9 @@
  * honest blank space.
  *
  * This is the fallback dataset used when the kitchen database is unreachable.
- * database/07_FULL_MENU_SEED.sql is generated from this file by
- * database/tools/build-menu-seed.mjs and holds the same menu in the database.
+ * The database keeps its own copy of the menu and it is not generated from
+ * this file any more; database/tools/check-menu.mjs compares the two and
+ * reports anything that has drifted.
  *
  * PHOTOS
  * Drop a picture into /images/dishes/ named after the item, for example

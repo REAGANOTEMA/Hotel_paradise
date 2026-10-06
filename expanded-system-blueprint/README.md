@@ -11,8 +11,11 @@ Location: Jinja, Uganda
 - **PWA/mobile-ready frontend**: the React interface is responsive and can be packaged as a PWA/native shell later.
 
 ## Database
-Run `database/INSTALL.sql` first, then `database/seed.sql`.
-`INSTALL.sql` is authoritative and should be run before any application module.
+**There is no SQL in this folder any more.** `database/INSTALL.sql`,
+`database/seed.sql` and `database/modules/*.sql` have been removed, so nothing
+here can be run against a database. The blueprint is documentation and
+reference only: the live site is installed from the two dumps under
+`database/sql/` at the project root.
 
 ## Frontend
 ```bash

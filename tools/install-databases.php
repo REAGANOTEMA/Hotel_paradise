@@ -83,10 +83,10 @@ $cfg=require $dbFile;
 $dumps=[
  ['database/sql/hotelpardise_system/hotelpardise_system.sql',
   $root.'/database/sql/hotelpardise_system/hotelpardise_system.sql',
-  (string)($cfg['db']['name']??''),100,'the hotel system'],
+  (string)($cfg['db']['name']??''),102,'the hotel system'],
  ['database/sql/hotelpardise_website/hotelpardise_website.sql',
   $root.'/database/sql/hotelpardise_website/hotelpardise_website.sql',
-  (string)($cfg['web_db']['name']??''),36,'the public website'],
+  (string)($cfg['web_db']['name']??''),38,'the public website'],
 ];
 foreach($dumps as [$rel,$file]){
  if(!is_readable($file)){

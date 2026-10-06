@@ -1,22 +1,20 @@
 # Putting the hotel online: the phpMyAdmin route
 
-Everything below is done in the hosting panel's **phpMyAdmin**, by pasting one
-file at a time into the **SQL** tab and pressing **Go**. Five pastes, in this
-order. Do not skip a step or reorder them; each one depends on the last.
+Everything below is done in the hosting panel's **phpMyAdmin**, by importing one
+file at a time. Four steps, in this order. Do not skip a step or reorder them.
 
 > **On a machine you control, do not do this by hand.** Run
-> `php tools/install-databases.php` instead. It does all five steps in the only
+> `php tools/install-databases.php` instead. It does all four steps in the only
 > order that works, reads the passwords from `backend-php/config.php` so there
 > is nothing to copy and no way for the two to disagree, and finishes by
 > connecting as the site does and saying so. It is safe to run again.
 >
 > The reason this page exists as a manual list is that the order is not
-> optional. Step 2 grants rights on tables named inside `hotelpardise_system`,
+> optional. Step 4 grants rights on tables named inside `hotelpardise_system`,
 > and a grant on a table that is not there yet is refused without a word. So
-> running the grants before the schema looks like it worked, and then the site
+> running the grants before the dumps looks like it worked, and then the site
 > cannot sign in hours later for a reason that has nothing to do with the
-> grants. `tools/install-databases.php` puts the schema first precisely so that
-> trap cannot be stepped in.
+> grants. The dumps come first precisely so that trap cannot be stepped in.
 
 ## Before you start
 
@@ -25,128 +23,146 @@ You need the database names and passwords from the hosting panel. Open
 the database and the user with your account name, so the real name may be
 `reagan_hotelpardise_system` rather than `hotelpardise_system`.
 
-That prefix matters. If you change it anywhere, change it in **all** the files
+That prefix matters. If you change it anywhere, change it in **all** the steps
 below *and* in `backend-php/config.php`, or the site will connect to an empty
 database and quietly show its built-in menu instead of your real one.
 
-## Step 0 — check before you seed
-
-Paste `database/00_CHECK_BEFORE_SEEDING.sql` and press **Go**, before anything
-else.
-
-It changes nothing. If the database is empty it says so, and you carry on. If
-it is already installed it stops with a message telling you to leave it alone
-and run `php tools/install-databases.php --check` instead.
-
-Do not skip this. Step 3 is plain `INSERT` statements with no
-`IF NOT EXISTS`, so pasting it into a database that already has the hotel in it
-fails on its first line with
+Check first whether the site is already installed:
 
 ```
-#1062 Duplicate entry 'hotel-paradise-on-the-nile' for key 'slug'
+C:\xampp\php\php.exe tools\install-databases.php --check
 ```
 
-and that error is not a problem to be fixed. It means the seed was already
-applied. Deleting the first row to get past it makes it worse, not better:
-`rooms`, `guests` and `suppliers` have no unique key, so the rest of the file
-would be inserted alongside the rows already there and come out **doubled**,
-with the console showing 138 rooms and two of everything else.
+It changes nothing. If it answers *"the site is installed correctly"*, stop:
+there is nothing here to do.
 
-## Step 1 — the hotel's tables
+## Step 1 — two empty databases
 
-With `hotelpardise_system` selected in the left-hand list, paste
-`database/01_LIVE_SYSTEM_SCHEMA.sql`.
+Create both, each with the same character set the dumps were taken with:
 
-You should get 32 tables. If you get an error saying a table already exists,
-that is fine and harmless; the file asks before creating each one.
+```sql
+CREATE DATABASE `hotelpardise_system` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE `hotelpardise_website` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-## Step 2 — the databases' users and rights
+Prefix the names if your host does.
 
-Back on the phpMyAdmin home page, open `database/05_HOSTING_INSTALL.sql` in a
-text editor first and replace the two placeholders:
+Both must be **empty**. A dump of this kind has no `DROP TABLE` and no
+`CREATE TABLE IF NOT EXISTS` in it: it can only be loaded into a database with
+no tables at all. Loading it into a database that already has tables fails part
+way through and leaves a half-built site, and a database that already has tables
+is usually a site being used, whose rows are not yours to overwrite. If one is
+not empty, either drop it — knowing that drops the site it holds — or leave it
+alone.
+
+## Step 2 — the hotel's data
+
+In `hotelpardise_system`, open the **Import** tab and choose
+
+```
+database/sql/hotelpardise_system/hotelpardise_system.sql
+```
+
+Character set: `utf8mb4`. Press **Go**.
+
+When it finishes you should have **102 tables**, and it should end without an
+error. This file carries the tables *and* the rows together: the hotel, the
+staff, the rooms, the reservations, and the whole menu — 1,930 dishes in 119
+categories across the restaurant, the bar and room service, of which 642 are
+active.
+
+## Step 3 — the website's data
+
+Switch to `hotelpardise_website` and import
+
+```
+database/sql/hotelpardise_website/hotelpardise_website.sql
+```
+
+**38 tables**, including `website_settings`, which holds the site's own
+settings.
+
+The menu the guest reads and the order the kitchen receives live in
+`hotelpardise_system`, not here: the website account is granted read access to
+those tables in the next step, so there is one copy of the menu rather than two
+that can drift apart.
+
+## Step 4 — the accounts and their rights
+
+Back on the phpMyAdmin home page, so this runs against neither database in
+particular. Copy the block below into a text editor and replace the
+placeholders:
 
 - `PASTE_THE_HOTEL_PASSWORD_HERE`
 - `PASTE_THE_WEBSITE_PASSWORD_HERE`
+- `hotelpardise_system` → your prefixed hotel database name, if it has one
+- `hotelpardise_website` → your prefixed website database name, if it has one
 
-with the two passwords you noted down, then paste the file into phpMyAdmin.
+```sql
+-- The accounts, for both the socket and TCP, because MariaDB decides which
+-- matches from the address in the connection.
+CREATE USER IF NOT EXISTS 'hotelpardise_system'@'localhost'  IDENTIFIED BY 'PASTE_THE_HOTEL_PASSWORD_HERE';
+CREATE USER IF NOT EXISTS 'hotelpardise_system'@'127.0.0.1'  IDENTIFIED BY 'PASTE_THE_HOTEL_PASSWORD_HERE';
+CREATE USER IF NOT EXISTS 'hotelpardise_website'@'localhost' IDENTIFIED BY 'PASTE_THE_WEBSITE_PASSWORD_HERE';
+CREATE USER IF NOT EXISTS 'hotelpardise_website'@'127.0.0.1' IDENTIFIED BY 'PASTE_THE_WEBSITE_PASSWORD_HERE';
 
-They are placeholders on purpose. The file lives in the repository, and a real
-password inside a committed file is a password that has to be changed the moment
-that file is shared. The passwords to use are the same two you will put in
-`backend-php/config.php` in step 6.
+GRANT ALL PRIVILEGES ON `hotelpardise_system`.* TO 'hotelpardise_system'@'localhost';
+GRANT ALL PRIVILEGES ON `hotelpardise_system`.* TO 'hotelpardise_system'@'127.0.0.1';
 
-This creates both databases, both users, and the rights each one has. It
-changes nothing else, and it is safe to run again if you need to.
+-- The website reads the published menu and may take a booking. It is not
+-- granted the hotel's money or guest documents.
+GRANT SELECT, INSERT, UPDATE, DELETE ON `hotelpardise_website`.* TO 'hotelpardise_website'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `hotelpardise_website`.* TO 'hotelpardise_website'@'127.0.0.1';
 
-**This one must come after step 1, not before.** A grant on a named table only
-takes if the table is already there, so running it first fails on the grants
-near the end of the file — and those are the grants that matter.
+GRANT SELECT ON `hotelpardise_system`.menu_categories TO 'hotelpardise_website'@'localhost';
+GRANT SELECT ON `hotelpardise_system`.menu_items      TO 'hotelpardise_website'@'localhost';
+GRANT SELECT ON `hotelpardise_system`.room_types      TO 'hotelpardise_website'@'localhost';
+GRANT SELECT ON `hotelpardise_system`.rooms           TO 'hotelpardise_website'@'localhost';
+GRANT SELECT ON `hotelpardise_system`.hotels          TO 'hotelpardise_website'@'localhost';
+GRANT SELECT (id, phone, full_name) ON `hotelpardise_system`.guests       TO 'hotelpardise_website'@'localhost';
+GRANT SELECT (booking_number)       ON `hotelpardise_system`.reservations TO 'hotelpardise_website'@'localhost';
+GRANT INSERT ON `hotelpardise_system`.guests           TO 'hotelpardise_website'@'localhost';
+GRANT INSERT ON `hotelpardise_system`.reservations     TO 'hotelpardise_website'@'localhost';
+GRANT INSERT ON `hotelpardise_system`.reservation_rooms TO 'hotelpardise_website'@'localhost';
+GRANT INSERT ON `hotelpardise_system`.orders           TO 'hotelpardise_website'@'localhost';
+GRANT INSERT ON `hotelpardise_system`.order_items      TO 'hotelpardise_website'@'localhost';
 
-It finishes by showing you the rights it granted. Check the last one reads
-`hotelpardise_website` and that you can see it holds rights on named tables
-only, **not** on the whole hotel database. If your host refuses one user being
-given rights on two databases, delete the two lines granting
-`hotelpardise_system` rights on `hotelpardise_website` and carry on.
+FLUSH PRIVILEGES;
+```
 
-## Step 3 — the hotel's starting data
+Repeat every `hotelpardise_website` grant for `'hotelpardise_website'@'127.0.0.1'`
+as well, or copy the block twice and change the host — whichever is less error
+prone by hand.
 
-With `hotelpardise_system` selected, paste `database/02_LIVE_SYSTEM_SEED.sql`.
-This loads the hotel, the staff roles, the room types and a first menu.
+They are placeholders on purpose. The passwords you are about to put in are the
+same two you will put in `backend-php/config.php`, and a real password inside a
+committed file is a password that has to be changed the moment that file is
+shared.
 
-## Step 4 — the full published menu
+**This step must come after steps 2 and 3, not before.** A grant on a named
+table only takes if the table is already there, so running it first fails on the
+grants — and those are the grants that matter.
 
-With `hotelpardise_system` selected, paste `database/07_FULL_MENU_SEED.sql`.
+When it finishes, show the rights for `hotelpardise_website` and check it holds
+rights on named tables only, **not** on the whole hotel database. If your host
+refuses one user being given rights on two databases, that is the step to hand
+to them: ask for `SELECT` on `menu_categories`, `menu_items`, `room_types`,
+`rooms` and `hotels`, plus `INSERT` on `guests`, `reservations`,
+`reservation_rooms`, `orders` and `order_items`.
 
-This loads all 19 sections and all 251 dishes exactly as the website shows them.
-Every dish carries a rate, so nothing is published as "Priced on request".
-It finishes with six checks. Read them:
-
-| check | must read |
-|---|---|
-| `published_sections` | 19 |
-| `published_dishes` | 251 |
-| `priced_on_request` | 0 |
-| `sections_covered` | 19 |
-| `published_dish_with_no_section` | 0 |
-| `published_section_with_no_dish` | 0 |
-
-The last two are the ones that matter. Anything above zero means a dish the
-guest cannot reach, or a section that opens to nothing. `priced_on_request` must
-be 0: if it is not, a dish reached the menu without a rate.
-
-The closing `outlet` summary is a bystander, not a check. The till's own menu
-must not change when this file runs.
-
-**Re-running this file is safe.** It matches dishes by name and updates them in
-place, so you can run it again whenever the kitchen changes the menu. It never
-deletes anything and never deactivates a dish, so past orders stay readable and
-the bar and room service menus are left alone. A dish dropped from the website
-is marked unpublished rather than removed, which is why the till still sells it.
-
-## Step 5 — the website's own tables
-
-Switch to `hotelpardise_website` in the left-hand list, then paste
-`database/website_sql/01_WEBSITE_INTEGRATION_SCHEMA.sql`.
-
-One table, `website_settings`. The menu and the orders are deliberately **not**
-here: they live in `hotelpardise_system` with the rest of the hotel, so the dish
-the guest reads, the order the kitchen receives and the row the till settles can
-never be three different versions of the same thing.
-
-## Step 6 — tell the site where the database is
+## Step 5 — tell the site where the database is
 
 `backend-php/config.php` is never committed, because it holds the passwords. You
 must create it on the server yourself. Copy it across, then change:
 
-- `port` — on most hosts leave this empty. This machine's XAMPP uses `3307`
-  only because MariaDB already holds `3306` here.
+- `port` — on most hosts leave this empty. This machine's XAMPP uses `3306`.
 - the database and user names, if your host prefixes them
 - the two passwords, to the ones from your hosting panel
 
 `host` stays `127.0.0.1` on almost all shared hosting. If your panel gives you a
 MySQL hostname such as `mysql.yourhosting.com`, use that instead.
 
-## Step 7 — check it works
+## Step 6 — check it works
 
 Visit, in the browser:
 
@@ -166,10 +182,10 @@ Then the menu:
 https://your-domain/backend-php/api.php?act=menu
 ```
 
-`"menu_items"` of 251 under `hotel` on the health page, and 19 sections in the
-menu response, means the database is installed correctly. If that number is
-small, `database/07_FULL_MENU_SEED.sql` has not been run, or was run before the
-schema gained the `published` column.
+`"menu_items"` of 642 under `hotel` on the health page, and 63 categories in
+the menu response, means the database is installed correctly. A zero under
+`website` is normal: the website's own database holds the settings, not the
+menu.
 
 ## Where the files go
 
@@ -207,37 +223,24 @@ hosting panel.
 **`Unknown database 'hotelpardise_system'`.** The prefix issue above. The
 database is really called something like `reagan_hotelpardise_system`.
 
-**`#1062 Duplicate entry 'hotel-paradise-on-the-nile' for key 'slug'`.**
-The seed is being pasted into a database that already has the hotel in it. The
-error is the seed doing its job, not a fault to be worked round.
-
-Two things cause it, and they need opposite answers:
-
-- *The site is already installed.* Stop. Nothing is broken. Run
-  `php tools/install-databases.php --check`, and if it says the site is
-  installed correctly, you are done. Do not run the seed.
-- *You are installing onto a database that is not empty*, because it is left
-  over from an earlier attempt or a different project. Either drop it and start
-  again from step 0, or point the site at it deliberately.
-
-**Do not delete the duplicate row to get past this.** `rooms`, `guests`,
-`suppliers`, `reservation_rooms` and `payments` have no unique key, so once the
-first statement is removed the rest of the seed is inserted alongside the rows
-already there and the database ends up with 138 rooms, two of every guest and
-two of every supplier. There is no error to stop it, because nothing about it
-is wrong as far as MySQL is concerned. Step 0 exists to catch this before that
-happens rather than after.
+**The import stopped part way through with `#1062 Duplicate entry ...`.** The
+database was not empty when the dump went in, so the dump hit rows that were
+already there. The tables it had already created are still there, and the ones
+it had not reached are missing. Dropping only the offending row does not fix
+this: the rest of the file then inserts alongside the rows already present and
+you end up with everything doubled, with no error to say so. The answer is to
+drop the database and import into an empty one, or to leave the existing one
+alone. Step 1 exists so this is decided before the import rather than after it.
 
 **A file that says `USE hotel_paradise_nile;`.** That is the original database
-name, and it is wrong. Anything under `database/system_sql/` is archived and
-must not be run; the live install files are the four in `database/`, and they
-all say `USE hotelpardise_system;`. If phpMyAdmin is pointed at
-`hotel_paradise_nile`, you are in a database the application never connects to,
-and the seed will collide with itself there.
+name. Nothing in this project uses it or creates it, and nothing in this
+project's SQL names any database at all — the loader selects the database first
+and then runs the file. If phpMyAdmin is pointed at `hotel_paradise_nile`, you
+are in a database the application never connects to.
 
-**Everything looks right but the menu is empty.** Check
-`published_sections` from step 4. If it is 0, step 4 did not run against the
-database you are looking at.
+**Everything looks right but the menu is empty.** Check that step 2 imported
+into the database `config.php` actually names, and that the health page reports
+`"menu_items"` above zero.
 
 **`#1227 Access denied; you need (at least one of) the CREATE USER privilege(s)`.**
 The account being used cannot create MySQL accounts. This is not a problem with
@@ -251,6 +254,11 @@ one phpMyAdmin signed in with has rights on *its* database, not on `*.*`. The
 fix is the logout link at the top of phpMyAdmin, then sign in again as `root`
 with an empty password, which is what XAMPP's root has.
 
+On hosting, where you are never root, create the two users in the panel instead
+and use the panel's names and passwords in `config.php`; only the cross-database
+grants in step 4 need an account that has rights on `*.*`, which is the one thing
+to ask the host for.
+
 If the site is *already* installed correctly, none of this is needed. Run this
 and stop:
 
@@ -259,13 +267,7 @@ C:\xampp\php\php.exe tools\install-databases.php --check
 ```
 
 It changes nothing and reports whether both databases open with the passwords in
-`config.php`. On a correctly installed XAMPP copy it answers *"the site is
-installed correctly: both databases open, both accounts work"*, and the accounts
-`hotelpardise_system` and `hotelpardise_website` already exist for both
-`@localhost` and `@127.0.0.1` with every grant below already applied. Running
-`database/system_sql/00_CREATE_DATABASE_USERS.sql` by hand in that situation
-achieves nothing, and if its placeholders have not been replaced it actively
-breaks the site by setting both passwords to the placeholder text.
+`config.php`.
 
 **The management system will not sign in, and the health page is `"ok":true`.**
 The database is fine and the problem is a password or a role, not a connection.

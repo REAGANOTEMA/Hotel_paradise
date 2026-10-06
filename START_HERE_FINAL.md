@@ -15,8 +15,8 @@ Place this folder at `C:\xampp\htdocs\Hotel_paradise`
 ## Install
 
 One command, run from this folder. It creates both databases, both MySQL
-accounts and their rights, and loads the schema, the starting data and the
-published menu:
+accounts and their rights, and loads the two dumps in `database/sql/`, which
+are the only SQL in the project:
 
 ```
 C:\xampp\php\php.exe tools\install-databases.php
@@ -29,14 +29,14 @@ is given. To check the install without changing anything:
 C:\xampp\php\php.exe tools\install-databases.php --check
 ```
 
-For hosting without a shell, `database/HOSTING.md` has the same five steps as a
+For hosting without a shell, `database/HOSTING.md` has the same install as a
 phpMyAdmin list.
 
 > An earlier version of this file told you to run
-> `database/system_sql/FINAL_INSTALL_SYSTEM.sql`. **Do not.** It is a snapshot
-> taken before the menu tables grew their `published` column and their unique
-> keys, so the full menu will not load against it. The installer's
-> `01_LIVE_SYSTEM_SCHEMA.sql` is the current one.
+> `database/system_sql/FINAL_INSTALL_SYSTEM.sql`. **Do not, and you cannot:**
+> that file, and every other SQL file the project used to carry, has been
+> removed. The only SQL left is the two dumps under `database/sql/`, and the
+> installer above is what loads them.
 
 ## Signing in
 
@@ -91,9 +91,10 @@ which is the fastest way to catch a mistyped address.
 ## Before going live
 
 - Change every password, starting with the administrator's.
-- Rotate both MySQL passwords, which were once committed to the repository in
-  `database/system_sql/00_CREATE_DATABASE_USERS.sql`. Use `ALTER USER` on
-  `@localhost` and `@127.0.0.1`, then update `backend-php/config.php` to match.
+- Rotate both MySQL passwords. They were once committed to the repository in a
+  SQL file under `database/system_sql/` (since removed), so treat them as
+  known: use `ALTER USER` on `@localhost` and `@127.0.0.1`, then update
+  `backend-php/config.php` to match.
 - The sign-in page only prints the demo passwords when `HP_DEMO_LOGINS` is set,
   which XAMPP does locally. A hosting platform will never set it, so the live
   page shows nothing but the form.

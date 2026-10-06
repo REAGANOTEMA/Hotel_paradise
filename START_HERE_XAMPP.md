@@ -12,11 +12,17 @@ Start **Apache** and **MySQL**.
 
 ## 3. Install the database
 
-Open phpMyAdmin, open the **Import** tab, and import:
+From this folder:
 
-`database/system_sql/04_SYSTEM_INSTALL_ALL.sql`
+```
+C:\xampp\php\php.exe tools\install-databases.php
+```
 
-Or use MySQL command line.
+It creates both databases, both MySQL accounts and their rights, and loads the
+two dumps in `database/sql/`. Add `--check` to look without changing anything.
+
+If you would rather do it by hand in phpMyAdmin, `database/HOSTING.md` is the
+same install as a list.
 
 ## 4. Open the public website
 

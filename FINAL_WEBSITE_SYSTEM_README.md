@@ -29,12 +29,25 @@ Dashboard, Reservations, Rooms, Guests, POS and Orders, Cashier Shifts, Inventor
 The PHP management system uses the same Hotel Paradise on the Nile logo assets from `images/`.
 
 ## DATABASE
-Use `database/04_INSTALL_ALL.sql`, or install the files separately:
-- `01_LIVE_SYSTEM_SCHEMA.sql`
-- `02_LIVE_SYSTEM_SEED.sql`
-- `03_LIVE_MENU_ALACARTE.sql`
+Two databases, both installed by one command from the project folder:
 
-Database name: `hotel_paradise_nile`.
+```
+C:\xampp\php\php.exe tools\install-databases.php
+```
+
+| Purpose | Name |
+|---|---|
+| Management system | `hotelpardise_system` |
+| Public website | `hotelpardise_website` |
+
+The only SQL in the project is the pair of phpMyAdmin dumps under `database/sql/`
+— one per database, each holding its schema and its data together. The installer
+creates the databases, the two MySQL accounts and their grants, loads the dumps
+in the only order that works, and finishes by connecting the way the site does.
+Add `--check` to look at an install without changing anything.
+
+For a host with no shell, `database/HOSTING.md` is the same install as a
+phpMyAdmin list.
 
 ## EXPANDED HOTEL PLATFORM
 `expanded-system-blueprint/`
@@ -49,7 +62,8 @@ Luxury Gold, Deep Navy, Nile Blue, Nebula Blue, White/Ivory, plus the Ugandan bl
 ## DEPLOYMENT
 For XAMPP:
 1. Copy the `hotelparadiseonthenile` folder into `C:\xampp\htdocs\`.
-2. Create/import `hotel_paradise_nile` using `database/04_INSTALL_ALL.sql`.
+2. Run `C:\xampp\php\php.exe tools\install-databases.php` from the project
+   folder (or follow `database/HOSTING.md` in phpMyAdmin).
 3. Check credentials in `backend-php/app/bootstrap.php`.
 4. Open the website.
 5. Select **Management System** from the website navigation.
