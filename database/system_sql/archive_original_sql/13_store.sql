@@ -1,4 +1,0 @@
--- Store module
--- Authoritative tables are created by ../INSTALL.sql.
--- Owned tables: store_items, store_receipts, store_issues
--- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

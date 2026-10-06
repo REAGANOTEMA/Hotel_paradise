@@ -1,4 +1,0 @@
--- Authentication module
--- Authoritative tables are created by ../INSTALL.sql.
--- Owned tables: password_reset_tokens, login_attempts, sessions, two_factor_settings
--- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

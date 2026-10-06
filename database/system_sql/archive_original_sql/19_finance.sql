@@ -1,4 +1,0 @@
--- Finance module
--- Authoritative tables are created by ../INSTALL.sql.
--- Owned tables: invoices, payments, expenses, financial_periods
--- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

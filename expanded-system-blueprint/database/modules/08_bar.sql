@@ -1,4 +1,0 @@
--- Bar module
--- Authoritative tables are created by ../INSTALL.sql.
--- Owned tables: bar_items, bar_orders, bar_shifts
--- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

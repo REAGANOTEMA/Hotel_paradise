@@ -4,11 +4,17 @@
  * the order they have to happen in, and then checks the result the way the site
  * checks it.
  *
- * The site was once installed by pasting four files into phpMyAdmin in a
- * particular order, and nothing on the machine said which order was right. Get
- * one step out of sequence and the grants silently fail, because MariaDB will
- * not grant on a table that is not there yet, and the only symptom is the site
- * refusing to connect hours later.
+ * The site is installed from exactly two files, and they are the only SQL in
+ * the project: database/sql/hotelpardise_system/hotelpardise_system.sql and
+ * database/sql/hotelpardise_website/hotelpardise_website.sql. Each is a
+ * complete phpMyAdmin dump - schema and data together - and neither names the
+ * database it belongs to, so this points the connection at each in turn.
+ *
+ * The accounts and the grants are not in the dumps, and a GRANT naming a table
+ * cannot be granted before the table exists. So the order still matters:
+ * databases, dumps, accounts, grants. Get it out of sequence and the grants
+ * silently fail, and the only symptom is the site refusing to connect hours
+ * later.
  *
  * It is also the one place that knows the MySQL passwords, and it does not
  * print them. They are read from backend-php/config.php, which is the file the
@@ -73,11 +79,22 @@ if(!is_readable($dbFile)){
 }
 $cfg=require $dbFile;
 
-/** The files to run, in the only order that works. */
-$schema   =$root.'/database/01_LIVE_SYSTEM_SCHEMA.sql';
-$seed     =$root.'/database/02_LIVE_SYSTEM_SEED.sql';
-$menu     =$root.'/database/07_FULL_MENU_SEED.sql';
-$webSchema=$root.'/database/website_sql/01_WEBSITE_INTEGRATION_SCHEMA.sql';
+/** The only two SQL files there are: [label, path, database, tables, what it holds]. */
+$dumps=[
+ ['database/sql/hotelpardise_system/hotelpardise_system.sql',
+  $root.'/database/sql/hotelpardise_system/hotelpardise_system.sql',
+  (string)($cfg['db']['name']??''),100,'the hotel system'],
+ ['database/sql/hotelpardise_website/hotelpardise_website.sql',
+  $root.'/database/sql/hotelpardise_website/hotelpardise_website.sql',
+  (string)($cfg['web_db']['name']??''),36,'the public website'],
+];
+foreach($dumps as [$rel,$file]){
+ if(!is_readable($file)){
+  fwrite(STDERR,"Cannot read $rel.\n".
+   "Those two dumps are the whole database install; nothing else in the project is SQL.\n");
+  exit(1);
+ }
+}
 
 $adminUser=getenv('HP_ADMIN_USER')?:'root';
 $adminPass=getenv('HP_ADMIN_PASS');
@@ -271,16 +288,33 @@ if(!$priv['createDb']){
  }
 }
 
-// The schema has to be in place before the grants, because a GRANT naming a
-// table cannot be granted before the table exists. Doing it the other way round
-// fails without a word and leaves the site unable to sign in much later.
-echo "\nschema\n";
-try{
- run_file($admin,$schema);
+// The dumps carry schema and data together, and neither one says which
+// database it belongs to, so the connection is pointed at each in turn. A
+// phpMyAdmin dump has no DROP TABLE and no CREATE IF NOT EXISTS in it: it can
+// only be loaded into an empty database, and a database that already has
+// tables is a site being used, whose rows are not this script's to touch.
+// The loads come before the grants because a GRANT naming a table cannot be
+// granted before the table exists; getting that backwards fails silently and
+// leaves the site unable to sign in hours later.
+echo "\ndumps\n";
+foreach($dumps as [$rel,$file,$dbName,$expected,$what]){
+ if($dbName===''){ step("load $rel",false,'no database name for it in backend-php/config.php'); continue; }
  $t=(int)@$admin->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema="
-  .lit($admin,$sysName)." AND table_type='BASE TABLE'")->fetch_row()[0];
- step('load database/01_LIVE_SYSTEM_SCHEMA.sql',$t>=32,"$t tables");
-}catch(RuntimeException $e){ step('load database/01_LIVE_SYSTEM_SCHEMA.sql',false,$e->getMessage()); }
+  .lit($admin,$dbName)." AND table_type='BASE TABLE'")->fetch_row()[0];
+ if($t>=$expected){ note("load $rel","$dbName already has $t tables"); continue; }
+ if($t>0){
+  step("load $rel",false,"$dbName has only $t of the $expected tables, so a load now would stop half way. ".
+   "Its rows are left alone; drop the database if you really want it rebuilt from the dump");
+  continue;
+ }
+ if(!@$admin->select_db($dbName)){ step("load $rel",false,$admin->error); continue; }
+ try{
+  run_file($admin,$file);
+  $t=(int)@$admin->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema="
+   .lit($admin,$dbName)." AND table_type='BASE TABLE'")->fetch_row()[0];
+  step("load $rel",$t>=$expected,"$t tables in $dbName");
+ }catch(RuntimeException $e){ step("load $rel",false,$e->getMessage()); }
+}
 
 echo "\naccounts\n";
 foreach([[$sysUser,$sysPass,'the management system'],[$webUser,$webPass,'the public website']] as [$u,$p,$what]){
@@ -297,29 +331,16 @@ foreach($hosts as $h){
 }
 
 echo "\ndata\n";
-// A database that already has staff is a site being used, and its rows are not
-// to be disturbed. An empty one has never been seeded and cannot be signed into,
-// which is the only way this could leave someone unable to log in.
+// The dumps arrive with their data already in them, so this only counts. A
+// zero here means the load above reported ok and then put nothing in, which
+// is worth saying out loud rather than leaving to be found at the first sign
+// in attempt.
 $haveUsers=0;
 try{ $haveUsers=(int)@$admin->query("SELECT COUNT(*) FROM `$sysName`.users")->fetch_row()[0]; }catch(Throwable $e){}
-if($haveUsers>0){
- note("database/02_LIVE_SYSTEM_SEED.sql, the system already has $haveUsers users");
-}else{
- try{
-  run_file($admin,$seed);
-  $n=(int)@$admin->query("SELECT COUNT(*) FROM `$sysName`.users")->fetch_row()[0];
-  step('load database/02_LIVE_SYSTEM_SEED.sql',$n>0,"$n users");
- }catch(RuntimeException $e){ step('load database/02_LIVE_SYSTEM_SEED.sql',false,$e->getMessage()); }
-}
-
-// The menu is the one thing reloaded every time, on purpose. It is idempotent:
-// dishes are matched by name, so a reload updates rows in place and keeps the ids
-// that past orders point at.
-try{
- run_file($admin,$menu);
- $n=(int)@$admin->query("SELECT COUNT(*) FROM `$sysName`.menu_items WHERE published=1")->fetch_row()[0];
- step('load database/07_FULL_MENU_SEED.sql',$n>0,"$n published dishes");
-}catch(RuntimeException $e){ step('load database/07_FULL_MENU_SEED.sql',false,$e->getMessage()); }
+step("$sysName.users has staff to sign in with",$haveUsers>0,"$haveUsers users");
+$haveDishes=0;
+try{ $haveDishes=(int)@$admin->query("SELECT COUNT(*) FROM `$sysName`.menu_items")->fetch_row()[0]; }catch(Throwable $e){}
+step("$sysName.menu_items has the menu",$haveDishes>0,"$haveDishes dishes");
 
 // The website account is granted the published menu and may take a booking, but
 // not the hotel's money or guest documents. Only a *.* account can do this,
@@ -348,11 +369,9 @@ if($priv['all']){
   'only an account with rights on *.* can reach across databases. If the website cannot read the menu, ask the host to add these.');
 }
 
-try{
- run_file($admin,$webSchema);
- $n=(int)@$admin->query("SELECT COUNT(*) FROM `$webName`.website_settings")->fetch_row()[0];
- step('load database/website_sql/01_WEBSITE_INTEGRATION_SCHEMA.sql',$n>0,"$n settings");
-}catch(RuntimeException $e){ step('load database/website_sql/01_WEBSITE_INTEGRATION_SCHEMA.sql',false,$e->getMessage()); }
+$haveSettings=0;
+try{ $haveSettings=(int)@$admin->query("SELECT COUNT(*) FROM `$webName`.website_settings")->fetch_row()[0]; }catch(Throwable $e){}
+step("$webName.website_settings has the site's settings",$haveSettings>0,"$haveSettings settings");
 
 @$admin->query('FLUSH PRIVILEGES');
 

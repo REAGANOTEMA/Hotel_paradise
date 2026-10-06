@@ -1,4 +1,0 @@
--- Kitchen module
--- Authoritative tables are created by ../INSTALL.sql.
--- Owned tables: kitchen_orders, kitchen_stations, kitchen_order_status
--- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

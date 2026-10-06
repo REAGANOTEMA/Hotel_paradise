@@ -1,4 +1,0 @@
--- Swimming Pool module
--- Authoritative tables are created by ../INSTALL.sql.
--- Owned tables: pool_visits, pool_services, pool_payments
--- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

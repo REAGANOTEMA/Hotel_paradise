@@ -1,4 +1,0 @@
--- Pos module
--- Authoritative tables are created by ../INSTALL.sql.
--- Owned tables: pos_terminals, pos_sales, pos_sale_items, pos_voids_refunds
--- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

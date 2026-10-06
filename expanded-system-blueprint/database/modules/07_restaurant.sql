@@ -1,4 +1,0 @@
--- Restaurant module
--- Authoritative tables are created by ../INSTALL.sql.
--- Owned tables: restaurant_tables, restaurant_orders, restaurant_shifts
--- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.

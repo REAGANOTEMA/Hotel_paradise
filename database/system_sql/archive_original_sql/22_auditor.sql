@@ -1,4 +1,0 @@
--- Auditor module
--- Authoritative tables are created by ../INSTALL.sql.
--- Owned tables: audit_logs, audit_exports, audit_reviews
--- Keep this file as a migration placeholder; do not duplicate CREATE TABLE statements here.
