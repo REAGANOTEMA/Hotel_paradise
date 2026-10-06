@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 05, 2026 at 08:42 AM
+-- Generation Time: Oct 06, 2026 at 09:45 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.25
 
@@ -167,7 +167,12 @@ INSERT INTO `guests` (`id`, `user_id`, `hotel_id`, `full_name`, `phone`, `email`
 (12, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
 (13, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
 (14, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(15, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL);
+(15, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
+(16, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
+(17, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
+(18, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
+(19, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
+(20, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -389,7 +394,23 @@ INSERT INTO `menu_categories` (`id`, `hotel_id`, `outlet`, `name`, `eyebrow`, `b
 (82, 1, 'bar', 'Cocktails', NULL, NULL, NULL, 0),
 (83, 1, 'bar', 'Beers & Ciders', NULL, NULL, NULL, 0),
 (84, 1, 'bar', 'Wines & Spirits', NULL, NULL, NULL, 0),
-(85, 1, 'room_service', 'Room Service', NULL, NULL, NULL, 0);
+(85, 1, 'room_service', 'Room Service', NULL, NULL, NULL, 0),
+(86, 1, 'restaurant', 'Breakfast', NULL, NULL, NULL, 0),
+(87, 1, 'restaurant', 'Main Meals', NULL, NULL, NULL, 0),
+(88, 1, 'restaurant', 'Snacks', NULL, NULL, NULL, 0),
+(89, 1, 'bar', 'Soft Drinks', NULL, NULL, NULL, 0),
+(90, 1, 'bar', 'Cocktails', NULL, NULL, NULL, 0),
+(91, 1, 'bar', 'Beers and Ciders', NULL, NULL, NULL, 0),
+(92, 1, 'bar', 'Wines and Spirits', NULL, NULL, NULL, 0),
+(93, 1, 'room_service', 'Room Service', NULL, NULL, NULL, 0),
+(94, 1, 'restaurant', 'Breakfast', NULL, NULL, NULL, 0),
+(95, 1, 'restaurant', 'Main Meals', NULL, NULL, NULL, 0),
+(96, 1, 'restaurant', 'Snacks', NULL, NULL, NULL, 0),
+(97, 1, 'bar', 'Soft Drinks', NULL, NULL, NULL, 0),
+(98, 1, 'bar', 'Cocktails', NULL, NULL, NULL, 0),
+(99, 1, 'bar', 'Beers & Ciders', NULL, NULL, NULL, 0),
+(100, 1, 'bar', 'Wines & Spirits', NULL, NULL, NULL, 0),
+(101, 1, 'room_service', 'Room Service', NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -923,7 +944,158 @@ INSERT INTO `menu_items` (`id`, `hotel_id`, `category_id`, `name`, `description`
 (569, 1, 76, 'House White Wine', 'Glass of the house white wine', 20000.00, NULL, NULL, 0, 1, 1),
 (570, 1, 76, 'Local Spirit', 'Uganda Waragi or other local spirit', 15000.00, NULL, NULL, 0, 1, 1),
 (571, 1, 77, 'Room Service Breakfast', 'Full breakfast delivered to your room', 28000.00, NULL, NULL, 0, 1, 1),
-(572, 1, 77, 'Room Service Platter', 'Nile grilled selection delivered to your room', 45000.00, NULL, NULL, 0, 1, 1);
+(572, 1, 77, 'Room Service Platter', 'Nile grilled selection delivered to your room', 45000.00, NULL, NULL, 0, 1, 1),
+(592, 1, 1, 'Full Breakfast', 'Eggs, sausages, toast, baked beans and tea or coffee', 25000.00, NULL, NULL, 0, 1, 0),
+(593, 1, 1, 'Continental Breakfast', 'Pastries, fresh fruit, juice and hot drink', 20000.00, NULL, NULL, 0, 1, 0),
+(594, 1, 1, 'Local Breakfast', 'Chapati, eggs and a hot local drink', 22000.00, NULL, NULL, 0, 1, 0),
+(595, 1, 2, 'Grilled Nile Perch', 'Fresh Nile perch fillet with rice and vegetables', 45000.00, NULL, NULL, 0, 1, 1),
+(596, 1, 2, 'Beef Stew and Rice', 'Slow cooked beef stew with steamed rice', 35000.00, NULL, NULL, 0, 1, 1),
+(597, 1, 2, 'Chicken and Chips', 'Grilled chicken with golden chips and salad', 38000.00, NULL, NULL, 0, 1, 1),
+(598, 1, 2, 'Buffet Plate', 'Daily buffet selection, meals from noon to 3pm and 7pm to 11pm', 40000.00, NULL, NULL, 0, 1, 1),
+(599, 1, 2, 'Chef Signature Plate', 'A seasonal chef special, ask the kitchen for today', 45000.00, NULL, NULL, 0, 1, 1),
+(600, 1, 3, 'Fresh Juice', 'Seasonal fruit juice, made to order', 12000.00, NULL, NULL, 0, 1, 1),
+(601, 1, 3, 'Samosas', 'Three vegetable or meat samosas', 10000.00, NULL, NULL, 0, 1, 1),
+(602, 1, 3, 'Chips and Ketchup', 'A generous bowl of golden chips', 12000.00, NULL, NULL, 0, 1, 1),
+(603, 1, 3, 'Chapati', 'Freshly rolled and griddled', 5000.00, NULL, NULL, 0, 1, 1),
+(604, 1, 4, 'Coca Cola 300ml', 'Ice cold bottle', 3000.00, NULL, NULL, 0, 1, 1),
+(605, 1, 4, 'Fanta 300ml', 'Orange or passion fruit', 3000.00, NULL, NULL, 0, 1, 1),
+(606, 1, 4, 'Mineral Water 500ml', 'Chilled bottled water', 2000.00, NULL, NULL, 0, 1, 1),
+(607, 1, 5, 'Paradise Sunset', 'House signature cocktail with a Nile twist', 25000.00, NULL, NULL, 0, 1, 1),
+(608, 1, 5, 'Nile Breeze', 'Light, refreshing cocktail of the house', 25000.00, NULL, NULL, 0, 1, 1),
+(609, 1, 6, 'Nile Special', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(610, 1, 6, 'Club Pilsener', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(611, 1, 6, 'Bell Lager', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(612, 1, 7, 'House White Wine', 'Glass of the house white wine', 20000.00, NULL, NULL, 0, 1, 1),
+(613, 1, 7, 'Local Spirit', 'Uganda Waragi or other local spirit', 15000.00, NULL, NULL, 0, 1, 1),
+(614, 1, 8, 'Room Service Breakfast', 'Full breakfast delivered to your room', 28000.00, NULL, NULL, 0, 1, 1),
+(615, 1, 8, 'Room Service Platter', 'Nile grilled selection delivered to your room', 45000.00, NULL, NULL, 0, 1, 1),
+(616, 1, 13, 'Fresh Juice', 'Seasonal fruit juice, made to order', 12000.00, NULL, NULL, 0, 1, 1),
+(617, 1, 13, 'Samosas', 'Three vegetable or meat samosas', 10000.00, NULL, NULL, 0, 1, 1),
+(618, 1, 13, 'Chips and Ketchup', 'A generous bowl of golden chips', 12000.00, NULL, NULL, 0, 1, 1),
+(619, 1, 13, 'Chapati', 'Freshly rolled and griddled', 5000.00, NULL, NULL, 0, 1, 1),
+(620, 1, 24, 'Full Breakfast', 'Eggs, sausages, toast, baked beans and tea or coffee', 25000.00, NULL, NULL, 0, 1, 0),
+(621, 1, 24, 'Continental Breakfast', 'Pastries, fresh fruit, juice and hot drink', 20000.00, NULL, NULL, 0, 1, 0),
+(622, 1, 24, 'Local Breakfast', 'Chapati, eggs and a hot local drink', 22000.00, NULL, NULL, 0, 1, 0),
+(623, 1, 25, 'Grilled Nile Perch', 'Fresh Nile perch fillet with rice and vegetables', 45000.00, NULL, NULL, 0, 1, 1),
+(624, 1, 25, 'Beef Stew and Rice', 'Slow cooked beef stew with steamed rice', 35000.00, NULL, NULL, 0, 1, 1),
+(625, 1, 25, 'Chicken and Chips', 'Grilled chicken with golden chips and salad', 38000.00, NULL, NULL, 0, 1, 1),
+(626, 1, 25, 'Buffet Plate', 'Daily buffet selection, meals from noon to 3pm and 7pm to 11pm', 40000.00, NULL, NULL, 0, 1, 1),
+(627, 1, 25, 'Chef Signature Plate', 'A seasonal chef special, ask the kitchen for today', 45000.00, NULL, NULL, 0, 1, 1),
+(628, 1, 26, 'Fresh Juice', 'Seasonal fruit juice, made to order', 12000.00, NULL, NULL, 0, 1, 1),
+(629, 1, 26, 'Samosas', 'Three vegetable or meat samosas', 10000.00, NULL, NULL, 0, 1, 1),
+(630, 1, 26, 'Chips and Ketchup', 'A generous bowl of golden chips', 12000.00, NULL, NULL, 0, 1, 1),
+(631, 1, 26, 'Chapati', 'Freshly rolled and griddled', 5000.00, NULL, NULL, 0, 1, 1),
+(632, 1, 27, 'Coca Cola 300ml', 'Ice cold bottle', 3000.00, NULL, NULL, 0, 1, 1),
+(633, 1, 27, 'Fanta 300ml', 'Orange or passion fruit', 3000.00, NULL, NULL, 0, 1, 1),
+(634, 1, 27, 'Mineral Water 500ml', 'Chilled bottled water', 2000.00, NULL, NULL, 0, 1, 1),
+(635, 1, 28, 'Paradise Sunset', 'House signature cocktail with a Nile twist', 25000.00, NULL, NULL, 0, 1, 1),
+(636, 1, 28, 'Nile Breeze', 'Light, refreshing cocktail of the house', 25000.00, NULL, NULL, 0, 1, 1),
+(637, 1, 29, 'Nile Special', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(638, 1, 29, 'Club Pilsener', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(639, 1, 29, 'Bell Lager', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(640, 1, 30, 'House White Wine', 'Glass of the house white wine', 20000.00, NULL, NULL, 0, 1, 1),
+(641, 1, 30, 'Local Spirit', 'Uganda Waragi or other local spirit', 15000.00, NULL, NULL, 0, 1, 1),
+(642, 1, 31, 'Room Service Breakfast', 'Full breakfast delivered to your room', 28000.00, NULL, NULL, 0, 1, 1),
+(643, 1, 31, 'Room Service Platter', 'Nile grilled selection delivered to your room', 45000.00, NULL, NULL, 0, 1, 1),
+(644, 1, 36, 'Fresh Juice', 'Seasonal fruit juice, made to order', 12000.00, NULL, NULL, 0, 1, 1),
+(645, 1, 36, 'Samosas', 'Three vegetable or meat samosas', 10000.00, NULL, NULL, 0, 1, 1),
+(646, 1, 36, 'Chips and Ketchup', 'A generous bowl of golden chips', 12000.00, NULL, NULL, 0, 1, 1),
+(647, 1, 36, 'Chapati', 'Freshly rolled and griddled', 5000.00, NULL, NULL, 0, 1, 1),
+(648, 1, 47, 'Full Breakfast', 'Eggs, sausages, toast, baked beans and tea or coffee', 25000.00, NULL, NULL, 0, 1, 0),
+(649, 1, 47, 'Continental Breakfast', 'Pastries, fresh fruit, juice and hot drink', 20000.00, NULL, NULL, 0, 1, 0),
+(650, 1, 47, 'Local Breakfast', 'Chapati, eggs and a hot local drink', 22000.00, NULL, NULL, 0, 1, 0),
+(651, 1, 48, 'Grilled Nile Perch', 'Fresh Nile perch fillet with rice and vegetables', 45000.00, NULL, NULL, 0, 1, 1),
+(652, 1, 48, 'Beef Stew and Rice', 'Slow cooked beef stew with steamed rice', 35000.00, NULL, NULL, 0, 1, 1),
+(653, 1, 48, 'Chicken and Chips', 'Grilled chicken with golden chips and salad', 38000.00, NULL, NULL, 0, 1, 1),
+(654, 1, 48, 'Buffet Plate', 'Daily buffet selection, meals from noon to 3pm and 7pm to 11pm', 40000.00, NULL, NULL, 0, 1, 1),
+(655, 1, 48, 'Chef Signature Plate', 'A seasonal chef special, ask the kitchen for today', 45000.00, NULL, NULL, 0, 1, 1),
+(656, 1, 49, 'Fresh Juice', 'Seasonal fruit juice, made to order', 12000.00, NULL, NULL, 0, 1, 1),
+(657, 1, 49, 'Samosas', 'Three vegetable or meat samosas', 10000.00, NULL, NULL, 0, 1, 1),
+(658, 1, 49, 'Chips and Ketchup', 'A generous bowl of golden chips', 12000.00, NULL, NULL, 0, 1, 1),
+(659, 1, 49, 'Chapati', 'Freshly rolled and griddled', 5000.00, NULL, NULL, 0, 1, 1),
+(660, 1, 50, 'Coca Cola 300ml', 'Ice cold bottle', 3000.00, NULL, NULL, 0, 1, 1),
+(661, 1, 50, 'Fanta 300ml', 'Orange or passion fruit', 3000.00, NULL, NULL, 0, 1, 1),
+(662, 1, 50, 'Mineral Water 500ml', 'Chilled bottled water', 2000.00, NULL, NULL, 0, 1, 1),
+(663, 1, 51, 'Paradise Sunset', 'House signature cocktail with a Nile twist', 25000.00, NULL, NULL, 0, 1, 1),
+(664, 1, 51, 'Nile Breeze', 'Light, refreshing cocktail of the house', 25000.00, NULL, NULL, 0, 1, 1),
+(665, 1, 52, 'Nile Special', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(666, 1, 52, 'Club Pilsener', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(667, 1, 52, 'Bell Lager', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(668, 1, 53, 'House White Wine', 'Glass of the house white wine', 20000.00, NULL, NULL, 0, 1, 1),
+(669, 1, 53, 'Local Spirit', 'Uganda Waragi or other local spirit', 15000.00, NULL, NULL, 0, 1, 1),
+(670, 1, 54, 'Room Service Breakfast', 'Full breakfast delivered to your room', 28000.00, NULL, NULL, 0, 1, 1),
+(671, 1, 54, 'Room Service Platter', 'Nile grilled selection delivered to your room', 45000.00, NULL, NULL, 0, 1, 1),
+(672, 1, 59, 'Fresh Juice', 'Seasonal fruit juice, made to order', 12000.00, NULL, NULL, 0, 1, 1),
+(673, 1, 59, 'Samosas', 'Three vegetable or meat samosas', 10000.00, NULL, NULL, 0, 1, 1),
+(674, 1, 59, 'Chips and Ketchup', 'A generous bowl of golden chips', 12000.00, NULL, NULL, 0, 1, 1),
+(675, 1, 59, 'Chapati', 'Freshly rolled and griddled', 5000.00, NULL, NULL, 0, 1, 1),
+(676, 1, 70, 'Full Breakfast', 'Eggs, sausages, toast, baked beans and tea or coffee', 25000.00, NULL, NULL, 0, 1, 0),
+(677, 1, 70, 'Continental Breakfast', 'Pastries, fresh fruit, juice and hot drink', 20000.00, NULL, NULL, 0, 1, 0),
+(678, 1, 70, 'Local Breakfast', 'Chapati, eggs and a hot local drink', 22000.00, NULL, NULL, 0, 1, 0),
+(679, 1, 71, 'Grilled Nile Perch', 'Fresh Nile perch fillet with rice and vegetables', 45000.00, NULL, NULL, 0, 1, 1),
+(680, 1, 71, 'Beef Stew and Rice', 'Slow cooked beef stew with steamed rice', 35000.00, NULL, NULL, 0, 1, 1),
+(681, 1, 71, 'Chicken and Chips', 'Grilled chicken with golden chips and salad', 38000.00, NULL, NULL, 0, 1, 1),
+(682, 1, 71, 'Buffet Plate', 'Daily buffet selection, meals from noon to 3pm and 7pm to 11pm', 40000.00, NULL, NULL, 0, 1, 1),
+(683, 1, 71, 'Chef Signature Plate', 'A seasonal chef special, ask the kitchen for today', 45000.00, NULL, NULL, 0, 1, 1),
+(684, 1, 72, 'Fresh Juice', 'Seasonal fruit juice, made to order', 12000.00, NULL, NULL, 0, 1, 1),
+(685, 1, 72, 'Samosas', 'Three vegetable or meat samosas', 10000.00, NULL, NULL, 0, 1, 1),
+(686, 1, 72, 'Chips and Ketchup', 'A generous bowl of golden chips', 12000.00, NULL, NULL, 0, 1, 1),
+(687, 1, 72, 'Chapati', 'Freshly rolled and griddled', 5000.00, NULL, NULL, 0, 1, 1),
+(688, 1, 73, 'Coca Cola 300ml', 'Ice cold bottle', 3000.00, NULL, NULL, 0, 1, 1),
+(689, 1, 73, 'Fanta 300ml', 'Orange or passion fruit', 3000.00, NULL, NULL, 0, 1, 1),
+(690, 1, 73, 'Mineral Water 500ml', 'Chilled bottled water', 2000.00, NULL, NULL, 0, 1, 1),
+(691, 1, 74, 'Paradise Sunset', 'House signature cocktail with a Nile twist', 25000.00, NULL, NULL, 0, 1, 1),
+(692, 1, 74, 'Nile Breeze', 'Light, refreshing cocktail of the house', 25000.00, NULL, NULL, 0, 1, 1),
+(693, 1, 75, 'Nile Special', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(694, 1, 75, 'Club Pilsener', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(695, 1, 75, 'Bell Lager', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(696, 1, 76, 'House White Wine', 'Glass of the house white wine', 20000.00, NULL, NULL, 0, 1, 1),
+(697, 1, 76, 'Local Spirit', 'Uganda Waragi or other local spirit', 15000.00, NULL, NULL, 0, 1, 1),
+(698, 1, 77, 'Room Service Breakfast', 'Full breakfast delivered to your room', 28000.00, NULL, NULL, 0, 1, 1),
+(699, 1, 77, 'Room Service Platter', 'Nile grilled selection delivered to your room', 45000.00, NULL, NULL, 0, 1, 1),
+(700, 1, 78, 'Full Breakfast', 'Eggs, sausages, toast, baked beans and tea or coffee', 25000.00, NULL, NULL, 0, 1, 0),
+(701, 1, 78, 'Continental Breakfast', 'Pastries, fresh fruit, juice and hot drink', 20000.00, NULL, NULL, 0, 1, 0),
+(702, 1, 78, 'Local Breakfast', 'Chapati, eggs and a hot local drink', 22000.00, NULL, NULL, 0, 1, 0),
+(703, 1, 79, 'Grilled Nile Perch', 'Fresh Nile perch fillet with rice and vegetables', 45000.00, NULL, NULL, 0, 1, 1),
+(704, 1, 79, 'Beef Stew and Rice', 'Slow cooked beef stew with steamed rice', 35000.00, NULL, NULL, 0, 1, 1),
+(705, 1, 79, 'Chicken and Chips', 'Grilled chicken with golden chips and salad', 38000.00, NULL, NULL, 0, 1, 1),
+(706, 1, 79, 'Buffet Plate', 'Daily buffet selection, meals from noon to 3pm and 7pm to 11pm', 40000.00, NULL, NULL, 0, 1, 1),
+(707, 1, 79, 'Chef Signature Plate', 'A seasonal chef special, ask the kitchen for today', 45000.00, NULL, NULL, 0, 1, 1),
+(708, 1, 80, 'Fresh Juice', 'Seasonal fruit juice, made to order', 12000.00, NULL, NULL, 0, 1, 1),
+(709, 1, 80, 'Samosas', 'Three vegetable or meat samosas', 10000.00, NULL, NULL, 0, 1, 1),
+(710, 1, 80, 'Chips and Ketchup', 'A generous bowl of golden chips', 12000.00, NULL, NULL, 0, 1, 1),
+(711, 1, 80, 'Chapati', 'Freshly rolled and griddled', 5000.00, NULL, NULL, 0, 1, 1),
+(712, 1, 81, 'Coca Cola 300ml', 'Ice cold bottle', 3000.00, NULL, NULL, 0, 1, 1),
+(713, 1, 81, 'Fanta 300ml', 'Orange or passion fruit', 3000.00, NULL, NULL, 0, 1, 1),
+(714, 1, 81, 'Mineral Water 500ml', 'Chilled bottled water', 2000.00, NULL, NULL, 0, 1, 1),
+(715, 1, 82, 'Paradise Sunset', 'House signature cocktail with a Nile twist', 25000.00, NULL, NULL, 0, 1, 1),
+(716, 1, 82, 'Nile Breeze', 'Light, refreshing cocktail of the house', 25000.00, NULL, NULL, 0, 1, 1),
+(717, 1, 85, 'Room Service Breakfast', 'Full breakfast delivered to your room', 28000.00, NULL, NULL, 0, 1, 1),
+(718, 1, 85, 'Room Service Platter', 'Nile grilled selection delivered to your room', 45000.00, NULL, NULL, 0, 1, 1),
+(719, 1, 86, 'Full Breakfast', 'Eggs, sausages, toast, baked beans and tea or coffee', 25000.00, NULL, NULL, 0, 1, 0),
+(720, 1, 86, 'Continental Breakfast', 'Pastries, fresh fruit, juice and hot drink', 20000.00, NULL, NULL, 0, 1, 0),
+(721, 1, 86, 'Local Breakfast', 'Chapati, eggs and a hot local drink', 22000.00, NULL, NULL, 0, 1, 0),
+(722, 1, 87, 'Grilled Nile Perch', 'Fresh Nile perch fillet with rice and vegetables', 45000.00, NULL, NULL, 0, 1, 1),
+(723, 1, 87, 'Beef Stew and Rice', 'Slow cooked beef stew with steamed rice', 35000.00, NULL, NULL, 0, 1, 1),
+(724, 1, 87, 'Chicken and Chips', 'Grilled chicken with golden chips and salad', 38000.00, NULL, NULL, 0, 1, 1),
+(725, 1, 87, 'Buffet Plate', 'Daily buffet selection, meals from noon to 3pm and 7pm to 11pm', 40000.00, NULL, NULL, 0, 1, 1),
+(726, 1, 87, 'Chef Signature Plate', 'A seasonal chef special, ask the kitchen for today', 45000.00, NULL, NULL, 0, 1, 1),
+(727, 1, 88, 'Fresh Juice', 'Seasonal fruit juice, made to order', 12000.00, NULL, NULL, 0, 1, 1),
+(728, 1, 88, 'Samosas', 'Three vegetable or meat samosas', 10000.00, NULL, NULL, 0, 1, 1),
+(729, 1, 88, 'Chips and Ketchup', 'A generous bowl of golden chips', 12000.00, NULL, NULL, 0, 1, 1),
+(730, 1, 88, 'Chapati', 'Freshly rolled and griddled', 5000.00, NULL, NULL, 0, 1, 1),
+(731, 1, 89, 'Coca Cola 300ml', 'Ice cold bottle', 3000.00, NULL, NULL, 0, 1, 1),
+(732, 1, 89, 'Fanta 300ml', 'Orange or passion fruit', 3000.00, NULL, NULL, 0, 1, 1),
+(733, 1, 89, 'Mineral Water 500ml', 'Chilled bottled water', 2000.00, NULL, NULL, 0, 1, 1),
+(734, 1, 90, 'Paradise Sunset', 'House signature cocktail with a Nile twist', 25000.00, NULL, NULL, 0, 1, 1),
+(735, 1, 90, 'Nile Breeze', 'Light, refreshing cocktail of the house', 25000.00, NULL, NULL, 0, 1, 1),
+(736, 1, 91, 'Nile Special', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(737, 1, 91, 'Club Pilsener', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(738, 1, 91, 'Bell Lager', '500ml bottle', 5000.00, NULL, NULL, 0, 1, 1),
+(739, 1, 92, 'House White Wine', 'Glass of the house white wine', 20000.00, NULL, NULL, 0, 1, 1),
+(740, 1, 92, 'Local Spirit', 'Uganda Waragi or other local spirit', 15000.00, NULL, NULL, 0, 1, 1),
+(741, 1, 93, 'Room Service Breakfast', 'Full breakfast delivered to your room', 28000.00, NULL, NULL, 0, 1, 1),
+(742, 1, 93, 'Room Service Platter', 'Nile grilled selection delivered to your room', 45000.00, NULL, NULL, 0, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -993,7 +1165,8 @@ CREATE TABLE `payments` (
 INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `invoice_id`, `order_id`, `reservation_id`, `amount`, `method`, `provider`, `provider_reference`, `status`, `created_at`) VALUES
 (1, 1, 6, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
 (2, 1, 6, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(3, 1, 6, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL);
+(3, 1, 6, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
+(4, 1, 6, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL);
 
 -- --------------------------------------------------------
 
@@ -1118,10 +1291,10 @@ CREATE TABLE `reservations` (
 --
 
 INSERT INTO `reservations` (`id`, `hotel_id`, `guest_id`, `booking_number`, `source`, `check_in`, `check_out`, `adults`, `children`, `status`, `room_rate`, `nights`, `subtotal`, `tax`, `total`, `paid`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'HPN-20260925-001', 'phone', '2026-09-25 14:00:00', '2026-09-28 11:00:00', 2, 0, 'checked_in', 248000.00, 3, 744000.00, 0.00, 744000.00, 744000.00, 'Birthday weekend by the Nile', '2026-10-05 05:39:41', NULL),
-(2, 1, 2, 'HPN-20260925-002', 'website', '2026-10-02 14:00:00', '2026-10-04 11:00:00', 2, 1, 'confirmed', 202000.00, 2, 404000.00, 0.00, 404000.00, 0.00, '', '2026-10-05 05:39:41', NULL),
-(3, 1, 3, 'HPN-20260925-003', 'walk_in', '2026-10-05 14:00:00', '2026-10-07 11:00:00', 3, 0, 'confirmed', 213000.00, 2, 426000.00, 0.00, 426000.00, 0.00, '', '2026-10-05 05:39:41', NULL),
-(4, 1, 4, 'HPN-20260925-004', 'agent', '2026-09-20 14:00:00', '2026-09-23 11:00:00', 2, 0, 'checked_out', 314000.00, 3, 942000.00, 0.00, 942000.00, 942000.00, 'Family holiday', '2026-10-05 05:39:41', NULL);
+(1, 1, 1, 'HPN-20260925-001', 'phone', '2026-09-25 14:00:00', '2026-09-28 11:00:00', 2, 0, 'checked_in', 248000.00, 3, 744000.00, 0.00, 744000.00, 744000.00, 'Birthday weekend by the Nile', '2026-10-05 06:40:51', NULL),
+(2, 1, 2, 'HPN-20260925-002', 'website', '2026-10-02 14:00:00', '2026-10-04 11:00:00', 2, 1, 'confirmed', 202000.00, 2, 404000.00, 0.00, 404000.00, 0.00, '', '2026-10-05 06:40:51', NULL),
+(3, 1, 3, 'HPN-20260925-003', 'walk_in', '2026-10-05 14:00:00', '2026-10-07 11:00:00', 3, 0, 'confirmed', 213000.00, 2, 426000.00, 0.00, 426000.00, 0.00, '', '2026-10-05 06:40:51', NULL),
+(4, 1, 4, 'HPN-20260925-004', 'agent', '2026-09-20 14:00:00', '2026-09-23 11:00:00', 2, 0, 'checked_out', 314000.00, 3, 942000.00, 0.00, 942000.00, 942000.00, 'Family holiday', '2026-10-05 06:40:51', NULL);
 
 -- --------------------------------------------------------
 
@@ -1154,7 +1327,11 @@ INSERT INTO `reservation_rooms` (`id`, `reservation_id`, `room_type_id`, `room_i
 (9, 1, 16, 1, 1, 248000.00),
 (10, 2, 19, 30, 1, 202000.00),
 (11, 3, 18, 15, 1, 213000.00),
-(12, 4, 17, 8, 1, 314000.00);
+(12, 4, 17, 8, 1, 314000.00),
+(13, 1, 23, 1, 1, 248000.00),
+(14, 2, 26, 30, 1, 202000.00),
+(15, 3, 25, 15, 1, 213000.00),
+(16, 4, 24, 8, 1, 314000.00);
 
 -- --------------------------------------------------------
 
@@ -1211,75 +1388,75 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`id`, `hotel_id`, `room_type_id`, `room_number`, `floor`, `status`) VALUES
-(1, 1, 16, 'S101', 'Floor 1', 'available'),
-(2, 1, 16, 'S102', 'Floor 1', 'available'),
-(3, 1, 16, 'S103', 'Floor 1', 'available'),
-(4, 1, 16, 'S104', 'Floor 1', 'available'),
-(5, 1, 16, 'S105', 'Floor 1', 'available'),
-(6, 1, 16, 'S106', 'Floor 1', 'available'),
-(8, 1, 17, 'F101', 'Floor 1', 'available'),
-(9, 1, 17, 'F102', 'Floor 1', 'available'),
-(10, 1, 17, 'F103', 'Floor 1', 'available'),
-(11, 1, 17, 'F104', 'Floor 1', 'available'),
-(12, 1, 17, 'F105', 'Floor 1', 'available'),
-(13, 1, 17, 'F106', 'Floor 1', 'available'),
-(14, 1, 17, 'F107', 'Floor 1', 'available'),
-(15, 1, 18, 'T201', 'Floor 2', 'available'),
-(16, 1, 18, 'T202', 'Floor 2', 'available'),
-(17, 1, 18, 'T203', 'Floor 2', 'available'),
-(18, 1, 18, 'T204', 'Floor 2', 'available'),
-(19, 1, 18, 'T205', 'Floor 2', 'available'),
-(20, 1, 18, 'T206', 'Floor 2', 'available'),
-(21, 1, 18, 'T207', 'Floor 2', 'available'),
-(22, 1, 18, 'T208', 'Floor 2', 'available'),
-(23, 1, 18, 'T209', 'Floor 2', 'available'),
-(24, 1, 18, 'T210', 'Floor 2', 'available'),
-(25, 1, 18, 'T211', 'Floor 2', 'available'),
-(26, 1, 18, 'T212', 'Floor 2', 'available'),
-(30, 1, 19, 'ED201', 'Floor 2', 'available'),
-(31, 1, 19, 'ED202', 'Floor 2', 'available'),
-(32, 1, 19, 'ED203', 'Floor 2', 'available'),
-(33, 1, 19, 'ED204', 'Floor 2', 'available'),
-(34, 1, 19, 'ED205', 'Floor 2', 'available'),
-(35, 1, 19, 'ED206', 'Floor 2', 'available'),
-(36, 1, 19, 'ED207', 'Floor 2', 'available'),
-(37, 1, 19, 'ED208', 'Floor 2', 'available'),
-(38, 1, 19, 'ED209', 'Floor 2', 'available'),
-(39, 1, 19, 'ED210', 'Floor 2', 'available'),
-(45, 1, 20, 'DD301', 'Floor 3', 'available'),
-(46, 1, 20, 'DD302', 'Floor 3', 'available'),
-(47, 1, 20, 'DD303', 'Floor 3', 'available'),
-(48, 1, 20, 'DD304', 'Floor 3', 'available'),
-(49, 1, 20, 'DD305', 'Floor 3', 'available'),
-(50, 1, 20, 'DD306', 'Floor 3', 'available'),
-(51, 1, 20, 'DD307', 'Floor 3', 'available'),
-(52, 1, 20, 'DD308', 'Floor 3', 'available'),
-(53, 1, 20, 'DD309', 'Floor 3', 'available'),
-(54, 1, 20, 'DD310', 'Floor 3', 'available'),
-(55, 1, 20, 'DD311', 'Floor 3', 'available'),
-(56, 1, 20, 'DD312', 'Floor 3', 'available'),
-(57, 1, 20, 'DD313', 'Floor 3', 'available'),
-(58, 1, 20, 'DD314', 'Floor 3', 'available'),
-(60, 1, 21, 'TW301', 'Floor 3', 'available'),
-(61, 1, 21, 'TW302', 'Floor 3', 'available'),
-(62, 1, 21, 'TW303', 'Floor 3', 'available'),
-(63, 1, 21, 'TW304', 'Floor 3', 'available'),
-(64, 1, 21, 'TW305', 'Floor 3', 'available'),
-(65, 1, 21, 'TW306', 'Floor 3', 'available'),
-(66, 1, 21, 'TW307', 'Floor 3', 'available'),
-(67, 1, 21, 'TW308', 'Floor 3', 'available'),
-(68, 1, 21, 'TW309', 'Floor 3', 'available'),
-(69, 1, 21, 'TW310', 'Floor 3', 'available'),
-(70, 1, 21, 'TW311', 'Floor 3', 'available'),
-(71, 1, 21, 'TW312', 'Floor 3', 'available'),
-(75, 1, 22, 'SG301', 'Floor 3', 'available'),
-(76, 1, 22, 'SG302', 'Floor 3', 'available'),
-(77, 1, 22, 'SG303', 'Floor 3', 'available'),
-(78, 1, 22, 'SG304', 'Floor 3', 'available'),
-(79, 1, 22, 'SG305', 'Floor 3', 'available'),
-(80, 1, 22, 'SG306', 'Floor 3', 'available'),
-(81, 1, 22, 'SG307', 'Floor 3', 'available'),
-(82, 1, 22, 'SG308', 'Floor 3', 'available'),
+(1, 1, 23, 'S101', 'Floor 1', 'available'),
+(2, 1, 23, 'S102', 'Floor 1', 'available'),
+(3, 1, 23, 'S103', 'Floor 1', 'available'),
+(4, 1, 23, 'S104', 'Floor 1', 'available'),
+(5, 1, 23, 'S105', 'Floor 1', 'available'),
+(6, 1, 23, 'S106', 'Floor 1', 'available'),
+(8, 1, 24, 'F101', 'Floor 1', 'available'),
+(9, 1, 24, 'F102', 'Floor 1', 'available'),
+(10, 1, 24, 'F103', 'Floor 1', 'available'),
+(11, 1, 24, 'F104', 'Floor 1', 'available'),
+(12, 1, 24, 'F105', 'Floor 1', 'available'),
+(13, 1, 24, 'F106', 'Floor 1', 'available'),
+(14, 1, 24, 'F107', 'Floor 1', 'available'),
+(15, 1, 25, 'T201', 'Floor 2', 'available'),
+(16, 1, 25, 'T202', 'Floor 2', 'available'),
+(17, 1, 25, 'T203', 'Floor 2', 'available'),
+(18, 1, 25, 'T204', 'Floor 2', 'available'),
+(19, 1, 25, 'T205', 'Floor 2', 'available'),
+(20, 1, 25, 'T206', 'Floor 2', 'available'),
+(21, 1, 25, 'T207', 'Floor 2', 'available'),
+(22, 1, 25, 'T208', 'Floor 2', 'available'),
+(23, 1, 25, 'T209', 'Floor 2', 'available'),
+(24, 1, 25, 'T210', 'Floor 2', 'available'),
+(25, 1, 25, 'T211', 'Floor 2', 'available'),
+(26, 1, 25, 'T212', 'Floor 2', 'available'),
+(30, 1, 26, 'ED201', 'Floor 2', 'available'),
+(31, 1, 26, 'ED202', 'Floor 2', 'available'),
+(32, 1, 26, 'ED203', 'Floor 2', 'available'),
+(33, 1, 26, 'ED204', 'Floor 2', 'available'),
+(34, 1, 26, 'ED205', 'Floor 2', 'available'),
+(35, 1, 26, 'ED206', 'Floor 2', 'available'),
+(36, 1, 26, 'ED207', 'Floor 2', 'available'),
+(37, 1, 26, 'ED208', 'Floor 2', 'available'),
+(38, 1, 26, 'ED209', 'Floor 2', 'available'),
+(39, 1, 26, 'ED210', 'Floor 2', 'available'),
+(45, 1, 27, 'DD301', 'Floor 3', 'available'),
+(46, 1, 27, 'DD302', 'Floor 3', 'available'),
+(47, 1, 27, 'DD303', 'Floor 3', 'available'),
+(48, 1, 27, 'DD304', 'Floor 3', 'available'),
+(49, 1, 27, 'DD305', 'Floor 3', 'available'),
+(50, 1, 27, 'DD306', 'Floor 3', 'available'),
+(51, 1, 27, 'DD307', 'Floor 3', 'available'),
+(52, 1, 27, 'DD308', 'Floor 3', 'available'),
+(53, 1, 27, 'DD309', 'Floor 3', 'available'),
+(54, 1, 27, 'DD310', 'Floor 3', 'available'),
+(55, 1, 27, 'DD311', 'Floor 3', 'available'),
+(56, 1, 27, 'DD312', 'Floor 3', 'available'),
+(57, 1, 27, 'DD313', 'Floor 3', 'available'),
+(58, 1, 27, 'DD314', 'Floor 3', 'available'),
+(60, 1, 28, 'TW301', 'Floor 3', 'available'),
+(61, 1, 28, 'TW302', 'Floor 3', 'available'),
+(62, 1, 28, 'TW303', 'Floor 3', 'available'),
+(63, 1, 28, 'TW304', 'Floor 3', 'available'),
+(64, 1, 28, 'TW305', 'Floor 3', 'available'),
+(65, 1, 28, 'TW306', 'Floor 3', 'available'),
+(66, 1, 28, 'TW307', 'Floor 3', 'available'),
+(67, 1, 28, 'TW308', 'Floor 3', 'available'),
+(68, 1, 28, 'TW309', 'Floor 3', 'available'),
+(69, 1, 28, 'TW310', 'Floor 3', 'available'),
+(70, 1, 28, 'TW311', 'Floor 3', 'available'),
+(71, 1, 28, 'TW312', 'Floor 3', 'available'),
+(75, 1, 29, 'SG301', 'Floor 3', 'available'),
+(76, 1, 29, 'SG302', 'Floor 3', 'available'),
+(77, 1, 29, 'SG303', 'Floor 3', 'available'),
+(78, 1, 29, 'SG304', 'Floor 3', 'available'),
+(79, 1, 29, 'SG305', 'Floor 3', 'available'),
+(80, 1, 29, 'SG306', 'Floor 3', 'available'),
+(81, 1, 29, 'SG307', 'Floor 3', 'available'),
+(82, 1, 29, 'SG308', 'Floor 3', 'available'),
 (103, 1, 15, 'SD303', 'Floor 3', 'available'),
 (104, 1, 15, 'SD304', 'Floor 3', 'available'),
 (105, 1, 15, 'SD305', 'Floor 3', 'available'),
@@ -1333,7 +1510,14 @@ INSERT INTO `room_types` (`id`, `hotel_id`, `name`, `description`, `max_guests`,
 (19, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
 (20, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
 (21, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(22, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1);
+(22, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1),
+(23, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
+(24, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
+(25, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
+(26, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
+(27, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
+(28, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
+(29, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1);
 
 -- --------------------------------------------------------
 
@@ -1479,7 +1663,12 @@ INSERT INTO `suppliers` (`id`, `hotel_id`, `name`, `contact_person`, `phone`, `e
 (12, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
 (13, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
 (14, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(15, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL);
+(15, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL),
+(16, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
+(17, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
+(18, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
+(19, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
+(20, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -1946,7 +2135,7 @@ ALTER TABLE `beds`
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `efris_transactions`
@@ -1964,7 +2153,7 @@ ALTER TABLE `expenses`
 -- AUTO_INCREMENT for table `guests`
 --
 ALTER TABLE `guests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `guest_folio_entries`
@@ -1976,37 +2165,37 @@ ALTER TABLE `guest_folio_entries`
 -- AUTO_INCREMENT for table `hotels`
 --
 ALTER TABLE `hotels`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `inventory_categories`
 --
 ALTER TABLE `inventory_categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `inventory_items`
 --
 ALTER TABLE `inventory_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `menu_categories`
 --
 ALTER TABLE `menu_categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- AUTO_INCREMENT for table `menu_items`
 --
 ALTER TABLE `menu_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=592;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=847;
 
 --
 -- AUTO_INCREMENT for table `orders`
@@ -2024,7 +2213,7 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders`
@@ -2060,31 +2249,31 @@ ALTER TABLE `reception_records`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `reservation_rooms`
 --
 ALTER TABLE `reservation_rooms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
 
 --
 -- AUTO_INCREMENT for table `room_types`
 --
 ALTER TABLE `room_types`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `shifts`
@@ -2108,7 +2297,7 @@ ALTER TABLE `stock_count_items`
 -- AUTO_INCREMENT for table `stock_levels`
 --
 ALTER TABLE `stock_levels`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `stock_movements`
@@ -2120,13 +2309,13 @@ ALTER TABLE `stock_movements`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `voids`
@@ -2150,7 +2339,7 @@ ALTER TABLE `website_enquiries`
 -- AUTO_INCREMENT for table `website_settings`
 --
 ALTER TABLE `website_settings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Constraints for dumped tables

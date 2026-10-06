@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 05, 2026 at 08:42 AM
+-- Generation Time: Oct 06, 2026 at 09:44 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.25
 
@@ -1099,7 +1099,15 @@ INSERT INTO `menu_categories` (`id`, `hotel_id`, `outlet`, `name`, `eyebrow`, `b
 (212, 1, 'restaurant', 'House Specials', 'FOR THE TABLE', 'Platters built for sharing, served with two accompaniments.', NULL, 120),
 (213, 1, 'restaurant', 'Asian Delicacies', 'FAR EAST', 'Mild creamy curries, biryani and coconut dishes with rice or chapatti.', NULL, 130),
 (214, 1, 'restaurant', 'Desserts', 'SWEET FINISH', 'Fresh fruit, ice cream and a little sugar.', NULL, 140),
-(215, 1, 'restaurant', 'Pizzeria Section', 'PIZZA', 'Baked to order on a stone base, 12 inch.', NULL, 150);
+(215, 1, 'restaurant', 'Pizzeria Section', 'PIZZA', 'Baked to order on a stone base, 12 inch.', NULL, 150),
+(216, 1, 'restaurant', 'Breakfast', NULL, NULL, NULL, 0),
+(217, 1, 'restaurant', 'Main Meals', NULL, NULL, NULL, 0),
+(218, 1, 'restaurant', 'Snacks', NULL, NULL, NULL, 0),
+(219, 1, 'bar', 'Soft Drinks', NULL, NULL, NULL, 0),
+(220, 1, 'bar', 'Cocktails', NULL, NULL, NULL, 0),
+(221, 1, 'bar', 'Beers & Ciders', NULL, NULL, NULL, 0),
+(222, 1, 'bar', 'Wines & Spirits', NULL, NULL, NULL, 0),
+(223, 1, 'room_service', 'Room Service', NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -5364,7 +5372,7 @@ ALTER TABLE `guest_folio_entries`
 -- AUTO_INCREMENT for table `hotels`
 --
 ALTER TABLE `hotels`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `hotel_groups`
@@ -5478,7 +5486,7 @@ ALTER TABLE `maintenance_tickets`
 -- AUTO_INCREMENT for table `menu_categories`
 --
 ALTER TABLE `menu_categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=216;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=224;
 
 --
 -- AUTO_INCREMENT for table `menu_items`
@@ -5628,7 +5636,7 @@ ALTER TABLE `reservation_rooms`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=160;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=175;
 
 --
 -- AUTO_INCREMENT for table `rooms`
