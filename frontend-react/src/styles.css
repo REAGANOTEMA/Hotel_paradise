@@ -1008,3 +1008,10 @@ tr:last-child td{border-bottom:0}
 @media(max-width:900px){.payGrid{grid-template-columns:1fr}}
 @media(max-width:560px){.payRow2,.cardGrid{grid-template-columns:1fr}}
 @media print{.webOnly{display:none}}
+
+/* ---- the guest's account: sign in link in the header, and the 'or' rule above Google's button ---- */
+.navSignIn{font-weight:700}
+.nav .navSignIn.active{color:var(--gold)}
+.acctOr{display:flex;align-items:center;gap:12px;margin:24px 0 14px;color:#98a2b3;font-size:11px;letter-spacing:3px;text-transform:uppercase}
+.acctOr::before,.acctOr::after{content:'';height:1px;background:#eaedf2;flex:1}
+

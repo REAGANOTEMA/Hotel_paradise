@@ -47,6 +47,30 @@ export const LOGO = './logo-256.png';
 
 export const fmt = (n: number): string => 'UGX ' + Math.round(n).toLocaleString();
 
+/**
+ * The guest's own account, kept in this browser.
+ *
+ * The token is a random string the server only ever stores as its sha256, so
+ * nothing here can be turned back into a login by anyone who reads it. The name
+ * is kept beside it so the navigation can say who is signed in without asking
+ * the API on every page load.
+ */
+const TOKEN_KEY = 'hpn_customer_token';
+const NAME_KEY = 'hpn_customer_name';
+
+export const customerToken = (): string => {
+  try { return window.localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; }
+};
+export const customerFirstName = (): string => {
+  try { return (window.localStorage.getItem(NAME_KEY) || '').split(' ')[0]; } catch { return ''; }
+};
+export const setCustomer = (token: string, name: string): void => {
+  try { window.localStorage.setItem(TOKEN_KEY, token); window.localStorage.setItem(NAME_KEY, name); } catch {}
+};
+export const forgetCustomer = (): void => {
+  try { window.localStorage.removeItem(TOKEN_KEY); window.localStorage.removeItem(NAME_KEY); } catch {}
+};
+
 export type Room = {
   id: number;
   type: string;
@@ -226,6 +250,7 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
     <Brand light={onDark}/>
     <nav>{NAV.map(([href, label]) => <a key={href} className={active(href) ? 'active' : ''} href={href}>{label}</a>)}</nav>
     <div className="navRight">
+     <a className={'navSignIn' + (active('./account.html') ? ' active' : '')} href="./account.html">{customerFirstName() || 'Sign in'}</a>
      <a className="btn navCta" href="./rooms.html">Book now</a>
      <button className={'burger' + (open ? ' open' : '')} onClick={() => setOpen(o => !o)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="mobile-menu">
       <span/><span/><span/>
@@ -239,9 +264,10 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
      <div className="drawerNav">
       {NAV.map(([href, label]) => <a key={href} className={active(href) ? 'active' : ''} href={href} onClick={close}>{label}</a>)}
      </div>
-     <div className="drawerFoot">
-      <a className="btn" href="./rooms.html" onClick={close}>Book now</a>
-      <a className="drawerCall systemLink" href="./system/" onClick={close}>Management system</a>
+      <div className="drawerFoot">
+       <a className="btn" href="./rooms.html" onClick={close}>Book now</a>
+       <a className="drawerCall systemLink" href="./account.html" onClick={close}>{customerFirstName() ? 'My account · ' + customerFirstName() : 'Sign in or create an account'}</a>
+       <a className="drawerCall systemLink" href="./system/" onClick={close}>Management system</a>
        <a className="drawerCall" href={telHref(CALL)}>Call {CALL}</a>
        <p className="drawerNote">{HOTEL.address}</p>
       </div>

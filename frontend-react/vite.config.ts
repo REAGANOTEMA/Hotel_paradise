@@ -50,7 +50,8 @@ export default defineConfig({
         home: 'index.html',
         rooms: 'rooms.html',
         menu: 'menu.html',
-        pay: 'pay.html'
+        pay: 'pay.html',
+        account: 'account.html'
       }
     }
   }

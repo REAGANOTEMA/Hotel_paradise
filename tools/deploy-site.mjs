@@ -15,7 +15,11 @@ const site = root;
 
 if (!existsSync(dist)) throw new Error(`no build to deploy: ${dist} is missing`);
 
-const html = ['index.html', 'menu.html', 'rooms.html'];
+// Every page the build produces, listed so that a page's own bundle is kept.
+// pay.html and account.html used to be missing from this list, which meant
+// their scripts were counted as dead weight and deleted on every deploy - the
+// page then loaded a script that was no longer there.
+const html = ['index.html', 'menu.html', 'rooms.html', 'pay.html', 'account.html'];
 const referenced = new Set();
 for (const page of html) {
   const file = join(dist, page);

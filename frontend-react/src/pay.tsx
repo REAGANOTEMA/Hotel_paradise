@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref} from './shared';
+import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken} from './shared';
 
 /*
  * Secure checkout. The room booking and the kitchen order both land here with
@@ -71,14 +71,30 @@ function PayPage() {
  const [err, setErr] = React.useState('');
  const [done, setDone] = React.useState<{reference: string; message: string} | null>(null);
 
- const keep = (patch: object) => setForm(f => {
-  const next = {...f, ...patch} as typeof f;
-  try { window.localStorage.setItem('hpn_name', next.name); window.localStorage.setItem('hpn_phone', next.phone); window.localStorage.setItem('hpn_email', next.email); } catch {}
-  return next;
- });
- const f = (k: 'name' | 'phone' | 'email') => ((e: React.ChangeEvent<HTMLInputElement>) => keep({[k]: e.target.value} as object));
+  const keep = (patch: object) => setForm(f => {
+   const next = {...f, ...patch} as typeof f;
+   try { window.localStorage.setItem('hpn_name', next.name); window.localStorage.setItem('hpn_phone', next.phone); window.localStorage.setItem('hpn_email', next.email); } catch {}
+   return next;
+  });
+  const f = (k: 'name' | 'phone' | 'email') => ((e: React.ChangeEvent<HTMLInputElement>) => keep({[k]: e.target.value} as object));
 
- const momoLabel = method === 'mtn_momo' ? 'MTN' : 'Airtel';
+  /**
+   * Nobody reaches the till without an account.
+   *
+   * The account is what ties a payment to a guest, and its mobile number is
+   * what the front desk confirms on, so this page sends a browser with no
+   * account to the sign up and waits there rather than letting a receipt be
+   * written against no one. The whole address it arrived with travels in the
+   * query string, so it comes straight back here afterwards.
+   */
+  const token = customerToken();
+  React.useEffect(() => {
+   if (token) return;
+   const back = window.location.pathname + window.location.search;
+   window.location.replace('./account.html?next=' + encodeURIComponent(back));
+  }, [token]);
+
+  const momoLabel = method === 'mtn_momo' ? 'MTN' : 'Airtel';
 
  const pay = async () => {
   setErr('');
@@ -97,7 +113,8 @@ function PayPage() {
   try {
    const body = {
     source: src, reference: ref, name: form.name.trim(), phone: normPhone(form.phone), email: form.email.trim(),
-    method, amount: Number(amt || 0)
+    method, amount: Number(amt || 0),
+    ...(token ? {token} : {})
    };
    const res = await fetch(await apiUrl('payment'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
    const d = await res.json();
@@ -112,7 +129,22 @@ function PayPage() {
   setBusy(false);
  };
 
- if (done) {
+  if (!token) {
+   return <div>
+    <TopBar/>
+    <PageNav/>
+    <section className="payWrap" style={{paddingTop: 70, paddingBottom: 90}}>
+     <div className="payCard" style={{maxWidth: 520, margin: '0 auto', textAlign: 'center'}}>
+      <p className="eyebrow">SECURE CHECKOUT</p>
+      <h3>One moment…</h3>
+      <p className="plannerNote">Taking you to sign in. Your booking reference and amount are kept exactly as they are, and you come straight back here.</p>
+     </div>
+    </section>
+    <Footer/>
+   </div>;
+  }
+
+  if (done) {
   return <div>
    <TopBar/>
    <PageNav/>

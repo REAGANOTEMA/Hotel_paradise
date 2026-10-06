@@ -279,9 +279,18 @@ if($act==='payment'){
   }
   if($expected<=0){ $out(['ok'=>false,'error'=>'There is nothing to pay on this reference.'],422); }
 
+  // The signed in guest's id rides along with the payment, so a receipt can be
+  // found again from the account. An anonymous payment is still a valid payment.
+  $custId=null;
+  $cTok=trim((string)($body['token']??''));
+  if($cTok!=='' && table_columns('customer_tokens')!==[]){
+    $ct=row('SELECT customer_id,expires_at FROM customer_tokens WHERE token_hash=? AND purpose=\'session\'',[hash('sha256',$cTok)]);
+    if($ct&&strtotime((string)$ct['expires_at'])>=time()){ $custId=(int)$ct['customer_id']; }
+  }
+
   $payRef=next_number('PAY','payments','provider_reference');
-  $paymentCols=existing_columns('payments',['id','hotel_id','user_id','invoice_id','order_id','reservation_id','amount','method','provider','provider_reference','status','created_at']);
-  $ins=['hotel_id'=>1,'user_id'=>null,'invoice_id'=>null,'order_id'=>$oid,'reservation_id'=>$rid,
+  $paymentCols=existing_columns('payments',['id','hotel_id','user_id','customer_id','invoice_id','order_id','reservation_id','amount','method','provider','provider_reference','status','created_at']);
+  $ins=['hotel_id'=>1,'user_id'=>null,'customer_id'=>$custId,'invoice_id'=>null,'order_id'=>$oid,'reservation_id'=>$rid,
     'amount'=>$expected,'method'=>$method,'provider'=>'pesapal','provider_reference'=>$payRef,'status'=>'pending'];
   $ins=array_intersect_key($ins,array_flip($paymentCols));
   $insCols=array_keys($ins);
@@ -291,6 +300,231 @@ if($act==='payment'){
   audit('web_payment','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'pending']);
   $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,
     'message'=>'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.']);
+}
+
+/**
+ * Customer accounts.
+ *
+ * The guest signs up with an email address and a password, is then asked for a
+ * mobile number, or arrives through Google and is asked for a mobile number
+ * because Google does not hand one over. Either way the answer to that second
+ * question is what the hotel confirms a booking or a payment on, so nothing is
+ * usable until it has been given.
+ *
+ * The browser keeps an opaque token, never the password and never a session id:
+ * only its sha256 is stored, so a dump of the table is not a set of logins.
+ */
+if($act==='account'){
+
+  $action=trim((string)($body['action']??''));
+
+  /** The account tables, which only exist once the upgrade SQL has been run. */
+  $ready=(table_columns('customers')!==[] && table_columns('customer_tokens')!==[]);
+  if(!$ready && $action!=='config'){
+    error_log('[hotel api] customers table missing - database/sql/upgrade/hotelpardise_upgrade.sql has not been run');
+    $out(['ok'=>false,'error'=>'Accounts are not available yet on this installation. Please call +256 759 504 928 and the front desk will take your booking.'],503);
+  }
+
+  $ip=(string)($_SERVER['REMOTE_ADDR']??'0.0.0.0');
+  $normPhone=function(string $p): string{ return preg_replace('/[^\d+]/','',$p)??''; };
+  $validPhone=function(string $p) use ($normPhone): bool{ return (bool)preg_match('/^(\+?256|0)7\d{8}$/',$normPhone($p)); };
+
+  $googleClientId=function(): string{
+    $v=getenv('HP_GOOGLE_CLIENT_ID');
+    if(is_string($v)&&$v!=='') return $v;
+    // Read straight from config.php: it is the file the site already trusts with
+    // its secrets, and it is not in git.
+    $file=__DIR__.'/config.php';
+    if(is_readable($file)){
+      $c=require $file;
+      if(is_array($c)&&isset($c['google_client_id'])&&is_string($c['google_client_id'])) return trim($c['google_client_id']);
+    }
+    return '';
+  };
+
+  $public=function(array $c): array{
+    return ['id'=>(int)$c['id'],'name'=>(string)$c['full_name'],'email'=>(string)$c['email'],
+      'phone'=>(string)$c['phone'],'google'=>(bool)($c['google_sub']??false)];
+  };
+
+  $issue=function(int $cid,string $purpose='session',int $days=30): string{
+    $tok=bin2hex(random_bytes(32));
+    q('INSERT INTO customer_tokens(customer_id,token_hash,purpose,expires_at) VALUES(?,?,?,DATE_ADD(NOW(), INTERVAL ? DAY))',
+      [$cid,hash('sha256',$tok),$purpose,$days]);
+    return $tok;
+  };
+
+  $fromToken=function(string $tok,string $purpose): ?array{
+    if($tok==='') return null;
+    $t=row('SELECT * FROM customer_tokens WHERE token_hash=?',[hash('sha256',$tok)]);
+    if(!$t) return null;
+    if(strtotime((string)$t['expires_at'])<time()) return null;
+    if($t['purpose']!==$purpose) return null;
+    $c=row('SELECT * FROM customers WHERE id=?',[(int)$t['customer_id']]);
+    if(!$c||$c['status']==='closed') return null;
+    q('UPDATE customer_tokens SET last_seen_at=NOW() WHERE id=?',[(int)$t['id']]);
+    return $c;
+  };
+
+  /** Eight wrong passwords in fifteen minutes for one address is enough. */
+  $blocked=function(string $email): bool{
+    $r=row('SELECT attempts,window_at FROM customer_signin_attempts WHERE ip_address=? AND email=? ORDER BY id DESC LIMIT 1',
+      [(string)($_SERVER['REMOTE_ADDR']??''),$email]);
+    if(!$r) return false;
+    if(strtotime((string)$r['window_at'])<time()-900) return false;
+    return (int)$r['attempts']>=8;
+  };
+  $failed=function(string $email): void{
+    $ip=(string)($_SERVER['REMOTE_ADDR']??'');
+    $r=row('SELECT id,attempts,window_at FROM customer_signin_attempts WHERE ip_address=? AND email=? ORDER BY id DESC LIMIT 1',[$ip,$email]);
+    if($r&&strtotime((string)$r['window_at'])>=time()-900){
+      q('UPDATE customer_signin_attempts SET attempts=attempts+1,window_at=NOW() WHERE id=?',[(int)$r['id']]);
+    }else{
+      q('INSERT INTO customer_signin_attempts(ip_address,email,attempts,window_at) VALUES(?,?,1,NOW())',[$ip,$email]);
+    }
+  };
+  $succeeded=function(string $email): void{
+    q('DELETE FROM customer_signin_attempts WHERE ip_address=? AND email=?',
+      [(string)($_SERVER['REMOTE_ADDR']??''),$email]);
+  };
+
+  /** Asks Google whether this identity token really is who it says it is. */
+  $googleVerify=function(string $jwt) use ($googleClientId): ?array{
+    $cid=$googleClientId();
+    if($cid===''||$jwt==='') return null;
+    $ctx=stream_context_create(['http'=>['timeout'=>6,'ignore_errors'=>true,'header'=>"Accept: application/json\r\n"]]);
+    $raw=@file_get_contents('https://oauth2.googleapis.com/tokeninfo?id_token='.urlencode($jwt),false,$ctx);
+    if($raw===false) return null;
+    $d=json_decode($raw,true);
+    if(!is_array($d)) return null;
+    if(($d['aud']??'')!==$cid) return null;
+    if(!in_array($d['iss']??'',['accounts.google.com','https://accounts.google.com'],true)) return null;
+    if(isset($d['exp'])&&(int)$d['exp']<time()) return null;
+    if(($d['email_verified']??'')!=='true'&&($d['email_verified']??true)!==true) return null;
+    if(!isset($d['sub'])||!isset($d['email'])) return null;
+    return $d;
+  };
+
+  // ---- what the page needs to draw itself
+  if($action==='config'){
+    $out(['ok'=>true,'google_client_id'=>$googleClientId()]);
+  }
+
+  // ---- step one: email, name and password
+  if($action==='signup'){
+    $name=trim((string)($body['name']??''));
+    $email=strtolower(trim((string)($body['email']??'')));
+    $pass=(string)($body['password']??'');
+    if($name===''||mb_strlen($name)<2){ $out(['ok'=>false,'error'=>'Please enter your full name.'],422); }
+    if(!filter_var($email,FILTER_VALIDATE_EMAIL)){ $out(['ok'=>false,'error'=>'Please enter a valid email address, for example you@email.com.'],422); }
+    if(strlen($pass)<8){ $out(['ok'=>false,'error'=>'Please choose a password of at least 8 characters.'],422); }
+
+    $existing=row('SELECT * FROM customers WHERE email=?',[$email]);
+    if($existing&&$existing['status']!=='pending_phone'){
+      $out(['ok'=>false,'error'=>'An account already uses that email address. Please sign in instead.'],409);
+    }
+    if($existing){
+      q('UPDATE customers SET full_name=?,password_hash=?,google_sub=NULL,updated_at=NOW() WHERE id=?',
+        [$name,password_hash($pass,PASSWORD_DEFAULT),(int)$existing['id']]);
+      $cid=(int)$existing['id'];
+    }else{
+      q('INSERT INTO customers(hotel_id,full_name,email,password_hash,status,created_at) VALUES(1,?,?,?,\'pending_phone\',NOW())',
+        [$name,$email,password_hash($pass,PASSWORD_DEFAULT)]);
+      $cid=(int)db()->lastInsertId();
+    }
+    $reg=$issue($cid,'register',1);
+    $out(['ok'=>true,'step'=>'phone','register_token'=>$reg,'name'=>$name,'email'=>$email,
+      'message'=>'Your email is set. Now add the mobile number the hotel should confirm your booking and payment on.']);
+  }
+
+  // ---- step two: the mobile number, for either way in
+  if($action==='phone'){
+    $tok=trim((string)($body['register_token']??$body['token']??''));
+    $phone=$normPhone(trim((string)($body['phone']??'')));
+    if(!$validPhone($phone)){
+      $out(['ok'=>false,'error'=>'Please enter a Ugandan mobile number, for example 0759 504 928 or +256 759 504 928.'],422);
+    }
+    $c=$fromToken($tok,'register');
+    if(!$c){ $out(['ok'=>false,'error'=>'That sign up has expired. Please start again.'],410); }
+    q('UPDATE customers SET phone=?,status=\'active\',last_login_at=NOW(),updated_at=NOW() WHERE id=?',[$phone,(int)$c['id']]);
+    q('DELETE FROM customer_tokens WHERE customer_id=? AND purpose=\'register\'',[(int)$c['id']]);
+    $c=row('SELECT * FROM customers WHERE id=?',[(int)$c['id']]);
+    $out(['ok'=>true,'token'=>$issue((int)$c['id']),'customer'=>$public($c),
+      'message'=>'Your account is ready. Welcome, '.trim((string)$c['full_name']).'.']);
+  }
+
+  // ---- password sign in
+  if($action==='signin'){
+    $email=strtolower(trim((string)($body['email']??'')));
+    $pass=(string)($body['password']??'');
+    if(!filter_var($email,FILTER_VALIDATE_EMAIL)){ $out(['ok'=>false,'error'=>'Please enter a valid email address.'],422); }
+    if($blocked($email)){ $out(['ok'=>false,'error'=>'Too many attempts on this address. Please wait a few minutes, or call +256 759 504 928.'],429); }
+    $c=row('SELECT * FROM customers WHERE email=?',[$email]);
+    // One sentence for every way this can fail, and none of them says which half
+    // was wrong: an address with no account is told to create one, an address
+    // that arrived through Google is told how to sign in, and a wrong password
+    // is a wrong password.
+    if(!$c||$c['status']==='closed'){ $failed($email); $out(['ok'=>false,'error'=>'No account uses that email address yet. Please create one below.'],401); }
+    if(($c['google_sub']??'')!==''&&($c['password_hash']??'')===''){ $failed($email); $out(['ok'=>false,'error'=>'That account was created with Google. Please use Continue with Google.'],401); }
+    if(!password_verify($pass,(string)$c['password_hash'])){ $failed($email); $out(['ok'=>false,'error'=>'That password is not correct. Please try again.'],401); }
+    $succeeded($email);
+    if(trim((string)$c['phone'])===''){
+      q('UPDATE customers SET last_login_at=NOW() WHERE id=?',[(int)$c['id']]);
+      $out(['ok'=>true,'step'=>'phone','register_token'=>$issue((int)$c['id'],'register',1),
+        'name'=>(string)$c['full_name'],'email'=>(string)$c['email'],
+        'message'=>'One more thing: add the mobile number the hotel should confirm your booking and payment on.']);
+    }
+    q('UPDATE customers SET last_login_at=NOW() WHERE id=?',[(int)$c['id']]);
+    $out(['ok'=>true,'token'=>$issue((int)$c['id']),'customer'=>$public($c)]);
+  }
+
+  // ---- Google sign in
+  if($action==='google'){
+    if($googleClientId()===''){
+      $out(['ok'=>false,'error'=>'Sign in with Google is not switched on for this website yet. Please sign in with your email address instead.'],501);
+    }
+    $cred=trim((string)($body['credential']??''));
+    $g=$googleVerify($cred);
+    if(!$g){ $out(['ok'=>false,'error'=>'Google could not confirm that sign in. Please try again, or sign in with your email address.'],401); }
+    $sub=(string)$g['sub']; $email=strtolower((string)$g['email']);
+    $name=trim((string)($g['name']??''));
+    $c=row('SELECT * FROM customers WHERE google_sub=?',[$sub]);
+    if(!$c){ $c=row('SELECT * FROM customers WHERE email=?',[$email]); }
+    if(!$c){
+      if($name===''){ $name=explode('@',$email)[0]; }
+      q('INSERT INTO customers(hotel_id,full_name,email,google_sub,status,created_at) VALUES(1,?,?,?,\'pending_phone\',NOW())',
+        [$name,$email,$sub]);
+      $cid=(int)db()->lastInsertId();
+    }else{
+      $cid=(int)$c['id'];
+      if(($c['google_sub']??'')!==$sub){ q('UPDATE customers SET google_sub=?,updated_at=NOW() WHERE id=?',[$sub,$cid]); }
+      if($c['status']==='closed'){ $out(['ok'=>false,'error'=>'That account has been closed. Please call +256 759 504 928.'],403); }
+    }
+    $c=row('SELECT * FROM customers WHERE id=?',[$cid]);
+    q('UPDATE customers SET last_login_at=NOW() WHERE id=?',[$cid]);
+    if(trim((string)$c['phone'])===''){
+      $out(['ok'=>true,'step'=>'phone','register_token'=>$issue($cid,'register',1),
+        'name'=>(string)$c['full_name'],'email'=>(string)$c['email'],
+        'message'=>'Google knows your email, but not your mobile number. Please add the number the hotel should confirm your booking and payment on.']);
+    }
+    $out(['ok'=>true,'token'=>$issue($cid),'customer'=>$public($c)]);
+  }
+
+  // ---- who am I
+  if($action==='me'){
+    $c=$fromToken(trim((string)($body['token']??'')),'session');
+    if(!$c){ $out(['ok'=>false,'error'=>'Not signed in.'],401); }
+    $out(['ok'=>true,'customer'=>$public($c)]);
+  }
+
+  // ---- sign out
+  if($action==='logout'){
+    $tok=trim((string)($body['token']??''));
+    if($tok!==''){ q('DELETE FROM customer_tokens WHERE token_hash=?',[hash('sha256',$tok)]); }
+    $out(['ok'=>true]);
+  }
+
+  $out(['ok'=>false,'error'=>'Unknown account request'],400);
 }
 
 $out(['ok'=>false,'error'=>'Unknown request'],404);
