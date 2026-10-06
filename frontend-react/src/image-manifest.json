@@ -1998,6 +1998,12 @@
         }
       ]
     },
+    "assorted-meat-and-salami": {
+      "ext": "webp",
+      "w": 1280,
+      "h": 720,
+      "variants": []
+    },
     "avocado-andlettuce-salad": {
       "ext": "jpg",
       "w": 335,
@@ -2081,6 +2087,18 @@
       "ext": "webp",
       "w": 1200,
       "h": 1200,
+      "variants": []
+    },
+    "banana-split": {
+      "ext": "jpg",
+      "w": 550,
+      "h": 557,
+      "variants": []
+    },
+    "bbq-beef-and-chicken-patty": {
+      "ext": "jpg",
+      "w": 678,
+      "h": 452,
       "variants": []
     },
     "bbq-beef-sandwich": {
@@ -2298,6 +2316,18 @@
       "ext": "jpg",
       "w": 516,
       "h": 387,
+      "variants": []
+    },
+    "bell-lager": {
+      "ext": "jpg",
+      "w": 597,
+      "h": 335,
+      "variants": []
+    },
+    "black-forest-cake": {
+      "ext": "jpg",
+      "w": 554,
+      "h": 554,
       "variants": []
     },
     "bolognaise": {
@@ -2865,6 +2895,18 @@
       "h": 980,
       "variants": []
     },
+    "chocolate-fudge-slice": {
+      "ext": "jpg",
+      "w": 468,
+      "h": 655,
+      "variants": []
+    },
+    "chocolate-mousse": {
+      "ext": "jpg",
+      "w": 640,
+      "h": 480,
+      "variants": []
+    },
     "cinnamon-roll": {
       "ext": "jpg",
       "w": 554,
@@ -2909,6 +2951,12 @@
           "h": 320
         }
       ]
+    },
+    "classic-carrot-cake": {
+      "ext": "jpg",
+      "w": 1707,
+      "h": 2560,
+      "variants": []
     },
     "classico-e-margherita": {
       "ext": "png",
@@ -2962,10 +3010,16 @@
       "h": 678,
       "variants": []
     },
+    "club-pilsener": {
+      "ext": "jpg",
+      "w": 399,
+      "h": 501,
+      "variants": []
+    },
     "coca-cola-300ml": {
       "ext": "jpg",
-      "w": 452,
-      "h": 678,
+      "w": 1000,
+      "h": 854,
       "variants": []
     },
     "cookies": {
@@ -3048,6 +3102,12 @@
           "h": 360
         }
       ]
+    },
+    "double-beef-and-bacon-burger": {
+      "ext": "jpg",
+      "w": 554,
+      "h": 554,
+      "variants": []
     },
     "eggs-and-toast": {
       "ext": "jpeg",
@@ -3513,6 +3573,12 @@
       "h": 800,
       "variants": []
     },
+    "fruit-salad": {
+      "ext": "jpg",
+      "w": 683,
+      "h": 1024,
+      "variants": []
+    },
     "fruits-image": {
       "ext": "jpg",
       "w": 4000,
@@ -3881,6 +3947,12 @@
         }
       ]
     },
+    "house-white-wine": {
+      "ext": "jpg",
+      "w": 1000,
+      "h": 1000,
+      "variants": []
+    },
     "ice-cream-3-scoop": {
       "ext": "jpg",
       "w": 612,
@@ -3975,6 +4047,12 @@
       "h": 554,
       "variants": []
     },
+    "lemon-tart": {
+      "ext": "jpg",
+      "w": 1200,
+      "h": 800,
+      "variants": []
+    },
     "liver-princess": {
       "ext": "jpg",
       "w": 447,
@@ -3991,6 +4069,18 @@
       "ext": "jpg",
       "w": 1920,
       "h": 2592,
+      "variants": []
+    },
+    "local-spirit": {
+      "ext": "jpg",
+      "w": 365,
+      "h": 547,
+      "variants": []
+    },
+    "mango-tart": {
+      "ext": "jpg",
+      "w": 1200,
+      "h": 1200,
       "variants": []
     },
     "marble-cake-slice": {
@@ -4233,8 +4323,8 @@
     },
     "mushroom-soup": {
       "ext": "jpg",
-      "w": 1244,
-      "h": 1244,
+      "w": 638,
+      "h": 480,
       "variants": [
         {
           "w": 320,
@@ -4247,6 +4337,12 @@
           "h": 720
         }
       ]
+    },
+    "nile-breeze": {
+      "ext": "jpg",
+      "w": 447,
+      "h": 447,
+      "variants": []
     },
     "nile-parch-catch-for-a-day": {
       "ext": "jpg",
@@ -4279,6 +4375,12 @@
           "h": 834
         }
       ]
+    },
+    "nile-special": {
+      "ext": "jpg",
+      "w": 399,
+      "h": 501,
+      "variants": []
     },
     "ovacado-with-an-eggs": {
       "ext": "jpg",
@@ -4357,6 +4459,12 @@
           "h": 640
         }
       ]
+    },
+    "pan-fried-boneless-chicken-breast": {
+      "ext": "jpg",
+      "w": 1200,
+      "h": 1200,
+      "variants": []
     },
     "pan-grilled-fish-fillet": {
       "ext": "jpg",
@@ -4468,6 +4576,12 @@
           "h": 214
         }
       ]
+    },
+    "paradise-sunset": {
+      "ext": "jpg",
+      "w": 447,
+      "h": 447,
+      "variants": []
     },
     "pasta-a-la-carbonara": {
       "ext": "jpg",
@@ -4808,6 +4922,12 @@
         }
       ]
     },
+    "profiteroles": {
+      "ext": "jpg",
+      "w": 469,
+      "h": 654,
+      "variants": []
+    },
     "prosciutto": {
       "ext": "jpg",
       "w": 1074,
@@ -4944,6 +5064,18 @@
           "h": 960
         }
       ]
+    },
+    "room-service-breakfast": {
+      "ext": "jpg",
+      "w": 360,
+      "h": 450,
+      "variants": []
+    },
+    "room-service-platter": {
+      "ext": "jpg",
+      "w": 547,
+      "h": 365,
+      "variants": []
     },
     "salami": {
       "ext": "webp",
@@ -5258,6 +5390,12 @@
         }
       ]
     },
+    "three-decker-sandwich": {
+      "ext": "webp",
+      "w": 612,
+      "h": 406,
+      "variants": []
+    },
     "tomatoes-cheese-and-avocado-sandwich": {
       "ext": "jpg",
       "w": 1200,
@@ -5536,6 +5674,12 @@
           "h": 320
         }
       ]
+    },
+    "white-forest-cake": {
+      "ext": "jpg",
+      "w": 1200,
+      "h": 1117,
+      "variants": []
     },
     "yummy-chicken-omelet": {
       "ext": "jpg",
