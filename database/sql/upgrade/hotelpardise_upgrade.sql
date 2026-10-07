@@ -15,6 +15,9 @@
 --   3. A photograph for every dish the menu can match to a file in
 --      /images/dishes or /images/food, and a banner for the sections that
 --      have a photograph worth showing.
+--   4. The photographs filed after the last pass: the drinks, the room
+--      service plates, the burgers and the desserts, plus a banner for
+--      each bar section.
 --
 -- WHERE TO RUN IT
 --   phpMyAdmin (http://localhost/phpmyadmin): pick hotelpardise_system in
@@ -201,6 +204,44 @@ UPDATE menu_categories SET image = 'chicken-coconut-curry.jpg' WHERE outlet = 'r
 UPDATE menu_categories SET image = 'fruits-image.jpg' WHERE outlet = 'restaurant' AND name = 'Desserts';
 UPDATE menu_categories SET image = 'section-pizza.jpg' WHERE outlet = 'restaurant' AND name = 'Pizzeria Section';
 UPDATE menu_categories SET image = 'food-on-table-hero3-use-it-on-menu-page.jpg' WHERE outlet = 'room_service' AND name = 'Room Service';
+-- ------------------------------------------------------------------------
+-- 4. The photographs filed after the last pass
+-- --------------------------------------------
+-- Every dish below was left with no photograph when the file had not yet
+-- been dropped into /images/food. The section is named in the join so a
+-- dish that later appears twice cannot be dressed twice.
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'chilli-beef-and-veggie-chips.jpg' WHERE c.outlet = 'restaurant' AND c.name = 'Snacks' AND i.name = 'Chilli Beef and Veggie Chips';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'liver-with-shredded-vegetables.jpg' WHERE c.outlet = 'restaurant' AND c.name = 'Snacks' AND i.name = 'Liver with Shredded Vegetables';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'coca-cola-300ml.jpg' WHERE c.outlet = 'bar' AND c.name = 'Soft Drinks' AND i.name = 'Coca Cola 300ml';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'fanta-300ml.jpg' WHERE c.outlet = 'bar' AND c.name = 'Soft Drinks' AND i.name = 'Fanta 300ml';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'mineral-water-500ml.webp' WHERE c.outlet = 'bar' AND c.name = 'Soft Drinks' AND i.name = 'Mineral Water 500ml';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'paradise-sunset.jpg' WHERE c.outlet = 'bar' AND c.name = 'Cocktails' AND i.name = 'Paradise Sunset';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'nile-breeze.jpg' WHERE c.outlet = 'bar' AND c.name = 'Cocktails' AND i.name = 'Nile Breeze';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'nile-special.jpg' WHERE c.outlet = 'bar' AND c.name = 'Beers and Ciders' AND i.name = 'Nile Special';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'club-pilsener.jpg' WHERE c.outlet = 'bar' AND c.name = 'Beers and Ciders' AND i.name = 'Club Pilsener';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'bell-lager.jpg' WHERE c.outlet = 'bar' AND c.name = 'Beers and Ciders' AND i.name = 'Bell Lager';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'house-white-wine.jpg' WHERE c.outlet = 'bar' AND c.name = 'Wines and Spirits' AND i.name = 'House White Wine';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'local-spirit.jpg' WHERE c.outlet = 'bar' AND c.name = 'Wines and Spirits' AND i.name = 'Local Spirit';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'room-service-breakfast.jpg' WHERE c.outlet = 'room_service' AND c.name = 'Room Service' AND i.name = 'Room Service Breakfast';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'room-service-platter.jpg' WHERE c.outlet = 'room_service' AND c.name = 'Room Service' AND i.name = 'Room Service Platter';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'three-decker-sandwich.webp' WHERE c.outlet = 'restaurant' AND c.name = 'Starters' AND i.name = 'Three Decker Sandwich';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'bbq-beef-and-chicken-patty.jpg' WHERE c.outlet = 'restaurant' AND c.name = 'Burgers' AND i.name = 'BBQ Beef and Chicken Patty';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'double-beef-and-bacon-burger.jpg' WHERE c.outlet = 'restaurant' AND c.name = 'Burgers' AND i.name = 'Double Beef and Bacon Burger';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'pan-fried-boneless-chicken-breast.jpg' WHERE c.outlet = 'restaurant' AND c.name = 'Chicken Lovers' AND i.name = 'Pan Fried Boneless Chicken Breast';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'pork-muchomo-and-chops-platter.jpg' WHERE c.outlet = 'restaurant' AND c.name = 'Pork' AND i.name = 'Pork Muchomo and Chops Platter';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'banana-crepe.webp' WHERE c.outlet = 'restaurant' AND c.name = 'Desserts' AND i.name = 'Banana Crepe';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'ice-cream.jpg' WHERE c.outlet = 'restaurant' AND c.name = 'Desserts' AND i.name = 'Ice Cream';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'cake-of-the-day.jpg' WHERE c.outlet = 'restaurant' AND c.name = 'Desserts' AND i.name = 'Cake of the Day';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'affogato-espresso-ice-cream.webp' WHERE c.outlet = 'restaurant' AND c.name = 'Desserts' AND i.name = 'Affogato Espresso Ice Cream';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'banana-split.jpg' WHERE c.outlet = 'restaurant' AND c.name = 'Desserts' AND i.name = 'Banana Split';
+UPDATE menu_items i JOIN menu_categories c ON c.id = i.category_id SET i.image = 'assorted-meat-and-salami.webp' WHERE c.outlet = 'restaurant' AND c.name = 'Pizzeria Section' AND i.name = 'Assorted Meat and Salami';
+
+-- Bar banners. The restaurant sections carry a photograph of the plate they
+-- sell; the four bar sections never had one, so they showed the letter panel.
+UPDATE menu_categories SET image = 'coca-cola-300ml.jpg' WHERE outlet = 'bar' AND name = 'Soft Drinks';
+UPDATE menu_categories SET image = 'paradise-sunset.jpg' WHERE outlet = 'bar' AND name = 'Cocktails';
+UPDATE menu_categories SET image = 'bell-lager.jpg' WHERE outlet = 'bar' AND name = 'Beers and Ciders';
+UPDATE menu_categories SET image = 'house-white-wine.jpg' WHERE outlet = 'bar' AND name = 'Wines and Spirits';
 -- ------------------------------------------------------------------------
 -- That is everything
 -- ------------------

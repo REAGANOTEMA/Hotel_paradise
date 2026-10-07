@@ -18,7 +18,6 @@ import {
   totalDishes,
   ADD_ONS_INCLUDED,
   type Choice,
-  type MenuGroup,
   type MenuItem,
   type MenuSection
 } from './menuData';
@@ -32,33 +31,67 @@ const FALLBACK: MenuSection[] = tidySections(menuSections);
 const SHOW_FILE_HINTS = photoHintsEnabled();
 
 /** Reads the live kitchen menu and folds it into the same shape as the fallback. */
-const toSections = (cats: Array<{name: string; eyebrow?: string; blurb?: string; image?: string; items: any[]}>): MenuSection[] =>
-  cats
-    .filter(c => Array.isArray(c.items) && c.items.length > 0)
-    .map(c => {
-      const groups: MenuGroup[] = [];
-      c.items.forEach(raw => {
-        const g = raw.group || 'Items';
-        let bucket = groups.find(x => x.name === g);
-        if (!bucket) { bucket = {name: g, items: []}; groups.push(bucket); }
-        bucket.items.push({
-          id: Number(raw.id),
-          name: String(raw.name || ''),
-          desc: String(raw.desc || ''),
-          price: raw.price === null || raw.price === undefined ? null : Number(raw.price),
-          image: String(raw.image || ''),
-          group: g
-        });
+type LiveCategory = {name: string; outlet?: string; eyebrow?: string; blurb?: string; image?: string; items: any[]};
+
+/**
+ * Where a section sits on the page. The kitchen orders its own sections by a
+ * sort number that runs across all of its outlets at once, which puts the bar
+ * between the starters and the burgers. Food first, then the drinks, then what
+ * the room can order: a guest reads a menu the way the printed one reads.
+ */
+const outletRank = (outlet?: string): number => {
+  const o = String(outlet || '').toLowerCase();
+  if (o.startsWith('bar')) return 1;
+  if (o.startsWith('room')) return 2;
+  return 0;
+};
+
+const toSections = (cats: LiveCategory[]): MenuSection[] => {
+  // Sections that share a heading are folded into one, and a dish filed twice
+  // in the same section is only printed once. Both happen when an import is
+  // run twice, and a guest should never see the copies.
+  const folded = new Map<string, MenuSection>();
+  const order: string[] = [];
+  const rank = new Map<string, number>();
+
+  cats.forEach(c => {
+    if (!Array.isArray(c.items) || c.items.length === 0) return;
+    const key = slugify(c.name);
+    let section = folded.get(key);
+    if (!section) {
+      section = {key, name: c.name, eyebrow: '', blurb: '', image: '', groups: []};
+      folded.set(key, section);
+      order.push(key);
+      rank.set(key, outletRank(c.outlet));
+    }
+    if (!section.eyebrow) section.eyebrow = c.eyebrow || '';
+    if (!section.blurb) section.blurb = c.blurb || '';
+    if (!section.image) section.image = c.image || '';
+
+    const seen = new Set<string>();
+    c.items.forEach(raw => {
+      const g = String(raw.group || 'Items');
+      const price = raw.price === null || raw.price === undefined ? null : Number(raw.price);
+      const signature = String(raw.name || '') + '\u0000' + (price === null ? '?' : price);
+      if (seen.has(signature)) return;
+      seen.add(signature);
+      let bucket = section!.groups.find(x => x.name === g);
+      if (!bucket) { bucket = {name: g, items: []}; section!.groups.push(bucket); }
+      bucket.items.push({
+        id: Number(raw.id),
+        name: String(raw.name || ''),
+        desc: String(raw.desc || ''),
+        price,
+        image: String(raw.image || ''),
+        group: g
       });
-      return {
-        key: slugify(c.name),
-        name: c.name,
-        eyebrow: c.eyebrow || '',
-        blurb: c.blurb || '',
-        image: c.image || '',
-        groups
-      };
     });
+  });
+
+  const ranked = order.map(key => ({key, rank: rank.get(key) ?? 0}));
+  ranked.sort((a, b) => a.rank - b.rank);
+  return ranked.map(r => folded.get(r.key)!);
+};
 
 /* ------------------------------------------------------------------
    The small marks on the page. Drawn here rather than pulled from an

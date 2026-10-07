@@ -1981,6 +1981,12 @@
     }
   },
   "food": {
+    "affogato-espresso-ice-cream": {
+      "ext": "webp",
+      "w": 1200,
+      "h": 1799,
+      "variants": []
+    },
     "aloo-mutter": {
       "ext": "jpg",
       "w": 640,
@@ -2409,6 +2415,12 @@
           "h": 480
         }
       ]
+    },
+    "cake-of-the-day": {
+      "ext": "jpg",
+      "w": 399,
+      "h": 501,
+      "variants": []
     },
     "calzone-pizza": {
       "ext": "webp",
@@ -2958,6 +2970,12 @@
       "h": 2560,
       "variants": []
     },
+    "classic-margherita": {
+      "ext": "jpg",
+      "w": 515,
+      "h": 388,
+      "variants": []
+    },
     "classico-e-margherita": {
       "ext": "png",
       "w": 555,
@@ -3172,12 +3190,6 @@
       "ext": "webp",
       "w": 500,
       "h": 500,
-      "variants": []
-    },
-    "espresso-ice-cream": {
-      "ext": "webp",
-      "w": 1200,
-      "h": 1799,
       "variants": []
     },
     "extra-avocado": {
@@ -3959,6 +3971,12 @@
       "h": 402,
       "variants": []
     },
+    "ice-cream": {
+      "ext": "jpg",
+      "w": 554,
+      "h": 554,
+      "variants": []
+    },
     "king-burger": {
       "ext": "jpg",
       "w": 750,
@@ -4463,7 +4481,7 @@
     "pan-fried-boneless-chicken-breast": {
       "ext": "jpg",
       "w": 1200,
-      "h": 1200,
+      "h": 1680,
       "variants": []
     },
     "pan-grilled-fish-fillet": {
@@ -4897,6 +4915,12 @@
           "h": 213
         }
       ]
+    },
+    "pork-muchomo-and-chops-platter": {
+      "ext": "jpg",
+      "w": 554,
+      "h": 554,
+      "variants": []
     },
     "pork-spring-roll": {
       "ext": "jpg",

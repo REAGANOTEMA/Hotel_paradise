@@ -2,6 +2,7 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken} from './shared';
+import {SmartImage} from './SmartImage';
 
 /*
  * Secure checkout. The room booking and the kitchen order both land here with
@@ -10,9 +11,61 @@ import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToke
  * keys are still pending, so for now the payment is recorded as pending and the
  * front desk confirms it. The moment Pesapal is switched on, this page sends the
  * guest to Pesapal's secure page and the same payment row receives the callback.
+ *
+ * The reference is read back from the database before anything is charged. The
+ * url can say whatever it likes - it is edited by hand as often as it is
+ * followed - so the lines, the dates and the amount on this page are the ones
+ * the hotel holds, and only those are ever sent to be paid.
  */
 
 type MethodKey = 'pesapal' | 'mtn_momo' | 'airtel_money' | 'card';
+
+/** One line of an order, exactly as the kitchen stored it. */
+type PayLine = {name: string; qty: number; unit: number; total: number; image: string; note: string};
+
+type PayDetail = {
+ source: string;
+ reference: string;
+ status: string;
+ total: number;
+ paid: number;
+ due: number;
+ booking?: {
+  room_type: string;
+  check_in: string;
+  check_in_time: string;
+  check_out: string;
+  check_out_time: string;
+  nights: number;
+  adults: number;
+  children: number;
+  subtotal: number;
+  tax: number;
+  withdrawal_fee: number | null;
+  fee_label: string;
+ };
+ order?: {
+  outlet: string;
+  kind: string;
+  table: string;
+  placed: string;
+  subtotal: number;
+  tax: number;
+  items: PayLine[];
+ };
+ payments: {reference: string; method: string; amount: number; status: string; when: string}[];
+};
+
+/** '2026-10-11' plus '14:00' the way a guest reads it: Sat 11 Oct, 14:00 */
+const whenText = (date: string, time: string): string => {
+ const d = /^\d{4}-\d{2}-\d{2}$/.test(date || '') ? new Date(date + 'T' + (time || '00:00') + ':00') : null;
+ if (!d || isNaN(d.getTime())) return date + (time ? ' ' + time : '');
+ const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+ const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()];
+ return `${day} ${d.getDate()} ${month}, ${time}`;
+};
+
+const METHOD_TEXT: Record<string, string> = {pesapal: 'Pesapal', mtn_momo: 'MTN MoMo', airtel_money: 'Airtel Money', card: 'Card', cash: 'Cash', bank: 'Bank transfer'};
 
 const METHODS: {key: MethodKey; label: string; hint: string; icon: string}[] = [
  {key: 'pesapal', label: 'Pesapal Pay', hint: 'Pay from a Pesapal account, or a credit or debit card, on Pesapal\u2019s secure page.', icon: 'wallet'},
@@ -94,11 +147,46 @@ function PayPage() {
    window.location.replace('./account.html?next=' + encodeURIComponent(back));
   }, [token]);
 
+  /**
+   * The reference, read back from the hotel.
+   *
+   * Until it lands the page falls back to the amount in the url, which is what
+   * the rooms or the menu page wrote there a moment ago; from then on it shows
+   * what is actually owed, including anything already paid. A lookup that fails
+   * on its own is not worth stopping for: the payment is priced on the server
+   * either way.
+   */
+  const [detail, setDetail] = React.useState<PayDetail | null>(null);
+  const [looking, setLooking] = React.useState(Boolean(src && ref));
+  React.useEffect(() => {
+   if (!src || !ref) { setLooking(false); return; }
+   let alive = true;
+   (async () => {
+    try {
+     const url = await apiUrl('checkout');
+     const res = await fetch(`${url}&src=${encodeURIComponent(src)}&ref=${encodeURIComponent(ref)}`, {headers: {Accept: 'application/json'}});
+     const d = await res.json();
+     if (alive && d && d.ok) setDetail(d as PayDetail);
+    } catch {
+     /* the url amount stands until the hotel answers */
+    }
+    if (alive) setLooking(false);
+   })();
+   return () => { alive = false; };
+  }, [src, ref]);
+
+  const owed = detail ? Math.max(0, Math.round(detail.due)) : amt;
+  const settled = Boolean(detail) && owed <= 0;
+  const payable = settled ? 0 : owed;
+  /** What the receipt will say, once it has been said. */
+  const [charged, setCharged] = React.useState(0);
+
   const momoLabel = method === 'mtn_momo' ? 'MTN' : 'Airtel';
 
  const pay = async () => {
   setErr('');
   if (!src || !ref) { setErr('There is nothing to pay right now. Please start again from the rooms or the menu.'); return; }
+  if (settled) { setErr('This reference has already been paid in full. Nothing further is due on it.'); return; }
   if (!form.name.trim()) { setErr('Please add the name that should appear on the receipt.'); return; }
   if (!normPhone(form.phone)) { setErr('Please add a phone number we can confirm the payment on.'); return; }
   if (method === 'mtn_momo' || method === 'airtel_money') {
@@ -113,12 +201,13 @@ function PayPage() {
   try {
    const body = {
     source: src, reference: ref, name: form.name.trim(), phone: normPhone(form.phone), email: form.email.trim(),
-    method, amount: Number(amt || 0),
+    method, amount: payable,
     ...(token ? {token} : {})
    };
    const res = await fetch(await apiUrl('payment'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
    const d = await res.json();
    if (d.ok) {
+    setCharged(typeof d.amount === 'number' ? Math.round(d.amount) : payable);
     setDone({reference: String(d.reference || ref), message: String(d.message || 'The front desk will confirm your request on ' + form.phone + '.')});
    } else {
     setErr(d.error || 'We could not take the payment right now. Please call ' + CALL + '.');
@@ -153,7 +242,7 @@ function PayPage() {
      <div className="payCheck"><CheckIcon/></div>
      <p className="eyebrow">PAYMENT REQUEST RECEIVED</p>
      <h1 className="payThanks">Thank you, {form.name.trim().split(' ')[0] || 'friend'}.</h1>
-     <p className="payDoneLine">Your <b>{src === 'booking' ? 'room booking ' : 'food order '}</b>for <b>{fmt(amt)}</b> is with the hotel.</p>
+     <p className="payDoneLine">Your <b>{src === 'booking' ? 'room booking ' : 'food order '}</b>for <b>{fmt(charged || amt)}</b> is with the hotel.</p>
      <div className="doneRef"><span>Your reference</span><b>{done.reference}</b></div>
      <p className="payDoneNote">{done.message}</p>
      <p className="payDoneNote2">Online payment with Pesapal is being switched on. Until it is live, no money is charged on this page and you are welcome to pay at the front desk, or call <a className="footLink" href={telHref(CALL)}>{CALL}</a>.</p>
@@ -189,14 +278,80 @@ function PayPage() {
     <div>
      <div className="payCard">
       <p className="eyebrow">YOUR REQUEST</p>
-      <h3>{item || (src === 'booking' ? 'Room booking' : 'Food order')}</h3>
+      <h3>{detail?.booking?.room_type || item || (src === 'booking' ? 'Room booking' : 'Food order')}</h3>
       <dl className="payLine">
        <div><dt>Reference</dt><dd>{ref}</dd></div>
-       {qty && <div><dt>On this request</dt><dd>{qty}{unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''}</dd></div>}
+       {detail?.booking && (
+        <div><dt>Stay</dt><dd>{whenText(detail.booking.check_in, detail.booking.check_in_time)}<br/>{whenText(detail.booking.check_out, detail.booking.check_out_time)}</dd></div>
+       )}
+       {detail?.booking && (
+        <div><dt>Guests</dt><dd>{detail.booking.adults} adult{detail.booking.adults === 1 ? '' : 's'}{detail.booking.children ? ' + ' + detail.booking.children + ' child' + (detail.booking.children === 1 ? '' : 'ren') : ''} &middot; {detail.booking.nights} night{detail.booking.nights === 1 ? '' : 's'}</dd></div>
+       )}
+       {detail?.order && (
+        <div><dt>Order</dt><dd>{detail.order.outlet === 'room_service' ? 'Room service' : detail.order.outlet === 'bar' ? 'Bar order' : 'Restaurant'}{detail.order.kind ? ' · ' + detail.order.kind.replace('_', ' ') : ''}<br/>{detail.order.placed}</dd></div>
+       )}
+       {!detail && qty && (
+        <div><dt>On this request</dt><dd>{qty}{unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''}</dd></div>
+       )}
        <div><dt>Prepared for</dt><dd>{form.name.trim() || 'your name below'}</dd></div>
        {form.phone && <div><dt>Phone</dt><dd>{normPhone(form.phone)}</dd></div>}
       </dl>
-      <div className="payTotal"><span>Amount to pay</span><b>{fmt(amt)}</b></div>
+
+      {detail?.order && detail.order.items.length > 0 && (
+       <div className="payLines">
+        {detail.order.items.map((l, i) => (
+         <div className="payLineItem" key={i}>
+          <SmartImage group="dishes" name={l.image || l.name} alt={l.name} ratio="4 / 3" widths={[160, 320]} sizes="56px"/>
+          <span className="payLineText">
+           <b>{l.name}</b>
+           <small>{l.qty} &times; {fmt(l.unit)}{l.note ? ' · ' + l.note : ''}</small>
+          </span>
+          <span className="payLineSum">{fmt(l.total)}</span>
+         </div>
+        ))}
+       </div>
+      )}
+
+      {detail?.booking && (
+       <div className="payLines">
+        <div className="payMoney"><span>Room{detail.booking.nights > 1 ? ' · ' + detail.booking.nights + ' nights' : ''}</span><b>{fmt(detail.booking.subtotal)}</b></div>
+        {detail.booking.withdrawal_fee ? <div className="payMoney"><span>{detail.booking.fee_label}</span><b>{fmt(detail.booking.withdrawal_fee)}</b></div> : null}
+        {detail.booking.tax > 0 && <div className="payMoney"><span>Tax</span><b>{fmt(detail.booking.tax)}</b></div>}
+        <div className="payMoney"><span>Total</span><b>{fmt(detail.total)}</b></div>
+        {detail.paid > 0 && <div className="payMoney paidRow"><span>Already paid</span><b>&minus;{fmt(detail.paid)}</b></div>}
+       </div>
+      )}
+
+      {detail?.order && (
+       <div className="payLines">
+        <div className="payMoney"><span>Subtotal</span><b>{fmt(detail.order.subtotal)}</b></div>
+        {detail.order.tax > 0 && <div className="payMoney"><span>Tax</span><b>{fmt(detail.order.tax)}</b></div>}
+        <div className="payMoney"><span>Total</span><b>{fmt(detail.total)}</b></div>
+        {detail.paid > 0 && <div className="payMoney paidRow"><span>Already paid</span><b>&minus;{fmt(detail.paid)}</b></div>}
+       </div>
+      )}
+
+      {looking && <div className="payMoney" style={{color: '#7b8798'}}><span>Checking this reference with the hotel&hellip;</span></div>}
+
+      <div className="payDue">
+       <span>{settled ? 'Settled' : 'Amount to pay'}</span>
+       <b className={settled ? 'clear' : ''}>{settled ? 'Paid in full' : fmt(payable)}</b>
+      </div>
+
+      {settled && <div className="paySettled">This reference is settled in full, so there is nothing left to pay on it. Your booking or order stays exactly as it is.</div>}
+
+      {detail && detail.payments.length > 0 && (
+       <div className="payHistory">
+        <p className="eyebrow" style={{margin: '0 0 6px'}}>RECORDED AGAINST THIS REFERENCE</p>
+        {detail.payments.map((p, i) => (
+         <div className="payHistoryRow" key={i}>
+          <span>{METHOD_TEXT[p.method] || p.method}{p.when ? ' · ' + p.when : ''}</span>
+          <b>{fmt(p.amount)} · {p.status}</b>
+         </div>
+        ))}
+       </div>
+      )}
+
       <div className="payTrust"><LockIcon/><span>Secured by Pesapal. You can also pay this at the front desk with this reference.</span></div>
      </div>
 
@@ -249,9 +404,9 @@ function PayPage() {
 
      {err && <div className="bookMsg" style={{marginTop: 16}}>{err}</div>}
 
-     <button className="btn planBook" style={{marginTop: 22}} onClick={pay} disabled={busy || !amt}>
-      {busy ? 'Contacting Pesapal...' : method === 'card' || method === 'pesapal' ? 'Pay ' + fmt(amt) : 'Pay ' + fmt(amt) + ' with ' + momoLabel + ' MoMo'}
-     </button>
+      <button className="btn planBook" style={{marginTop: 22}} onClick={pay} disabled={busy || !payable}>
+       {busy ? 'Contacting Pesapal...' : settled ? 'Already paid in full' : method === 'card' || method === 'pesapal' ? 'Pay ' + fmt(payable) : 'Pay ' + fmt(payable) + ' with ' + momoLabel + ' MoMo'}
+      </button>
      <p className="plannerNote">Pesapal is the merchant of record for online payments. Reviewing your request does not charge you, and you are never charged twice. For help, call <a className="footLink" href={telHref(CALL)}>{CALL}</a> or email {HOTEL.email}.</p>
     </div>
    </div>

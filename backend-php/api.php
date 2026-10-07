@@ -72,7 +72,7 @@ function booking_withdrawal_fee(): array{
 
 $act=$_GET['act']??'';
 $method=$_SERVER['REQUEST_METHOD'];
-$read=['rooms','menu','health'];
+$read=['rooms','menu','health','checkout'];
 if($method!=='GET'&&$method!=='POST'){ $out(['ok'=>false,'error'=>'Method not allowed'],405); }
 if($method==='GET'){
  if(!in_array($act,$read)){ $out(['ok'=>false,'error'=>'Method not allowed for this request'],405); }
@@ -267,17 +267,25 @@ if($act==='payment'){
   $label=$src==='booking'?'booking':($src==='order'?'order':'');
   if($label===''||$ref===''){ $out(['ok'=>false,'error'=>'Nothing to pay. Please start again from the rooms or the menu.'],422); }
 
-  $rid=null; $oid=null; $expected=0.0;
+  $rid=null; $oid=null; $expected=0.0; $atDesk=0.0;
   if($src==='booking'){
-    $r=row('SELECT id,total FROM reservations WHERE booking_number=?',[$ref]);
+    $r=row('SELECT id,total'.nullable_column('reservations','paid','paid').' FROM reservations WHERE booking_number=?',[$ref]);
     if(!$r){ $out(['ok'=>false,'error'=>'We could not find that booking reference. Please call +256 759 504 928.'],404); }
-    $rid=(int)$r['id']; $expected=(float)$r['total'];
+    $rid=(int)$r['id']; $expected=(float)$r['total']; $atDesk=(float)($r['paid']??0);
   }else{
     $o=row('SELECT id,total FROM orders WHERE order_number=?',[$ref]);
     if(!$o){ $out(['ok'=>false,'error'=>'We could not find that order reference. Please call +256 759 504 928.'],404); }
     $oid=(int)$o['id']; $expected=(float)$o['total'];
   }
-  if($expected<=0){ $out(['ok'=>false,'error'=>'There is nothing to pay on this reference.'],422); }
+  // What is still owed, not what the reference started at. A booking settled at
+  // the front desk and a payment that has already gone through both reduce the
+  // figure, so a reference opened twice cannot be charged twice. Only a payment
+  // that actually succeeded counts: a request still waiting with the front desk
+  // leaves the amount exactly where it was.
+  $already=$atDesk+(float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE status=\'successful\' AND '
+    .($oid!==null?'order_id=?':'reservation_id=?'),[$oid!==null?$oid:$rid]);
+  $expected=round(max(0.0,$expected-$already),2);
+  if($expected<=0){ $out(['ok'=>false,'error'=>'There is nothing left to pay on this reference. If you think this is wrong, please call +256 759 504 928.'],422); }
 
   // The signed in guest's id rides along with the payment, so a receipt can be
   // found again from the account. An anonymous payment is still a valid payment.
@@ -300,6 +308,119 @@ if($act==='payment'){
   audit('web_payment','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'pending']);
   $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,
     'message'=>'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.']);
+}
+
+/**
+ * What a reference is actually worth, read back from the database.
+ *
+ * The rooms page and the menu page both hand the guest a checkout url with a
+ * reference and an amount in it, and until now the checkout page believed that
+ * amount. A reference outlives the page that made it: it is pasted into an
+ * email, opened again from the account, or retyped by hand, and the number on
+ * the till has to be the hotel's, not the url's. This reads the reservation or
+ * the order back with its lines, its dates and anything already paid against
+ * it, so what the guest reviews and what the payment records are the same
+ * figure. Nothing here identifies the guest: no name and no phone number, so
+ * a reference cannot be used to read who made it.
+ */
+if($act==='checkout'){
+  $src=trim((string)($body['src']??$body['source']??''));
+  $ref=trim((string)($body['ref']??$body['reference']??''));
+  if($ref===''||!in_array($src,['booking','order'],true)){
+    $out(['ok'=>false,'error'=>'We could not read that reference. Please start again from the rooms or the menu.'],422);
+  }
+
+  // Every payment ever taken against this reference, newest first.
+  $payCols=existing_columns('payments',['provider_reference','method','amount','status','created_at']);
+  $paymentsFor=function(?int $oid,?int $rid) use($payCols): array{
+    $where=[]; $args=[];
+    if($oid){ $where[]='order_id=?'; $args[]=$oid; }
+    if($rid){ $where[]='reservation_id=?'; $args[]=$rid; }
+    if($where===[]) return [];
+    $got=rows('SELECT '.implode(',',$payCols).' FROM payments WHERE '.implode(' OR ',$where).' ORDER BY id DESC LIMIT 20',$args);
+    return array_map(fn($p)=>[
+      'reference'=>(string)($p['provider_reference']??''),
+      'method'=>(string)($p['method']??''),
+      'amount'=>(float)($p['amount']??0),
+      'status'=>(string)($p['status']??''),
+      'when'=>substr((string)($p['created_at']??''),0,16)
+    ],$got);
+  };
+  /** What has really settled: only a successful payment reduces what is due. */
+  $settled=function(array $payments): float{
+    return round(array_sum(array_map(fn($p)=>$p['status']==='successful'?(float)$p['amount']:0.0,$payments)),2);
+  };
+
+  if($src==='booking'){
+    $r=row('SELECT * FROM reservations WHERE booking_number=?',[$ref]);
+    if(!$r){ $out(['ok'=>false,'error'=>'We could not find that booking reference. Please call +256 759 504 928.'],404); }
+    $rid=(int)$r['id'];
+    $payments=$paymentsFor(null,$rid);
+    $total=(float)$r['total'];
+    // The front desk records a cash payment against the reservation itself, so
+    // the guest is never asked twice for the same night.
+    $recorded=existing_columns('reservations',['paid'])?(float)($r['paid']??0):0.0;
+    $paid=max($settled($payments),$recorded);
+    $rooms=rows('SELECT COALESCE(rt.name,\'Room\') AS name, COALESCE(SUM(rr.quantity),1) AS qty'
+      .' FROM reservation_rooms rr LEFT JOIN room_types rt ON rt.id=rr.room_type_id'
+      .' WHERE rr.reservation_id=? GROUP BY COALESCE(rt.name,\'Room\') ORDER BY MIN(rr.id)',[$rid]);
+    // A family room booked twice reads as one line, not as the same words
+    // repeated down the receipt.
+    $roomType=implode(' + ',array_map(fn($x)=>(int)$x['qty']>1
+      ? trim((string)$x['name']).' × '.(int)$x['qty']
+      : trim((string)$x['name']),$rooms));
+    $haveFee=existing_columns('reservations',['withdrawal_fee']);
+    $out(['ok'=>true,'source'=>'booking','reference'=>(string)$r['booking_number'],'status'=>(string)$r['status'],
+      'total'=>$total,'paid'=>round($paid,2),'due'=>round(max(0.0,$total-$paid),2),
+      'booking'=>[
+        'room_type'=>$roomType,
+        'check_in'=>substr((string)$r['check_in'],0,10),
+        'check_in_time'=>substr((string)$r['check_in'],11,5),
+        'check_out'=>substr((string)$r['check_out'],0,10),
+        'check_out_time'=>substr((string)$r['check_out'],11,5),
+        'nights'=>(int)$r['nights'],
+        'adults'=>(int)($r['adults']??1),
+        'children'=>(int)($r['children']??0),
+        'subtotal'=>(float)$r['subtotal'],
+        'tax'=>(float)$r['tax'],
+        'withdrawal_fee'=>$haveFee?(float)($r['withdrawal_fee']??0):null,
+        'fee_label'=>booking_withdrawal_fee()['label']
+      ],
+      'payments'=>$payments]);
+  }
+
+  $o=row('SELECT * FROM orders WHERE order_number=?',[$ref]);
+  if(!$o){ $out(['ok'=>false,'error'=>'We could not find that order reference. Please call +256 759 504 928.'],404); }
+  $oid=(int)$o['id'];
+  $payments=$paymentsFor($oid,null);
+  $total=(float)$o['total'];
+  $lines=rows('SELECT oi.quantity,oi.unit_price,oi.total,oi.notes,mi.name'
+    .nullable_column('menu_items','image','image','mi')
+    .' FROM order_items oi'
+    .' LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id=? ORDER BY oi.id',[$oid]);
+  $items=array_map(function(array $l): array{
+    $note=trim((string)($l['notes']??''));
+    // The note opens with the guest's name and phone number. The extras after
+    // it are worth showing - the companion and the salads were charged for -
+    // so the first sentence goes and the rest stays.
+    $note=preg_replace('/^Web takeaway order from[^.]*\.\s*/','',$note)??'';
+    return ['name'=>(string)($l['name']??'Dish'),'qty'=>(int)$l['quantity'],
+      'unit'=>(float)$l['unit_price'],'total'=>(float)$l['total'],
+      'image'=>(string)($l['image']??''),'note'=>$note];
+  },$lines);
+  $paid=$settled($payments);
+  $out(['ok'=>true,'source'=>'order','reference'=>(string)$o['order_number'],'status'=>(string)$o['status'],
+    'total'=>$total,'paid'=>$paid,'due'=>round(max(0.0,$total-$paid),2),
+    'order'=>[
+      'outlet'=>(string)$o['outlet'],
+      'kind'=>(string)$o['order_type'],
+      'table'=>(string)($o['table_name']??''),
+      'placed'=>substr((string)($o['created_at']??''),0,16),
+      'subtotal'=>(float)$o['subtotal'],
+      'tax'=>(float)$o['tax'],
+      'items'=>$items
+    ],
+    'payments'=>$payments]);
 }
 
 /**

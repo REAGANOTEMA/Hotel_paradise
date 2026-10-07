@@ -264,7 +264,7 @@ export const menuSections: MenuSection[] = [
     name: 'Starters & Salads',
     eyebrow: 'To begin',
     blurb: 'Fresh greens, tossed to order and dressed at the table.',
-    image: '',
+    image: 'caesar-salad.jpg',
     groups: [
       {
         name: 'Starters & Salads',
@@ -287,7 +287,7 @@ export const menuSections: MenuSection[] = [
     name: 'Soups',
     eyebrow: 'Warmed through',
     blurb: 'Made fresh every morning and served with bread.',
-    image: '',
+    image: 'mushroom-soup.jpg',
     groups: [
       {
         name: 'Soups',
@@ -307,7 +307,7 @@ export const menuSections: MenuSection[] = [
     name: 'Omelets & Snacks',
     eyebrow: 'From the pan',
     blurb: 'All omelets are served with chips.',
-    image: '',
+    image: 'spanish-omelet.jpg',
     groups: [
       {
         name: 'Omelets & Snacks',
@@ -343,7 +343,7 @@ export const menuSections: MenuSection[] = [
     name: 'Sandwiches',
     eyebrow: 'The sandwich corner',
     blurb: 'All sandwiches come with chips or salad.',
-    image: '',
+    image: 'classic-blt-sandwich.jpg',
     groups: [
       {
         name: 'Sandwiches',
@@ -365,7 +365,7 @@ export const menuSections: MenuSection[] = [
     name: 'Burgers',
     eyebrow: 'The grill',
     blurb: 'Burgers can be served with chips and salad.',
-    image: '',
+    image: 'king-burger.jpg',
     groups: [
       {
         name: 'Burgers',
@@ -385,7 +385,7 @@ export const menuSections: MenuSection[] = [
     name: 'Rolex Wraps & Burritos',
     eyebrow: 'Rolled to order',
     blurb: 'Warm tortillas, filled as you like them.',
-    image: '',
+    image: 'beef-rolex.jpg',
     groups: [
       {
         name: 'Rolex Wraps & Burritos',
@@ -406,7 +406,7 @@ export const menuSections: MenuSection[] = [
     name: "Fisherman's Offer",
     eyebrow: 'Fresh from the Nile',
     blurb: 'Tilapia and Nile perch, grilled, poached, crumbed or steamed.',
-    image: '',
+    image: 'grilled-king-fish.jpg',
     groups: [
       {
         name: "Fisherman's Offer",
@@ -414,7 +414,7 @@ export const menuSections: MenuSection[] = [
           item('Fish Florentine', 'Grilled tilapia fillet with creamy spinach and cheese.', 32000, "Fisherman's Offer"),
           item('Poached Fish', 'Tilapia fillet gently cooked in rich fish stock with fresh mushrooms and potatoes.', 30000, "Fisherman's Offer"),
           item('Mombasa Fish', 'A tilapia fillet crumbed with coconut and fried to perfection.', 32000, "Fisherman's Offer"),
-          item('Catch of the Day (Nile Perch)', 'Pan grilled Nile perch fillet.', 32000, "Fisherman's Offer"),
+          item('Catch of the Day (Nile Perch)', 'Pan grilled Nile perch fillet.', 32000, "Fisherman's Offer", 'nile-parch-catch-for-a-day.jpg'),
           item('Deep Fried Fish Fillet', 'A coated tilapia fish fillet.', 32000, "Fisherman's Offer"),
           item('Pan Grilled Fish Fillet', 'A coated tilapia fish fillet.', 32000, "Fisherman's Offer"),
           item('Fish Fingers with Chips', 'Fish fingers served with chips.', 30000, "Fisherman's Offer"),
@@ -440,7 +440,7 @@ export const menuSections: MenuSection[] = [
     name: 'House Specials & Platters',
     eyebrow: 'For the table',
     blurb: 'Platters built for sharing, with a side of your choice.',
-    image: '',
+    image: 'mixed-grill-platter.jpg',
     groups: [
       {
         name: 'House Specials & Platters',
@@ -456,7 +456,7 @@ export const menuSections: MenuSection[] = [
     name: 'Chicken Dishes',
     eyebrow: 'Poultry',
     blurb: 'Marinated overnight, then grilled, pan fried or tossed in sauce.',
-    image: '',
+    image: 'bbq-chicken-drumstick.jpg',
     groups: [
       {
         name: 'Chicken Dishes',
@@ -477,7 +477,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Beef & Goat Main Courses',
     eyebrow: 'Steaks and grills',
     blurb: 'Prime beef fillet, tender goat and the hunter’s favourites.',
-    image: '',
+    image: 'king-steak.jpg',
     groups: [
       {
         name: 'Beef & Goat Main Courses',
@@ -505,7 +505,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Pork Courses',
     eyebrow: 'Pork',
     blurb: 'Slow roasted, glazed and grilled to your liking.',
-    image: '',
+    image: 'honey-mustard-glazed-pork-ribs.jpg',
     groups: [
       {
         name: 'Pork Courses',
@@ -524,7 +524,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Pizzeria',
     eyebrow: 'Pizza',
     blurb: 'Baked to order on a stone base. A whole meal on its own, add garlic bread or a salad.',
-    image: '',
+    image: 'section-pizza.jpg',
     groups: [
       {
         name: 'Pizzeria',
@@ -556,7 +556,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Italian Pastas',
     eyebrow: 'From Napoli',
     blurb: 'Pasta choices: spaghetti, penne, fettuccine, farfalle or spirulina.',
-    image: '',
+    image: 'pasta-a-la-carbonara.jpg',
     groups: [
       {
         name: 'Italian Pastas',
@@ -577,7 +577,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Asian & Indian Curries',
     eyebrow: 'Far East and sub continent',
     blurb: 'Non veg curries are served with a choice of 1 or 2 accompaniments.',
-    image: '',
+    image: 'chicken-coconut-curry.jpg',
     groups: [
       {
         name: 'Asian & Indian Curries',
@@ -609,42 +609,42 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Chinese Corner',
     eyebrow: 'Wok and steam',
     blurb: 'Sizzling plates, deep fried bites and the full sweet and sour house.',
-    image: '',
+    image: 'sweet-and-sour-chicken.jpg',
     groups: [
       {
         name: 'Chinese Corner',
         items: [
-          item('Vegetable Spring Roll (1pc)', '', 1000, 'Chinese Corner'),
-          item('Chicken Spring Roll (1pc)', '', 2500, 'Chinese Corner'),
-          item('Pork Spring Roll (1pc)', '', 2500, 'Chinese Corner'),
-          item('Vegetable Wanton', '', 5000, 'Chinese Corner'),
-          item('Special Chicken Wings (1pc)', '', 7000, 'Chinese Corner'),
-          item('Fried Wanton (Chicken or Beef)', '', 8000, 'Chinese Corner'),
+          item('Vegetable Spring Roll (1pc)', '', 1000, 'Chinese Corner', 'vegetable-spring-rolls.jpg'),
+          item('Chicken Spring Roll (1pc)', '', 2500, 'Chinese Corner', 'chicken-spring-rolls.webp'),
+          item('Pork Spring Roll (1pc)', '', 2500, 'Chinese Corner', 'pork-spring-roll.jpg'),
+          item('Vegetable Wanton', '', 5000, 'Chinese Corner', 'vegetable-wonton.jpg'),
+          item('Special Chicken Wings (1pc)', '', 7000, 'Chinese Corner', 'special-chicken-wings.webp'),
+          item('Fried Wanton (Chicken or Beef)', '', 8000, 'Chinese Corner', 'fried-wonton-chicken.jpg'),
           item('Golden Fried Cauliflower', '', 10000, 'Chinese Corner'),
           item('Fried Chips Plain', '', 10000, 'Chinese Corner'),
           item('Special Beef Simsim', '', 15000, 'Chinese Corner'),
           item('Smoked Fish', '', 15000, 'Chinese Corner'),
-          item('Salty Chicken / Beef', '', 15000, 'Chinese Corner'),
+          item('Salty Chicken / Beef', '', 15000, 'Chinese Corner', 'salty-chicken.webp'),
           item('Foil Wrapped Chicken', '', 15000, 'Chinese Corner'),
           item('French Fries with Garlic Sauce', '', 15000, 'Chinese Corner'),
-          item('Fried Egg Rolled Chicken (Pair)', '', 18000, 'Chinese Corner'),
+          item('Fried Egg Rolled Chicken (Pair)', '', 18000, 'Chinese Corner', 'fried-eggs-rolled-chicken.jpg'),
           item('Fried Chicken Wings', '', 20000, 'Chinese Corner'),
-          item('Crispy Chicken Legs', '', 20000, 'Chinese Corner'),
+          item('Crispy Chicken Legs', '', 20000, 'Chinese Corner', 'cripcy-chicken-legs.jpg'),
           item('Golden Fried Prawns', '', 20000, 'Chinese Corner'),
           item('Fried Baby Corn with Cashew Nuts', '', 20000, 'Chinese Corner'),
           item('Fried Summary Chicken', '', 25000, 'Chinese Corner'),
-          item('Sauté Chicken Sichuan Style', '', 25000, 'Chinese Corner'),
+          item('Sauté Chicken Sichuan Style', '', 25000, 'Chinese Corner', 'saute-chicken-sichuan-style.jpg'),
           item('Chicken Curry', '', 25000, 'Chinese Corner'),
           item('Fried French Beans with Garlic Sauce', '', 25000, 'Chinese Corner'),
-          item('Chinese Cabbage Sichuan Style (Hot)', '', 25000, 'Chinese Corner'),
-          item('Mixed Vegetables (Onions, Cabbage, Carrots, Pepper, Mushroom)', '', 25000, 'Chinese Corner'),
+          item('Chinese Cabbage Sichuan Style (Hot)', '', 25000, 'Chinese Corner', 'chinese-cabbage-sichuan-style.jpg'),
+          item('Mixed Vegetables (Onions, Cabbage, Carrots, Pepper, Mushroom)', '', 25000, 'Chinese Corner', 'mixed-vegetable-onions-cabbage-carrots-pepper-mushroom.jpg'),
           item('Stir-Fried Chicken with Cashew Nuts', '', 30000, 'Chinese Corner'),
           item('Spicy Half Chicken with Vegetables', '', 30000, 'Chinese Corner'),
           item('Fried Chicken with Chinese Black Bean Sauce', '', 30000, 'Chinese Corner'),
           item('Sweet and Sour Chicken', '', 30000, 'Chinese Corner'),
           item('Sliced Chicken with Garlic Sauce', '', 30000, 'Chinese Corner'),
           item('Sliced Beef with Chinese Cabbage', '', 30000, 'Chinese Corner'),
-          item('Shredded Beef with Onions', '', 30000, 'Chinese Corner'),
+          item('Shredded Beef with Onions', '', 30000, 'Chinese Corner', 'shredded-beef-with-vegetables.jpg'),
           item('Sweet and Sour Beef', '', 30000, 'Chinese Corner'),
           item('Sliced Beef in Oyster Sauce', '', 30000, 'Chinese Corner'),
           item('Shredded Beef with Vegetables', '', 30000, 'Chinese Corner'),
@@ -652,21 +652,21 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
           item('Beef Curry', '', 30000, 'Chinese Corner'),
           item('Sweet and Sour Pork (Chinese)', '', 30000, 'Chinese Corner'),
           item('Shredded Pork with Green Pepper', '', 30000, 'Chinese Corner'),
-          item('Sauté Pork Sichuan Style (Hot)', '', 30000, 'Chinese Corner'),
+          item('Sauté Pork Sichuan Style (Hot)', '', 30000, 'Chinese Corner', 'saute-pork-sichuan-style.webp'),
           item('Spicy Pork with Garlic Sauce', '', 30000, 'Chinese Corner'),
           item('Sweet and Sour Fish Finger', '', 30000, 'Chinese Corner'),
           item('Spicy Fish with Ginger & Garlic Sauce', '', 30000, 'Chinese Corner'),
           item('Sliced Fish with Vegetables', '', 30000, 'Chinese Corner'),
           item('Sliced Fish in Special Hot Sweet & Sour Sauce', '', 30000, 'Chinese Corner'),
-          item('Special Mixed Vegetables & Sprouts', '', 30000, 'Chinese Corner'),
-          item('Fried Mixed Chicken, Beef & Goat Meat', '', 35000, 'Chinese Corner'),
-          item('Fried Shredded Chicken with Bamboo Shoots', '', 35000, 'Chinese Corner'),
-          item('Sliced Pork with Mushroom and Bamboo Shoots', '', 35000, 'Chinese Corner'),
+          item('Special Mixed Vegetables & Sprouts', '', 30000, 'Chinese Corner', 'special-mixed-vegetables-and-sprout.jpg'),
+          item('Fried Mixed Chicken, Beef & Goat Meat', '', 35000, 'Chinese Corner', 'fried-mixed-chicken-beef-and-goat-meet.jpg'),
+          item('Fried Shredded Chicken with Bamboo Shoots', '', 35000, 'Chinese Corner', 'fried-shredded-chicken-with-baboo-shoots.jpg'),
+          item('Sliced Pork with Mushroom and Bamboo Shoots', '', 35000, 'Chinese Corner', 'sliced-pork-and-mushroom-with-bamboo-shoots.jpg'),
           item('Fried Beijing Duck with Vegetables', '', 35000, 'Chinese Corner'),
           item('Fried Duck with Bamboo Shoots', '', 35000, 'Chinese Corner'),
-          item('Fried Prawns with Cashew Nuts', '', 45000, 'Chinese Corner'),
-          item('Sauté Prawns with Black Bean Sauce', '', 45000, 'Chinese Corner'),
-          item('Fried Prawns with Chinese Black Beans', '', 50000, 'Chinese Corner'),
+          item('Fried Prawns with Cashew Nuts', '', 45000, 'Chinese Corner', 'fried-prawns-cashew-nuts.jpg'),
+          item('Sauté Prawns with Black Bean Sauce', '', 45000, 'Chinese Corner', 'saute-prawns-with-black-bean-sauce.webp'),
+          item('Fried Prawns with Chinese Black Beans', '', 50000, 'Chinese Corner', 'fried-prawns-with-chinese-black-bean.jpg'),
           item('Beijing Roasted Duck (Whole)', '', 100000, 'Chinese Corner')
         ]
       }
@@ -677,7 +677,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Sizzler Hot Plates',
     eyebrow: 'On a hot plate',
     blurb: 'Brought to the table on a sizzling iron, with rice.',
-    image: '',
+    image: 'sizzler-beef-plate.jpg',
     groups: [
       {
         name: 'Sizzler Hot Plates',
@@ -686,7 +686,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
           item('Sizzler Pork Plate', '', 35000, 'Sizzler Hot Plates'),
           item('Sizzler Beef Plate', '', 35000, 'Sizzler Hot Plates'),
           item('Sizzler Chicken Plate', '', 35000, 'Sizzler Hot Plates'),
-          item('Sizzler Shrimps / Prawns Plate', '', 50000, 'Sizzler Hot Plates')
+          item('Sizzler Shrimps / Prawns Plate', '', 50000, 'Sizzler Hot Plates', 'sizzler-shrimp-or-prawns-plate.jpg')
         ]
       }
     ]
@@ -696,7 +696,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Rice & Noodles',
     eyebrow: 'Side options',
     blurb: 'Everything to round off a main course.',
-    image: '',
+    image: 'chicken-fried-rice.jpg',
     groups: [
       {
         name: 'Rice & Noodles',
@@ -706,7 +706,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
           item('Ginger Fried Rice', '', 8000, 'Rice & Noodles'),
           item('Vegetable Fried Rice', '', 10000, 'Rice & Noodles'),
           item('Vegetable Fried Noodles', '', 12000, 'Rice & Noodles'),
-          item('Egg Fried Rice', '', 15000, 'Rice & Noodles'),
+          item('Egg Fried Rice', '', 15000, 'Rice & Noodles', 'eggs-fried-rice.webp'),
           item('Chicken Fried Rice', '', 25000, 'Rice & Noodles'),
           item('Chicken / Beef / Pork Fried Noodles', '', 25000, 'Rice & Noodles')
         ]
@@ -718,14 +718,14 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Accompaniments & Extras',
     eyebrow: 'Side add ons',
     blurb: 'Added to any main course, priced per portion.',
-    image: '',
+    image: 'masala-chips.jpg',
     groups: [
       {
         name: 'Accompaniments & Extras',
         items: [
           item('Extra Mushroom', '', 4000, 'Accompaniments & Extras'),
           item('Extra Avocado', '', 4000, 'Accompaniments & Extras'),
-          item('Extra Fried Egg', '', 4000, 'Accompaniments & Extras'),
+          item('Extra Fried Egg', '', 4000, 'Accompaniments & Extras', 'extra-fried-eggs.jpg'),
           item('Extra Bacon', '', 7000, 'Accompaniments & Extras'),
           item('Extra Cheese', '', 7000, 'Accompaniments & Extras')
         ]
@@ -737,14 +737,14 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     name: 'Desserts & Bakery',
     eyebrow: 'Sweet finish',
     blurb: 'Cakes, pastries and fruit from our own bakery.',
-    image: '',
+    image: 'chocolate-cake-slice.jpg',
     groups: [
       {
         name: 'Desserts & Bakery',
         items: [
           item('Cookies', '', 1000, 'Desserts & Bakery'),
-          item('Croissant', '', 2000, 'Desserts & Bakery'),
-          item('Beef / Chicken Pie', '', 5000, 'Desserts & Bakery'),
+          item('Croissant', '', 2000, 'Desserts & Bakery', 'croissants.jpg'),
+          item('Beef / Chicken Pie', '', 5000, 'Desserts & Bakery', 'beef-or-chicken-pie.jpg'),
           item('Sausage Roll', '', 5000, 'Desserts & Bakery'),
           item('Bread Loaf', '', 6000, 'Desserts & Bakery'),
           item('Marble Cake Slice', '', 7000, 'Desserts & Bakery'),
@@ -755,13 +755,13 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
           item('Butter Bread', '', 7000, 'Desserts & Bakery'),
           item('French Bread', '', 7000, 'Desserts & Bakery'),
           item('Cinnamon Roll', '', 8000, 'Desserts & Bakery'),
-          item('Ice Cream (3 Scoops)', 'A bowl of three scoops, with a choice of chocolate, vanilla or strawberry.', 9000, 'Desserts & Bakery'),
+          item('Ice Cream (3 Scoops)', 'A bowl of three scoops, with a choice of chocolate, vanilla or strawberry.', 9000, 'Desserts & Bakery', 'ice-cream-3-scoop.jpg'),
           item('Golden Fried Banana', '', 10000, 'Desserts & Bakery'),
           item('Banana Crepe', 'A thin pancake filled with sliced bananas and chocolate syrup, garnished with orange slices.', 15000, 'Desserts & Bakery'),
           item('Affogato / Espresso Ice Cream', 'Two scoops of ice cream of choice served with 60ml of espresso coffee.', 15000, 'Desserts & Bakery'),
           item('Special Banana with Honey Sauce', '', 12000, 'Desserts & Bakery'),
           item('Pineapple Upside-Down Cake', '', 14000, 'Desserts & Bakery'),
-          item('Tropical Fruit Platter', 'A presentation of fresh seasonal fruit: mango, pineapple, melon, orange, grapes and passion fruit.', 15000, 'Desserts & Bakery'),
+          item('Tropical Fruit Platter', 'A presentation of fresh seasonal fruit: mango, pineapple, melon, orange, grapes and passion fruit.', 15000, 'Desserts & Bakery', 'tropical-fruits-platter.jpg'),
           item('Fruit Salad', 'A combination of cubed fresh fruit sprinkled with passion fruit syrup.', 15000, 'Desserts & Bakery'),
           item('Lemon Tart', '', 15000, 'Desserts & Bakery'),
           item('Banana Split', 'Banana and ice cream garnished with chocolate sauce, whipped cream, flaked almonds and cherries.', 15000, 'Desserts & Bakery'),
@@ -769,7 +769,7 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
           item('White Forest Cake', '', 16000, 'Desserts & Bakery'),
           item('Profiteroles', '', 16000, 'Desserts & Bakery'),
           item('Chocolate Fudge Slice', '', 17000, 'Desserts & Bakery'),
-          item('Black Forest Cake (pc)', '', 17000, 'Desserts & Bakery'),
+          item('Black Forest Cake (pc)', '', 17000, 'Desserts & Bakery', 'black-forest-cake.jpg'),
           item('Classic Carrot Cake', '', 19000, 'Desserts & Bakery'),
           item('Chocolate Mousse', '', 20000, 'Desserts & Bakery')
         ]

@@ -1007,6 +1007,28 @@ tr:last-child td{border-bottom:0}
 .panned{box-shadow:0 14px 40px #071A3310}
 @media(max-width:900px){.payGrid{grid-template-columns:1fr}}
 @media(max-width:560px){.payRow2,.cardGrid{grid-template-columns:1fr}}
+
+/* What the reference actually holds: the lines of an order, the dates of a
+   booking, and anything already paid against it, all read from the hotel. */
+.payLines{margin:18px 0 4px;border-top:1px solid #eee9da}
+.payLineItem{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1ece0}
+.payLineItem .photoBox{flex:none;width:56px;border-radius:8px}
+.payLineText{flex:1;min-width:0}
+.payLineText b{display:block;color:var(--navy);font-size:14px;font-weight:600}
+.payLineText small{display:block;color:#7b8798;font-size:12px;margin-top:2px;line-height:1.5}
+.payLineSum{flex:none;color:var(--ink);font-size:14px;font-weight:700}
+.payMoney{display:flex;justify-content:space-between;gap:16px;padding:6px 0;font-size:13.5px}
+.payMoney span{color:#667085;letter-spacing:.4px}
+.payMoney b{color:var(--ink);font-weight:600}
+.payMoney.paidRow b{color:#2e7d4f}
+.payDue{display:flex;justify-content:space-between;align-items:baseline;gap:16px;border-top:1px dashed #dcd6c4;margin-top:10px;padding-top:12px}
+.payDue span{color:#667085;font-size:12px;letter-spacing:2px;text-transform:uppercase}
+.payDue b{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold)}
+.payDue b.clear{font-size:18px;color:#2e7d4f}
+.payHistory{margin-top:16px;border-top:1px solid #eee9da;padding-top:12px}
+.payHistoryRow{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:12.5px;color:#7b8798}
+.payHistoryRow b{color:#33414f;font-weight:600}
+.paySettled{background:#eaf7ef;border:1px solid #bfe4cd;color:#1f6b45;padding:14px 16px;border-radius:10px;font-size:14px;line-height:1.6;margin-top:16px}
 @media print{.webOnly{display:none}}
 
 /* ---- the guest's account: sign in link in the header, and the 'or' rule above Google's button ---- */
