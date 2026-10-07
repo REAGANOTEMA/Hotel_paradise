@@ -45,7 +45,7 @@ export const apiUrl = async (act: string): Promise<string> => {
 
 export const LOGO = './logo-256.png';
 
-export const fmt = (n: number): string => 'UGX ' + Math.round(n).toLocaleString();
+export const fmt = (n: number): string => 'UGX ' + Math.round(n * 1.035).toLocaleString();
 
 /**
  * The guest's own account, kept in this browser.

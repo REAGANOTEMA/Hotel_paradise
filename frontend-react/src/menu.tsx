@@ -714,7 +714,7 @@ function MenuPage() {
         <button className="orderPanelHead" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-controls="orderBody">
           <span className="orderPanelTitle">
             <b>Your order</b>
-            <em>{tray.length === 0 ? 'Nothing added yet. Open any dish to add it.' : count + ' item' + (count === 1 ? '' : 's') + ' · UGX ' + Math.round(subtotal).toLocaleString()}</em>
+            <em>{tray.length === 0 ? 'Nothing added yet. Open any dish to add it.' : count + ' item' + (count === 1 ? '' : 's') + '  UGX ' + Math.round(subtotal).toLocaleString()}</em>
           </span>
           <span className="orderPanelToggle">{open ? 'Collapse' : 'Open'}</span>
         </button>

@@ -4170,6 +4170,12 @@
         }
       ]
     },
+    "menu-background": {
+      "ext": "jpg",
+      "w": 739,
+      "h": 415,
+      "variants": []
+    },
     "mexican-omelet": {
       "ext": "jpg",
       "w": 452,
