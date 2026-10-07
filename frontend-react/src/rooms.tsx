@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, apiUrl, CALL} from './shared';
@@ -89,34 +89,24 @@ function RoomsPage() {
    <TopBar/>
    <PageNav/>
 
-   <section className="pageHero">
-    <p className="eyebrow">CHOOSE YOUR ROOM</p>
-    <h1>Rooms and beds, your way.</h1>
-    <p>Every room type is photographed, so you can see exactly what you are booking. Choose the one you like, and change or drop it as often as you like before you book. Rates are per night, shown in Uganda Shillings and US dollars, and include breakfast and the local hotel tax.</p>
+<section className="pageHero hasCover">
+    <SmartImage
+      group="rooms"
+      name="suite"
+      alt="Hotel Paradise on the Nile - Suite"
+      className="pageHeroCover"
+      widths={[640,1024,1440,1920]}
+      sizes="100vw"
+      position="50% 50%"
+    />
+    <div className="pageHeroInner">
+     <p className="eyebrow">CHOOSE YOUR ROOM</p>
+     <h1>Rooms and beds, your way.</h1>
+     <p>Every room type is photographed, so you can see exactly what you are booking. Choose the one you like, and change or drop it as often as you like before you book. Rates are per night, shown in Uganda Shillings and US dollars, and include breakfast and the local hotel tax.</p>
+    </div>
    </section>
-
    <section className="bedsWrap section">
     <div className="bedList">
-     {rooms.map(r => {
-      const active = chosen === r.type;
-      return (
-       <article className={'bedCard' + (active ? ' chosen' : '')} id={'bed-' + r.id} key={r.id}>
-        <SmartImage
-         group="rooms"
-         name={roomImage(r.type)}
-         alt={r.type}
-         ratio="3 / 4"
-         widths={[320, 480, 640, 960]}
-         sizes="(max-width:1050px) 100vw, 300px"
-         position="50% 45%"
-         zoom
-         className="bedMedia"
-         placeholder={<>
-          <BedGlyph size={92}/>
-          <span className="bedMediaNote">{r.beds}</span>
-          {SHOW_FILE_HINTS && <code className="shotFile">images/rooms/{roomImage(r.type)}.jpg</code>}
-         </>}
-        />
         <div className="bedBody">
          <p className="pill">{r.pillow}</p>
          <h3>{r.type}</h3>
