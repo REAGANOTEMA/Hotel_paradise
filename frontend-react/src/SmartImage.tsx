@@ -3,7 +3,7 @@ import manifest from './image-manifest.json';
 
 export type ImageGroup = 'dishes' | 'rooms' | 'gallery';
 
-type Variant = {w: number; ext: string; h: number};
+type Variant = {w: number; ext: string; h: number; file?: string};
 type Entry = {ext: string; w: number; h: number; variants: Variant[]};
 
 /** The folder a photo may actually live in. */
@@ -17,7 +17,28 @@ export const IMAGE_DIR: Record<ImageHome, string> = {
   food: './images/food/'
 };
 
-export type HeroShot = {slug: string; ext: string; w: number; h: number; variants: Variant[]};
+/** The poster a film slot waits on. It lives in the folder of the film. */
+export type HeroPoster = {dir: string; file: string; ext: string; w: number; h: number};
+
+/**
+ * One slot of the home carousel.
+ *
+ * `dir` and `file` are the exact path to the bytes, because a slot may sit in
+ * a subfolder and may be served straight from its widest narrow copy when no
+ * full size original exists. `kind` marks the hotel film, which plays over
+ * `poster` instead of fading in like a photograph.
+ */
+export type HeroShot = {
+  slug: string;
+  dir: string;
+  file: string;
+  ext: string;
+  w: number;
+  h: number;
+  variants: Variant[];
+  kind?: 'image' | 'video';
+  poster?: HeroPoster;
+};
 
 /**
  * The hero list is the one place the manifest names the photograph, so that the

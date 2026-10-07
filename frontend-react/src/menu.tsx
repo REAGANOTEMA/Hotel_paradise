@@ -611,14 +611,25 @@ function MenuPage() {
     <TopBar/>
     <PageNav/>
 
-    <section className="pageHero">
-      <p className="eyebrow">DINING AND BAR</p>
-      <h1>Our menu, your order.</h1>
-      <p>
-        Every dish in its own section, with a photograph of each plate. Open any dish to see it in full,
-        choose your companion and a salad, and add it to your order. Change or drop anything freely before
-        it reaches the kitchen. Prices include taxes.
-      </p>
+    <section className="pageHero hasCover">
+      <SmartImage
+        group="dishes"
+        name="steak-dinner-and-wine-on-table"
+        alt="A steak dinner and a glass of wine on the table at Hotel Paradise on the Nile"
+        className="pageHeroCover"
+        widths={[640, 1024, 1440, 1920]}
+        sizes="100vw"
+        position="50% 50%"
+      />
+      <div className="pageHeroInner">
+        <p className="eyebrow">DINING AND BAR</p>
+        <h1>Our menu, your order.</h1>
+        <p>
+          Every dish in its own section, with a photograph of each plate. Open any dish to see it in full,
+          choose your companion and a salad, and add it to your order. Change or drop anything freely before
+          it reaches the kitchen. Prices include taxes.
+        </p>
+      </div>
     </section>
 
     <div className="menuJump" id="jump">

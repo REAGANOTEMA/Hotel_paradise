@@ -2972,8 +2972,8 @@
     },
     "classic-margherita": {
       "ext": "jpg",
-      "w": 515,
-      "h": 388,
+      "w": 516,
+      "h": 387,
       "variants": []
     },
     "classico-e-margherita": {
@@ -5317,6 +5317,12 @@
         }
       ]
     },
+    "steak-dinner-and-wine-on-table": {
+      "ext": "jpg",
+      "w": 612,
+      "h": 408,
+      "variants": []
+    },
     "steamed-rice": {
       "ext": "webp",
       "w": 1200,
@@ -6160,74 +6166,165 @@
   },
   "hero": [
     {
+      "slug": "view",
+      "dir": "./images/hero/",
+      "file": "view-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "view-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "view-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "steak-dinner-and-wine-on-table",
+      "dir": "./images/food/",
+      "file": "steak-dinner-and-wine-on-table.jpg",
+      "ext": "jpg",
+      "w": 612,
+      "h": 408,
+      "variants": [],
+      "kind": "image"
+    },
+    {
       "slug": "hero1",
+      "dir": "./images/",
+      "file": "hero1.jpg",
       "ext": "jpg",
       "w": 1680,
       "h": 1050,
-      "variants": []
+      "variants": [],
+      "kind": "image"
     },
     {
       "slug": "hero2",
+      "dir": "./images/",
+      "file": "hero2.jpg",
       "ext": "jpg",
       "w": 6000,
       "h": 4000,
-      "variants": []
+      "variants": [],
+      "kind": "image"
     },
     {
-      "slug": "hero3",
-      "ext": "jpg",
-      "w": 6000,
-      "h": 4000,
-      "variants": []
-    },
-    {
-      "slug": "hero4",
-      "ext": "jpg",
-      "w": 6000,
-      "h": 4000,
-      "variants": []
-    },
-    {
-      "slug": "hero5",
-      "ext": "jpg",
-      "w": 4000,
-      "h": 3000,
-      "variants": []
-    },
-    {
-      "slug": "hero6",
-      "ext": "jpg",
-      "w": 4000,
-      "h": 3000,
-      "variants": []
-    },
-    {
-      "slug": "hero7",
-      "ext": "jpg",
-      "w": 4000,
-      "h": 3000,
-      "variants": []
-    },
-    {
-      "slug": "hero8",
-      "ext": "jpg",
-      "w": 678,
-      "h": 452,
-      "variants": []
-    },
-    {
-      "slug": "hero9",
-      "ext": "jpg",
-      "w": 679,
-      "h": 452,
-      "variants": []
+      "slug": "swimming-pool",
+      "dir": "./images/",
+      "file": "swimming-pool.jpeg",
+      "ext": "jpeg",
+      "w": 1020,
+      "h": 765,
+      "variants": [],
+      "kind": "image"
     },
     {
       "slug": "hero10",
+      "dir": "./images/",
+      "file": "hero10.jpg",
       "ext": "jpg",
       "w": 6000,
       "h": 4000,
-      "variants": []
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "suite-bed",
+      "dir": "./images/",
+      "file": "suite-bed.png",
+      "ext": "png",
+      "w": 1024,
+      "h": 683,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "suite-320",
+      "dir": "./images/",
+      "file": "suite-320.jpg",
+      "ext": "jpg",
+      "w": 320,
+      "h": 427,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "hero8",
+      "dir": "./images/",
+      "file": "hero8.jpg",
+      "ext": "jpg",
+      "w": 678,
+      "h": 452,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "classic-margherita",
+      "dir": "./images/dishes/",
+      "file": "classic-margherita.jpg",
+      "ext": "jpg",
+      "w": 1400,
+      "h": 1750,
+      "variants": [
+        {
+          "file": "classic-margherita-320.jpg",
+          "ext": "jpg",
+          "w": 320,
+          "h": 400
+        },
+        {
+          "file": "classic-margherita-480.jpg",
+          "ext": "jpg",
+          "w": 480,
+          "h": 600
+        },
+        {
+          "file": "classic-margherita-640.jpg",
+          "ext": "jpg",
+          "w": 640,
+          "h": 800
+        },
+        {
+          "file": "classic-margherita-960.jpg",
+          "ext": "jpg",
+          "w": 960,
+          "h": 1200
+        },
+        {
+          "file": "classic-margherita-1280.jpg",
+          "ext": "jpg",
+          "w": 1280,
+          "h": 1600
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "hotel-view",
+      "dir": "./images/",
+      "file": "hotel-view.mp4",
+      "ext": "mp4",
+      "w": 0,
+      "h": 0,
+      "variants": [],
+      "kind": "video",
+      "poster": {
+        "dir": "./images/",
+        "file": "hotel-view-poster.jpg",
+        "ext": "jpg",
+        "w": 1600,
+        "h": 900
+      }
     }
   ]
 }

@@ -131,40 +131,144 @@ function scanFolder(dir) {
   return out;
 }
 
-/** The hero carousel is a numbered sequence, grouped the same way as folders. */
-function scanHero(dir) {
-  const out = [];
-  if (!fs.existsSync(dir)) return out;
+/**
+ * The home page carousel, in the order it plays.
+ *
+ * Each entry names a file under /images, with or without a subfolder and
+ * without its extension, and the build works out everything else: the real
+ * pixel size, the narrower copies sitting beside it, and whether the slot is
+ * a still photograph or the hotel film. A slot whose file is missing is
+ * skipped with a warning rather than shown as an empty frame.
+ *
+ *   hero/view     a photograph in /images/hero
+ *   hero1         a photograph in /images itself
+ *   hotel-view    a video, played over hotel-view-poster.jpg
+ */
+const HERO_SEQUENCE = [
+  'hero/view',
+  'food/steak-dinner-and-wine-on-table',
+  'hero1',
+  'hero2',
+  'swimming-pool',
+  'hero10',
+  'suite-bed',
+  'suite-320',
+  'hero8',
+  'dishes/classic-margherita',
+  'hotel-view'
+];
 
-  const byBase = new Map();
+const VIDEO_EXTS = ['.mp4', '.webm', '.mov', '.m4v'];
+
+/** Escapes a slug so it can be matched literally inside a regular expression. */
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * Reads one slot of the carousel: the file itself, the `-NNN` copies that
+ * narrow it for a phone, and the poster if the slot is a film.
+ *
+ * The file name is matched literally, never split on a trailing number, so
+ * `suite-320.jpg` stays a photograph called suite-320 and does not turn into
+ * a 320 pixel copy of a room called suite.
+ */
+function scanSlot(imagesRoot, token) {
+  const slash = token.lastIndexOf('/');
+  const sub = slash < 0 ? '' : token.slice(0, slash);
+  const base = slash < 0 ? token : token.slice(slash + 1);
+  const dir = sub ? path.join(imagesRoot, sub) : imagesRoot;
+  if (!fs.existsSync(dir)) return null;
+
+  const dirUrl = './images/' + (sub ? sub.replace(/\\/g, '/') + '/' : '');
+  const variants = [];
+  const stills = [];
+  const films = [];
+
   for (const name of fs.readdirSync(dir)) {
-    if (!/^hero\d+([-.]\d+)?\.[a-z0-9]+$/i.test(name)) continue;
     const ext = path.extname(name).toLowerCase();
-    if (!EXTS.includes(ext)) continue;
+    if (!EXTS.includes(ext) && !VIDEO_EXTS.includes(ext)) continue;
+    const stem = name.slice(0, name.length - ext.length).toLowerCase();
+    const full = path.join(dir, name);
 
-    const base = toSlug(name);
-    const sized = /^(hero\d+)-(\d{2,4})$/.exec(base);
-    const key = sized ? sized[1] : base;
-    const width = sized ? Number(sized[2]) : 0;
-    if (!byBase.has(key)) byBase.set(key, { slug: key, ext: ext.slice(1), w: 0, h: 0, variants: [] });
-
-    const entry = byBase.get(key);
-    const size = readSize(path.join(dir, name)) || { w: width, h: 0 };
-    if (width) {
-      entry.variants.push({ w: width, ext: ext.slice(1), h: size.h });
-    } else if (!entry.w) {
-      entry.ext = ext.slice(1);
-      entry.w = size.w;
-      entry.h = size.h;
+    if (stem === base) {
+      (VIDEO_EXTS.includes(ext) ? films : stills).push({file: name, ext: ext.slice(1), full});
+      continue;
+    }
+    if (new RegExp('^' + escapeRe(base) + '-\\d{2,4}$').test(stem)) {
+      const size = readSize(full) || {w: 0, h: 0};
+      variants.push({
+        file: name,
+        ext: ext.slice(1),
+        w: size.w || Number(stem.slice(base.length + 1)),
+        h: size.h
+      });
     }
   }
 
-  // hero2 before hero10, not the other way round.
-  for (const key of [...byBase.keys()].sort((a, b) => a.localeCompare(b, undefined, {numeric: true}))) {
-    const entry = byBase.get(key);
-    entry.variants.sort((a, b) => a.w - b.w);
-    entry.variants = entry.variants.filter(v => !entry.w || v.w < entry.w);
-    out.push(entry);
+  if (!stills.length && !films.length && !variants.length) return null;
+
+  // Two files can answer to the same name in different cases; take them in a
+  // predictable order so the carousel never changes between builds.
+  stills.sort((a, b) => a.file.localeCompare(b.file));
+  films.sort((a, b) => a.file.localeCompare(b.file));
+  variants.sort((a, b) => a.w - b.w);
+
+  // The film slot: played over its poster, which is named after the film.
+  if (!stills.length && films.length) {
+    const film = films[0];
+    const size = readSize(film.full) || {w: 0, h: 0};
+    const posterStem = base + '-poster';
+    const posterName = fs.readdirSync(dir).find(f => path.parse(f).name.toLowerCase() === posterStem);
+    const poster = posterName
+      ? (() => {
+          const pext = path.extname(posterName).slice(1).toLowerCase();
+          const psize = readSize(path.join(dir, posterName)) || {w: 0, h: 0};
+          return {dir: dirUrl, file: posterName, ext: pext, w: psize.w, h: psize.h};
+        })()
+      : undefined;
+    return {
+      slug: base,
+      dir: dirUrl,
+      file: film.file,
+      ext: film.ext,
+      w: size.w,
+      h: size.h,
+      variants: [],
+      kind: 'video',
+      poster
+    };
+  }
+
+  // A still, or a photograph that only exists as narrow copies: the widest of
+  // those copies then stands in for the original, which is what keeps
+  // `hero/view` (960, 1280 and 1920 only) from asking the browser for a
+  // `view.webp` that was never written.
+  let shot = stills[0];
+  if (!shot) {
+    const widest = variants.pop();
+    shot = {file: widest.file, ext: widest.ext, full: path.join(dir, widest.file)};
+  }
+  const size = readSize(shot.full) || {w: 0, h: 0};
+
+  return {
+    slug: base,
+    dir: dirUrl,
+    file: shot.file,
+    ext: shot.ext,
+    w: size.w,
+    h: size.h,
+    // Never advertise a copy as wide as the file it is served from.
+    variants: variants.filter(v => !size.w || v.w < size.w),
+    kind: 'image'
+  };
+}
+
+/** The carousel, built in the order the homepage plays it. */
+function scanHero(imagesRoot) {
+  const out = [];
+  for (const token of HERO_SEQUENCE) {
+    const slot = scanSlot(imagesRoot, token);
+    if (!slot) console.warn('  hero       ' + token + ' skipped, no file found');
+    else out.push(slot);
   }
   return out;
 }

@@ -78,6 +78,20 @@ a{color:inherit;text-decoration:none}
    photo look soft, so this stays barely perceptible. */
 .heroSlide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;opacity:0;visibility:hidden;transform:scale(1.012);filter:saturate(.96);transition:opacity 1.5s ease,transform 11s cubic-bezier(.3,0,.2,1),visibility 0s linear 1.5s;will-change:opacity,transform;-webkit-user-drag:none}
 .heroSlide.active{opacity:1;visibility:visible;transform:scale(1.04);transition:opacity 1.5s ease,transform 11s cubic-bezier(.3,0,.2,1),visibility 0s}
+/* The film waits on its poster like a photograph, and never grabs the mouse
+   away from the carousel controls that share its frame. */
+.heroFilm{background:#04101f;pointer-events:none}
+/* Every slide breathes: it eases into its crop or settles out of a wider one,
+   alternating down the carousel so a turn never repeats the move of the one
+   before it. The resting scale of a dormant slide is the scale its animation
+   ends on, so nothing visibly snaps when the slide hands over - the zoom keeps
+   running while the next picture is fading in over it. */
+.heroSlide.zoomOut{transform:scale(1.06)}
+.heroSlide.zoomIn{transform:scale(1.22)}
+.heroSlide.zoomOut.active{animation:heroZoomOut var(--heroZoom,4.6s) cubic-bezier(.32,.02,.24,1) both}
+.heroSlide.zoomIn.active{animation:heroZoomIn var(--heroZoom,4.6s) cubic-bezier(.32,.02,.24,1) both}
+@keyframes heroZoomOut{from{transform:scale(1.22)}to{transform:scale(1.06)}}
+@keyframes heroZoomIn{from{transform:scale(1.06)}to{transform:scale(1.22)}}
 /* Heaviest behind the writing on the left, lifting to the right so the
    photograph is still read, and a soft vignette to hold the eye in the frame. */
 .heroShade{position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(7,26,51,.94) 0%,rgba(7,26,51,.7) 34%,rgba(7,26,51,.18) 66%,rgba(7,26,51,.42) 100%),radial-gradient(120% 90% at 50% 45%,rgba(0,0,0,0) 40%,rgba(5,13,26,.55) 100%)}
@@ -89,11 +103,21 @@ a{color:inherit;text-decoration:none}
 .heroDots{position:absolute;z-index:3;left:50%;bottom:24px;transform:translateX(-50%);display:flex;gap:2px;align-items:center}
 /* The bar is drawn by ::before so the tap target can be a comfortable
    34 by 26 pixels instead of a 4 pixel sliver. */
-.heroDots .dot{position:relative;width:34px;height:26px;background:none;border:0;padding:0;transition:width .4s ease}
+.heroDots .dot{position:relative;width:34px;height:26px;background:none;border:0;padding:0;cursor:pointer;transition:width .4s ease}
 .heroDots .dot::before{content:'';position:absolute;left:2px;right:2px;top:11px;height:4px;border-radius:99px;background:rgba(255,255,255,.38);transition:background .4s ease}
+/* ::after is the progress fill, played over the same four seconds a slide
+   lives, so the active bar doubles as the carousel's timer. */
+.heroDots .dot::after{content:'';position:absolute;left:2px;right:2px;top:11px;height:4px;border-radius:99px;background:linear-gradient(90deg,var(--gold),#e6c54a);transform:scaleX(0);transform-origin:left;opacity:0}
 .heroDots .dot:hover::before{background:rgba(255,255,255,.75)}
 .heroDots .dot.on{width:48px}
-.heroDots .dot.on::before{background:var(--gold)}
+.heroDots .dot.on::before{background:rgba(255,255,255,.28)}
+.heroDots .dot.on::after{opacity:1;animation:dotFill 4s linear both}
+.heroDots .dot.on:hover::before{background:rgba(255,255,255,.6)}
+@keyframes dotFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* Hovering or focusing the carousel holds a slide open, so it holds the
+   progress bar in place too. */
+.hero:hover .heroDots .dot.on::after,
+.hero:focus-within .heroDots .dot.on::after{animation-play-state:paused}
 .eyebrow{letter-spacing:4px;font-size:11px;color:var(--gold);font-weight:700;margin:0}
 h1,h2{font-family:'Playfair Display',serif;font-weight:600}
 .hero h1{font-size:clamp(40px,5.4vw,78px);line-height:1.02;margin:14px 0;color:#fff;text-wrap:balance}
@@ -110,11 +134,33 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600}
 .bookMsg.ok{background:#eaf7ef;border-color:#2e7d4f;color:#1b4a31}
 .booking input[disabled],.booking button[disabled]{opacity:.6;cursor:not-allowed}
 .booking select option{color:#071A33}
+.booking input:focus,.booking select:focus,.booking .btn:focus{outline:2px solid var(--gold);outline-offset:2px}
+/* Eleven dots grew the progress row wider than a phone screen, so the row
+   wraps and the bars shrink on narrow viewports instead of overflowing. */
+@media (max-width:540px){
+  .heroDots{max-width:92vw;flex-wrap:wrap;justify-content:center;gap:1px}
+  .heroDots .dot{width:20px;height:22px}
+  .heroDots .dot::before,.heroDots .dot::after{top:9px}
+  .heroDots .dot.on{width:30px}
+}
+@media (max-width:380px){
+  .heroDots .dot{width:16px}
+  .heroDots .dot.on{width:24px}
+}
 
 .section{padding:100px 7vw;max-width:1400px;margin:auto}
 .center{text-align:center}
 .section h2{font-size:52px;margin:10px 0}
 .intro{max-width:720px;margin:0 auto 45px;color:#687386}
+/* Section titles sit on a short gold rule, so the heading starts to read as a
+   printed word rather than a floating one. */
+.section .center h2{position:relative;padding-bottom:16px}
+.section .center h2::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:64px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--gold),#e6c54a)}
+/* Everything marked .reveal rises into place the first time it scrolls past.
+   The class is only ever added by the observer, so a browser without one shows
+   the page at full brightness from the start. */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;text-align:left;margin-top:10px}
 .card{background:#fff;box-shadow:0 10px 35px #071A3312;display:flex;flex-direction:column;overflow:hidden}
 .photo.isEmpty{display:flex;align-items:center;justify-content:center;color:#b39c5e;background:linear-gradient(150deg,#16293f,#0B5D78)}
@@ -275,10 +321,16 @@ tr:last-child td{border-bottom:0}
 .btn.ghost2:hover{background:var(--gold);color:#071A33}
 
 /* subpage hero */
-.pageHero{background:linear-gradient(125deg,var(--navy),var(--nebula));color:#fff;padding:86px 7vw 66px}
+.pageHero{background:linear-gradient(125deg,var(--navy),var(--nebula));color:#fff;padding:86px 7vw 66px;position:relative;overflow:hidden}
 .pageHero .eyebrow{color:var(--gold)}
 .pageHero h1{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(40px,6vw,64px);margin:12px 0}
 .pageHero p{color:#c7d2de;font-size:18px;max-width:660px;margin:0}
+/* The menu page opens over a full photograph of the steak dinner, with the
+   writing held on a navy scrim so it reads as it does on the plain header. */
+.pageHero.hasCover{padding-bottom:74px}
+.pageHeroCover{position:absolute!important;inset:0;aspect-ratio:auto!important;background:var(--navy)}
+.pageHero.hasCover::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,26,51,.92) 0%,rgba(7,26,51,.6) 48%,rgba(7,26,51,.28) 100%),linear-gradient(0deg,rgba(7,26,51,.3) 0%,rgba(7,26,51,0) 40%)}
+.pageHeroInner{position:relative;z-index:1}
 
 /* beds page */
 .bedsWrap{display:grid;grid-template-columns:1fr 400px;gap:34px;align-items:start;max-width:1400px}
@@ -902,7 +954,7 @@ tr:last-child td{border-bottom:0}
   .modalScrim{background:Canvas}
   .modalScrim::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.55)}
 }
-@media(prefers-reduced-motion:no-preference){.card,.fact,.menuRow,.rateCard{transition:transform .25s ease,box-shadow .25s ease}.btn:hover{transform:translateY(-2px);background:#d8aa2e}.card:hover,.fact:hover,.menuRow:hover,.rateCard:hover{transform:translateY(-5px);box-shadow:0 20px 50px #071A3320}}
+@media(prefers-reduced-motion:no-preference){.card,.fact,.menuRow,.rateCard{transition:opacity .6s ease,transform .25s ease,box-shadow .25s ease}.btn:hover{transform:translateY(-2px);background:#d8aa2e}.card:hover,.fact:hover,.menuRow:hover,.rateCard:hover{transform:translateY(-5px);box-shadow:0 20px 50px #071A3320}}
 @media(prefers-reduced-motion:reduce){
   /* Fades only, and no drift. visibility still has to switch instantly,
      otherwise a hidden slide would linger for the length of the delay. */
@@ -916,6 +968,8 @@ tr:last-child td{border-bottom:0}
   .modalClose:hover{transform:none}
   .modalBack:hover svg{transform:rotate(180deg)}
   .pickCard:hover{transform:none}
+  /* nothing waits to be scrolled into view, and nothing drifts into place */
+  .reveal{opacity:1!important;transform:none!important;transition:none!important}
 }
 
 /* the menu is designed to be printed as well as browsed */
@@ -927,6 +981,8 @@ tr:last-child td{border-bottom:0}
   .pageHero{background:#fff!important;color:var(--navy)!important;padding:0 0 14mm;border-bottom:2px solid var(--gold)}
   .pageHero h1{color:var(--navy)!important;font-size:30pt}
   .pageHero p,.pageHero .eyebrow{color:#4a5666!important}
+  .pageHero.hasCover .pageHeroCover,.pageHero.hasCover::after{display:none!important}
+  .reveal{opacity:1!important;transform:none!important}
   .section{padding:8mm 0 0;max-width:none}
   .menuWrap{padding-top:0}
   .menuMeta{color:#4a5666;margin-bottom:6mm}
