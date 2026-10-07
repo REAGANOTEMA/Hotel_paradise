@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, telHref} from './shared';
+import {TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {
   MENU_REVISION,
@@ -272,7 +272,7 @@ function ChoicePicker({id, legend, hint, list, chosen, multiple, onChange}: Pick
                 <small>{c.note}</small>
                 {SHOW_FILE_HINTS && <code className="shotFile">images/dishes/side-{c.key}.jpg</code>}
               </span>
-              <span className={'pickPrice' + (free ? ' incl' : '')}>{free ? 'Included' : '+ ' + fmt(addOnPrice(c))}</span>
+              <span className={'pickPrice' + (free ? ' incl' : '')}>{free ? 'Included' : '+ ' + fmtPrice(addOnPrice(c))}</span>
             </label>
           );
         })}
@@ -367,7 +367,7 @@ function DishDetail({
           <p className="modalPrice">
             {onRequest
               ? <span className="askPrice">Priced on request</span>
-              : <>{fmt(unit)}<small>per serving</small></>}
+              : <>{fmtPrice(unit)}<small>per serving</small></>}
           </p>
 
           {dish.desc && <p className="modalDesc">{dish.desc}</p>}
@@ -420,7 +420,7 @@ function DishDetail({
                 </div>
                 <div className="modalTotal">
                   <span>Total</span>
-                  <b>{fmt(total)}</b>
+                  <b>{fmtPrice(total)}</b>
                 </div>
               </div>
 
@@ -685,7 +685,7 @@ function MenuPage() {
                     <div className="dishBody">
                       <div className="dishFoot">
                         <b className={dish.price === null ? 'askPrice' : ''}>
-                          {dish.price === null ? 'Price on request' : fmt(dish.price)}
+                          {dish.price === null ? 'Price on request' : fmtPrice(dish.price)}
                         </b>
                         <button className="addBtn" onClick={() => openDish(dish, section, g.name)}>
                           <PlusIcon/>{mine > 0 ? 'Add more' : 'Add'}
@@ -714,7 +714,7 @@ function MenuPage() {
         <button className="orderPanelHead" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-controls="orderBody">
           <span className="orderPanelTitle">
             <b>Your order</b>
-            <em>{tray.length === 0 ? 'Nothing added yet. Open any dish to add it.' : count + ' item' + (count === 1 ? '' : 's') + '  UGX ' + Math.round(subtotal).toLocaleString()}</em>
+            <em>{tray.length === 0 ? 'Nothing added yet. Open any dish to add it.' : count + ' item' + (count === 1 ? '' : 's') + '  ' + fmtPrice(subtotal)}</em>
           </span>
           <span className="orderPanelToggle">{open ? 'Collapse' : 'Open'}</span>
         </button>
@@ -735,15 +735,15 @@ function MenuPage() {
                         {x.companion && x.salads.length > 0 && ' · '}
                         {x.salads.length > 0 && x.salads.map(s => s.name).join(', ').toLowerCase()}
                       </span>}
-                      <span>{fmt(unit)} each</span>
+                      <span>{fmtPrice(unit)} each</span>
                     </div>
                     <div className="trayQty"><button onClick={() => bump(x.key, -1)} aria-label="One less">&minus;</button><em>{x.qty}</em><button onClick={() => bump(x.key, 1)} aria-label="One more">+</button></div>
-                    <span className="lineTotal">{fmt(sumLine(x))}</span>
+                    <span className="lineTotal">{fmtPrice(sumLine(x))}</span>
                     <button className="dropBtn" onClick={() => drop(x.key)} title="Drop this dish">Drop</button>
                   </div>
                 );
               })}
-              <div className="trayTotal"><span>Total</span><b>{fmt(subtotal)}</b></div>
+              <div className="trayTotal"><span>Total</span><b>{fmtPrice(subtotal)}</b></div>
             </div>
           )}
 
@@ -771,7 +771,7 @@ function MenuPage() {
         <span className="orderPillDot">{count}</span>
         <span className="orderPillText">
           <b>Your order</b>
-          <em>{fmt(subtotal)}</em>
+          <em>{fmtPrice(subtotal)}</em>
         </span>
       </button>
     )}

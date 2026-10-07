@@ -63,3 +63,23 @@
 
     RewriteRule ^ index.html [L]
 </IfModule>
+
+# ---------------------------------------------------------------------------
+# 3. How long a browser may hold on to what it has fetched.
+#
+#    Every page names its script by a hash that changes whenever the script
+#    does, and every deploy removes the bundles nothing points at any more. So
+#    the pages themselves must never be kept: a page read from yesterday asks
+#    for a bundle today's deploy has already deleted, and the guest gets a 404
+#    for the whole site instead of a page. The bundles are the other way round
+#    - their name is their content, so once fetched they are kept for a year
+#    and the next deploy simply asks for different names.
+#
+#    mod_headers supplies the header; without it these lines do nothing and
+#    the browser falls back to the heuristics it used before.
+# ---------------------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header set Cache-Control "no-cache, must-revalidate" "expr=%{REQUEST_URI} =~ m#\.html$#"
+    Header set Cache-Control "public, max-age=31536000, immutable" "expr=%{REQUEST_URI} =~ m#/assets/#"
+    Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/images/#"
+</IfModule>

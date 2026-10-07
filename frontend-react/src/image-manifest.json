@@ -265,6 +265,12 @@
         }
       ]
     },
+    "chicken-beef-burito": {
+      "ext": "jpg",
+      "w": 495,
+      "h": 619,
+      "variants": []
+    },
     "chicken-beef-burrito": {
       "ext": "jpg",
       "w": 495,
@@ -325,6 +331,12 @@
           "h": 1920
         }
       ]
+    },
+    "chicken-lollipoops-with-chips": {
+      "ext": "jpg",
+      "w": 550,
+      "h": 367,
+      "variants": []
     },
     "chicken-lollipops-with-chips": {
       "ext": "jpg",
@@ -626,6 +638,12 @@
           "h": 480
         }
       ]
+    },
+    "deep-fried-fish": {
+      "ext": "jpg",
+      "w": 720,
+      "h": 720,
+      "variants": []
     },
     "eggs-and-toast": {
       "ext": "jpeg",
@@ -1195,6 +1213,12 @@
         }
       ]
     },
+    "king-wet-fried-fish": {
+      "ext": "jpg",
+      "w": 500,
+      "h": 613,
+      "variants": []
+    },
     "king-wet-fried-tilapia": {
       "ext": "jpg",
       "w": 500,
@@ -1436,6 +1460,11 @@
           "w": 640,
           "ext": "jpg",
           "h": 640
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 720
         }
       ]
     },
@@ -1519,6 +1548,12 @@
           "h": 640
         }
       ]
+    },
+    "pair-of-chicken-springs-roll": {
+      "ext": "jpg",
+      "w": 1200,
+      "h": 1200,
+      "variants": []
     },
     "pan-grilled-fish-fillet": {
       "ext": "jpg",
@@ -1796,6 +1831,12 @@
         }
       ]
     },
+    "premium-whole-fried": {
+      "ext": "jpg",
+      "w": 500,
+      "h": 500,
+      "variants": []
+    },
     "pulled-pork-sandwish": {
       "ext": "jpg",
       "w": 750,
@@ -1908,6 +1949,24 @@
         }
       ]
     },
+    "tomatoes-cheese-and-ovacado-sandwich": {
+      "ext": "webp",
+      "w": 375,
+      "h": 469,
+      "variants": []
+    },
+    "trio-of-samosa-beef": {
+      "ext": "jpg",
+      "w": 678,
+      "h": 452,
+      "variants": []
+    },
+    "trio-of-samosa-vegetable": {
+      "ext": "png",
+      "w": 1024,
+      "h": 1024,
+      "variants": []
+    },
     "trio-of-samosas-beef": {
       "ext": "jpg",
       "w": 678,
@@ -1985,6 +2044,12 @@
       "ext": "jpg",
       "w": 335,
       "h": 597,
+      "variants": []
+    },
+    "vegetable-spring-roll": {
+      "ext": "jpg",
+      "w": 452,
+      "h": 678,
       "variants": []
     },
     "vegetable-spring-rolls": {
@@ -2937,6 +3002,12 @@
       "h": 2000,
       "variants": []
     },
+    "chilli-chicken": {
+      "ext": "jpg",
+      "w": 1200,
+      "h": 1800,
+      "variants": []
+    },
     "chinese-cabbage-sichuan-style": {
       "ext": "jpg",
       "w": 538,
@@ -3163,6 +3234,12 @@
         }
       ]
     },
+    "diavolo": {
+      "ext": "jpg",
+      "w": 683,
+      "h": 512,
+      "variants": []
+    },
     "double-beef-and-bacon-burger": {
       "ext": "jpg",
       "w": 554,
@@ -3232,6 +3309,12 @@
       "ext": "webp",
       "w": 500,
       "h": 500,
+      "variants": []
+    },
+    "espresso-ice-cream": {
+      "ext": "webp",
+      "w": 1200,
+      "h": 1799,
       "variants": []
     },
     "extra-avocado": {
@@ -3318,6 +3401,12 @@
           "h": 552
         }
       ]
+    },
+    "farmers-pizza": {
+      "ext": "jpg",
+      "w": 1194,
+      "h": 686,
+      "variants": []
     },
     "fish-biryani": {
       "ext": "jpg",
@@ -4701,6 +4790,12 @@
         }
       ]
     },
+    "pasta-al-cavolfiore-e-salsiccia": {
+      "ext": "jpg",
+      "w": 740,
+      "h": 414,
+      "variants": []
+    },
     "pasta-ala-cavolfiore-e-salsiccia": {
       "ext": "jpg",
       "w": 740,
@@ -4718,6 +4813,12 @@
         }
       ]
     },
+    "pasta-alla-contadina": {
+      "ext": "jpg",
+      "w": 678,
+      "h": 452,
+      "variants": []
+    },
     "pasta-arabiata": {
       "ext": "jpg",
       "w": 554,
@@ -4729,6 +4830,12 @@
           "h": 320
         }
       ]
+    },
+    "pasta-arrabiata": {
+      "ext": "jpg",
+      "w": 554,
+      "h": 554,
+      "variants": []
     },
     "pasta-classic-bolognaise": {
       "ext": "jpg",
@@ -4742,6 +4849,12 @@
         }
       ]
     },
+    "pasta-classic-bolognese": {
+      "ext": "jpg",
+      "w": 500,
+      "h": 500,
+      "variants": []
+    },
     "pasta-genovese": {
       "ext": "jpg",
       "w": 638,
@@ -4753,6 +4866,18 @@
           "h": 241
         }
       ]
+    },
+    "pasta-la-carbonara": {
+      "ext": "jpg",
+      "w": 554,
+      "h": 554,
+      "variants": []
+    },
+    "pasta-la-napolitana": {
+      "ext": "jpg",
+      "w": 600,
+      "h": 600,
+      "variants": []
     },
     "pata": {
       "ext": "jpg",
@@ -5745,6 +5870,12 @@
       "ext": "jpg",
       "w": 930,
       "h": 620,
+      "variants": []
+    },
+    "veggie-biryan": {
+      "ext": "jpg",
+      "w": 554,
+      "h": 554,
       "variants": []
     },
     "veggie-biryani": {

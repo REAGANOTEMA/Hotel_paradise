@@ -17,6 +17,22 @@ set_exception_handler(function(Throwable $e){
 $out=function(array $data, int $code=200): void{ http_response_code($code); echo json_encode($data,JSON_UNESCAPED_UNICODE); exit; };
 
 /**
+ * The service charge the hotel carries inside every price it publishes.
+ *
+ * A room rate and a dish price on the site already include it, so the amount a
+ * guest reads is the amount a guest owes. What is owed is still shown apart as
+ * a line of its own on the receipt, which is what the 3.5% is written into
+ * here: the subtotal stays the hotel's figure, the charge sits beside it, and
+ * the two of them add to the total. Nothing is charged twice.
+ */
+const SERVICE_RATE=0.035;
+
+/** What the hotel's 3.5% comes to on top of an amount that excludes it. */
+function service_charge(float $amount): float{
+ return round($amount*SERVICE_RATE,2);
+}
+
+/**
  * Some installations were built before the menu tables grew their optional
  * columns. Selecting a column that is not there is a fatal error, which used to
  * take the whole menu down, so a column is only ever asked for once we have
@@ -128,7 +144,14 @@ if($act==='booking'){
  }
  $num=next_number('HPN','reservations','booking_number');
  $rate=(float)$rt['base_rate']; $subtotal=round($rate*$nights,2);
- $fee=booking_withdrawal_fee(); $feeAmount=$fee['amount']; $total=round($subtotal+$feeAmount,2);
+ // The rate the guest was shown already carries the hotel's 3.5%, so it is
+ // added on here as a line of its own rather than a second mark up: the
+ // subtotal is the published rate, the charge sits beside it, and together
+ // they are what is owed. A database with nowhere to hold the line has no
+ // charge to add, and books for the room rate alone.
+ $hasTax=(bool)existing_columns('reservations',['tax']);
+ $service=$hasTax?service_charge((float)$subtotal):0.0;
+ $fee=booking_withdrawal_fee(); $feeAmount=$fee['amount']; $total=round($subtotal+$service+$feeAmount,2);
  $hasFee=(bool)existing_columns('reservations',['withdrawal_fee']);
  // The column list and the placeholders are both built from this one array, so
  // a column can never end up paired with the wrong value. The statement this
@@ -139,6 +162,7 @@ if($act==='booking'){
   'check_in'=>$cin.' 14:00:00','check_out'=>$cout.' 11:00:00',
   'adults'=>$adults,'children'=>$children,'status'=>'pending',
   'room_rate'=>$rate,'nights'=>$nights,'subtotal'=>$subtotal,'paid'=>0,'total'=>$total];
+ if($hasTax) $ins['tax']=$service;
  if($hasFee) $ins['withdrawal_fee']=$feeAmount;
  $insCols=array_keys($ins);
  q('INSERT INTO reservations('.implode(',',$insCols).',created_at)'
@@ -146,7 +170,7 @@ if($act==='booking'){
  $rid=(int)db()->lastInsertId();
  q('INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate) VALUES(?,?,NULL,1,?)',[$rid,$rt['id'],$rate]);
  $out(['ok'=>true,'booking_number'=>$num,'room_type'=>$rt['name'],'nights'=>$nights,
-  'subtotal'=>$subtotal,'withdrawal_fee'=>$feeAmount,'withdrawal_fee_label'=>$fee['label'],'total'=>$total,
+  'subtotal'=>$subtotal,'service_charge'=>$service,'withdrawal_fee'=>$feeAmount,'withdrawal_fee_label'=>$fee['label'],'total'=>$total,
   'message'=>'Your request has been received. Our front desk will confirm availability on the number you provided.']);
 }
 
@@ -235,13 +259,18 @@ if($act==='order'){
     $rows[]=['id'=>(int)$mi['id'],'qty'=>$qty,'price'=>$unit,'base'=>(float)$mi['price'],'note'=>$note];
   }
   if(count($rows)===0){ $out(['ok'=>false,'error'=>'Your order is empty. Add at least one dish first.'],422); }
-  $sub=array_sum(array_map(fn($r)=>$r['qty']*$r['price'],$rows));
+  // The prices the guest read already carry the hotel's 3.5%, so the charge is
+  // written apart as the tax line and added once. The total the browser is
+  // pointed at for payment is this figure, never the raw sum of the dishes.
+  $sub=round((float)array_sum(array_map(fn($r)=>$r['qty']*$r['price'],$rows)),2);
+  $service=$sub>0?service_charge($sub):0.0;
+  $total=round($sub+$service,2);
   $num=next_number('ORD','orders','order_number');
-  q('INSERT INTO orders(hotel_id,user_id,shift_id,order_number,outlet,order_type,status,subtotal,tax,total,created_at) VALUES(1,1,NULL,?,\'restaurant\',\'takeaway\',\'pending\',?,0,?,NOW())',[$num,$sub,$sub]);
+  q('INSERT INTO orders(hotel_id,user_id,shift_id,order_number,outlet,order_type,status,subtotal,tax,total,created_at) VALUES(1,1,NULL,?,\'restaurant\',\'takeaway\',\'pending\',?,?,?,NOW())',[$num,$sub,$service,$total]);
   $oid=(int)db()->lastInsertId();
   foreach($rows as $r){ q('INSERT INTO order_items(order_id,menu_item_id,quantity,unit_price,total,notes) VALUES(?,?,?,?,?,?)',[$oid,$r['id'],$r['qty'],$r['price'],$r['qty']*$r['price'],$r['note']]); }
-  audit('web_order','order',$oid,['order_number'=>$num,'subtotal'=>$sub]);
-  $out(['ok'=>true,'order_number'=>$num,'total'=>$sub,'message'=>'Please keep your phone nearby. We will call '.$phone.' to confirm collection and payment.']);
+  audit('web_order','order',$oid,['order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total]);
+  $out(['ok'=>true,'order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total,'message'=>'Please keep your phone nearby. We will call '.$phone.' to confirm collection and payment.']);
 }
 
 /**

@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, apiUrl, CALL} from './shared';
+import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 
 /** The photographs each room is still waiting for, shown on request only. */
@@ -41,11 +41,18 @@ function RoomsPage() {
    }).catch(() => {});
   }, []);
 
-  const rooms = baseRooms.map(r => ({...r, price: live[r.type] ?? r.price, rate: live[r.type] ? fmt(live[r.type]) : r.rate}));
+  const rooms = baseRooms.map(r => {
+    const price = live[r.type] ?? r.price;
+    // The rate a guest reads carries the hotel's 3.5%, and so does the total
+    // below, because both are what the booking will actually charge.
+    return {...r, price, rate: fmtPrice(price)};
+  });
   const sel = rooms.find(r => r.type === chosen) || null;
   const nights = form.check_in && form.check_out && form.check_out > form.check_in ? Math.max(1, Math.ceil((Date.parse(form.check_out) - Date.parse(form.check_in)) / 86400000)) : 0;
   const subtotal = sel && nights && sel.price > 0 ? sel.price * nights : 0;
-  const total = subtotal + (nights ? fee.amount : 0);
+  // The withdrawal fee is a pass through, so the 3.5% rides on the room alone
+  // and the fee is added exactly as the hotel set it.
+  const total = withService(subtotal) + (nights ? fee.amount : 0);
 
  const pick = (t: string) => {
   setChosen(t);
@@ -107,6 +114,26 @@ function RoomsPage() {
    </section>
    <section className="bedsWrap section">
     <div className="bedList">
+     {rooms.map(r => {
+      const active = chosen === r.type;
+      return (
+       <article className={'bedCard' + (active ? ' chosen' : '')} id={'bed-' + r.id} key={r.id}>
+        <SmartImage
+         group="rooms"
+         name={roomImage(r.type)}
+         alt={r.type}
+         ratio="3 / 4"
+         widths={[320, 480, 640, 960]}
+         sizes="(max-width:1050px) 100vw, 300px"
+         position="50% 45%"
+         zoom
+         className="bedMedia"
+         placeholder={<>
+          <BedGlyph size={92}/>
+          <span className="bedMediaNote">{r.beds}</span>
+          {SHOW_FILE_HINTS && <code className="shotFile">images/rooms/{roomImage(r.type)}.jpg</code>}
+         </>}
+        />
         <div className="bedBody">
          <p className="pill">{r.pillow}</p>
          <h3>{r.type}</h3>
@@ -148,7 +175,7 @@ function RoomsPage() {
        <h3>{sel.type}</h3>
        <p className="bedsLine">{sel.beds} &middot; {sel.guests}</p>
         <div className="spotTotal"><span>{sel.rate} per night</span><b>{nights ? fmt(total) : 'Pick your dates'}</b><small>{nights ? 'For ' + nights + ' night' + (nights > 1 ? 's' : '') + ', breakfast and hotel tax included. Also US$ ' + sel.usd + ' per night' : 'Choose check in and check out to see your total, quoted in Uganda Shillings'}</small>
-         {nights && fee.amount > 0 ? <small className="feeLine">{fmt(subtotal)} for the room, plus a {fmt(fee.amount)} {fee.label.toLowerCase()}</small> : null}</div>
+         {nights && fee.amount > 0 ? <small className="feeLine">{fmtPrice(subtotal)} for the room, plus a {fmt(fee.amount)} {fee.label.toLowerCase()}</small> : null}</div>
 
 
 

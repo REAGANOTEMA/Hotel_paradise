@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken} from './shared';
+import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken, rooms as bedRooms, WhatsAppIcon} from './shared';
 import {SmartImage} from './SmartImage';
 
 /*
@@ -66,6 +66,19 @@ const whenText = (date: string, time: string): string => {
 };
 
 const METHOD_TEXT: Record<string, string> = {pesapal: 'Pesapal', mtn_momo: 'MTN MoMo', airtel_money: 'Airtel Money', card: 'Card', cash: 'Cash', bank: 'Bank transfer'};
+
+/**
+ * The hotel on WhatsApp, in the international form wa.me wants, without the
+ * plus. Every forwarded receipt goes to this one number: the front desk,
+ * which is the number printed in the top bar of the site.
+ */
+const WA_HOTEL = '256759504928';
+
+/** The bed behind a room type, so the hotel reads the bed as well as the room. */
+const bedOf = (roomType: string): {beds: string; guests: string} | null => {
+ const hit = bedRooms.find(r => String(roomType).toLowerCase().includes(r.type.toLowerCase()));
+ return hit ? {beds: hit.beds, guests: hit.guests} : null;
+};
 
 const METHODS: {key: MethodKey; label: string; hint: string; icon: string}[] = [
  {key: 'pesapal', label: 'Pesapal Pay', hint: 'Pay from a Pesapal account, or a credit or debit card, on Pesapal\u2019s secure page.', icon: 'wallet'},
@@ -218,6 +231,79 @@ function PayPage() {
   setBusy(false);
  };
 
+  /**
+   * The whole payment, written for WhatsApp.
+   *
+   * The hotel asked for one message that carries everything the front desk
+   * needs to act on it: who paid, against which reference, every dish with its
+   * price and any companion, or the room with its bed, dates and nights, then
+   * the subtotal, the 3.5% and the total. Room bookings and food orders both
+   * come through here, so a guest never has to explain the same payment twice.
+   */
+  const whatsappText = (): string => {
+   const L: string[] = [];
+   const say = (k: string, v: string | number) => { if (v !== '' && v !== null && v !== undefined) L.push(k + ': ' + v); };
+   const money = (n: number) => fmt(n);
+
+   L.push('HOTEL PARADISE ON THE NILE', 'Payment details', '');
+   say('Guest', form.name.trim() || '-');
+   say('Phone', normPhone(form.phone) || '-');
+   if (form.email.trim()) say('Email', form.email.trim());
+   say(src === 'booking' ? 'Booking' : 'Order', ref || '-');
+   if (done && done.reference && done.reference !== ref) say('Payment ref', done.reference);
+   say('Method', METHOD_TEXT[method] || method);
+   say('Amount', money(charged || amt));
+   L.push('');
+
+   if (detail && detail.booking) {
+    const b = detail.booking;
+    const bed = bedOf(b.room_type);
+    L.push('ROOM BOOKING');
+    say('Room', b.room_type);
+    if (bed) { say('Bed', bed.beds); say('Sleeps', bed.guests); }
+    say('Check in', whenText(b.check_in, b.check_in_time));
+    say('Check out', whenText(b.check_out, b.check_out_time));
+    say('Nights', b.nights);
+    say('Guests', b.adults + ' adult' + (b.adults === 1 ? '' : 's') + (b.children ? ' + ' + b.children + ' child' + (b.children === 1 ? '' : 'ren') : ''));
+    L.push('');
+    say('Room subtotal', money(b.subtotal));
+    if (b.tax > 0) say('Service charge (3.5%)', money(b.tax));
+    if (b.withdrawal_fee) say(b.fee_label, money(b.withdrawal_fee));
+    say('Total', money(detail.total));
+    L.push('');
+   }
+
+   if (detail && detail.order) {
+    const o = detail.order;
+    L.push('FOOD ORDER');
+    say('Outlet', o.outlet === 'room_service' ? 'Room service' : o.outlet === 'bar' ? 'Bar' : 'Restaurant');
+    if (o.kind) say('Kind', o.kind.replace(/_/g, ' '));
+    say('Placed', o.placed);
+    L.push('');
+    o.items.forEach((it, i) => {
+     L.push((i + 1) + '. ' + it.qty + ' x ' + it.name + '  ' + money(it.total) + (it.note ? '\n    ' + it.note : ''));
+    });
+    L.push('');
+    say('Subtotal', money(o.subtotal));
+    if (o.tax > 0) say('Service charge (3.5%)', money(o.tax));
+    say('Total', money(detail.total));
+    L.push('');
+   }
+
+   if (!detail) {
+    L.push(src === 'booking' ? 'ROOM BOOKING' : 'FOOD ORDER');
+    say(src === 'booking' ? 'Room' : 'Items', item || '-');
+    if (qty) say('Quantity', qty + (unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''));
+    say('Total', money(charged || amt));
+    L.push('');
+   }
+
+   L.push('Sent from ' + HOTEL.website);
+   return L.join('\n');
+  };
+
+  const waHref = 'https://wa.me/' + WA_HOTEL + '?text=' + encodeURIComponent(whatsappText());
+
   if (!token) {
    return <div>
     <TopBar/>
@@ -246,11 +332,14 @@ function PayPage() {
      <div className="doneRef"><span>Your reference</span><b>{done.reference}</b></div>
      <p className="payDoneNote">{done.message}</p>
      <p className="payDoneNote2">Online payment with Pesapal is being switched on. Until it is live, no money is charged on this page and you are welcome to pay at the front desk, or call <a className="footLink" href={telHref(CALL)}>{CALL}</a>.</p>
-     <div className="payDoneActions">
-      <a className="btn" href="./index.html">Back to the hotel</a>
-      <a className="btn ghost2" href={telHref(CALL)}>Call the front desk</a>
-      <a className="btn" href="#" onClick={(e)=>{e.preventDefault();let m="Hotel Paradise on the Nile\\nRef:"+(done.reference||"")+"\\nName:"+(form.name||"").trim()+"\\nPhone:"+(form.phone||"")+"\\nType:"+(src==="booking"?"Room":"Food")+"\\nAmount:"+fmt(charged||amt)+"\\n";if(detail?.booking){m+="Room:"+detail.booking.room_type+"\\nIn:"+detail.booking.check_in+" Out:"+detail.booking.check_out+" Nights:"+detail.booking.nights+"\\n";}if(detail?.order&&detail.order.items){m+="Items:\\n";detail.order.items.forEach(it=>{m+=it.qty+"x "+it.name+"\\n";});}window.open("https://wa.me/256759504928?text="+encodeURIComponent(m),"_blank");}}>Forward to WhatsApp (Hotel)</a>
-     </div>
+      <div className="payDoneActions">
+       <a className="btn waBtn" href={waHref} target="_blank" rel="noopener noreferrer">
+        <WhatsAppIcon size={16}/> Send every detail to the hotel on WhatsApp
+       </a>
+       <a className="btn ghost2" href="./index.html">Back to the hotel</a>
+       <a className="btn ghost2" href={telHref(CALL)}>Call the front desk</a>
+      </div>
+      <p className="payDoneNote2">WhatsApp carries your name, your reference, the amount, and the whole booking or order, dish by dish and room by room, to the front desk on {HOTEL.phones[0]}.</p>
     </div>
    </section>
    <Footer/>
@@ -317,7 +406,7 @@ function PayPage() {
        <div className="payLines">
         <div className="payMoney"><span>Room{detail.booking.nights > 1 ? ' Â· ' + detail.booking.nights + ' nights' : ''}</span><b>{fmt(detail.booking.subtotal)}</b></div>
         {detail.booking.withdrawal_fee ? <div className="payMoney"><span>{detail.booking.fee_label}</span><b>{fmt(detail.booking.withdrawal_fee)}</b></div> : null}
-        {detail.booking.tax > 0 && <div className="payMoney"><span>Tax</span><b>{fmt(detail.booking.tax)}</b></div>}
+        {detail.booking.tax > 0 && <div className="payMoney"><span>Service charge (3.5%)</span><b>{fmt(detail.booking.tax)}</b></div>}
         <div className="payMoney"><span>Total</span><b>{fmt(detail.total)}</b></div>
         {detail.paid > 0 && <div className="payMoney paidRow"><span>Already paid</span><b>&minus;{fmt(detail.paid)}</b></div>}
        </div>
@@ -326,7 +415,7 @@ function PayPage() {
       {detail?.order && (
        <div className="payLines">
         <div className="payMoney"><span>Subtotal</span><b>{fmt(detail.order.subtotal)}</b></div>
-        {detail.order.tax > 0 && <div className="payMoney"><span>Tax</span><b>{fmt(detail.order.tax)}</b></div>}
+        {detail.order.tax > 0 && <div className="payMoney"><span>Service charge (3.5%)</span><b>{fmt(detail.order.tax)}</b></div>}
         <div className="payMoney"><span>Total</span><b>{fmt(detail.total)}</b></div>
         {detail.paid > 0 && <div className="payMoney paidRow"><span>Already paid</span><b>&minus;{fmt(detail.paid)}</b></div>}
        </div>
@@ -339,7 +428,11 @@ function PayPage() {
        <b className={settled ? 'clear' : ''}>{settled ? 'Paid in full' : fmt(payable)}</b>
       </div>
 
-      {settled && <div className="paySettled">This reference is settled in full, so there is nothing left to pay on it. Your booking or order stays exactly as it is.</div>}
+      {settled && <div className="paySettled">
+       <p style={{margin: 0}}>This reference is settled in full, so there is nothing left to pay on it. Your booking or order stays exactly as it is.</p>
+       <p className="payDoneNote2" style={{margin: '8px 0 0'}}>Still want the hotel to have it on WhatsApp? It carries the reference, the amount, and every detail.</p>
+       <a className="btn waBtn" style={{marginTop: 10}} href={waHref} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={16}/> Send the details to the hotel on WhatsApp</a>
+      </div>}
 
       {detail && detail.payments.length > 0 && (
        <div className="payHistory">

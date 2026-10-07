@@ -45,7 +45,25 @@ export const apiUrl = async (act: string): Promise<string> => {
 
 export const LOGO = './logo-256.png';
 
-export const fmt = (n: number): string => 'UGX ' + Math.round(n * 1.035).toLocaleString();
+/**
+ * The 3.5% the hotel carries inside every price it quotes.
+ *
+ * A guest reads one number. The card on the menu, the rate on the room, the
+ * total in the tray and the amount the payment takes are the same figure, so
+ * the 3.5% is added in exactly one place here and the server adds the same
+ * 3.5% when it fixes a total. The receipt itemises it, so the arithmetic can
+ * still be read.
+ */
+export const SERVICE_RATE = 0.035;
+
+/** A base figure with the hotel's 3.5% carried inside it. */
+export const withService = (n: number): number => Math.round(n * (1 + SERVICE_RATE));
+
+/** Formats shillings that already carry everything they should. */
+export const fmt = (n: number): string => 'UGX ' + Math.round(n).toLocaleString();
+
+/** A price as it is printed on a tag: the base figure with the 3.5% inside it. */
+export const fmtPrice = (n: number): string => fmt(withService(n));
 
 /**
  * The guest's own account, kept in this browser.
@@ -85,14 +103,14 @@ export type Room = {
 };
 
 export const rooms: Room[] = [
-     {id: 1, type: 'Suite', rate: 'UGX 248,000', usd: '100 to 120', price: 248000, guests: 'Up to 3 guests', beds: 'One king sized bed', pillow: 'The grand retreat', text: 'Our most spacious room, generous in space and comfort, with premium furnishings, a king sized bed and a calm, elegant atmosphere.', featured: true},
-  {id: 2, type: 'Family Room', rate: 'UGX 314,000', usd: '122 to 125', price: 314000, guests: 'Up to 4 guests', beds: 'One double bed and two single beds', pillow: 'Made for families', text: 'Roomier than most, with a double bed and two single beds, made for families travelling together with comfort in mind.', featured: true},
-  {id: 3, type: 'Triple Room', rate: 'UGX 213,000', usd: '100', price: 213000, guests: 'Up to 3 guests', beds: 'Three single beds', pillow: 'For three guests', text: 'A comfortable setting with three single beds, ideal for friends or a small group staying together.'},
-  {id: 4, type: 'Executive Deluxe', rate: 'UGX 202,000', usd: '80', price: 202000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'Business ready', text: 'An elevated stay with refined touches and a king sized bed, well suited to business and leisure travellers alike.'},
-  {id: 5, type: 'Deluxe Double', rate: 'UGX 178,000', usd: '70', price: 178000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'The popular choice', text: 'Elegant double accommodation with a restful, warm and private atmosphere and a comfortable double bed.'},
-     {id: 6, type: 'Standard Double', rate: 'UGX 155,000', usd: '60', price: 155000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'Quiet and cosy', text: 'A well kept double room with a comfortable bed, everything you need for a good night in Jinja.'},
-     {id: 7, type: 'Standard Twin', rate: 'UGX 142,000', usd: '60', price: 142000, guests: 'Up to 2 guests', beds: 'Two single beds', pillow: 'Two beds', text: 'A neatly kept room with two comfortable single beds for a peaceful night of rest.'},
-     {id: 8, type: 'Standard Single', rate: 'UGX 128,000', usd: '55', price: 128000, guests: '1 guest', beds: 'One single bed', pillow: 'Great value', text: 'A simple, well equipped single room with a comfortable single bed, and the best value on the river.'}
+     {id: 1, type: 'Suite', rate: fmtPrice(248000), usd: '100 to 120', price: 248000, guests: 'Up to 3 guests', beds: 'One king sized bed', pillow: 'The grand retreat', text: 'Our most spacious room, generous in space and comfort, with premium furnishings, a king sized bed and a calm, elegant atmosphere.', featured: true},
+  {id: 2, type: 'Family Room', rate: fmtPrice(314000), usd: '122 to 125', price: 314000, guests: 'Up to 4 guests', beds: 'One double bed and two single beds', pillow: 'Made for families', text: 'Roomier than most, with a double bed and two single beds, made for families travelling together with comfort in mind.', featured: true},
+  {id: 3, type: 'Triple Room', rate: fmtPrice(213000), usd: '100', price: 213000, guests: 'Up to 3 guests', beds: 'Three single beds', pillow: 'For three guests', text: 'A comfortable setting with three single beds, ideal for friends or a small group staying together.'},
+  {id: 4, type: 'Executive Deluxe', rate: fmtPrice(202000), usd: '80', price: 202000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'Business ready', text: 'An elevated stay with refined touches and a king sized bed, well suited to business and leisure travellers alike.'},
+  {id: 5, type: 'Deluxe Double', rate: fmtPrice(178000), usd: '70', price: 178000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'The popular choice', text: 'Elegant double accommodation with a restful, warm and private atmosphere and a comfortable double bed.'},
+     {id: 6, type: 'Standard Double', rate: fmtPrice(155000), usd: '60', price: 155000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'Quiet and cosy', text: 'A well kept double room with a comfortable bed, everything you need for a good night in Jinja.'},
+     {id: 7, type: 'Standard Twin', rate: fmtPrice(142000), usd: '60', price: 142000, guests: 'Up to 2 guests', beds: 'Two single beds', pillow: 'Two beds', text: 'A neatly kept room with two comfortable single beds for a peaceful night of rest.'},
+     {id: 8, type: 'Standard Single', rate: fmtPrice(128000), usd: '55', price: 128000, guests: '1 guest', beds: 'One single bed', pillow: 'Great value', text: 'A simple, well equipped single room with a comfortable single bed, and the best value on the river.'}
    ];
 
 /**

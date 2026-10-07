@@ -1,13 +1,17 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, LOGO, HOTEL, CALL, telHref} from './shared';
+import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, CALL, telHref} from './shared';
 import {heroShots, SmartImage, type HeroShot} from './SmartImage';
 
+/**
+ * What dining costs, worked out from the base figures so that the 3.5% the
+ * hotel carries inside every price reaches this table as well.
+ */
 const dining = [
- {name: 'Breakfast', price: 'UGX 25,000', note: 'For non residents, or children above six years sharing a room with their parents'},
- {name: 'Buffet meal', price: 'UGX 40,000', note: 'Served daily around lunch and dinner'},
- {name: 'A la carte menu', price: 'UGX 6,000 to 100,000', note: '83 dishes, from light bites to full platters'},
+ {name: 'Breakfast', price: fmtPrice(25000), note: 'For non residents, or children above six years sharing a room with their parents'},
+ {name: 'Buffet meal', price: fmtPrice(40000), note: 'Served daily around lunch and dinner'},
+ {name: 'A la carte menu', price: fmtPrice(6000) + ' to ' + withService(100000).toLocaleString(), note: '251 dishes, from light bites to full platters'},
  {name: 'Baby cots', price: 'Free', note: 'Available on request for your little one'}
 ];
 
@@ -365,7 +369,7 @@ function Rates() {
          <small>{priced ? 'Classic comfort, breakfast and taxes included' : 'A well equipped single room, contact the hotel for the Uganda Shilling rate'}</small>
         </div>
         <b>{cur === 'UGX'
-          ? (priced ? <>{fmt(r.price)}<span>per night</span></> : <>On request<span>contact the hotel</span></>)
+          ? (priced ? <>{fmtPrice(r.price)}<span>per night</span></> : <>On request<span>contact the hotel</span></>)
           : <>US$ {r.usd}<span>per night</span></>}</b>
        </div>
       );
@@ -377,7 +381,7 @@ function Rates() {
      <p>Rooms held up to 6 pm are charged at 75% of the applicable rate. After 6 pm the full rate applies.</p>
      <p>All rates quoted include the local hotel tax of UGX 2,000 per room per day, and every rate includes breakfast.</p>
      <p>US dollar rates are quoted for international guests and carry the same breakfast, tax and timing terms as the Uganda Shilling rates.</p>
-     <p>Baby cots are free, and children above six years sharing a room with their parents pay for breakfast only at UGX 25,000.</p>
+      <p>Baby cots are free, and children above six years sharing a room with their parents pay for breakfast only at {fmtPrice(25000)}.</p>
      <p>Lunch is served from 12 noon to 3 pm, and dinner from 7 pm to 11 pm.</p>
      <a className="btn" href="./rooms.html" style={{marginTop: 12}}>Choose your room</a>
     </div>
