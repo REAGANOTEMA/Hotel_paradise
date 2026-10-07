@@ -2398,6 +2398,12 @@
         }
       ]
     },
+    "burger-hero-for-homepage-replace-with-the-secon-bed-make-this-to-be-the-hero": {
+      "ext": "jpg",
+      "w": 678,
+      "h": 452,
+      "variants": []
+    },
     "butter-bread": {
       "ext": "jpg",
       "w": 399,
@@ -3975,6 +3981,12 @@
       "ext": "jpg",
       "w": 554,
       "h": 554,
+      "variants": []
+    },
+    "juice-hero-for-homepage-replace-with-swimming-pool-the-first-one": {
+      "ext": "jpg",
+      "w": 1152,
+      "h": 720,
       "variants": []
     },
     "king-burger": {

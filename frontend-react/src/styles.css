@@ -193,7 +193,7 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600}
 .policy p:last-child{margin:0}
 .policy b{color:#e8eef4}
 
-.menuWrap{max-width:900px;margin:0 auto}
+
 .menuRow{display:flex;align-items:center;justify-content:space-between;gap:24px;background:#fff;padding:22px 28px;margin-bottom:14px;box-shadow:0 8px 28px #071A3312}
 .menuRow:last-child{margin-bottom:0}
 .menuRow h4{margin:0 0 4px;font-family:'Playfair Display';font-size:20px}
@@ -382,13 +382,13 @@ tr:last-child td{border-bottom:0}
 .printBtn:hover{border-color:var(--gold);color:var(--gold)}
 
 /* diagonal brand watermark behind the whole menu */
-.menuWrap{position:relative;padding-top:36px}
+.menuWrap{position:relative;padding-top:36px;width:96%;max-width:100%;margin:0 auto}
 .menuWatermark{position:absolute;top:0;bottom:0;left:0;right:0;z-index:0;pointer-events:none;user-select:none;background-repeat:repeat;background-size:640px 360px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360'%3E%3Ctext x='320' y='190' text-anchor='middle' font-family='Georgia,Times New Roman,serif' font-size='46' font-weight='700' letter-spacing='3' fill='%23071A33' fill-opacity='0.07' transform='rotate(-26 320 180)'%3EHotel Paradise on the Nile%3C/text%3E%3C/svg%3E")}
 .menuWrap>*:not(.menuWatermark){position:relative;z-index:1}
 
 /* section jump bar */
-.menuJump{position:sticky;top:82px;z-index:9;background:#ffffffef;backdrop-filter:blur(8px);border-bottom:1px solid #e7e2d6;box-shadow:0 4px 18px #071A3308}
-.menuJumpInner{max-width:1400px;margin:auto;padding:0 7vw;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+.menuJump{position:sticky;top:82px;z-index:9;background:#ffffffef;backdrop-filter:blur(8px);border-bottom:1px solid #e7e2d6;box-shadow:0 4px 18px #071A3308;padding:0;width:100%}
+.menuJumpInner{width:94%;max-width:100%;margin:auto;padding:0;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
 .menuJumpInner::-webkit-scrollbar{display:none}
 .menuJump a{flex:none;padding:14px 12px;font-size:12px;font-weight:600;letter-spacing:.6px;color:#4a5666;border-bottom:2px solid transparent;white-space:nowrap;transition:color .18s ease,border-color .18s ease}
 .menuJump a:hover{color:var(--gold)}
@@ -397,7 +397,7 @@ tr:last-child td{border-bottom:0}
 .jumpOrder:hover{background:var(--gold);color:var(--navy)}
 
 /* sections */
-.secBlock{margin-bottom:60px;scroll-margin-top:150px}
+.secBlock{margin-bottom:60px;scroll-margin-top:150px;padding:0 0vw}
 .secHead{margin-bottom:26px}
 .secEyebrow{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:4px;margin:0 0 6px}
 .secHead h2,.secBanner h2{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(28px,3.4vw,42px);color:var(--navy);margin:0 0 10px;line-height:1.1}
@@ -418,7 +418,7 @@ tr:last-child td{border-bottom:0}
 .secBannerGlyph{position:absolute;right:5%;top:50%;transform:translateY(-50%);z-index:1;font-family:'Playfair Display',serif;font-size:clamp(64px,10vw,132px);line-height:1;font-weight:700;color:#ffffff17;pointer-events:none;user-select:none}
 
 /* dish cards, each with its photograph */
-.dishGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:20px}
+.dishGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
 .dishCard{position:relative;background:#ffffffe6;display:flex;flex-direction:column;box-shadow:0 10px 30px #071A3310;border:1px solid #ece7db;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;overflow:hidden}
 .dishCard:hover{transform:translateY(-2px);box-shadow:0 18px 42px #071A3318;border-color:#ded5bd}
 /* a dish already in the order keeps a gold edge, so a guest scanning the
@@ -1092,4 +1092,21 @@ tr:last-child td{border-bottom:0}
 .nav .navSignIn.active{color:var(--gold)}
 .acctOr{display:flex;align-items:center;gap:12px;margin:24px 0 14px;color:#98a2b3;font-size:11px;letter-spacing:3px;text-transform:uppercase}
 .acctOr::before,.acctOr::after{content:'';height:1px;background:#eaedf2;flex:1}
+
+
+
+
+
+
+
+@media (max-width: 1366px) { .dishGrid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 1024px) { .dishGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .dishGrid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+@media (max-width: 480px) { .dishGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+@media (max-width: 390px) { .dishGrid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
+@media (max-width: 360px) { .dishGrid { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
+
+
+
+
 

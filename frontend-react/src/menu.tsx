@@ -160,7 +160,7 @@ function DishShot({dish, large = false, hint = true}: {dish: MenuItem; large?: b
       alt={dish.name}
       ratio={large ? '16 / 10' : '4 / 3'}
       widths={large ? [640, 1024, 1440] : [320, 480, 640, 960]}
-      sizes={large ? '(max-width:900px) 100vw, 46vw' : '(max-width:640px) 132px, (max-width:1050px) 240px, (max-width:1400px) 300px, 340px'}
+      sizes={large ? '(max-width:900px) 100vw, 46vw' : '(max-width:640px) 132px, (max-width:1050px) 240px, (width:94%;max-width:100%) 300px, 340px'}
       position="50% 52%"
       zoom={!large}
       className={large ? 'shot shotLarge' : 'shot'}
@@ -189,7 +189,7 @@ function SectionBanner({section, children}: {section: MenuSection; children: Rea
       alt=""
       ratio="21 / 8"
       widths={[640, 1024, 1440, 1920]}
-      sizes="(max-width:1400px) 100vw, 1260px"
+      sizes="(width:94%;max-width:100%) 100vw, 1260px"
       position="72% 50%"
       className="secBanner"
       placeholder={<span className="secBannerGlyph" aria-hidden="true">{section.name.slice(0, 1).toUpperCase()}</span>}
@@ -792,3 +792,4 @@ function MenuPage() {
 }
 
 createRoot(document.getElementById('root')!).render(<MenuPage/>);
+
