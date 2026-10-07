@@ -245,3 +245,42 @@ ul.clean{list-style:none;margin:0;padding:0}
   .panel{border:0;box-shadow:none}
   .tableScroll{overflow:visible}
 }
+
+/* ===================================================================
+   The paper these dashboards print.
+
+   A receipt waits inside a <template>, so it is never part of the
+   screen and never part of a normal printout. When a print is asked
+   for, the sheet alone is copied into #printStack and body gains
+   .printing, which takes the whole console off the page and leaves the
+   sheet: a docket that arrives with the sidebar and the KPI cards on
+   it is not a docket. Ctrl+P without that class still prints the
+   screen, exactly as it always did.
+   =================================================================== */
+#printStack{display:none}
+.sheet{width:78mm;max-width:100%;margin:0 auto;background:#fff;color:#000;padding:6mm 5mm;font-family:'DM Sans',sans-serif;font-size:12.5px;line-height:1.45}
+.sheetBar{background:#071A33;color:#fff;text-align:center;letter-spacing:2.6px;font-size:10px;font-weight:700;padding:6px 4px}
+.sheetHotel{text-align:center;margin-top:9px}
+.sheetHotel b{display:block;font-family:'Playfair Display',serif;font-size:13.5px;letter-spacing:.6px}
+.sheetHotel span{display:block;font-size:10px;color:#444;margin-top:2px}
+.sheetNo{text-align:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin:9px 0 4px}
+.sheetMeta{border-top:1px dashed #999;border-bottom:1px dashed #999;padding:7px 0;margin:7px 0;display:grid;gap:3px}
+.sheetMeta span{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.sheetMeta i{font-style:normal;color:#555;letter-spacing:.7px;text-transform:uppercase;font-size:9.5px;font-weight:700}
+.sheetLines{margin:4px 0}
+.sheetLine{padding:5px 0;border-bottom:1px dotted #cfcfcf}
+.sheetLine b{display:block;font-size:12.5px;padding-right:44px}
+.sheetLine .q{float:right;font-weight:700}
+.sheetLine em{display:block;font-style:normal;font-size:11px;color:#444}
+.sheetLine .a{display:block;text-align:right;font-size:11.5px;font-weight:600}
+.sheetTotals{display:grid;grid-template-columns:1fr auto;gap:2px 12px;border-top:2px solid #000;margin-top:7px;padding-top:7px;font-size:12.5px}
+.sheetTotals b{text-align:right}
+.sheetTotals .big{font-size:15px}
+.sheetFoot{margin-top:8px;font-size:11px;color:#333;text-align:center}
+.sheetCut{margin-top:10px;padding-top:6px;border-top:1px dashed #999;font-size:9.5px;letter-spacing:1.4px;text-transform:uppercase;text-align:center;color:#555}
+
+@media print{
+  body.printing .app{display:none!important}
+  body.printing #printStack{display:block!important}
+  body.printing{background:#fff}
+}

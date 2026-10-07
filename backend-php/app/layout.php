@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 function nav_items(): array{
  return [
-  'dashboard'=>'Dashboard','reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests',
-  'pos'=>'POS and Orders','shifts'=>'Shifts','inventory'=>'Inventory','suppliers'=>'Suppliers',
+  'dashboard'=>'Dashboard','overview'=>'CEO / Director','reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests',
+  'pos'=>'POS and Orders','fnb'=>'Food and Beverage','kitchen'=>'Kitchen','shifts'=>'Shifts','inventory'=>'Inventory','suppliers'=>'Suppliers',
   'purchases'=>'Purchases','expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals',
   'audit'=>'Audit Trail','reports'=>'Reports','users'=>'Team and Users'
  ];
@@ -107,4 +107,147 @@ function form_close(): void{ echo '</form>'; }
 
 function back_button(string $label='Back'): void{
  echo '<a class="btnGhost sm" href="javascript:history.back()">'.e($label).'</a>';
+}
+
+/* ==================================================================
+   THE PAPER A DASHBOARD PRINTS ON
+
+   Three of these dashboards print: the kitchen prints a docket, food
+   and beverage prints a bill, the director's page prints an order or a
+   guest statement. They all work the same way, and it is worth saying
+   once why.
+
+   A receipt is handed to receipt_template() as HTML inside a <template>
+   element, which the browser keeps out of the layout entirely: it is
+   not drawn, it is not in the accessibility tree, and it is not printed
+   until something asks for it. receipt_print() then does four jobs:
+
+     1. On the first load of a page, any receipt marked fresh prints
+        itself. That is what makes a docket come off the printer as an
+        order lands, without anybody touching the screen.
+     2. What has been printed is remembered in local storage under
+        $key, so the screen refreshes itself every few seconds without
+        reprinting yesterday's tickets.
+     3. A Print button calls printReceipt(id), which puts exactly that
+        one sheet on the paper.
+     4. If the module passes a feed address, the page asks it every
+        fifteen seconds whether an order exists that this screen has
+        not drawn yet, and reloads when one does. The reload draws it,
+        and rule 1 prints it.
+
+   The printing itself is one class on <body>: while it is there, the
+   console is hidden and the sheet is the only thing on the page.
+   ================================================================== */
+
+/** The guest a web order was placed by, read out of the note the site wrote. */
+function order_customer(?string $note): ?array{
+ if($note===null||$note==='') return null;
+ if(!preg_match('/^Web takeaway order from (.+?),\s*([+\d][0-9\s]{6,})/u',$note,$m)) return null;
+ return ['name'=>trim($m[1]),'phone'=>trim($m[2])];
+}
+
+/** What is left of a line note once the guest's name and number are taken off. */
+function prep_note(?string $note): string{
+ if($note===null||$note==='') return '';
+ if(strpos($note,'Web takeaway order from ')!==0) return trim($note);
+ $rest=substr($note,strlen('Web takeaway order from '));
+ $parts=preg_split('/\s+-\s+/',$rest,2);
+ return isset($parts[1])?trim($parts[1],". \t\n\r"):'';
+}
+
+/**
+ * One sheet of paper.
+ *
+ * $kind     what the paper is called, in the bar across the top
+ * $number   the reference printed large
+ * $meta     label/value pairs printed under it: table, time, outlet, guest
+ * $lines    each with name, qty, note and amount (amount may be null)
+ * $totals   label/value pairs at the foot: subtotal, service, total
+ * $foot     the line under the totals, or null
+ */
+function receipt_sheet(array $r): string{
+ $h='<div class="sheet">';
+ $h.='<div class="sheetBar">'.e($r['kind']??'RECEIPT').'</div>';
+ $h.='<div class="sheetHotel"><b>HOTEL PARADISE ON THE NILE</b><span>Jinja &middot; Uganda &middot; +256 759 504 928</span></div>';
+ if(isset($r['number'])) $h.='<div class="sheetNo">'.e($r['number']).'</div>';
+ if(!empty($r['meta'])){
+  $h.='<div class="sheetMeta">';
+  foreach($r['meta'] as $k=>$v){ if($v===null||$v==='') continue; $h.='<span><i>'.e($k).'</i>'.e($v).'</span>'; }
+  $h.='</div>';
+ }
+ if(!empty($r['lines'])){
+  $h.='<div class="sheetLines">';
+  foreach($r['lines'] as $l){
+   $h.='<div class="sheetLine"><b>'.e($l['name']??'').'</b>';
+   if(isset($l['qty'])&&$l['qty']!=='') $h.='<span class="q">'.e($l['qty']).'</span>';
+   if(!empty($l['note'])) $h.='<em>'.e($l['note']).'</em>';
+   if(array_key_exists('amount',$l)&&$l['amount']!==null) $h.='<span class="a">'.e($l['amount']).'</span>';
+   $h.='</div>';
+  }
+  $h.='</div>';
+ }
+ if(!empty($r['totals'])){
+  $h.='<div class="sheetTotals">';
+  foreach($r['totals'] as $t){
+   // Each row is [label, value] or [label, value, 'big']. The label and the
+   // figure are written separately because a receipt rules between them.
+   $label=(string)($t[0]??$t['label']??'');
+   $value=(string)($t[1]??$t['value']??'');
+   $big=!empty($t[2])||!empty($t['big']);
+   $h.='<span class="'.($big?'big':'').'">'.e($label).'</span><b class="'.($big?'big':'').'">'.e($value).'</b>';
+  }
+  $h.='</div>';
+ }
+ if(!empty($r['foot'])) $h.='<div class="sheetFoot">'.$r['foot'].'</div>';
+ $h.='<div class="sheetCut">Thank you &middot; Hotel Paradise on the Nile</div>';
+ $h.='</div>';
+ return $h;
+}
+
+/** One sheet, waiting in the wings. $fresh means this one prints itself. */
+function receipt_template($id,string $html,bool $fresh=false): void{
+ echo '<template data-receipt="'.e((string)$id).'"'.($fresh?' data-new="1"':'').'>'.$html.'</template>';
+}
+
+/** The printer: prints, remembers, and watches for work this screen has not drawn. */
+function receipt_print(string $key,string $feed=''): void{
+ echo '<div id="printStack" aria-hidden="true"></div>';
+ $keyJs=json_encode('hpn_printed_'.$key);
+ $feedJs=json_encode($feed);
+ echo <<<HTML
+<script>
+(function(){
+ var KEY={$keyJs},FEED={$feedJs},store={};
+ try{store=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){store={}}
+ var tpl=[].slice.call(document.querySelectorAll('template[data-receipt]'));
+ function go(list){
+  if(!list.length)return;
+  var s=document.getElementById('printStack');if(!s)return;
+  s.innerHTML='';
+  list.forEach(function(t){s.appendChild(t.content.cloneNode(true))});
+  document.body.classList.add('printing');
+  try{window.print()}catch(e){}
+  list.forEach(function(t){store[t.getAttribute('data-receipt')]=1});
+  try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
+ }
+ window.printReceipt=function(id){go(tpl.filter(function(t){return t.getAttribute('data-receipt')===String(id)}))};
+ window.addEventListener('afterprint',function(){
+  document.body.classList.remove('printing');
+  var s=document.getElementById('printStack');if(s)s.innerHTML='';
+ });
+ var fresh=tpl.filter(function(t){return t.getAttribute('data-new')==='1'&&!store[t.getAttribute('data-receipt')]});
+ if(fresh.length)setTimeout(function(){go(fresh)},250);
+ if(FEED){
+  setInterval(function(){
+   fetch(FEED,{headers:{'Accept':'application/json'},credentials:'same-origin'})
+    .then(function(r){return r.json()})
+    .then(function(d){
+     var known={};tpl.forEach(function(t){known[t.getAttribute('data-receipt')]=1});
+     if((d.ids||[]).some(function(id){return !known[String(id)]}))location.reload();
+    }).catch(function(){});
+  },15000);
+ }
+})();
+</script>
+HTML;
 }

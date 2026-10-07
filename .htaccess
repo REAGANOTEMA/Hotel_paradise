@@ -55,6 +55,15 @@
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
+    # A hashed name a browser is still holding from an earlier deploy, pointed
+    # at the file the current build gives that same piece of the site. Builds
+    # now name their bundles after what they are rather than after their
+    # contents (see frontend-react/vite.config.ts), so home.js, shared.js,
+    # SmartImage.js and shared.css are the names that last; this rule answers
+    # for the older -8characterhash spellings that are still written into pages
+    # a browser has cached, and for any that a proxy has kept.
+    RewriteRule ^assets/([A-Za-z0-9_]+)-[A-Za-z0-9_-]{4,}\.(js|css)$ assets/$1.$2 [L]
+
     # A real request for something that is missing stays missing. Without this
     # the rule below would answer a missing stylesheet, a wrong API path or a
     # mistyped .php with the whole application and an HTTP 200, and the fault
@@ -67,19 +76,22 @@
 # ---------------------------------------------------------------------------
 # 3. How long a browser may hold on to what it has fetched.
 #
-#    Every page names its script by a hash that changes whenever the script
-#    does, and every deploy removes the bundles nothing points at any more. So
-#    the pages themselves must never be kept: a page read from yesterday asks
-#    for a bundle today's deploy has already deleted, and the guest gets a 404
-#    for the whole site instead of a page. The bundles are the other way round
-#    - their name is their content, so once fetched they are kept for a year
-#    and the next deploy simply asks for different names.
+#    A bundle's name no longer changes with its contents, so a name is a promise
+#    about the address and nothing about what is inside it: the file behind
+#    assets/home.js is rewritten by every deploy. That rules out the long,
+#    immutable cache the hashed names used to earn - a guest would be shown
+#    yesterday's code for a year - so every built asset is revalidated instead,
+#    which costs one 304 per file per visit and always resolves to today's build.
+#
+#    The pages themselves must never be kept: a page read from yesterday asks
+#    for a file today's deploy has already taken away, and the guest gets a 404
+#    for the whole site instead of a page.
 #
 #    mod_headers supplies the header; without it these lines do nothing and
 #    the browser falls back to the heuristics it used before.
 # ---------------------------------------------------------------------------
 <IfModule mod_headers.c>
     Header set Cache-Control "no-cache, must-revalidate" "expr=%{REQUEST_URI} =~ m#\.html$#"
-    Header set Cache-Control "public, max-age=31536000, immutable" "expr=%{REQUEST_URI} =~ m#/assets/#"
+    Header set Cache-Control "no-cache, must-revalidate" "expr=%{REQUEST_URI} =~ m#/assets/#"
     Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/images/#"
 </IfModule>

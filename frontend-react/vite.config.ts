@@ -52,6 +52,21 @@ export default defineConfig({
         menu: 'menu.html',
         pay: 'pay.html',
         account: 'account.html'
+      },
+      // The file name of a bundle is not its content hash.
+      //
+      // A hash in the name means every deploy renames every file, and a deploy
+      // deletes the bundles nothing points at any more. A page a browser still
+      // holds - from a tab left open, a back/forward cache, a service worker, a
+      // proxy - then asks for a file that is gone and the site fails to load
+      // with a 404 on its own script. Naming the files after what they are
+      // keeps one name per file for the life of the site: a stale page finds
+      // today's file, and the only thing a deploy has to get right is that the
+      // file is written before the old one is taken away.
+      output: {
+        entryFileNames: 'assets/[name].js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name][extname]'
       }
     }
   }

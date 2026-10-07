@@ -251,9 +251,10 @@ function PayPage() {
    if (form.email.trim()) say('Email', form.email.trim());
    say(src === 'booking' ? 'Booking' : 'Order', ref || '-');
    if (done && done.reference && done.reference !== ref) say('Payment ref', done.reference);
-   say('Method', METHOD_TEXT[method] || method);
-   say('Amount', money(charged || amt));
-   L.push('');
+    say('Method', METHOD_TEXT[method] || method);
+    say('Amount', money(charged || amt));
+    say('Payment status', done ? 'Request received - the front desk confirms it on ' + (normPhone(form.phone) || 'the phone given') : 'Details only - no money has been taken yet');
+    L.push('');
 
    if (detail && detail.booking) {
     const b = detail.booking;
@@ -303,6 +304,23 @@ function PayPage() {
   };
 
   const waHref = 'https://wa.me/' + WA_HOTEL + '?text=' + encodeURIComponent(whatsappText());
+
+  /**
+   * Sending it to the hotel without being asked.
+   *
+   * The moment a request is accepted the whole payment opens in WhatsApp on
+   * the number the hotel watches, because a payment the front desk cannot see
+   * is not a payment yet. A browser is allowed to refuse a tab opened from
+   * script, so the button that does exactly the same thing stays on the page
+   * as the way that cannot be refused. This runs once, for food orders and for
+   * room bookings alike.
+   */
+  const forwarded = React.useRef(false);
+  React.useEffect(() => {
+   if (!done || forwarded.current) return;
+   forwarded.current = true;
+   try { window.open(waHref, '_blank', 'noopener'); } catch { /* the button below still does it */ }
+  }, [done, waHref]);
 
   if (!token) {
    return <div>

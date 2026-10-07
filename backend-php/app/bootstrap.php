@@ -316,10 +316,18 @@ function page_allowed(string $page): bool{
  if(in_array('super_admin',$r)) return true;
  $map=[
   'dashboard'=>[],
+  // The director's own page: the money, every order, every customer, and the
+  // detail behind either of them. Deliberately not opened to accountants or
+  // auditors - it is the view of the house, not of the ledger.
+  'overview'=>['director','general_manager'],
   'reservations'=>['receptionist','general_manager','director','accountant','events_manager'],
   'rooms'=>['receptionist','housekeeping','general_manager','director','maintenance'],
   'guests'=>['receptionist','general_manager','director','accountant'],
   'pos'=>['waiter','bar_staff','cashier','kitchen','general_manager','director'],
+  // Food and beverage runs the floor: the outlets, the bills, the payments.
+  'fnb'=>['waiter','bar_staff','cashier','general_manager','director'],
+  // The kitchen sees food only - no prices, no payments, no guests.
+  'kitchen'=>['kitchen','general_manager','director'],
   'shifts'=>['cashier','general_manager','director','accountant'],
   'inventory'=>['storekeeper','general_manager','director','accountant'],
   'suppliers'=>['procurement','storekeeper','general_manager','director','accountant'],
