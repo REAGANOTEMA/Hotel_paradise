@@ -429,6 +429,12 @@
       "h": 501,
       "variants": []
     },
+    "chicken-spring-rolls": {
+      "ext": "webp",
+      "w": 1170,
+      "h": 1462,
+      "variants": []
+    },
     "chicken-wings-with-chips": {
       "ext": "jpg",
       "w": 447,
@@ -580,6 +586,12 @@
           "h": 314
         }
       ]
+    },
+    "cripcy-chicken-legs": {
+      "ext": "jpg",
+      "w": 406,
+      "h": 492,
+      "variants": []
     },
     "crunchy-vegetable-wrap": {
       "ext": "jpg",
@@ -869,6 +881,12 @@
           "h": 640
         }
       ]
+    },
+    "fried-eggs-rolled-chicken": {
+      "ext": "jpg",
+      "w": 1200,
+      "h": 1600,
+      "variants": []
     },
     "fried-king-prawns": {
       "ext": "jpg",
@@ -1754,6 +1772,12 @@
         }
       ]
     },
+    "pork-spring-roll": {
+      "ext": "jpg",
+      "w": 2500,
+      "h": 1736,
+      "variants": []
+    },
     "premium-wet-fried-tilapia": {
       "ext": "webp",
       "w": 400,
@@ -1783,6 +1807,12 @@
           "h": 422
         }
       ]
+    },
+    "salty-chicken": {
+      "ext": "webp",
+      "w": 400,
+      "h": 400,
+      "variants": []
     },
     "section-pizza": {
       "ext": "jpg",
@@ -1842,6 +1872,12 @@
           "h": 960
         }
       ]
+    },
+    "special-chicken-wings": {
+      "ext": "webp",
+      "w": 1452,
+      "h": 1089,
+      "variants": []
     },
     "steak-cheese-sandwich": {
       "ext": "jpg",
@@ -1953,8 +1989,8 @@
     },
     "vegetable-spring-rolls": {
       "ext": "jpg",
-      "w": 452,
-      "h": 678,
+      "w": 800,
+      "h": 800,
       "variants": []
     },
     "yummy-chicken-omelet": {

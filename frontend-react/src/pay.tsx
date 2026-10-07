@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken} from './shared';
@@ -225,7 +225,7 @@ function PayPage() {
     <section className="payWrap" style={{paddingTop: 70, paddingBottom: 90}}>
      <div className="payCard" style={{maxWidth: 520, margin: '0 auto', textAlign: 'center'}}>
       <p className="eyebrow">SECURE CHECKOUT</p>
-      <h3>One moment…</h3>
+      <h3>One momentâ€¦</h3>
       <p className="plannerNote">Taking you to sign in. Your booking reference and amount are kept exactly as they are, and you come straight back here.</p>
      </div>
     </section>
@@ -249,6 +249,7 @@ function PayPage() {
      <div className="payDoneActions">
       <a className="btn" href="./index.html">Back to the hotel</a>
       <a className="btn ghost2" href={telHref(CALL)}>Call the front desk</a>
+      <a className="btn" href="#" onClick={(e)=>{e.preventDefault();let m="Hotel Paradise on the Nile\\nRef:"+(done.reference||"")+"\\nName:"+(form.name||"").trim()+"\\nPhone:"+(form.phone||"")+"\\nType:"+(src==="booking"?"Room":"Food")+"\\nAmount:"+fmt(charged||amt)+"\\n";if(detail?.booking){m+="Room:"+detail.booking.room_type+"\\nIn:"+detail.booking.check_in+" Out:"+detail.booking.check_out+" Nights:"+detail.booking.nights+"\\n";}if(detail?.order&&detail.order.items){m+="Items:\\n";detail.order.items.forEach(it=>{m+=it.qty+"x "+it.name+"\\n";});}window.open("https://wa.me/256759504928?text="+encodeURIComponent(m),"_blank");}}>Forward to WhatsApp (Hotel)</a>
      </div>
     </div>
    </section>
@@ -288,7 +289,7 @@ function PayPage() {
         <div><dt>Guests</dt><dd>{detail.booking.adults} adult{detail.booking.adults === 1 ? '' : 's'}{detail.booking.children ? ' + ' + detail.booking.children + ' child' + (detail.booking.children === 1 ? '' : 'ren') : ''} &middot; {detail.booking.nights} night{detail.booking.nights === 1 ? '' : 's'}</dd></div>
        )}
        {detail?.order && (
-        <div><dt>Order</dt><dd>{detail.order.outlet === 'room_service' ? 'Room service' : detail.order.outlet === 'bar' ? 'Bar order' : 'Restaurant'}{detail.order.kind ? ' · ' + detail.order.kind.replace('_', ' ') : ''}<br/>{detail.order.placed}</dd></div>
+        <div><dt>Order</dt><dd>{detail.order.outlet === 'room_service' ? 'Room service' : detail.order.outlet === 'bar' ? 'Bar order' : 'Restaurant'}{detail.order.kind ? ' Â· ' + detail.order.kind.replace('_', ' ') : ''}<br/>{detail.order.placed}</dd></div>
        )}
        {!detail && qty && (
         <div><dt>On this request</dt><dd>{qty}{unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''}</dd></div>
@@ -304,7 +305,7 @@ function PayPage() {
           <SmartImage group="dishes" name={l.image || l.name} alt={l.name} ratio="4 / 3" widths={[160, 320]} sizes="56px"/>
           <span className="payLineText">
            <b>{l.name}</b>
-           <small>{l.qty} &times; {fmt(l.unit)}{l.note ? ' · ' + l.note : ''}</small>
+           <small>{l.qty} &times; {fmt(l.unit)}{l.note ? ' Â· ' + l.note : ''}</small>
           </span>
           <span className="payLineSum">{fmt(l.total)}</span>
          </div>
@@ -314,7 +315,7 @@ function PayPage() {
 
       {detail?.booking && (
        <div className="payLines">
-        <div className="payMoney"><span>Room{detail.booking.nights > 1 ? ' · ' + detail.booking.nights + ' nights' : ''}</span><b>{fmt(detail.booking.subtotal)}</b></div>
+        <div className="payMoney"><span>Room{detail.booking.nights > 1 ? ' Â· ' + detail.booking.nights + ' nights' : ''}</span><b>{fmt(detail.booking.subtotal)}</b></div>
         {detail.booking.withdrawal_fee ? <div className="payMoney"><span>{detail.booking.fee_label}</span><b>{fmt(detail.booking.withdrawal_fee)}</b></div> : null}
         {detail.booking.tax > 0 && <div className="payMoney"><span>Tax</span><b>{fmt(detail.booking.tax)}</b></div>}
         <div className="payMoney"><span>Total</span><b>{fmt(detail.total)}</b></div>
@@ -345,8 +346,8 @@ function PayPage() {
         <p className="eyebrow" style={{margin: '0 0 6px'}}>RECORDED AGAINST THIS REFERENCE</p>
         {detail.payments.map((p, i) => (
          <div className="payHistoryRow" key={i}>
-          <span>{METHOD_TEXT[p.method] || p.method}{p.when ? ' · ' + p.when : ''}</span>
-          <b>{fmt(p.amount)} · {p.status}</b>
+          <span>{METHOD_TEXT[p.method] || p.method}{p.when ? ' Â· ' + p.when : ''}</span>
+          <b>{fmt(p.amount)} Â· {p.status}</b>
          </div>
         ))}
        </div>
