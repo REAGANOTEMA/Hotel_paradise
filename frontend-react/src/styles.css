@@ -1,13 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
-:root{--gold:#C9A227;--navy:#071A33;--nile:#0B5D78;--nebula:#1E3A5F;--ivory:#F8F5EC;--white:#fff;--ink:#172033}
+:root{
+  /* The house colours, and the tints the rest of the sheet reaches for. */
+  --gold:#C9A227;--gold-deep:#A9861B;--gold-soft:#C9A2271a;--gold-ink:#8A6D14;
+  --navy:#071A33;--navy2:#0F2850;--nebula:#1E3A5F;--nile:#0B5D78;
+  --ivory:#F8F5EC;--white:#fff;--ink:#172033;--muted:#5D6878;--faint:#8A93A1;
+  --line:#E4E0D2;--line2:#ECEEF2;
+  --ok:#2E7D32;--warn:#B26A00;--bad:#C62828;--blue:#0B5D78;
+  /* One radius for site controls and cards, and the height the header owns. */
+  --r:6px;--navh:82px;
+  --shadow:0 1px 2px rgba(7,26,51,.04),0 12px 30px rgba(7,26,51,.06);
+}
 
 *{box-sizing:border-box}
 /* Stops iOS inflating text in landscape, which would otherwise break every grid. */
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{margin:0;color:var(--ink);font-family:'DM Sans',sans-serif;background:var(--ivory);line-height:1.6}
+body{margin:0;color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:15.5px;background:var(--ivory);line-height:1.65;-webkit-font-smoothing:antialiased}
 img,svg,video,iframe{max-width:100%}
 button{font:inherit;cursor:pointer;border:0}
 a{color:inherit;text-decoration:none}
+/* Prices and every other figure a guest reads line up down the page. */
+b,strong{font-variant-numeric:tabular-nums}
 
 /* ---------------------------------------------------------------
    Photograph frames
@@ -23,20 +35,47 @@ a{color:inherit;text-decoration:none}
 /* Text laid over a photograph carries its own scrim so it stays legible. */
 .photoOverlay{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:flex-end}
 
-.topbar{background:var(--navy);color:#fff;padding:10px 5vw;font-size:11px;letter-spacing:2px;display:flex;justify-content:space-between;gap:20px}
-.topbar .right{color:#cbd6e2}
-.nav{height:82px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;position:sticky;top:0;z-index:10;box-shadow:0 5px 25px #00000010}
+.topbar{background:var(--navy);color:#fff;padding:9px 6vw;font-size:10.5px;letter-spacing:.16em;display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar .right{color:#a9b8ca}
+/* The header sits over the hero on the pages that carry one, and turns into a
+   solid bar the moment the page moves. Which of the two it is depends on the
+   page: .dark over a photograph, plain ivory everywhere else. */
+.nav{height:var(--navh);background:var(--ivory);display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 6vw;position:sticky;top:0;z-index:30;border-bottom:1px solid transparent;transition:background .28s ease,box-shadow .28s ease,border-color .28s ease}
+.nav.stuck{background:rgba(248,245,236,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom-color:var(--line);box-shadow:0 14px 34px rgba(7,26,51,.10)}
+.nav.dark{background:transparent;border-bottom-color:rgba(255,255,255,.16)}
+.nav.dark.stuck{background:rgba(7,26,51,.94);border-bottom-color:rgba(255,255,255,.10);box-shadow:0 14px 36px rgba(7,26,51,.3)}
+.nav.dark .brandWord{color:#fff}
+.nav.dark .nav a,.nav.dark .navSignIn{color:#e9eff6}
+.nav.dark .nav a:hover,.nav.dark .nav a.active,.nav.dark .navSignIn:hover,.nav.dark .navSignIn.active{color:var(--gold)}
+.nav.dark .burger span{background:#fff}
 .brand{display:flex;flex-direction:column;color:var(--navy);font-family:'Playfair Display',serif;letter-spacing:3px;line-height:1.1}
 .brand span{font-size:25px}
 .brand small{font-family:'DM Sans';letter-spacing:4px;color:var(--gold);font-size:9px}
-.nav nav{display:flex;gap:28px}
-.nav a{font-size:13px;color:#33414f;white-space:nowrap}
-.nav a:hover{color:var(--gold)}
-.btn{display:inline-block;background:var(--gold);color:#071A33;padding:14px 22px;font-weight:700;letter-spacing:1px;font-size:13px;text-align:center}
-.btn.ghost{background:transparent;border:1px solid #fff;color:#fff}
-.nav .btn{padding:12px 20px}
-.nav nav a.active{color:var(--gold)}
-.navRight{display:flex;align-items:center;gap:12px}
+.nav nav{display:flex;gap:26px}
+.nav nav a{font-size:13px;font-weight:600;letter-spacing:.02em;color:#33414f;white-space:nowrap;padding:6px 0;border-bottom:2px solid transparent;transition:color .18s ease,border-color .18s ease}
+.nav nav a:hover{color:var(--gold-ink)}
+.nav nav a.active{color:var(--gold-ink);border-bottom-color:var(--gold)}
+.nav.dark nav a.active{color:var(--gold);border-bottom-color:var(--gold)}
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:var(--navy);border:1px solid transparent;border-radius:var(--r);padding:13px 24px;min-height:44px;font-weight:700;font-size:13px;letter-spacing:.02em;text-align:center;box-shadow:0 6px 18px rgba(201,162,39,.22);transition:background .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.btn:hover{background:var(--gold-deep);transform:translateY(-1px);box-shadow:0 12px 26px rgba(201,162,39,.32)}
+.btn:active{transform:translateY(0);box-shadow:inset 0 1px 3px rgba(7,26,51,.25)}
+.btn[disabled],.btn:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+/* Outline white for a photograph, outline gold for the ivory pages. */
+.btn.ghost{background:transparent;border-color:rgba(255,255,255,.65);color:#fff;box-shadow:none}
+.btn.ghost:hover{background:rgba(255,255,255,.14);border-color:#fff;color:#fff}
+.btn.ghost2{background:transparent;border-color:var(--gold);color:var(--navy);box-shadow:none}
+.btn.ghost2:hover{background:var(--gold-soft);border-color:var(--gold-deep);color:var(--navy)}
+.btn.navy{background:var(--navy2);color:#fff;box-shadow:0 8px 20px rgba(7,26,51,.22)}
+.btn.navy:hover{background:var(--nebula);color:#fff}
+.btn.danger{background:var(--bad);color:#fff;box-shadow:none}
+.btn.danger:hover{background:#a92222;color:#fff}
+/* The label keeps its width while the button waits, so nothing jumps. */
+.btn.loading{color:transparent;pointer-events:none;opacity:.92}
+.btn.loading::after{content:'';position:absolute;left:50%;top:50%;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;border-radius:50%;border:2px solid rgba(7,26,51,.25);border-top-color:var(--navy);animation:spin .7s linear infinite}
+.btn.navy.loading::after,.btn.ghost.loading::after{border-color:rgba(255,255,255,.3);border-top-color:#fff}
+@keyframes spin{to{transform:rotate(360deg)}}
+.nav .btn{padding:12px 20px;min-height:42px}
+.navRight{display:flex;align-items:center;gap:14px}
 .burger{display:none;position:relative;width:44px;height:44px;background:none;border:0;padding:0;cursor:pointer;flex:none;-webkit-tap-highlight-color:transparent}
 .burger span{position:absolute;left:11px;right:11px;height:2px;background:var(--navy);border-radius:2px;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .25s ease,top .3s cubic-bezier(.4,0,.2,1)}
 .burger span:nth-child(1){top:15px}
@@ -47,30 +86,45 @@ a{color:inherit;text-decoration:none}
 .burger.open span:nth-child(3){top:21px;transform:rotate(-45deg)}
 
 /* mobile drawer */
-.drawer{position:fixed;top:82px;left:0;right:0;bottom:0;z-index:40;visibility:hidden;pointer-events:none}
+.drawer{position:fixed;top:var(--navh);left:0;right:0;bottom:0;z-index:40;visibility:hidden;pointer-events:none}
 .drawer.open{visibility:visible;pointer-events:auto}
 .drawerScrim{position:absolute;inset:0;background:rgba(5,13,26,.62);opacity:0;transition:opacity .3s ease;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .drawer.open .drawerScrim{opacity:1}
 .drawerPanel{position:absolute;top:0;right:0;bottom:0;width:min(86vw,360px);background:linear-gradient(160deg,var(--navy) 0%,var(--nebula) 100%);color:#fff;display:flex;flex-direction:column;transform:translateX(102%);transition:transform .38s cubic-bezier(.22,.9,.3,1);box-shadow:-24px 0 70px #00000050;overflow-y:auto}
-.drawerPanel::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),#e6c54a)}
+.drawerPanel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),#e6c54a)}
 .drawer.open .drawerPanel{transform:translateX(0)}
-.drawerNav{display:flex;flex-direction:column;padding:30px 26px 8px}
-.drawerNav a{position:relative;color:#dce6f0;font-family:'Playfair Display',serif;font-size:20px;letter-spacing:.4px;padding:15px 34px 15px 2px;border-bottom:1px solid rgba(255,255,255,.09);transition:color .2s ease,padding-left .2s ease}
+.drawerNav{display:flex;flex-direction:column;padding:26px 26px 8px}
+/* The links arrive one after the other as the panel opens, which is what
+   makes it read as a considered menu rather than a list dumped on screen. */
+.drawerNav a{position:relative;color:#dce6f0;font-family:'Playfair Display',serif;font-size:20px;letter-spacing:.4px;padding:15px 34px 15px 2px;border-bottom:1px solid rgba(255,255,255,.09);opacity:0;transform:translateY(10px);transition:color .2s ease,padding-left .2s ease,opacity .45s ease,transform .45s cubic-bezier(.22,.61,.36,1)}
+.drawer.open .drawerNav a{opacity:1;transform:none}
+.drawer.open .drawerNav a:nth-child(1){transition-delay:.07s}
+.drawer.open .drawerNav a:nth-child(2){transition-delay:.13s}
+.drawer.open .drawerNav a:nth-child(3){transition-delay:.19s}
+.drawer.open .drawerNav a:nth-child(4){transition-delay:.25s}
+.drawer.open .drawerNav a:nth-child(5){transition-delay:.31s}
+.drawer.open .drawerNav a:nth-child(6){transition-delay:.37s}
 .drawerNav a:hover{color:var(--gold);padding-left:6px}
 .drawerNav a::after{content:'\2192';position:absolute;right:4px;top:50%;transform:translateY(-50%);color:var(--gold);opacity:0;transition:opacity .2s ease,transform .2s ease;pointer-events:none}
 .drawerNav a:hover::after,.drawerNav a.active::after{opacity:1;transform:translate(2px,-50%)}
 .drawerNav a.active{color:var(--gold)}
 .drawerNav a.active::before{content:'';position:absolute;left:-26px;top:0;bottom:0;width:4px;background:var(--gold)}
 .drawerFoot{margin-top:auto;padding:20px 26px 30px;border-top:1px solid rgba(255,255,255,.09)}
-.drawerFoot .btn{display:block;width:100%;padding:15px 20px;text-align:center}
+.drawerFoot .btn{display:flex;width:100%;padding:15px 20px;text-align:center}
 .drawerCall{display:block;margin:16px 0 4px;color:#eef4f8;font-size:15px;font-weight:600;text-align:center;letter-spacing:.4px}
 .drawerCall:hover{color:var(--gold)}
 .drawerNote{color:#93a6ba;font-size:12px;letter-spacing:1px;text-align:center;margin:6px 0 0}
 
 /* mobile fixed booking bar */
 .mobileCta{display:none}
+/* The first stop for anyone tabbing through the page. */
+.skipLink{position:fixed;left:16px;top:12px;z-index:80;transform:translateY(-280%);background:var(--gold);color:var(--navy);padding:12px 18px;border-radius:var(--r);font-weight:700;font-size:13px;box-shadow:0 10px 26px rgba(7,26,51,.35);transition:transform .2s ease}
+.skipLink:focus{transform:none}
 
-.hero{position:relative;min-height:680px;background:var(--navy);display:flex;align-items:center;overflow:hidden}
+/* The hero is drawn underneath the header, which sits over it in return, so
+   the photograph runs to the very top of the page without the header taking
+   a band out of it. */
+.hero{position:relative;margin-top:calc(-1 * var(--navh));min-height:min(760px,88vh);background:var(--navy);display:flex;align-items:center;overflow:hidden}
 .hero:focus-visible{outline:3px solid var(--gold);outline-offset:-4px}
 .heroShots{position:absolute;inset:0;z-index:0}
 /* The drift is deliberately small. These photographs are already being scaled
@@ -94,8 +148,8 @@ a{color:inherit;text-decoration:none}
 @keyframes heroZoomIn{from{transform:scale(1.06)}to{transform:scale(1.22)}}
 /* Heaviest behind the writing on the left, lifting to the right so the
    photograph is still read, and a soft vignette to hold the eye in the frame. */
-.heroShade{position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(7,26,51,.94) 0%,rgba(7,26,51,.7) 34%,rgba(7,26,51,.18) 66%,rgba(7,26,51,.42) 100%),radial-gradient(120% 90% at 50% 45%,rgba(0,0,0,0) 40%,rgba(5,13,26,.55) 100%)}
-.heroCopy{position:relative;z-index:2;width:100%;display:grid;padding:clamp(64px,7vw,104px) 8vw clamp(104px,9vw,140px);color:#fff}
+.heroShade{position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(7,26,51,.96) 0%,rgba(7,26,51,.78) 36%,rgba(7,26,51,.34) 68%,rgba(7,26,51,.52) 100%),radial-gradient(120% 90% at 50% 45%,rgba(0,0,0,0) 40%,rgba(5,13,26,.55) 100%)}
+.heroCopy{position:relative;z-index:2;width:100%;display:grid;padding:calc(var(--navh) + clamp(34px,4vw,54px)) 8vw clamp(96px,9vw,128px);color:#fff}
 /* All seven panels share one grid cell, so the block is as tall as the longest
    of them and the words can change length without moving anything. */
 .heroPanel{grid-area:1/1;align-self:center;max-width:790px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s ease,visibility 0s linear .5s}
@@ -118,23 +172,36 @@ a{color:inherit;text-decoration:none}
    progress bar in place too. */
 .hero:hover .heroDots .dot.on::after,
 .hero:focus-within .heroDots .dot.on::after{animation-play-state:paused}
-.eyebrow{letter-spacing:4px;font-size:11px;color:var(--gold);font-weight:700;margin:0}
-h1,h2{font-family:'Playfair Display',serif;font-weight:600}
-.hero h1{font-size:clamp(40px,5.4vw,78px);line-height:1.02;margin:14px 0;color:#fff;text-wrap:balance}
-.heroText{font-size:19px;max-width:600px;color:#eef4f8;margin:0;line-height:1.65;text-wrap:pretty}
+.eyebrow{letter-spacing:.22em;font-size:11px;color:var(--gold-ink);font-weight:700;margin:0;text-transform:uppercase}
+/* Over a photograph or a navy band the eyebrow opens with a short gold rule,
+   so the small caps line reads as a considered mark rather than loose text. */
+.heroPanel .eyebrow,.pageHero .eyebrow,.rates .eyebrow,.contact .eyebrow{color:var(--gold);display:flex;align-items:center;gap:12px}
+.heroPanel .eyebrow::before,.pageHero .eyebrow::before,.rates .eyebrow::before,.contact .eyebrow::before{content:'';flex:none;width:26px;height:1px;background:var(--gold)}
+h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.05;margin:14px 0;color:#fff;text-wrap:balance}
+.heroText{font-size:17.5px;max-width:58ch;color:#eaf1f7;margin:0;line-height:1.65;text-wrap:pretty}
 .heroBtns{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+.heroBtns .btn{min-height:46px;padding:14px 26px}
 /* Over a photograph the outlined button needs light lettering, not navy. */
-.heroBtns .btn.ghost2{color:#fff}
+.heroBtns .btn.ghost2{color:#fff;border-color:rgba(255,255,255,.75)}
+.heroBtns .btn.ghost2:hover{background:var(--gold);border-color:var(--gold);color:var(--navy)}
 
-.booking{margin:-45px auto 0;position:relative;background:#fff;max-width:1100px;padding:22px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:14px;box-shadow:0 15px 45px #071A3325}
-.booking label{display:block;font-size:10px;letter-spacing:2px;color:#667085;margin-bottom:7px}
-.booking input,.booking select{width:100%;padding:14px;border:1px solid #d9dee7;background:#fff;font-family:inherit}
-.booking .btn{align-self:end;border:0}
-.bookMsg{margin:16px auto 0;max-width:1100px;padding:14px 18px;border-radius:10px;background:#fdf5e6;border:1px solid var(--gold);color:#071A33;font-size:14px}
-.bookMsg.ok{background:#eaf7ef;border-color:#2e7d4f;color:#1b4a31}
+/* The availability strip: one clean bar of fields under the hero, opened by a
+   gold hairline so it reads as part of the header rather than a floating box. */
+.booking{margin:-52px auto 0;position:relative;background:#fff;max-width:1100px;padding:22px 24px 24px;display:grid;grid-template-columns:repeat(4,1fr) auto;gap:16px;border:1px solid var(--line2);border-radius:var(--r);box-shadow:0 18px 50px rgba(7,26,51,.14)}
+.booking::before{content:'';position:absolute;left:-1px;right:-1px;top:-1px;height:3px;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(90deg,var(--gold),#e6c54a)}
+.booking label,.planField label{display:block;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.booking input,.booking select,.planField input,.planField select,.paySub input{width:100%;height:44px;padding:0 14px;border:1px solid #D8DCE3;border-radius:8px;background:#fff;font-family:inherit;font-size:15px;color:var(--ink);transition:border-color .18s ease,box-shadow .18s ease}
+.booking input:hover,.booking select:hover,.planField input:hover,.planField select:hover,.paySub input:hover{border-color:#B9C0CB}
+.booking input:focus,.booking select:focus,.planField input:focus,.planField select:focus,.paySub input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.booking input::placeholder,.planField input::placeholder,.paySub input::placeholder{color:var(--faint)}
+.booking .btn{align-self:end;border:0;box-shadow:none}
+/* Every message the site puts in front of a guest, in one shape and three tones. */
+.bookMsg{margin:16px auto 0;max-width:1100px;padding:14px 18px;border-radius:var(--r);background:#FDF7E8;border:1px solid #E9DCB4;border-left:3px solid var(--gold);color:var(--ink);font-size:14.5px;line-height:1.6}
+.bookMsg.ok{background:#EEF7F1;border-color:#BFE4CD;border-left-color:var(--ok);color:#1B4A31}
+.bookMsg a{color:var(--nile);font-weight:700;text-decoration:underline}
 .booking input[disabled],.booking button[disabled]{opacity:.6;cursor:not-allowed}
 .booking select option{color:#071A33}
-.booking input:focus,.booking select:focus,.booking .btn:focus{outline:2px solid var(--gold);outline-offset:2px}
 /* Eleven dots grew the progress row wider than a phone screen, so the row
    wraps and the bars shrink on narrow viewports instead of overflowing. */
 @media (max-width:540px){
@@ -148,27 +215,31 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600}
   .heroDots .dot.on{width:24px}
 }
 
-.section{padding:100px 7vw;max-width:1400px;margin:auto}
+.section{padding:clamp(64px,8vw,110px) 6vw;max-width:1360px;margin:auto}
+/* A band runs the full width of the page; .bandInner holds its content to the
+   same measure as every other section. */
+.section.band{max-width:none;padding-left:0;padding-right:0}
+.bandInner{max-width:1360px;margin:0 auto;padding:0 6vw}
 .center{text-align:center}
-.section h2{font-size:52px;margin:10px 0}
-.intro{max-width:720px;margin:0 auto 45px;color:#687386}
+.section h2{font-size:clamp(1.8rem,3vw,2.6rem);margin:12px 0 0;line-height:1.15}
+.intro{max-width:720px;margin:18px auto 44px;color:var(--muted);font-size:16px}
 /* Section titles sit on a short gold rule, so the heading starts to read as a
    printed word rather than a floating one. */
 .section .center h2{position:relative;padding-bottom:16px}
 .section .center h2::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:64px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--gold),#e6c54a)}
 /* Everything marked .reveal rises into place the first time it scrolls past.
-   The class is only ever added by the observer, so a browser without one shows
-   the page at full brightness from the start. */
-.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.7,.3,1)}
+    The class is only ever added by the observer, so a browser without one shows
+    the page at full brightness from the start. */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
 .reveal.in{opacity:1;transform:none}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;text-align:left;margin-top:10px}
-.card{background:#fff;box-shadow:0 10px 35px #071A3312;display:flex;flex-direction:column;overflow:hidden}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;text-align:left;margin-top:10px}
+.card{background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;transition:box-shadow .25s ease,transform .25s ease}
 .photo.isEmpty{display:flex;align-items:center;justify-content:center;color:#b39c5e;background:linear-gradient(150deg,#16293f,#0B5D78)}
-.cardBody{padding:25px;display:flex;flex-direction:column;flex:1}
-.card h3{font-family:'Playfair Display';font-size:24px;margin:0 0 8px}
-.card .pill{font-size:10px;letter-spacing:2px;color:var(--nile);font-weight:700;margin:0 0 10px}
-.card p{color:#687386;line-height:1.7;margin:0 0 16px;flex:1}
-.card strong{display:block;color:var(--gold);font-size:18px;margin-bottom:16px}
+.cardBody{padding:26px 26px 28px;display:flex;flex-direction:column;flex:1}
+.card h3{font-family:'Playfair Display';font-size:1.35rem;margin:0 0 8px;color:var(--navy)}
+.card .pill{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--nile);font-weight:700;margin:0 0 10px}
+.card p{color:var(--muted);line-height:1.7;margin:0 0 16px;flex:1}
+.card strong{display:block;color:var(--gold-ink);font-size:18px;margin-bottom:16px}
 .card strong span{font-size:11px;color:#8a95a5;font-weight:600;letter-spacing:1px}
 .card strong .usdLine{margin-top:6px;font-size:12px;color:var(--nile);letter-spacing:.5px}
 
@@ -176,55 +247,54 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600}
 .rates h2{color:#fff}
 .rates .intro{color:#c7d2de}
 .ratesWrap{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;margin-top:10px}
-.rateCard{background:#fff;color:var(--ink)}
-.rateRow{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 26px;border-bottom:1px solid #eaedf2}
+.rateCard{background:#fff;color:var(--ink);border-radius:var(--r);overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.32)}
+.rateRow{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 26px;border-bottom:1px solid var(--line2)}
 .rateRow:last-child{border-bottom:0}
-.rateRow h4{margin:0 0 3px;font-family:'Playfair Display';font-size:18px}
-.rateRow small{color:#687386;display:block;line-height:1.5}
-.rateRow b{color:var(--gold);font-size:17px;text-align:right;white-space:nowrap}
-.rateRow b span{display:block;font-size:10px;letter-spacing:1px;color:#8a95a5;font-weight:600}
-.curToggle{display:inline-flex;margin:26px 0 0;border:1px solid #ffffff2e}
+.rateRow h4{margin:0 0 3px;font-family:'Playfair Display';font-size:18px;color:var(--navy)}
+.rateRow small{color:var(--muted);display:block;line-height:1.5}
+.rateRow b{color:var(--gold-ink);font-size:17px;text-align:right;white-space:nowrap}
+.rateRow b span{display:block;font-size:10.5px;letter-spacing:1px;color:#8a95a5;font-weight:600}
+.curToggle{display:inline-flex;margin:26px 0 0;border:1px solid #ffffff33;border-radius:var(--r);overflow:hidden}
 .curToggle button{background:transparent;border:0;color:#c7d2de;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:2px;padding:13px 30px;cursor:pointer;transition:background .2s ease,color .2s ease}
-.curToggle button:hover{color:#fff}
-.curToggle button.on{background:var(--gold);color:#071A33}
-.policy{background:#0d2338;padding:34px;color:#d5dee8}
+.curToggle button:hover{color:#fff;background:rgba(255,255,255,.08)}
+.curToggle button.on{background:var(--gold);color:var(--navy)}
+.policy{background:#0d2338;border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:34px;color:#d5dee8}
 .policy h4{color:var(--gold);letter-spacing:2px;font-size:12px;margin:0 0 16px}
 .policy p{font-size:14px;color:#aebccb;line-height:1.85;margin:0 0 15px}
 .policy p:last-child{margin:0}
 .policy b{color:#e8eef4}
 
 
-.menuRow{display:flex;align-items:center;justify-content:space-between;gap:24px;background:#fff;padding:22px 28px;margin-bottom:14px;box-shadow:0 8px 28px #071A3312}
+.menuRow{display:flex;align-items:center;justify-content:space-between;gap:24px;background:#fff;border:1px solid var(--line2);border-radius:var(--r);padding:22px 28px;margin-bottom:14px;box-shadow:var(--shadow)}
 .menuRow:last-child{margin-bottom:0}
-.menuRow h4{margin:0 0 4px;font-family:'Playfair Display';font-size:20px}
-.menuRow small{color:#687386;line-height:1.6;display:block}
-.menuRow b{color:var(--gold);font-size:17px;white-space:nowrap}
+.menuRow h4{margin:0 0 4px;font-family:'Playfair Display';font-size:20px;color:var(--navy)}
+.menuRow small{color:var(--muted);line-height:1.6;display:block}
+.menuRow b{color:var(--gold-ink);font-size:17px;white-space:nowrap}
 
+/* The hotel's own numbers, set as an editorial index rather than a list. */
 .factsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.fact{background:#fff;padding:32px;box-shadow:0 10px 35px #071A3312}
-.fact h4{color:var(--gold);letter-spacing:2px;font-size:11px;margin:0 0 10px}
-.fact p{margin:0;color:#4a5568;line-height:1.75}
+.fact{position:relative;background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);padding:30px 30px 28px;transition:box-shadow .25s ease,transform .25s ease}
+.factIdx{display:block;font-family:'Playfair Display',serif;font-size:34px;line-height:1;color:var(--gold-ink);margin-bottom:12px}
+.fact h4{font-family:'Playfair Display',serif;font-weight:600;font-size:21px;letter-spacing:0;text-transform:none;color:var(--navy);margin:0 0 8px}
+.fact p{margin:0;color:var(--muted);line-height:1.75}
 
 .contact{background:linear-gradient(120deg,var(--nebula),var(--navy));color:#fff}
 .contact h2{color:#fff}
 .contact .intro{color:#c7d2de}
 .contactWrap{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:stretch}
-.contactCard{background:#fff;color:var(--ink);padding:34px;box-shadow:0 20px 50px #00000030}
-.contactRow{display:flex;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px solid #eaedf2;font-size:15px}
+.contactCard{background:#fff;color:var(--ink);padding:32px 34px;border-radius:var(--r);box-shadow:0 24px 60px rgba(0,0,0,.32)}
+.contactRow{display:flex;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px solid var(--line2);font-size:15px}
 .contactRow:last-child{border-bottom:0}
-.contactRow b{color:var(--navy);font-size:11px;letter-spacing:2px;white-space:nowrap;padding-top:3px}
+.contactRow b{color:var(--navy);font-size:11px;letter-spacing:.14em;white-space:nowrap;padding-top:3px}
 .contactRow span{color:#344049;text-align:right}
-.contactNote{color:#c7d2de;font-size:15px;line-height:1.9;display:flex;flex-direction:column;justify-content:center}
-.contactNote p{margin:0 0 18px}
-.contactNote .btn{align-self:flex-start}
 
-footer{background:#050a12;color:#dbe4ee;overflow-wrap:anywhere}
-.flag{height:8px;display:grid;grid-template-columns:1fr 1fr 1fr}
+footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1px solid rgba(255,255,255,.1)}
+.flag{height:6px;display:grid;grid-template-columns:1fr 1fr 1fr}
 .flag i:nth-child(1){background:#000}
 .flag i:nth-child(2){background:#FCDC04}
 .flag i:nth-child(3){background:#D90000}
-.footerMain{padding:60px 7vw;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1.25fr;gap:40px}
-.footerMain h4{color:var(--gold);font-size:11px;letter-spacing:2px;margin:0 0 12px}
+.footerMain{padding:60px 6vw;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1.25fr;gap:40px}
+.footerMain h4{color:var(--gold);font-size:11px;letter-spacing:.18em;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.12)}
 .footerMain p{color:#9aa8b8;line-height:1.7;font-size:13px;margin:6px 0}
 .footLink{color:#9aa8b8;transition:color .18s ease}
 .footLink:hover{color:var(--gold)}
@@ -241,71 +311,6 @@ footer{background:#050a12;color:#dbe4ee;overflow-wrap:anywhere}
 .projLink:hover{color:#fff;border-color:#fff}
 .footerCredit{padding:22px 7vw;border-top:1px solid #ffffff12;color:#73808f;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 
-/* agreement page */
-.docpage{background:#0a1626;min-height:100vh;padding:0 0 80px}
-.docTopbar{max-width:1080px;margin:0 auto;padding:22px 20px;display:flex;align-items:center;justify-content:space-between}
-.docTopbar .brand{color:#fff}
-.docTopbar .brand small{color:var(--gold)}
-.backLink{color:#c7d2de;font-size:13px;letter-spacing:1px}
-.backLink:hover{color:var(--gold)}
-.docsheet{max-width:1080px;margin:0 auto;background:#fdfcf8;box-shadow:0 30px 90px #00000040}
-.dochead{padding:64px 70px 44px;background:linear-gradient(130deg,var(--navy),var(--nebula));color:#fff;text-align:center}
-.docOverline{color:var(--gold);letter-spacing:4px;font-size:11px;font-weight:700;margin:0 0 18px}
-.dochead h1{font-size:clamp(28px,4vw,44px);margin:0 0 6px;font-weight:600}
-.dochead h2{color:var(--gold);font-size:clamp(19px,2.6vw,27px);margin:0 0 20px;font-weight:600}
-.docTag{margin:0 0 8px;color:#dbe6f0;font-size:14px;letter-spacing:1px}
-.docModules{color:#9fb2c5;font-size:12px;letter-spacing:2px;margin:0}
-.parties{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;border-bottom:1px solid #e8e2d2}
-.partyCard{padding:34px 44px}
-.partyCard h4{font-family:'Playfair Display';font-size:24px;margin:8px 0 6px;color:var(--navy)}
-.partyCard p{margin:4px 0;color:#687386;font-size:14px}
-.partyLabel{display:inline-block;color:var(--gold);font-size:10px;letter-spacing:3px;font-weight:700}
-.partySeal{align-self:center;border:1px solid var(--gold);color:var(--gold);font-size:10px;letter-spacing:4px;padding:12px 14px;font-weight:700;margin:0 20px;display:flex;align-items:center;justify-content:center;text-align:center}
-.docSection{padding:44px 70px 0}
-.secTop{display:flex;align-items:baseline;gap:16px;border-bottom:2px solid #070f1a12;padding-bottom:14px;margin-bottom:22px}
-.secNum{font-family:'Playfair Display';color:var(--gold);font-size:22px;font-weight:700}
-.docSection h3{font-family:'Playfair Display';font-size:24px;color:var(--navy);margin:0}
-.secBody p{color:#3d4a5a;font-size:15px;line-height:1.85;margin:0 0 16px}
-.noteP{background:#f2eee2;padding:16px 20px;border-left:3px solid var(--gold);color:#4a5568}
-.docList{margin-bottom:6px}
-.docItem{display:flex;gap:14px;margin:0 0 12px;color:#3d4a5a;font-size:15px;line-height:1.75}
-.docItem i{width:7px;height:7px;background:var(--gold);border-radius:50%;flex:none;margin-top:9px}
-.scopeGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:8px}
-.scopeCard{border:1px solid #eae4d2;background:#fdfcf8;padding:24px 26px;position:relative}
-.scopeIndex{font-family:'Playfair Display';color:var(--gold);font-size:26px;font-weight:700;display:block;margin-bottom:8px}
-.scopeCard h5{font-family:'Playfair Display';font-size:18px;color:var(--navy);margin:0 0 12px}
-.scopeCard .docItem{font-size:13.5px;margin-bottom:9px;line-height:1.65}
-.scopeCard .docItem i{width:5px;height:5px;margin-top:8px}
-.tableWrap{margin:8px 0 20px;overflow-x:auto}
-table{width:100%;border-collapse:collapse;background:#fff}
-th{background:var(--navy);color:var(--gold);text-align:left;font-size:11px;letter-spacing:2px;font-weight:700;padding:14px 18px}
-td{padding:13px 18px;border-bottom:1px solid #eae4d2;color:#3d4a5a;font-size:14px;vertical-align:top}
-tr:last-child td{border-bottom:0}
-.roleName,.phaseName,.phaseTarget{font-weight:600;color:var(--navy)}
-.invTotal{background:linear-gradient(120deg,var(--navy),var(--nebula));color:#fff;padding:30px 34px;margin:0 0 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.invTotal span{display:block;font-size:11px;letter-spacing:3px;color:var(--gold);font-weight:700;margin-bottom:8px}
-.invTotal b{font-family:'Playfair Display';font-size:34px;color:#fff}
-.invTotal p{margin:0;color:#c7d2de;font-size:14px;max-width:280px;text-align:right}
-.invTable td.amount{text-align:right;font-weight:600;color:var(--navy);white-space:nowrap}
-.totalRow td{background:#f2eee2;font-weight:700;color:var(--navy)}
-.totalRow td.amount{color:var(--gold);font-size:16px}
-.payCard{margin:6px 0 26px}
-.payCard>div:first-child{margin-bottom:16px}
-.payCard h4{font-family:'Playfair Display';font-size:22px;color:var(--navy);margin:8px 0 0}
-.payRows{border:1px solid #eae4d2;border-bottom:0}
-.payRow{display:flex;justify-content:space-between;gap:24px;padding:14px 20px;border-bottom:1px solid #eae4d2}
-.payRow b{color:var(--navy);font-size:13px;letter-spacing:1px}
-.payRow span{color:#3d4a5a;font-size:14px;text-align:right}
-.sigGrid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px}
-.sigCard{border:1px solid #eae4d2;padding:26px 30px}
-.sigLine{display:flex;align-items:center;gap:14px;margin-top:18px;font-size:14px}
-.sigLine span{width:110px;color:#687386;font-size:11px;letter-spacing:2px;flex:none}
-.sigLine em{flex:1;color:#3d4a5a;font-style:normal;letter-spacing:2px}
-.sigLine b{flex:1;color:var(--navy)}
-.witWrap{margin:8px 0 4px}
-.docFoot{padding:36px 70px 50px;color:#8a95a5;font-size:13px;text-align:center;letter-spacing:1px}
-.docFoot p{margin:6px 0}
-.docFoot p:last-child{color:var(--gold);font-weight:700}
 /* brand with logo */
 .brandL{display:flex;align-items:center;gap:13px;min-width:0}
 .brandLogo{width:54px;height:54px;border-radius:50%;object-fit:cover;flex:none;background:var(--ivory);border:3px solid var(--gold);box-shadow:0 2px 10px #071A3326;padding:2px}
@@ -316,15 +321,12 @@ tr:last-child td{border-bottom:0}
 .brandL.light .brandWord{color:#fff}
 .heroLogo{margin-bottom:22px}
 .heroLogo img{width:96px;height:96px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.92);border:3px solid var(--gold);box-shadow:0 8px 26px #00000050;padding:3px}
-.stripNote{max-width:1100px;margin:20px auto 0;padding:14px 20px;color:#5b6675;font-size:14px;background:#fff;border-left:3px solid var(--gold);box-shadow:0 8px 28px #071A3312}
-.btn.ghost2{background:transparent;border:1px solid var(--gold);color:var(--navy)}
-.btn.ghost2:hover{background:var(--gold);color:#071A33}
+.stripNote{max-width:1100px;margin:20px auto 0;padding:14px 20px;color:#5b6675;font-size:14px;background:#fff;border-left:3px solid var(--gold);border-radius:0 var(--r) var(--r) 0;box-shadow:var(--shadow)}
 
-/* subpage hero */
-.pageHero{background:linear-gradient(125deg,var(--navy),var(--nebula));color:#fff;padding:86px 7vw 66px;position:relative;overflow:hidden}
-.pageHero .eyebrow{color:var(--gold)}
-.pageHero h1{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(40px,6vw,64px);margin:12px 0}
-.pageHero p{color:#c7d2de;font-size:18px;max-width:660px;margin:0}
+/* subpage hero: drawn under the header, exactly as the home hero is */
+.pageHero{margin-top:calc(-1 * var(--navh));background:linear-gradient(125deg,var(--navy),var(--nebula));color:#fff;padding:calc(var(--navh) + clamp(46px,6vw,78px)) 6vw clamp(50px,6vw,70px);position:relative;overflow:hidden}
+.pageHero h1{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(1.9rem,3.4vw,2.75rem);margin:14px 0;line-height:1.12}
+.pageHero p{color:#cdd8e4;font-size:16.5px;max-width:66ch;margin:0;line-height:1.7}
 /* The menu page opens over a full photograph of the steak dinner, with the
    writing held on a navy scrim so it reads as it does on the plain header. */
 .pageHero.hasCover{padding-bottom:74px}
@@ -354,26 +356,30 @@ tr:last-child td{border-bottom:0}
 .bedFoot strong{color:var(--gold);font-size:18px}
 .bedFoot strong span{display:block;font-size:10px;letter-spacing:1px;color:#8a95a5;font-weight:600}
 .bedFoot strong .usdLine{margin-top:6px;font-size:12px;color:var(--nile);letter-spacing:.5px}
-.planner{position:sticky;top:100px;background:#fff;box-shadow:0 20px 55px #071A3320;padding:26px}
-.plannerEmpty{text-align:center;color:var(--gold);padding:12px 4px}
+.planner{position:sticky;top:calc(var(--navh) + 18px);background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);padding:26px}
+.plannerEmpty{text-align:center;color:var(--gold-ink);padding:12px 4px}
 .plannerEmpty h3{font-family:'Playfair Display';color:var(--navy);margin:12px 0 8px}
-.plannerEmpty p{color:#687386;font-size:14px}
-.plannerActive .spot{background:#eef0f2;box-shadow:0 8px 22px #071A3314;margin-bottom:16px}
+.plannerEmpty p{color:var(--muted);font-size:14px}
+.plannerActive .spot{background:#F4F6F8;border:1px solid var(--line2);border-radius:var(--r);margin-bottom:16px}
 .plannerActive .spot.isEmpty{display:flex;align-items:center;justify-content:center;color:#b39c5e;background:linear-gradient(150deg,#16293f,#0B5D78)}
-.plannerActive h3{font-family:'Playfair Display';font-size:26px;margin:0 0 2px}
+.plannerActive h3{font-family:'Playfair Display';font-size:24px;margin:0 0 2px}
 .plannerActive .bedsLine{color:#5b6675}
-.spotTotal{background:linear-gradient(120deg,var(--navy),var(--nebula));color:#fff;padding:16px 18px;margin:14px 0 16px}
-.spotTotal span{display:block;font-size:11px;letter-spacing:2px;color:var(--gold);font-weight:700}
+.spotTotal{background:linear-gradient(120deg,var(--navy),var(--nebula));color:#fff;padding:16px 18px;margin:14px 0 16px;border-radius:var(--r)}
+.spotTotal span{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700}
 .spotTotal b{font-family:'Playfair Display';font-size:24px;display:block;margin:4px 0}
 .spotTotal small{color:#c7d2de;font-size:12px}
 .spotTotal .feeLine{display:block;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.18);color:#e8d9a6;font-size:12px}
 .planGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.planField label{display:block;font-size:10px;letter-spacing:2px;color:#667085;margin-bottom:6px}
-.planField input,.planField select{width:100%;padding:12px;border:1px solid #d9dee7;background:#fff;font-family:inherit;font-size:14px}
+/* Numbered steps make the booking form read as four short jobs instead of
+   one long one. */
+.stepHead{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:22px 0 12px;padding-bottom:9px;border-bottom:1px solid var(--line2)}
+.stepHead:first-child{margin-top:0}
+.stepNum{flex:none;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:700;letter-spacing:0}
+.stepHead b{color:var(--navy)}
 .planBook{width:100%;margin-top:16px;border:0}
 .linkBtn{background:none;border:0;color:var(--nile);font-size:13px;text-decoration:underline;margin-top:12px;display:block;width:100%;text-align:center}
-.linkBtn:hover{color:var(--gold)}
-.plannerNote{color:#8a95a5;font-size:12px;line-height:1.7;margin:16px 0 0;border-top:1px solid #eaedf2;padding-top:14px}
+.linkBtn:hover{color:var(--gold-ink)}
+.plannerNote{color:var(--faint);font-size:12px;line-height:1.7;margin:16px 0 0;border-top:1px solid var(--line2);padding-top:14px}
 
 /* menu page */
 .menuMeta{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 18px;color:#8a95a5;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:30px}
@@ -387,7 +393,7 @@ tr:last-child td{border-bottom:0}
 .menuWrap>*:not(.menuWatermark){position:relative;z-index:1}
 
 /* category filter bar: choosing one shows only that category */
-.menuJump{position:sticky;top:82px;z-index:9;background:#ffffffef;backdrop-filter:blur(8px);border-bottom:1px solid #e7e2d6;box-shadow:0 4px 18px #071A3308;padding:0;width:100%}
+.menuJump{position:sticky;top:var(--navh);z-index:9;background:#ffffffef;backdrop-filter:blur(8px);border-bottom:1px solid #e7e2d6;box-shadow:0 4px 18px #071A3308;padding:0;width:100%}
 .menuJumpInner{width:96%;max-width:1400px;margin:auto;padding:9px 0;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none}
 .menuJumpInner::-webkit-scrollbar{display:none}
 .catChip{flex:none;border:1px solid transparent;background:transparent;border-radius:999px;padding:8px 15px;font-size:12.5px;font-weight:600;letter-spacing:.5px;color:#4a5666;white-space:nowrap;transition:color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
@@ -420,7 +426,7 @@ tr:last-child td{border-bottom:0}
 
 /* dish cards, each with its photograph */
 .dishGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-.dishCard{position:relative;background:#ffffffe6;display:flex;flex-direction:column;box-shadow:0 10px 30px #071A3310;border:1px solid #ece7db;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;overflow:hidden}
+.dishCard{position:relative;background:#ffffffe6;border-radius:var(--r);display:flex;flex-direction:column;box-shadow:0 10px 30px #071A3310;border:1px solid #ece7db;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;overflow:hidden}
 .dishCard:hover{transform:translateY(-2px);box-shadow:0 18px 42px #071A3318;border-color:#ded5bd}
 /* a dish already in the order keeps a gold edge, so a guest scanning the
    menu can see at a glance what they have chosen */
@@ -452,11 +458,12 @@ tr:last-child td{border-bottom:0}
    one clean line of prices however long the descriptions are */
 .dishBody{padding:11px 16px 16px;display:flex;flex-direction:column;margin-top:auto;position:relative;z-index:2}
 .dishFoot{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.dishFoot b{color:var(--gold);font-size:14.5px;white-space:nowrap}
-.dishFoot b.askPrice{color:#8a95a5;font-size:12px;font-weight:600;font-style:italic}
-.addBtn{display:inline-flex;align-items:center;gap:7px;background:var(--gold);color:#071A33;font-weight:700;letter-spacing:1px;font-size:11.5px;padding:9px 16px;flex:none;transition:background .18s ease,box-shadow .18s ease}
+.dishFoot b{color:var(--gold-ink);font-size:15px;white-space:nowrap}
+.dishFoot b.askPrice{color:#7c8593;font-size:12.5px;font-weight:600;font-style:italic}
+.addBtn{display:inline-flex;align-items:center;gap:7px;background:var(--gold);color:#071A33;font-weight:700;letter-spacing:1px;font-size:12px;padding:10px 16px;border-radius:var(--r);flex:none;transition:background .18s ease,box-shadow .18s ease}
 .addBtn svg{width:12px;height:12px;flex:none}
 .addBtn:hover{background:#d8aa2e;box-shadow:0 6px 18px #C9A22755}
+.addBtn:active{background:var(--gold-deep);box-shadow:inset 0 2px 5px rgba(7,26,51,.25);transform:translateY(1px)}
 
 /* read by a screen reader only, for the card wide open button */
 .srOnly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}

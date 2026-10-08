@@ -217,21 +217,38 @@ function page_scripts(): void{
     });
   }
 
-  /* notifications: any "ok" note leaves on its own, a warning or an error
-     stays until it is read and dismissed */
-  var dismiss=function(t){
-    if(!t||t.dataset.gone)return;
-    t.dataset.gone='1';
-    t.classList.add('toastOut');
-    setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t)},300);
-  };
-  Array.prototype.forEach.call(document.querySelectorAll('#toasts .toast'),function(t){
-    var x=t.querySelector('button');
-    if(x)x.addEventListener('click',function(){dismiss(t)});
-    if(!t.classList.contains('bad')&&!t.classList.contains('warn')){
-      setTimeout(function(){dismiss(t)},6000);
-    }
-  });
+   /* notifications: any "ok" note leaves on its own, a warning or an error
+      stays until it is read and dismissed */
+   var dismiss=function(t){
+     if(!t||t.dataset.gone)return;
+     t.dataset.gone='1';
+     t.classList.add('toastOut');
+     setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t)},300);
+   };
+   Array.prototype.forEach.call(document.querySelectorAll('#toasts .toast'),function(t){
+     var x=t.querySelector('button');
+     if(x)x.addEventListener('click',function(){dismiss(t)});
+     if(!t.classList.contains('bad')&&!t.classList.contains('warn')){
+       setTimeout(function(){dismiss(t)},6000);
+     }
+   });
+
+   /* lightweight submit loading state - adds .loading to the submitting button */
+   document.addEventListener('submit', function(e){
+     var frm=e.target;
+     if(!frm) return;
+     var btn=frm.querySelector('button[type=submit],input[type=submit]');
+     if(btn && !btn.disabled){
+       btn.classList.add('loading');
+       btn.setAttribute('aria-busy','true');
+       setTimeout(function(){
+         if(btn.parentNode){
+           btn.classList.remove('loading');
+           btn.removeAttribute('aria-busy');
+         }
+       }, 8000);
+     }
+   }, true);
 
   document.querySelectorAll('table.tbl').forEach(function(t){
     if(t.parentNode&&t.parentNode.classList.contains('tableScroll'))return;
@@ -250,11 +267,13 @@ function page_foot(): void{
 }
 
 function kpi_card(string $label,string $value,string $hint='',string $tone='navy'): void{
- $cards=['navy'=>'#0f2850','gold'=>'#b08d1a','green'=>'#14532d','red'=>'#7f1d1d','blue'=>'#0B5D78'];
- echo '<div class="kpi" style="--k:'.($cards[$tone]??$cards['navy']).'">'
-  .'<span class="kpiIco">'.svg_icon(kpi_icon($label)).'</span>'
-  .'<div class="kpiLbl">'.e($label).'</div><div class="kpiVal">'.$value.'</div>'
-  .($hint?'<div class="kpiHint">'.e($hint).'</div>':'').'</div>';
+  $cards=['navy'=>'#0f2850','gold'=>'#b08d1a','green'=>'#2e7d32','red'=>'#c62828','blue'=>'#0B5D78','ok'=>'#2e7d32','warn'=>'#b26a00'];
+  $t = strtolower($tone);
+  $k = $cards[$t] ?? $cards['navy'];
+  echo '<div class="kpi" style="--k:'.$k.'">'
+   .'<span class="kpiIco">'.svg_icon(kpi_icon($label)).'</span>'
+   .'<div class="kpiLbl">'.e($label).'</div><div class="kpiVal">'.$value.'</div>'
+   .($hint?'<div class="kpiHint">'.e($hint).'</div>':'').'</div>';
 }
 
 function filter_bar(string $extra=''): void{

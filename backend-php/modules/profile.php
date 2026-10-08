@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 $me = row("SELECT * FROM users WHERE id=?", [$uid]);
 
-page_head("My Profile", "dashboard", "Manage your account settings");
+page_head("My Profile", "profile", "Manage your account settings");
 echo "<div class=\"twoCol\">";
 echo "<div class=\"panel\">";
 echo "<h2>Personal Information</h2>";
