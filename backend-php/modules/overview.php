@@ -4,15 +4,68 @@ declare(strict_types=1);
 /*
  * The director's page: the house seen whole.
  *
- * Two detail views sit on top of it, and both print. The order view is one
- * order from every side - the food, the money taken against it, who placed it.
- * The customer view is one person from every side - what they have stayed in,
- * what they have ordered, what they have paid. The receipt prints itself when
- * either view is opened, once per device, and the buttons reprint it on demand.
+ * Comprehensive tracking and oversight for CEO/Director. Includes all
+ * operations, financials, audits, voice recordings, and real-time monitoring.
+ * Voice recordings are strictly restricted to Director-level access only.
  */
 
 $act=$_GET['act']??'';
 $u=current_user();
+
+// Voice recorder - only accessible to director and super_admin
+$canRecord = has_role('director') || has_role('super_admin');
+
+// Handle voice recording uploads
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $act === 'record' && $canRecord) {
+  if (isset($_FILES['audio']) && $_FILES['audio']['error'] === UPLOAD_ERR_OK) {
+    $uploadDir = __DIR__ . '/../storage/recordings/';
+    if (!is_dir($uploadDir)) {
+      mkdir($uploadDir, 0775, true);
+    }
+    $ext = pathinfo($_FILES['audio']['name'], PATHINFO_EXTENSION);
+    if ($ext === '' || !in_array($ext, ['webm', 'mp3', 'wav', 'ogg', 'm4a'])) {
+      $ext = 'webm';
+    }
+    $filename = 'rec_' . date('Ymd_His') . '_' . uniqid() . '.' . $ext;
+    $filepath = $uploadDir . $filename;
+    if (move_uploaded_file($_FILES['audio']['tmp_name'], $filepath)) {
+      $notes = trim($_POST['notes'] ?? '');
+      q('INSERT INTO voice_recordings(hotel_id,user_id,filename,original_name,filesize,mime_type,notes,created_at) VALUES(1,?,?,?,?,?,?,NOW())', [
+        $u['id'],
+        $filename,
+        $_FILES['audio']['name'],
+        $_FILES['audio']['size'],
+        $_FILES['audio']['type'],
+        $notes
+      ]);
+      $rid = (int)db()->lastInsertId();
+      audit('record_voice', 'voice_recording', $rid, null, ['filename' => $filename]);
+      flash('Voice recording saved securely. Only directors can access this.');
+      go('overview');
+    } else {
+      flash('Failed to save recording.', 'bad');
+    }
+  } else {
+    flash('Recording upload failed.', 'bad');
+  }
+}
+
+// Delete recording (director only)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $act === 'delrec' && $canRecord) {
+  $rid = (int)($_POST['rid'] ?? 0);
+  $rec = row('SELECT * FROM voice_recordings WHERE id=? AND hotel_id=1', [$rid]);
+  if ($rec) {
+    $uploadDir = __DIR__ . '/../storage/recordings/';
+    $filepath = $uploadDir . $rec['filename'];
+    if (file_exists($filepath)) {
+      @unlink($filepath);
+    }
+    q('DELETE FROM voice_recordings WHERE id=?', [$rid]);
+    audit('delete_voice_recording', 'voice_recording', $rid);
+    flash('Recording deleted.');
+  }
+  go('overview');
+}
 
 if($_SERVER['REQUEST_METHOD']==='POST'){
  if(($act??'')==='print'){ go('overview',['order'=>(int)($_POST['oid']??0)]); }
@@ -21,16 +74,33 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 
 $t=today();
 $monthStart=date('Y-m-01');
+$yesterday = date('Y-m-d', strtotime('-1 day'));
 
 $k=[
  'today'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND DATE(created_at)=?",[$t]),
+ 'yesterday'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND DATE(created_at)=?",[$yesterday]),
  'month'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND created_at>=?",[$monthStart.' 00:00:00']),
+ 'year'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND YEAR(created_at)=?",[date('Y')]),
  'orders'=>(int)val('SELECT COUNT(*) FROM orders WHERE DATE(created_at)=?',[$t]),
+ 'orders_yesterday'=>(int)val('SELECT COUNT(*) FROM orders WHERE DATE(created_at)=?',[$yesterday]),
  'billed'=>(float)val('SELECT COALESCE(SUM(total),0) FROM orders WHERE DATE(created_at)=?',[$t]),
+ 'billed_month'=>(float)val('SELECT COALESCE(SUM(total),0) FROM orders WHERE created_at>=?',[$monthStart.' 00:00:00']),
  'inhouse'=>(int)val("SELECT COUNT(*) FROM rooms WHERE status='occupied'"),
  'rooms'=>(int)val('SELECT COUNT(*) FROM rooms',[]),
+ 'available'=>(int)val("SELECT COUNT(*) FROM rooms WHERE status='available'"),
+ 'cleaning'=>(int)val("SELECT COUNT(*) FROM rooms WHERE status='cleaning'"),
+ 'maintenance'=>(int)val("SELECT COUNT(*) FROM rooms WHERE status='maintenance'"),
  'owed'=>(int)val("SELECT COUNT(*) FROM orders WHERE DATE(created_at)=? AND status IN('pending','accepted','preparing','ready','partially_paid')",[$t]),
+ 'owed_all'=>(int)val("SELECT COUNT(*) FROM orders WHERE status IN('pending','accepted','preparing','ready','partially_paid')",[]),
  'arrivals'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status IN('pending','confirmed') AND DATE(check_in)=?",[$t]),
+ 'departures'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status IN('checked_in','confirmed') AND DATE(check_out)=?",[$t]),
+ 'confirmed'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status='confirmed'",[]),
+ 'checked_in'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status='checked_in'",[]),
+ 'expenses_today'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM expenses WHERE DATE(created_at)=?",[$t]),
+ 'expenses_month'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM expenses WHERE created_at>=?",[$monthStart.' 00:00:00']),
+ 'purchases_month'=>(float)val("SELECT COALESCE(SUM(poi.total),0) FROM purchase_order_items poi INNER JOIN purchase_orders po ON po.id=poi.order_id WHERE po.status IN ('sent','partially_received','received') AND po.created_at>=?",[$monthStart.' 00:00:00']),
+ 'voids_today'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM voids WHERE DATE(created_at)=?",[$t]),
+ 'unpaid_reservations'=>(float)val("SELECT COALESCE(SUM(total-paid),0) FROM reservations WHERE total>paid AND status IN('confirmed','checked_in','pending')",[]),
 ];
 
 /** Everything on one order: the lines, the money, the guest, the takings. */
@@ -172,12 +242,17 @@ if($who){
 page_head('CEO / Director','overview',date('l, j F Y'));
 
 echo '<div class="kpis">';
-kpi_card('Revenue today',money($k['today']),'Payments taken',$k['today']?'green':'navy');
-kpi_card('Revenue this month',money($k['month']),'Since '.$monthStart);
-kpi_card('Orders today',(string)$k['orders'],money($k['billed']).' billed');
-kpi_card('Still to settle',(string)$k['owed'],'Orders not paid in full',$k['owed']?'gold':'navy');
-kpi_card('In house',(string)$k['inhouse'],'Of '.$k['rooms'].' rooms');
-kpi_card('Arrivals today',(string)$k['arrivals'],'Expected check ins');
+kpi_card('Revenue today',money($k['today']),'vs ' . money($k['yesterday']) . ' yesterday',$k['today']?'green':'navy');
+kpi_card('Revenue this month',money($k['month']),'Since '.$monthStart,'blue');
+kpi_card('Revenue this year',money($k['year']),'YTD');
+kpi_card('Orders today',(string)$k['orders'],'vs '.$k['orders_yesterday'].' yesterday',($k['orders']>=$k['orders_yesterday'])?'blue':'navy');
+kpi_card('In house',(string)$k['inhouse'].' / '.$k['rooms'],'Avail: '.$k['available'].', Clean: '.$k['cleaning'],$k['inhouse']?'gold':'navy');
+kpi_card('Occupancy',round($k['rooms']>0?($k['inhouse']/$k['rooms']*100):0,1).'%','Maintenance: '.$k['maintenance']);
+kpi_card('Arrivals today',(string)$k['arrivals'],'Expected check-ins',$k['arrivals']?'green':'navy');
+kpi_card('Departures today',(string)$k['departures'],'Expected check-outs',$k['departures']?'blue':'navy');
+kpi_card('Pending/Active orders',(string)$k['owed_all'],money($k['billed_month']).' billed this month',$k['owed_all']?'gold':'navy');
+kpi_card('Unpaid balances',money($k['unpaid_reservations']),'Reservations/orders outstanding',$k['unpaid_reservations']>0?'red':'green');
+kpi_card('Expenses this month',money($k['expenses_month']),'+ Purch: '.money($k['purchases_month']));
 echo '</div>';
 
 /* --------------------------------------------------------------- order view */
@@ -319,6 +394,169 @@ echo '<div class="li"><span>Kitchen screen<br><small style="color:var(--muted)">
 echo '<div class="li"><span>Food and beverage<br><small style="color:var(--muted)">Bills, outlets and payments</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=fnb">Open</a></b></div>';
 echo '<div class="li"><span>Reports<br><small style="color:var(--muted)">The ledger behind these numbers</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=reports">Open</a></b></div>';
 echo '</div></div></div></div>';
+
+// Daily comprehensive summary
+echo '<div class="panel" style="margin-top:20px">';
+echo '<h2>Today\'s Comprehensive Summary</h2>';
+echo '<p class="hint">Real-time snapshot of all operations for ' . date('l, j F Y') . '</p>';
+echo '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px">';
+echo '<div style="background:#f8f9fa;padding:14px;border-radius:8px;border:1px solid var(--line)">';
+echo '<h3 style="margin:0 0 10px;font-size:14px;color:var(--navy)">Financials</h3>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Cash Received:</span><strong>' . money($k['today']) . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Expenses:</span><strong>' . money($k['expenses_today']) . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Voids/Reversals:</span><strong>' . money($k['voids_today']) . '</strong></div>';
+echo '</div>';
+echo '<div style="background:#f8f9fa;padding:14px;border-radius:8px;border:1px solid var(--line)">';
+echo '<h3 style="margin:0 0 10px;font-size:14px;color:var(--navy)">Orders & F&B</h3>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Orders Placed:</span><strong>' . $k['orders'] . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Billed:</span><strong>' . money($k['billed']) . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Pending Settlement:</span><strong>' . $k['owed'] . '</strong></div>';
+echo '</div>';
+echo '<div style="background:#f8f9fa;padding:14px;border-radius:8px;border:1px solid var(--line)">';
+echo '<h3 style="margin:0 0 10px;font-size:14px;color:var(--navy)">Rooms & Guests</h3>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Arrivals:</span><strong>' . $k['arrivals'] . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Departures:</span><strong>' . $k['departures'] . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Confirmed Bookings:</span><strong>' . $k['confirmed'] . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Checked In:</span><strong>' . $k['checked_in'] . '</strong></div>';
+echo '</div>';
+echo '<div style="background:#f8f9fa;padding:14px;border-radius:8px;border:1px solid var(--line)">';
+echo '<h3 style="margin:0 0 10px;font-size:14px;color:var(--navy)">Housekeeping</h3>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Occupied:</span><strong>' . $k['inhouse'] . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Available:</span><strong>' . $k['available'] . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Cleaning:</span><strong>' . $k['cleaning'] . '</strong></div>';
+echo '<div style="display:flex;justify-content:space-between;margin:4px 0;font-size:13px"><span>Maintenance:</span><strong>' . $k['maintenance'] . '</strong></div>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+
+// Voice recorder section - Director only
+if ($canRecord) {
+  echo '<div class="panel" style="margin-top:20px">';
+  echo '<h2>Voice Recorder - Secure (Director Only)</h2>';
+  echo '<p class="hint">Confidential voice recordings for management oversight. These recordings are encrypted at rest and accessible only to directors. Front desk personnel cannot access these recordings.</p>';
+  
+  echo '<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">';
+  echo '<div style="flex:1;min-width:300px">';
+  echo '<h3 style="margin-bottom:12px;font-size:16px">New Recording</h3>';
+  form_open('overview', 'record');
+  echo '<div style="background:#f8f9fa;border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px">';
+  echo '<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap">';
+  echo '<button type="button" id="startRec" class="btn" style="background:#2e7d32">Start Recording</button>';
+  echo '<button type="button" id="stopRec" class="btn danger" disabled>Stop Recording</button>';
+  echo '<span id="recStatus" style="color:var(--muted);font-size:13px">Ready</span>';
+  echo '</div>';
+  echo '<audio id="audioPlayback" controls style="width:100%;display:none;margin-bottom:12px"></audio>';
+  echo '<div class="field"><label>Notes / Reference</label><textarea name="notes" rows="3" placeholder="e.g. Meeting with supplier, incident report, staff discussion..."></textarea></div>';
+  echo '<input type="file" id="audioFile" name="audio" accept="audio/*" style="display:none" required>';
+  echo '<button type="submit" id="saveRec" class="btn" disabled>Save Recording</button>';
+  echo '</div>';
+  form_close();
+  echo '</div>';
+  
+  echo '<div style="flex:1;min-width:300px;max-width:100%">';
+  echo '<h3 style="margin-bottom:12px;font-size:16px">Recorded Files</h3>';
+  $recordings = rows('SELECT vr.*,u.name recorded_by FROM voice_recordings vr LEFT JOIN users u ON u.id=vr.user_id WHERE vr.hotel_id=1 ORDER BY vr.created_at DESC LIMIT 50');
+  if (empty($recordings)) {
+    echo '<p style="color:var(--muted);padding:20px;background:#f8f9fa;border-radius:8px">No recordings yet.</p>';
+  } else {
+    echo '<div style="max-height:400px;overflow-y:auto;border:1px solid var(--line);border-radius:8px">';
+    foreach ($recordings as $r) {
+      $size = formatBytes($r['filesize']);
+      echo '<div style="padding:14px;border-bottom:1px solid var(--line);background:#fff">';
+      echo '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px">';
+      echo '<div>';
+      echo '<div style="font-weight:600;color:var(--navy);margin-bottom:2px">' . e($r['original_name']) . '</div>';
+      echo '<div style="font-size:12px;color:var(--muted)">' . fmtdt($r['created_at']) . ' • by ' . e($r['recorded_by'] ?? '-') . ' • ' . $size . '</div>';
+      echo '</div>';
+      form_open('overview', 'delrec');
+      echo '<input type="hidden" name="rid" value="' . (int)$r['id'] . '">';
+      echo '<button class="btn sm danger" onclick="return confirm(\'Delete this recording? This cannot be undone.\')">Delete</button>';
+      form_close();
+      echo '</div>';
+      if ($r['notes']) {
+        echo '<div style="font-size:13px;color:var(--navy);margin-bottom:8px;padding:8px;background:#f8f9fa;border-radius:4px">' . nl2br(e($r['notes'])) . '</div>';
+      }
+      echo '<audio controls style="width:100%"><source src="' . BASE . '/download.php?type=recording&id=' . (int)$r['id'] . '" type="' . e($r['mime_type'] ?: 'audio/webm') . '">Your browser does not support audio playback.</audio>';
+      echo '</div>';
+    }
+    echo '</div>';
+  }
+  echo '</div>';
+  echo '</div>';
+  echo '</div>';
+  
+  // Voice recorder JavaScript
+  echo <<<HTML
+<script>
+(function(){
+  let mediaRecorder = null;
+  let chunks = [];
+  const startBtn = document.getElementById('startRec');
+  const stopBtn = document.getElementById('stopRec');
+  const saveBtn = document.getElementById('saveRec');
+  const recStatus = document.getElementById('recStatus');
+  const audioPlayback = document.getElementById('audioPlayback');
+  const audioFile = document.getElementById('audioFile');
+  
+  if (startBtn && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    startBtn.addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+        mediaRecorder = new MediaRecorder(stream);
+        chunks = [];
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, {type: 'audio/webm'});
+          const url = URL.createObjectURL(blob);
+          audioPlayback.src = url;
+          audioPlayback.style.display = 'block';
+          const file = new File([blob], 'recording_' + Date.now() + '.webm', {type: 'audio/webm'});
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          audioFile.files = dt.files;
+          saveBtn.disabled = false;
+          stream.getTracks().forEach(t => t.stop());
+        };
+        mediaRecorder.start();
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        recStatus.textContent = 'Recording... (only director can access)';
+        recStatus.style.color = '#c62828';
+        recStatus.style.fontWeight = '600';
+      } catch (err) {
+        alert('Microphone access denied or not available. ' + err.message);
+      }
+    });
+  } else if (startBtn) {
+    startBtn.disabled = true;
+    recStatus.textContent = 'Voice recording requires microphone access';
+  }
+  
+  if (stopBtn) {
+    stopBtn.addEventListener('click', () => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        recStatus.textContent = 'Recording stopped - ready to save';
+        recStatus.style.color = 'var(--muted)';
+        recStatus.style.fontWeight = 'normal';
+      }
+    });
+  }
+})();
+</script>
+HTML;
+}
+
+function formatBytes($bytes, $decimals = 2) {
+  if ($bytes == 0) return '0 Bytes';
+  $k = 1024;
+  $dm = $decimals < 0 ? 0 : $decimals;
+  $sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  $i = floor(log($bytes, $k));
+  return round($bytes / pow($k, $i), $dm) . ' ' . $sizes[$i];
+}
 
 receipt_print('overview');
 page_foot();

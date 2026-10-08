@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 07, 2026 at 05:59 AM
+-- Generation Time: Oct 08, 2026 at 04:34 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.25
 
@@ -2440,6 +2440,24 @@ CREATE TABLE `vehicles` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `voice_recordings`
+--
+
+CREATE TABLE `voice_recordings` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `hotel_id` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `user_id` int(10) UNSIGNED DEFAULT NULL,
+  `filename` varchar(255) NOT NULL,
+  `original_name` varchar(255) NOT NULL,
+  `filesize` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `mime_type` varchar(120) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `voids`
 --
 
@@ -3336,6 +3354,15 @@ ALTER TABLE `vehicles`
   ADD KEY `fk_vehicle_driver` (`driver_user_id`);
 
 --
+-- Indexes for table `voice_recordings`
+--
+ALTER TABLE `voice_recordings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_vr_hotel` (`hotel_id`),
+  ADD KEY `idx_vr_user` (`user_id`),
+  ADD KEY `idx_vr_created` (`created_at`);
+
+--
 -- Indexes for table `voids`
 --
 ALTER TABLE `voids`
@@ -3429,7 +3456,7 @@ ALTER TABLE `customer_tokens`
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 
 --
 -- AUTO_INCREMENT for table `department_messages`
@@ -3561,7 +3588,7 @@ ALTER TABLE `housekeeping_tasks`
 -- AUTO_INCREMENT for table `inventory_categories`
 --
 ALTER TABLE `inventory_categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `inventory_items`
@@ -3795,7 +3822,7 @@ ALTER TABLE `reception_records`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `reservation_rooms`
@@ -3807,7 +3834,7 @@ ALTER TABLE `reservation_rooms`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=175;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
 
 --
 -- AUTO_INCREMENT for table `rooms`
@@ -3909,7 +3936,7 @@ ALTER TABLE `two_factor_settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
@@ -3928,6 +3955,12 @@ ALTER TABLE `user_sessions`
 --
 ALTER TABLE `vehicles`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `voice_recordings`
+--
+ALTER TABLE `voice_recordings`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `voids`

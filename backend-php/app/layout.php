@@ -6,7 +6,7 @@ function nav_items(): array{
   'dashboard'=>'Dashboard','overview'=>'CEO / Director','reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests',
   'pos'=>'POS and Orders','fnb'=>'Food and Beverage','kitchen'=>'Kitchen','shifts'=>'Shifts','inventory'=>'Inventory','suppliers'=>'Suppliers',
   'purchases'=>'Purchases','expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals',
-  'audit'=>'Audit Trail','reports'=>'Reports','users'=>'Team and Users'
+  'audit'=>'Audit Trail','reports'=>'Reports','users'=>'Team and Users','profile'=>'My Profile'
  ];
 }
 
@@ -251,3 +251,7 @@ function receipt_print(string $key,string $feed=''): void{
 </script>
 HTML;
 }
+function nav_profile_item(): string {
+  return '';
+}
+
