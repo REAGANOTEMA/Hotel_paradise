@@ -12,7 +12,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       flash("Name is required.", "bad");
       go("profile");
     }
-    q("UPDATE users SET name=?, phone=?, updated_at=NOW() WHERE id=?", [$name, $phone, $uid]);
+    $profileImage = null;
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+      $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      $ext = strtolower(pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION));
+      if (in_array($ext, $allowed)) {
+        $uploadDir = __DIR__ . '/../storage/profile/';
+        if (!is_dir($uploadDir)) {
+          mkdir($uploadDir, 0775, true);
+        }
+        $filename = 'profile_' . $uid . '_' . time() . '.' . $ext;
+        if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $uploadDir . $filename)) {
+          $oldImg = $me['profile_image'] ?? '';
+          if ($oldImg && file_exists($uploadDir . $oldImg)) {
+            @unlink($uploadDir . $oldImg);
+          }
+          $profileImage = $filename;
+        }
+      }
+    }
+    if ($profileImage) {
+      q("UPDATE users SET name=?, phone=?, profile_image=?, updated_at=NOW() WHERE id=?", [$name, $phone, $profileImage, $uid]);
+    } else {
+      q("UPDATE users SET name=?, phone=?, updated_at=NOW() WHERE id=?", [$name, $phone, $uid]);
+    }
     audit("update_profile", "user", $uid);
     flash("Profile updated successfully.");
     go("profile");
@@ -48,11 +71,31 @@ echo "<div class=\"panel\">";
 echo "<h2>Personal Information</h2>";
 echo "<p class=\"hint\">Update your name and phone number.</p>";
 form_open("profile", "update");
+echo "<input type=\"file\" name=\"profile_image\" accept=\"image/*\" style=\"display:none\" id=\"profImg\">";
+echo "<div style=\"text-align:center;margin-bottom:20px\">";
+$profImg = $me['profile_image'] ?? '';
+if ($profImg) {
+  $imgSrc = BASE . '/download.php?type=profile&id=' . $uid;
+} else {
+  $imgSrc = SITE_URL . '/images/paradise-logo.png';
+}
+echo "<img id=\"profPrev\" src=\"" . $imgSrc . "\" style=\"width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #d4af37;cursor:pointer\" onclick=\"document.getElementById('profImg').click()\">";
+echo "<p style=\"margin-top:8px;font-size:12px;color:#666\">Click to change profile picture</p>";
+echo "</div>";
 echo "<div class=\"field\"><label>Full Name</label><input name=\"name\" value=\"" . e($me["name"] ?? "") . "\" required></div>";
 echo "<div class=\"field\"><label>Email</label><input value=\"" . e($me["email"] ?? "") . "\" readonly style=\"background:#f8f9fa;cursor:not-allowed\"></div>";
 echo "<div class=\"field\"><label>Phone</label><input name=\"phone\" value=\"" . e($me["phone"] ?? "") . "\"></div>";
 echo "<button class=\"btn\">Update Profile</button>";
 form_close();
+echo "<script>
+document.getElementById('profImg').addEventListener('change', function(e){
+  if(e.target.files && e.target.files[0]){
+    const reader = new FileReader();
+    reader.onload = function(ev){ document.getElementById('profPrev').src = ev.target.result; }
+    reader.readAsDataURL(e.target.files[0]);
+  }
+});
+</script>";
 echo "</div>";
 echo "</div>";
 echo "<div>";
