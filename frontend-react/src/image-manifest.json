@@ -6434,13 +6434,26 @@
       "kind": "image"
     },
     {
-      "slug": "suite-320",
-      "dir": "./images/",
-      "file": "suite-320.jpg",
-      "ext": "jpg",
-      "w": 320,
-      "h": 427,
-      "variants": [],
+      "slug": "food-breakfast",
+      "dir": "./images/hero/",
+      "file": "food-breakfast-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "food-breakfast-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "food-breakfast-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
       "kind": "image"
     },
     {

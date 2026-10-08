@@ -152,7 +152,7 @@ const HERO_SEQUENCE = [
   'swimming-pool',
   'hero10',
   'suite-bed',
-  'suite-320',
+  'hero/food-breakfast',
   'hero8',
   'dishes/classic-margherita',
   'hotel-view'
