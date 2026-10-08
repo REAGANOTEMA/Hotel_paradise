@@ -24,17 +24,54 @@ function pagelogin(): void{
   echo '<link rel="stylesheet" href="'.BASE.'/assets/admin.css">';
   echo '<link rel="icon" type="image/png" sizes="64x64" href="'.SITE_URL.'/images/logo-64.png">';
   echo '<link rel="apple-touch-icon" href="'.SITE_URL.'/images/logo-192.png"></head><body>';
-  echo '<div class="loginWrap" style="background: linear-gradient(rgba(7,26,51,0.85), rgba(15,40,80,0.9)), url(\''.SITE_URL.'/images/hero-pool.jpg\') center/cover no-repeat;"><div class="loginCard" style="backdrop-filter: blur(4px); background: rgba(255,255,255,0.98);">';
+    echo '<div class="loginWrap"><div id="particles-js" style="position:absolute;inset:0;z-index:1"></div><div class="loginCard" style="z-index:2;position:relative;">';
   echo '<div class="sideBrand"><img class="sideLogo" src="'.SITE_URL.'/images/logo-256.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span></div>';
   if($f=flash_out()){ echo '<div class="flash '.e($f['type']).'">'.e($f['msg']).'</div>'; }
-  echo '<h1 style="font-size:26px;color:var(--navy);margin-bottom:4px">Welcome back</h1><p>Sign in to the Hotel Paradise on the Nile management system.</p>';
-  echo '<form method="post">';
-  echo '<div class="field"><label>Email address</label><input name="email" type="email" required autocomplete="username" autofocus></div>';
-  echo '<div class="field"><label>Password</label><input name="password" type="password" required autocomplete="current-password"></div>';
- echo '<button class="btn" style="width:100%;justify-content:center">Sign in</button></form>'.PHP_EOL;
+  echo '<h1 style="font-size:28px;margin-bottom:6px;font-weight:700;background:linear-gradient(135deg,#071A33 0%,#d4af37 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Welcome back</h1><p>Sign in to the Hotel Paradise on the Nile management system.</p>';
+  echo '<form method="post" id="loginForm">';
+  echo '<div id="emailStep">';
+  echo '<div class="field"><label>Email address</label><input id="emailInput" name="email" type="email" required autocomplete="username" autofocus placeholder="Enter your email address"></div>';
+  echo '<button type="button" class="btn" style="width:100%;justify-content:center" onclick="proceedToPassword()">Continue with Email</button>';
+  echo '</div>';
+  echo '<div id="passwordStep" style="display:none">';
+  echo '<div style="margin-bottom:12px;padding:10px;background:#f8f9fa;border-radius:8px;font-size:13px;color:#666">';
+  echo '<strong>Email:</strong> <span id="emailDisplay"></span><br><button type="button" style="background:none;border:none;color:var(--navy);text-decoration:underline;cursor:pointer;padding:4px 0;font-size:12px" onclick="backToEmail()">Change email</button>';
+  echo '</div>';
+  echo '<div class="field"><label>Password</label><input id="passwordInput" name="password" type="password" required autocomplete="current-password" placeholder="Enter your password"></div>';
+  echo '<button type="submit" class="btn" style="width:100%;justify-content:center">Sign in</button>';
+  echo '</div>';
+  echo '</form>'.PHP_EOL;
+  echo '<script>
+  function proceedToPassword(){
+    const email = document.getElementById("emailInput").value.trim();
+    if(!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){
+      alert("Please enter a valid email address");
+      return;
+    }
+    document.getElementById("emailDisplay").textContent = email;
+    document.getElementById("emailStep").style.display = "none";
+    document.getElementById("passwordStep").style.display = "block";
+    document.getElementById("passwordInput").focus();
+  }
+  function backToEmail(){
+    document.getElementById("passwordStep").style.display = "none";
+    document.getElementById("emailStep").style.display = "block";
+    document.getElementById("emailInput").focus();
+  }
+  document.getElementById("loginForm").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+      if(document.getElementById("emailStep").style.display !== "none"){
+        e.preventDefault();
+        proceedToPassword();
+      }
+    }
+  });
+  </script>';
  if(demo_logins_enabled()) echo '';
- echo '<div class="demo" style="border:0;margin-top:14px;padding-top:0">Management system by <a href="https://reagansoftinnovation.com" target="_blank" rel="noopener" rel="noreferrer" style="color:var(--gold)">Reagansoft Innovation Limited</a></div>';
- echo '</div></div></body></html>';
+    echo '<div class="demo" style="border:0;margin-top:14px;padding-top:0">Management system by <a href="https://reagansoftinnovation.com" target="_blank" rel="noopener" rel="noreferrer" style="color:var(--gold)">Reagansoft Innovation Limited</a></div>';
+   echo '</div></div><script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>';
+   echo '<script>particlesJS("particles-js",{particles:{number:{value:40,density:{enable:true,value_area:800}},color:{value:"#d4af37"},shape:{type:"circle"},opacity:{value:0.5,random:false},size:{value:2,random:true},line_linked:{enable:true,distance:150,color:"#d4af37",opacity:0.3,width:1},move:{enable:true,speed:1.5,direction:"none",random:false,straight:false,out_mode:"out",bounce:false}},interactivity:{detect_on:"canvas",events:{onhover:{enable:false},onclick:{enable:false}}},retina_detect:true});</script>';
+   echo '</body></html>';
 }
 
 $page=$_GET['page']??'dashboard';
