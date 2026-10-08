@@ -350,11 +350,13 @@ function PayPage() {
           </style>
         </head>
         <body>
-          <div class="header">
-            <h1 class="title">HOTEL PARADISE ON THE NILE</h1>
-            <p class="subtitle">Jinja, Uganda</p>
-            <p class="subtitle">Tel: ${HOTEL.phones[0] || CALL}</p>
-          </div>
+            <div class="header">
+              <img src="./images/paradise-logo.png" alt="Hotel Paradise Logo" style="max-width:60px;height:auto;margin-bottom:6px" onerror="this.style.display='none'"/>
+              <h1 class="title">HOTEL PARADISE ON THE NILE</h1>
+              <p class="subtitle">Jinja, Uganda</p>
+              <p class="subtitle">Tel: ${HOTEL.phones[0] || CALL}</p>
+              <p class="subtitle">Email: ${HOTEL.email}</p>
+            </div>
           <div class="info">
             <div class="info-row"><span>Receipt No:</span><span>${done?.reference || ref}</span></div>
             <div class="info-row"><span>Date:</span><span>${dateStr}</span></div>

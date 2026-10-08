@@ -19,11 +19,12 @@ import{c as Ce,j as a,R as m,b as se,T as we,P as Se,d as O,C as G,t as oe,F as 
                 </style>
                 </head>
                 <body>
-                  <div class="h">
-                    <h1 class="t">HOTEL PARADISE ON THE NILE</h1>
-                    <p class="s">Jinja, Uganda</p>
-                    <p class="s">Tel: +256 759 504 928</p>
-                  </div>
+                    <div class="h">
+                      <img src="./images/paradise-logo.png" alt="Hotel Paradise Logo" style="max-width:60px;height:auto;margin-bottom:6px" onerror="this.style.display='none'"/>
+                      <h1 class="t">HOTEL PARADISE ON THE NILE</h1>
+                      <p class="s">Jinja, Uganda</p>
+                      <p class="s">Tel: +256 759 504 928</p>
+                    </div>
                   <div class="i">
                     <div class="r"><span>Order No:</span><span>${n.order_number}</span></div>
                     <div class="r"><span>Date:</span><span>${f}</span></div>

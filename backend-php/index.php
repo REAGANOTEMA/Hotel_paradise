@@ -24,7 +24,7 @@ function pagelogin(): void{
   echo '<link rel="stylesheet" href="'.BASE.'/assets/admin.css">';
   echo '<link rel="icon" type="image/png" sizes="64x64" href="'.SITE_URL.'/images/logo-64.png">';
   echo '<link rel="apple-touch-icon" href="'.SITE_URL.'/images/logo-192.png"></head><body>';
-  echo '<div class="loginWrap"><div class="loginCard">';
+  echo '<div class="loginWrap" style="background: linear-gradient(rgba(7,26,51,0.85), rgba(15,40,80,0.9)), url(\''.SITE_URL.'/images/hero-pool.jpg\') center/cover no-repeat;"><div class="loginCard" style="backdrop-filter: blur(4px); background: rgba(255,255,255,0.98);">';
   echo '<div class="sideBrand"><img class="sideLogo" src="'.SITE_URL.'/images/logo-256.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span></div>';
   if($f=flash_out()){ echo '<div class="flash '.e($f['type']).'">'.e($f['msg']).'</div>'; }
   echo '<h1 style="font-size:26px;color:var(--navy);margin-bottom:4px">Welcome back</h1><p>Sign in to the Hotel Paradise on the Nile management system.</p>';
@@ -32,7 +32,7 @@ function pagelogin(): void{
   echo '<div class="field"><label>Email address</label><input name="email" type="email" required autocomplete="username" autofocus></div>';
   echo '<div class="field"><label>Password</label><input name="password" type="password" required autocomplete="current-password"></div>';
  echo '<button class="btn" style="width:100%;justify-content:center">Sign in</button></form>'.PHP_EOL;
- if(demo_logins_enabled()) echo '<div class="demo">Demo accounts, password <b>Paradise2026</b> except the administrator which uses <b>Admin@123</b>.<br>Administrator: <b>admin@hotelparadiseonthenile.info</b><br>Front desk: <b>frontdesk@hotelparadiseonthenile.info</b></div>';
+ if(demo_logins_enabled()) echo '';
  echo '<div class="demo" style="border:0;margin-top:14px;padding-top:0">Management system by <a href="https://reagansoftinnovation.com" target="_blank" rel="noopener" rel="noreferrer" style="color:var(--gold)">Reagansoft Innovation Limited</a></div>';
  echo '</div></div></body></html>';
 }

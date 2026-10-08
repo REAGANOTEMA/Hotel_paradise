@@ -150,7 +150,7 @@ ul.clean{list-style:none;margin:0;padding:0}
 .res-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
 .payRow2{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid #eeeae0}
 
-.loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#050d1c,#071A33 60%,#0f2850);padding:20px}
+.loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#050d1c,#071A33 60%,#0f2850);background-size:cover;background-position:center;padding:20px;position:relative}
 .loginCard{width:100%;max-width:390px;background:#fff;border-radius:18px;padding:38px 34px;box-shadow:0 30px 80px #00000055}
 .loginCard .sideBrand{color:var(--navy);padding:0;margin-bottom:22px;justify-content:center}
 .loginCard .sideBrand .sideLogo{width:64px;height:64px}

@@ -78,10 +78,7 @@ define('SITE_URL',hp_paths()['site']);
  *   SetEnv HP_DEMO_LOGINS 1
  */
 function demo_logins_enabled(): bool{
-  $v=getenv('HP_DEMO_LOGINS');
-  if($v===false && isset($_SERVER['HP_DEMO_LOGINS'])) $v=$_SERVER['HP_DEMO_LOGINS'];
-  if($v===false) return false;
-  return in_array(strtolower(trim((string)$v)),['1','true','yes','on'],true);
+  return false;
 }
 
 /**
