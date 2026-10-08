@@ -454,7 +454,9 @@ function MenuPage() {
   const [live, setLive] = React.useState(false);
   const [tray, setTray] = React.useState<Line[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [here, setHere] = React.useState(FALLBACK[0].key);
+  // The category the guest has picked. null means the whole menu, so the
+  // page still opens as one printed list until a category is chosen.
+  const [cat, setCat] = React.useState<string | null>(null);
   const [name, setName] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
@@ -469,7 +471,11 @@ function MenuPage() {
       .then(d => {
         if (d.ok && Array.isArray(d.categories) && d.categories.some((c: {items?: unknown[]}) => Array.isArray(c.items) && c.items.length)) {
           const next = tidySections(toSections(d.categories));
-          if (next.length) { setSections(next); setLive(true); setHere(h => (next.some(s => s.key === h) ? h : next[0].key)); }
+          if (next.length) {
+            setSections(next);
+            setLive(true);
+            setCat(c => (c === null || next.some(s => s.key === c)) ? c : null);
+          }
         }
       })
       .catch(() => {});
@@ -506,28 +512,29 @@ function MenuPage() {
     writeDishParam(null);
   }, []);
 
-  // Highlight the section currently under the sticky navigation.
+  // Deep link: menu.html#sec-desserts opens straight on that one category.
+  // Read once, and only accepted for a category that really exists.
+  const hashCat = React.useRef(location.hash.indexOf('#sec-') === 0 ? decodeURIComponent(location.hash.slice(5)) : '');
   React.useEffect(() => {
-    const seen = new Map<string, number>();
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => seen.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0));
-      let best = '';
-      let bestRatio = 0;
-      seen.forEach((ratio, id) => { if (ratio > bestRatio) { bestRatio = ratio; best = id; } });
-      if (best) setHere(best.replace('sec-', ''));
-    }, {rootMargin: '-140px 0px -55% 0px', threshold: [0, .15, .4, .8, 1]});
-    document.querySelectorAll('[id^="sec-"]').forEach(el => io.observe(el));
-    return () => io.disconnect();
+    const want = hashCat.current;
+    if (!want) return;
+    if (sections.some(s => s.key === want)) { hashCat.current = ''; setCat(want); }
   }, [sections]);
 
-  // Keep the live chip of the jump bar in view as the guest reads down.
-  React.useEffect(() => {
-    const chip = document.querySelector<HTMLElement>('.menuJump a.active');
-    const rail = document.querySelector<HTMLElement>('.menuJumpInner');
-    if (!chip || !rail) return;
-    const want = chip.offsetLeft - (rail.clientWidth - chip.clientWidth) / 2;
-    rail.scrollTo({left: Math.max(0, want), behavior: 'smooth'});
-  }, [here]);
+  // A category that has since disappeared from the live menu falls back to
+  // the whole menu rather than to an empty screen.
+  const activeCat = cat && sections.some(s => s.key === cat) ? cat : null;
+  const visible = activeCat ? sections.filter(s => s.key === activeCat) : sections;
+
+  /** One category, or the whole menu, and back to the head of the list. */
+  const pickCat = (key: string | null) => {
+    setCat(key);
+    const jump = document.getElementById('jump');
+    if (jump) {
+      const y = jump.getBoundingClientRect().top + window.scrollY;
+      if (window.scrollY > y) window.scrollTo({top: y, behavior: 'smooth'});
+    }
+  };
 
   const lineKey = (dish: MenuItem, companion: Choice | null, salads: Choice[]): string =>
     [dish.id, companion?.key ?? 'plain', salads.map(s => s.key).sort().join('+') || 'none'].join('|');
@@ -697,17 +704,27 @@ function MenuPage() {
         <p className="eyebrow">DINING AND BAR</p>
         <h1>Our menu, your order.</h1>
         <p>
-          Every dish in its own section, with a photograph of each plate. Open any dish to see it in full,
-          choose your companion and a salad, and add it to your order. Change or drop anything freely before
-          it reaches the kitchen. Prices include taxes.
+          Every dish in its own section, with a photograph of each plate. Pick a category above to see only
+          that part of the menu, or leave it on All to read the whole thing. Open any dish to see it in full,
+          choose your companion and a salad, and add it to your order. Prices include taxes.
         </p>
       </div>
     </section>
 
     <div className="menuJump" id="jump">
-      <div className="menuJumpInner">
+      <div className="menuJumpInner" role="group" aria-label="Choose a category">
+        <button
+          className={'catChip' + (activeCat === null ? ' on' : '')}
+          aria-pressed={activeCat === null}
+          onClick={() => pickCat(null)}
+        >All</button>
         {sections.map(s => (
-          <a key={s.key} className={here === s.key ? 'active' : ''} href={'#sec-' + s.key}>{s.name}</a>
+          <button
+            key={s.key}
+            className={'catChip' + (activeCat === s.key ? ' on' : '')}
+            aria-pressed={activeCat === s.key}
+            onClick={() => pickCat(s.key)}
+          >{s.name}</button>
         ))}
         <button className="jumpOrder" onClick={goToOrder}>
           Your order{count > 0 && ' (' + count + ')'}
@@ -720,11 +737,14 @@ function MenuPage() {
 
       <div className="menuMeta">
         <span>{MENU_REVISION}</span>
-        <span className="menuMetaCount">{totalDishes(sections)} dishes</span>
+        <span className="menuMetaCount">
+          {activeCat ? visible.map(s => s.name).join(' · ') + ' · ' : ''}
+          {totalDishes(visible)} dishes
+        </span>
         <button className="printBtn" onClick={() => window.print()}>Print this menu</button>
       </div>
 
-      {sections.map(section => (
+      {visible.map(section => (
         <section className="secBlock" id={'sec-' + section.key} key={section.key}>
           <header className="secHead">
             <SectionBanner section={section}>

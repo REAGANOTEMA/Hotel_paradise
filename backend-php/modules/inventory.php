@@ -71,7 +71,7 @@ echo '<div class="panel"><h2>Stock levels</h2><p class="hint">Current quantities
 echo '<table class="tbl"><thead><tr><th>Item</th><th>Code</th><th>Location</th><th class="num">Qty</th><th class="num">Reorder</th><th></th></tr></thead><tbody>';
 foreach($levels as $s){
  $low2=$s['quantity']<=$s['reorder_level'];
- echo '<tr><td><b>'.e($s['name']).'</b><br><small style="color:var(--muted)">'.e($s['unit']).'</small></td><td>'.e($s['code']).'</td><td>'.e($s['location']).'</td><td class="num">'.num($s['quantity']).'</td><td class="num">'.num($s['reorder_level']).'</td><td>'.($low2?badge('Low stock','bad'):'').'</td></tr>';
+ echo '<tr><td><b>'.e($s['name']).'</b><br><small>'.e($s['unit']).'</small></td><td>'.e($s['code']).'</td><td>'.e($s['location']).'</td><td class="num">'.num($s['quantity']).'</td><td class="num">'.num($s['reorder_level']).'</td><td>'.($low2?badge('Low stock','bad'):'').'</td></tr>';
 }
 if(!count($levels)) echo '<tr><td colspan="6" style="text-align:center;color:var(--muted)">No stock recorded.</td></tr>';
 echo '</tbody></table></div>';

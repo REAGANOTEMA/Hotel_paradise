@@ -36,7 +36,7 @@ echo '<div class="twoCol"><div>';
 echo '<div class="panel"><h2>Guest registry</h2><p class="hint">Every guest who has stayed or booked.</p>';
 echo '<table class="tbl"><thead><tr><th>Name</th><th>Phone</th><th>Nationality</th><th class="num">Stays</th><th></th></tr></thead><tbody>';
 foreach($list as $g){
- echo '<tr><td><b>'.e($g['full_name']).'</b><br><small style="color:var(--muted)">'.e($g['email']??'').'</small></td><td>'.e($g['phone']??'-').'</td><td>'.e($g['nationality']??'-').'</td><td class="num">'.(int)$g['stays'].'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=guests&edit='.(int)$g['id'].'">Edit</a></td></tr>';
+ echo '<tr><td><b>'.e($g['full_name']).'</b><br><small>'.e($g['email']??'').'</small></td><td>'.e($g['phone']??'-').'</td><td>'.e($g['nationality']??'-').'</td><td class="num">'.(int)$g['stays'].'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=guests&edit='.(int)$g['id'].'">Edit</a></td></tr>';
 }
 if(!count($list)) echo '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No guests found.</td></tr>';
 echo '</tbody></table></div></div>';

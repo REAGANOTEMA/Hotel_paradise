@@ -118,7 +118,7 @@ if($view){
  if(count($pending)){
   foreach($pending as $i){ echo '<div class="field"><label>'.e($i['iname']).'  (received '.num($i['received_qty']).' of '.num($i['quantity']).')</label><input type="number" step="0.5" min="0" name="items['.(int)$i['id'].'][qty]" value="'.num($i['quantity']-$i['received_qty']).'"></div>'; }
   echo '<button class="btn tick">Receive goods</button>';
- }else{ echo '<p style="color:var(--muted)">This order is fully received.</p>'; }
+ }else{ echo '<p class="emptyLine">This order is fully received.</p>'; }
  form_close();
  echo '</div>';
  if($o['status']!=='cancelled'){ echo '<div class="panel"><h2>Add more items</h2><p class="hint">Extend this order with an item and its unit cost.</p>'; form_open('purchases','poitems',['oid'=>$view]);
@@ -144,7 +144,7 @@ echo '<div class="panel"><h2>Purchase requisitions</h2><p class="hint">Departmen
 echo '<table class="tbl"><thead><tr><th>Number</th><th>Department</th><th>Requested by</th><th>Status</th><th></th></tr></thead><tbody>';
 foreach($reqs as $r){
 $line=(int)val('SELECT COALESCE(SUM(ri.requested_qty),0) FROM purchase_requisition_items ri WHERE ri.requisition_id=?',[$r['id']]);
-  echo '<tr><td><b>'.e($r['number']).'</b></td><td>'.e($r['dept']).'</td><td>'.e($r['reqby']).'</td><td><small style="color:var(--muted)">'.$line.' item(s)</small></td><td>'.status_badge($r['status']).'</td><td>';
+  echo '<tr><td><b>'.e($r['number']).'</b></td><td>'.e($r['dept']).'</td><td>'.e($r['reqby']).'</td><td><small>'.$line.' item(s)</small></td><td>'.status_badge($r['status']).'</td><td>';
  if($r['status']==='pending'){ form_open('purchases','reqstatus',['id'=>$r['id']]); echo '<input type="hidden" name="nst" value="approved"><button class="btn sm tick">Approve</button>'; form_close(); form_open('purchases','reqstatus',['id'=>$r['id']]); echo '<input type="hidden" name="nst" value="rejected"><button class="btn sm danger">Reject</button>'; form_close(); }
  if($r['status']==='approved'){ echo ' <button class="btn sm blue" onclick="document.getElementById(\'poFrom'.(int)$r['id'].'\').hidden=false">Create purchase order</button>';
   echo '<div id="poFrom'.(int)$r['id'].'" hidden style="margin-top:10px;background:#f6f4ea;border:1px solid var(--line);border-radius:10px;padding:12px">';

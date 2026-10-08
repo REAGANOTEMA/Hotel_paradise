@@ -127,7 +127,7 @@ echo '<div class="miniList">';
 foreach($ordersToday as $o){
  $itRows=rows('SELECT mi.name,oi.quantity FROM order_items oi JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id=?',[$o['id']]);
  echo '<div class="li" style="flex-direction:column;align-items:stretch">';
- echo '<div style="display:flex;justify-content:space-between;gap:10px"><span><b>'.e($o['order_number']).'</b> &middot; '.e($o['outlet']).' &middot; '.e($o['order_type']).($o['table_name']?' &middot; '.e($o['table_name']):'').'<br><small style="color:var(--muted)">';
+ echo '<div style="display:flex;justify-content:space-between;gap:10px"><span><b>'.e($o['order_number']).'</b> &middot; '.e($o['outlet']).' &middot; '.e($o['order_type']).($o['table_name']?' &middot; '.e($o['table_name']):'').'<br><small>';
  $first=true; foreach($itRows as $i){ if(!$first) echo ', '; echo e($i['name']).' x'.(float)$i['quantity']; $first=false; } echo '</small></span><b>'.money($o['total']).'</b>'.status_badge($o['status']).'</div>';
  echo '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">';
  if(in_array($o['status'],['pending'])){ echo '<form method="post" action="'.BASE.'/index.php?page=pos&amp;act=status"><input type="hidden" name="oid" value="'.(int)$o['id'].'"><input type="hidden" name="nst" value="accepted"><button class="btn sm blue">Accept</button></form>'; }
@@ -147,7 +147,7 @@ foreach($ordersToday as $o){
  echo '<input type="hidden" name="nst" value="cancelled"><div style="display:flex;gap:6px;margin-top:8px"><input name="reason" placeholder="Reason to cancel" style="flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:8px"><button class="btn sm danger" onclick="return confirm(\'Cancel this order?\')">Cancel order</button></div>'; form_close();
  echo '</div></div>';
 }
-if(!count($ordersToday)) echo '<p style="color:var(--muted)">No orders yet this session.</p>';
+if(!count($ordersToday)) echo '<p class="emptyLine">No orders yet this session.</p>';
 echo '</div></div></div></div>';
 
 echo '<script>

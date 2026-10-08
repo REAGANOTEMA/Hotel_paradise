@@ -60,7 +60,7 @@ echo '<div class="twoCol"><div>';
 echo '<div class="panel"><h2>Expenses</h2><p class="hint">Every request, its approval path and payment state.</p>';
 echo '<table class="tbl"><thead><tr><th>Number</th><th>Department</th><th>Category</th><th>Description</th><th class="num">Amount</th><th>Status</th><th></th></tr></thead><tbody>';
 foreach($list as $e){
- echo '<tr><td><b>'.e($e['number']).'</b><br><small style="color:var(--muted)">'.e($e['reqby']).'</small></td><td>'.e($e['dept']).'</td><td>'.e($e['category']).'</td><td>'.e($e['description']).'</td><td class="num">'.money($e['amount']).'</td><td>'.status_badge($e['status']).'</td><td style="white-space:nowrap">';
+ echo '<tr><td><b>'.e($e['number']).'</b><br><small>'.e($e['reqby']).'</small></td><td>'.e($e['dept']).'</td><td>'.e($e['category']).'</td><td>'.e($e['description']).'</td><td class="num">'.money($e['amount']).'</td><td>'.status_badge($e['status']).'</td><td style="white-space:nowrap">';
  if($e['status']==='pending'){ form_open('expenses','status',['id'=>$e['id']]); echo '<input type="hidden" name="nst" value="approved"><button class="btn sm tick">Approve</button>'; form_close(); form_open('expenses','status',['id'=>$e['id']]); echo '<input type="hidden" name="nst" value="rejected"><button class="btn sm danger">Reject</button>'; form_close(); }
  if($e['status']==='approved'){ form_open('expenses','pay',['id'=>$e['id']]); echo '<select name="method" style="padding:6px;border:1px solid var(--line);border-radius:8px">'; foreach(['cash'=>'Cash','mtn_momo'=>'Mobile Money','airtel_money'=>'Airtel Money','bank'=>'Bank'] as $k=>$v2) echo '<option>'.$v2.'</option>'; echo '</select> <button class="btn sm blue">Mark paid</button>'; form_close(); }
  echo '</td></tr>';

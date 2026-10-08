@@ -275,7 +275,7 @@ if($order){
  echo '<h3>What was ordered</h3><table class="tbl"><thead><tr><th>Dish</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Amount</th></tr></thead><tbody>';
  foreach($order['lines'] as $l){
   $note=prep_note($l['notes']??null);
-  echo '<tr><td><b>'.e($l['name']??'Item removed').'</b>'.($note?'<br><small style="color:var(--muted)">'.e($note).'</small>':'').'</td>';
+  echo '<tr><td><b>'.e($l['name']??'Item removed').'</b>'.($note?'<br><small>'.e($note).'</small>':'').'</td>';
   echo '<td class="num">'.rtrim(rtrim(number_format((float)$l['quantity'],2,'.',''),'0'),'.').'</td><td class="num">'.money($l['unit_price']).'</td><td class="num">'.money($l['total']).'</td></tr>';
  }
  echo '</tbody></table>';
@@ -288,12 +288,12 @@ if($order){
 
  echo '<div>';
  echo '<h3>Payments against it</h3>';
- if(!count($order['payments'])) echo '<p style="color:var(--muted)">Nothing has been taken against this order yet.</p>';
+ if(!count($order['payments'])) echo '<p class="emptyLine">Nothing has been taken against this order yet.</p>';
  else{
   echo '<div class="miniList">';
   foreach($order['payments'] as $p){
-   echo '<div class="li"><span>'.e(ucfirst((string)$p['method'])).'<br><small style="color:var(--muted)">'.fmtdt($p['created_at']).' &middot; '.e($p['who']??'Website').'</small></span>';
-   echo '<b>'.money($p['amount']).'<br><small style="color:var(--muted)">'.e($p['status']).'</small></b></div>';
+   echo '<div class="li"><span>'.e(ucfirst((string)$p['method'])).'<br><small>'.fmtdt($p['created_at']).' &middot; '.e($p['who']??'Website').'</small></span>';
+   echo '<b>'.money($p['amount']).'<br><small>'.e($p['status']).'</small></b></div>';
   }
   echo '</div>';
  }
@@ -319,7 +319,7 @@ if($who){
 
  echo '<div class="twoCol"><div>';
  echo '<h3>Stays</h3>';
- if(!count($who['stays']??[])) echo '<p style="color:var(--muted)">No stays on record.</p>';
+ if(!count($who['stays']??[])) echo '<p class="emptyLine">No stays on record.</p>';
  else{
   echo '<table class="tbl"><thead><tr><th>Booking</th><th>Arrive</th><th>Depart</th><th class="num">Total</th><th class="num">Paid</th><th>Status</th></tr></thead><tbody>';
   foreach($who['stays'] as $s){
@@ -329,7 +329,7 @@ if($who){
   echo '</tbody></table>';
  }
  echo '<h3>Orders</h3>';
- if(!count($who['orders']??[])) echo '<p style="color:var(--muted)">No orders on record.</p>';
+ if(!count($who['orders']??[])) echo '<p class="emptyLine">No orders on record.</p>';
  else{
   echo '<table class="tbl"><thead><tr><th>Order</th><th>Date</th><th>Outlet</th><th class="num">Total</th><th class="num">Paid</th><th></th></tr></thead><tbody>';
   foreach($who['orders'] as $o){
@@ -342,11 +342,11 @@ if($who){
  }
  echo '</div><div>';
  echo '<h3>Payments</h3>';
- if(!count($who['payments']??[])) echo '<p style="color:var(--muted)">Nothing has been taken from this guest yet.</p>';
+ if(!count($who['payments']??[])) echo '<p class="emptyLine">Nothing has been taken from this guest yet.</p>';
  else{
   echo '<div class="miniList">';
   foreach($who['payments'] as $p){
-   echo '<div class="li"><span>'.e(ucfirst((string)$p['method'])).'<br><small style="color:var(--muted)">'.fmtdt($p['created_at']??$p['created_at']).'</small></span><b>'.money($p['amount']).'</b></div>';
+   echo '<div class="li"><span>'.e(ucfirst((string)$p['method'])).'<br><small>'.fmtdt($p['created_at']??$p['created_at']).'</small></span><b>'.money($p['amount']).'</b></div>';
   }
   echo '</div>';
  }
@@ -369,13 +369,13 @@ echo '</tbody></table></div>';
 echo '<div class="panel"><h2>Customer detail</h2><p class="hint">Website accounts and guests of the house. Open either for stays, orders and payments, with a printable statement.</p>';
 echo '<h3>Website customers</h3><div class="miniList">';
 foreach($recentCustomers as $c){
- echo '<div class="li"><span><b><a href="'.BASE.'/index.php?page=overview&amp;customer='.(int)$c['id'].'">'.e($c['full_name']).'</a></b><br><small style="color:var(--muted)">'.e($c['phone']??'').' &middot; '.e($c['email']??'').'</small></span>';
+ echo '<div class="li"><span><b><a href="'.BASE.'/index.php?page=overview&amp;customer='.(int)$c['id'].'">'.e($c['full_name']).'</a></b><br><small>'.e($c['phone']??'').' &middot; '.e($c['email']??'').'</small></span>';
  echo '<b><a class="btnGhost sm" href="'.BASE.'/index.php?page=overview&amp;customer='.(int)$c['id'].'">Open</a></b></div>';
 }
 echo '</div>';
 echo '<h3>Hotel guests</h3><div class="miniList">';
 foreach($recentGuests as $g){
- echo '<div class="li"><span><b><a href="'.BASE.'/index.php?page=overview&amp;guest='.(int)$g['id'].'">'.e($g['full_name']).'</a></b><br><small style="color:var(--muted)">'.e($g['phone']??'').' &middot; '.e($g['email']??'').'</small></span>';
+ echo '<div class="li"><span><b><a href="'.BASE.'/index.php?page=overview&amp;guest='.(int)$g['id'].'">'.e($g['full_name']).'</a></b><br><small>'.e($g['phone']??'').' &middot; '.e($g['email']??'').'</small></span>';
  echo '<b><a class="btnGhost sm" href="'.BASE.'/index.php?page=overview&amp;guest='.(int)$g['id'].'">Open</a></b></div>';
 }
 echo '</div></div></div>';
@@ -390,9 +390,9 @@ echo '<div class="li"><span>Rooms in house</span><b>'.(int)$k['inhouse'].' of '.
 echo '</div></div>';
 
 echo '<div class="panel"><h2>On the boards</h2><p class="hint">Where the detail lives.</p><div class="miniList">';
-echo '<div class="li"><span>Kitchen screen<br><small style="color:var(--muted)">Dockets, printed as orders land</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=kitchen">Open</a></b></div>';
-echo '<div class="li"><span>Food and beverage<br><small style="color:var(--muted)">Bills, outlets and payments</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=fnb">Open</a></b></div>';
-echo '<div class="li"><span>Reports<br><small style="color:var(--muted)">The ledger behind these numbers</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=reports">Open</a></b></div>';
+echo '<div class="li"><span>Kitchen screen<br><small>Dockets, printed as orders land</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=kitchen">Open</a></b></div>';
+echo '<div class="li"><span>Food and beverage<br><small>Bills, outlets and payments</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=fnb">Open</a></b></div>';
+echo '<div class="li"><span>Reports<br><small>The ledger behind these numbers</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=reports">Open</a></b></div>';
 echo '</div></div></div></div>';
 
 // Daily comprehensive summary

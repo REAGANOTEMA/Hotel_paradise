@@ -25,20 +25,18 @@ function pagelogin(): void{
   echo '<link rel="icon" type="image/png" sizes="64x64" href="'.SITE_URL.'/images/logo-64.png">';
   echo '<link rel="apple-touch-icon" href="'.SITE_URL.'/images/logo-192.png"></head><body>';
     echo '<div class="loginWrap"><div id="particles-js" style="position:absolute;inset:0;z-index:1"></div><div class="loginCard" style="z-index:2;position:relative;">';
-    echo '<div class="sideBrand"><img class="sideLogo" src="'.SITE_URL.'/images/paradise-logo.png" alt="Hotel Paradise on the Nile logo"><span class="sbText" style="text-shadow: 0 2px 10px rgba(0,0,0,0.8)"><span style="color:#ffffff">HOTEL PARADISE</span><small style="color:#d4af37">ON THE NILE</small></span></div>';
-  if($f=flash_out()){ echo '<div class="flash '.e($f['type']).'">'.e($f['msg']).'</div>'; }
-  echo '<h1 style="font-size:28px;margin-bottom:6px;font-weight:700;background:linear-gradient(135deg,#071A33 0%,#d4af37 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Welcome back</h1><p>Sign in to the Hotel Paradise on the Nile management system.</p>';
+    echo '<div class="sideBrand"><img class="sideLogo" src="'.SITE_URL.'/images/paradise-logo.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span></div>';
+  if($f=flash_out()){ echo '<div class="flash '.e($f['type']).'"><span class="noteIco">'.($f['type']==='bad'?'!':'✓').'</span><span>'.e($f['msg']).'</span></div>'; }
+  echo '<h1 class="loginTitle">Welcome back</h1><p class="loginSub">Sign in to the Hotel Paradise on the Nile management system.</p>';
   echo '<form method="post" id="loginForm">';
   echo '<div id="emailStep">';
-  echo '<div class="field"><label>Email address</label><input id="emailInput" name="email" type="email" required autocomplete="username" autofocus placeholder="Enter your email address"></div>';
-  echo '<button type="button" class="btn" style="width:100%;justify-content:center" onclick="proceedToPassword()">Continue with Email</button>';
+  echo '<div class="field"><label for="emailInput">Email address</label><input id="emailInput" name="email" type="email" required autocomplete="username" autofocus placeholder="Enter your email address"></div>';
+  echo '<button type="button" class="btn" onclick="proceedToPassword()">Continue with Email</button>';
   echo '</div>';
   echo '<div id="passwordStep" style="display:none">';
-  echo '<div style="margin-bottom:12px;padding:10px;background:#f8f9fa;border-radius:8px;font-size:13px;color:#666">';
-  echo '<strong>Email:</strong> <span id="emailDisplay"></span><br><button type="button" style="background:none;border:none;color:var(--navy);text-decoration:underline;cursor:pointer;padding:4px 0;font-size:12px" onclick="backToEmail()">Change email</button>';
-  echo '</div>';
-  echo '<div class="field"><label>Password</label><input id="passwordInput" name="password" type="password" required autocomplete="current-password" placeholder="Enter your password"></div>';
-  echo '<button type="submit" class="btn" style="width:100%;justify-content:center">Sign in</button>';
+  echo '<div class="loginStepHead"><span><strong>Email:</strong> <span id="emailDisplay"></span></span><button type="button" class="linkish" onclick="backToEmail()">Change email</button></div>';
+  echo '<div class="field"><label for="passwordInput">Password</label><input id="passwordInput" name="password" type="password" required autocomplete="current-password" placeholder="Enter your password"></div>';
+  echo '<button type="submit" class="btn">Sign in</button>';
   echo '</div>';
   echo '</form>'.PHP_EOL;
   echo '<script>
@@ -68,7 +66,7 @@ function pagelogin(): void{
   });
   </script>';
  if(demo_logins_enabled()) echo '';
-    echo '<div class="demo" style="border:0;margin-top:14px;padding-top:0">Management system by <a href="https://reagansoftinnovation.com" target="_blank" rel="noopener" rel="noreferrer" style="color:var(--gold)">Reagansoft Innovation Limited</a></div>';
+    echo '<div class="loginCredit">Management system by <a href="https://reagansoftinnovation.com" target="_blank" rel="noopener" rel="noreferrer">Reagansoft Innovation Limited</a></div>';
    echo '</div></div><script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>';
    echo '<script>particlesJS("particles-js",{particles:{number:{value:40,density:{enable:true,value_area:800}},color:{value:"#d4af37"},shape:{type:"circle"},opacity:{value:0.5,random:false},size:{value:2,random:true},line_linked:{enable:true,distance:150,color:"#d4af37",opacity:0.3,width:1},move:{enable:true,speed:1.5,direction:"none",random:false,straight:false,out_mode:"out",bounce:false}},interactivity:{detect_on:"canvas",events:{onhover:{enable:false},onclick:{enable:false}}},retina_detect:true});</script>';
    echo '</body></html>';

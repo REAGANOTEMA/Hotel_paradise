@@ -116,7 +116,7 @@ if($view){
  echo '</tbody></table></div>';
  echo '<div class="panel"><h2>Guest folio</h2><p class="hint">Charges and payments on this stay.</p><div class="miniList">';
  echo '<div class="li"><span>Room charge, '.$r['nights'].' night(s)</span><b>'.money($r['total']).'</b></div>';
- foreach($folio as $f){ $sign=$f['entry_type']==='payment'||$f['entry_type']==='refund'?'-':'+'; echo '<div class="li"><span>'.e(ucfirst($f['entry_type'])).' '.e($f['description']).'<br><small style="color:var(--muted)">'.fmtdt($f['created_at']).'</small></span><b>'.$sign.''.money($f['amount']).'</b></div>'; }
+ foreach($folio as $f){ $sign=$f['entry_type']==='payment'||$f['entry_type']==='refund'?'-':'+'; echo '<div class="li"><span>'.e(ucfirst($f['entry_type'])).' '.e($f['description']).'<br><small>'.fmtdt($f['created_at']).'</small></span><b>'.$sign.''.money($f['amount']).'</b></div>'; }
  echo '</div><div style="border-top:2px solid var(--line);margin-top:10px;padding-top:12px"><div class="payRow2"><span>Total charges</span><b>'.money($charges).'</b></div><div class="payRow2"><span>Total paid</span><b>'.money($paid).'</b></div><div class="payRow2"><span style="font-weight:700;color:'.($balance>0?'var(--gold)':'#2e7d32').'">Balance</span><b>'.money($balance).'</b></div></div>';
  echo '</div></div>';
 

@@ -10,10 +10,90 @@ function nav_items(): array{
  ];
 }
 
+/** The rail, in groups. Every group and every link is dropped when the
+ *  signed-in member is not allowed to open that module, so each person
+ *  sees only their own console. */
+function nav_groups(): array{
+ return [
+  ['label'=>'Front desk','items'=>[
+    'dashboard'=>'Dashboard','overview'=>'CEO / Director','reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
+  ['label'=>'Food and beverage','items'=>[
+    'pos'=>'POS and Orders','fnb'=>'Food and Beverage','kitchen'=>'Kitchen']],
+  ['label'=>'Operations','items'=>[
+    'shifts'=>'Shifts','inventory'=>'Inventory','suppliers'=>'Suppliers','purchases'=>'Purchases','expenses'=>'Expenses']],
+  ['label'=>'Finance and control','items'=>[
+    'finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
+  ['label'=>'Administration','items'=>[
+    'users'=>'Team and Users','profile'=>'My Profile']],
+ ];
+}
+
+/** One 24px stroke icon per module. Kept in a single place so the rail,
+ *  the header menu and the KPI cards all draw the same hand. */
+function svg_icon(string $name): string{
+ $p=[
+  'grid'=>'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',
+  'chart'=>'<path d="M21.2 15.9A10 10 0 1 1 8 2.8"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>',
+  'calendar'=>'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>',
+  'bed'=>'<path d="M2 19v-9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v9"/><path d="M2 15h20"/><path d="M6 10V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/>',
+  'users'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  'cart'=>'<circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.4 11.2a2 2 0 0 0 2 1.6h8.5a2 2 0 0 0 2-1.55L21.5 7H6"/>',
+  'fork'=>'<path d="M6 2v7a2.5 2.5 0 0 0 2.5 2.5h0V22"/><path d="M4 2v5M8.5 2v5"/><path d="M17 2c2.4 2.6 2.6 7.5.4 10.4V22"/>',
+  'pot'=>'<path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-6z"/><path d="M2 10h20"/><path d="M9.5 6.5c0-1.4 1.2-1.4 1.2-3M14 6.5c0-1.4 1.2-1.4 1.2-3"/>',
+  'clock'=>'<circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 1.9"/>',
+  'box'=>'<path d="M21 8.5l-9-5-9 5v7l9 5 9-5v-7z"/><path d="M3 8.5l9 5 9-5"/><path d="M12 13.5v9"/>',
+  'truck'=>'<path d="M1.5 4.5h14v11h-14z"/><path d="M15.5 9h4l3 3.2v3.3h-7z"/><circle cx="5.5" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/>',
+  'bag'=>'<path d="M6 2L3 6.2V21a1.8 1.8 0 0 0 1.8 1.8h14.4A1.8 1.8 0 0 0 21 21V6.2L18 2z"/><path d="M3 6.2h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+  'receipt'=>'<path d="M5.5 2.5h13v19l-3.2-2-2.1 2-2.2-2-2.1 2-3.4-2z"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  'coins'=>'<ellipse cx="12" cy="6" rx="7.5" ry="3.2"/><path d="M4.5 6v5c0 1.8 3.4 3.2 7.5 3.2s7.5-1.4 7.5-3.2V6"/><path d="M4.5 11v5c0 1.8 3.4 3.2 7.5 3.2s7.5-1.4 7.5-3.2v-5"/>',
+  'trend'=>'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+  'check'=>'<path d="M21.8 11.1V12a9.8 9.8 0 1 1-5.8-8.9"/><polyline points="21.5 5 12 14.5 9.2 11.7"/>',
+  'file'=>'<path d="M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z"/><polyline points="14 2.5 14 8 19.5 8"/><path d="M15.5 13.5h-7M15.5 17h-7"/>',
+  'bars'=>'<path d="M6 20v-5M12 20V8M18 20v-9"/><path d="M3 20.5h18"/>',
+  'user'=>'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  'globe'=>'<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14.5 14.5 0 0 1 0 18 14.5 14.5 0 0 1 0-18z"/>',
+  'logout'=>'<path d="M9.5 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4.5"/><polyline points="16 17 21 12 16 7"/><path d="M21 12H9"/>',
+  'bell'=>'<path d="M18 8.5a6 6 0 1 0-12 0c0 6-2.5 7.5-2.5 7.5h17S18 14.5 18 8.5z"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/>',
+  'alert'=>'<path d="M12 3.5L2.5 20h19z"/><path d="M12 10v4.2M12 17.2v.1"/>',
+  'wallet'=>'<path d="M20 7.5V6a2 2 0 0 0-2-2H5.5A2.5 2.5 0 0 0 3 6.5v11A2.5 2.5 0 0 0 5.5 20H19a2 2 0 0 0 2-2v-8.5a2 2 0 0 0-2-2H5"/><circle cx="16.5" cy="14" r="1.2"/>',
+  'plate'=>'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/>',
+  'spark'=>'<path d="M12 3l1.9 5.4L19.5 10l-5.6 1.7L12 17l-1.9-5.3L4.5 10l5.6-1.6z"/>',
+ ];
+ $d=$p[$name]??$p['grid'];
+ return '<svg viewBox="0 0 24 24" aria-hidden="true">'.$d.'</svg>';
+}
+
+/** Which icon a KPI card asks for, read off the label it was given, so
+ *  no module has to pass one. */
+function kpi_icon(string $label): string{
+ $map=[
+  '/arrival|check.?in/i'=>'calendar','/depart|check.?out/i'=>'logout','/in house|occupan/i'=>'bed',
+  '/room/i'=>'bed','/reservation|booking/i'=>'calendar','/guest|customer|member/i'=>'users',
+  '/revenue|payment|amount|money|sales|collection|total/i'=>'coins','/price|rate|tariff/i'=>'trend',
+  '/approval|pending|awaiting/i'=>'check','/stock|reorder|level/i'=>'box','/inventory|item/i'=>'box',
+  '/order|pass|cook|meal|dish/i'=>'pot','/table|cover/i'=>'plate','/shift|hour|time/i'=>'clock',
+  '/expense|cost|bill/i'=>'wallet','/purchase|requisition/i'=>'bag','/supplier|deliver/i'=>'truck',
+  '/audit|trail|log/i'=>'file','/report|chart|analy/i'=>'bars','/task|alert|issue|risk/i'=>'alert',
+  '/balance|cash|profit|income/i'=>'trend','/team|user|staff/i'=>'users',
+ ];
+ foreach($map as $re=>$ico){ if(preg_match($re,$label)) return $ico; }
+ return 'spark';
+}
+
+/** The two letters in the roundel beside a name: the initials off the
+ *  record, never anything guessed from the email. */
+function initials(?string $name): string{
+ $w=preg_split('/\s+/',trim((string)$name))?:[];
+ $s='';
+ foreach($w as $x){ if($x!=='') $s.=mb_strtoupper(mb_substr($x,0,1)); if(mb_strlen($s)>=2) break; }
+ return $s!==''?$s:'HP';
+}
+
 function page_head(string $title,string $active='dashboard',string $sub=''): void{
  $u=current_user();
  $flash=flash_out();
- $items=nav_items();
+ $me=$u['name']??'';
+ $role=role_label(roles_of()[0]??'');
  echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">';
  echo '<title>'.e($title).' | Hotel Paradise on the Nile</title>';
  echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
@@ -26,25 +106,70 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<a class="skipLink" href="#mainContent">Skip to content</a>';
  echo '<div class="sideScrim" id="sideScrim" hidden></div>';
 
- echo '<aside class="side" id="side"><a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/paradise-logo.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span style="color:#ffffff">HOTEL PARADISE</span><small style="color:#d4af37">ON THE NILE</small></span></a>';
+ /* ---- the rail ---- */
+ echo '<aside class="side" id="side">';
+ echo '<a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/paradise-logo.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span></a>';
  echo '<button class="sideClose" id="sideClose" type="button" aria-label="Close menu"><span></span><span></span></button>';
- echo '<div class="sideLabel">MANAGEMENT SYSTEM</div><nav class="sideNav" aria-label="Modules">';
- foreach($items as $k=>$lbl){
-  if(!page_allowed($k)) continue;
-  $on=$k===$active?' class="on"':'';
-  echo '<a href="'.BASE.'/index.php?page='.$k.'"'.$on.'><span class="dot"></span>'.e($lbl).'</a>';
+ echo '<nav class="sideNav" aria-label="Modules">';
+ foreach(nav_groups() as $g){
+  $open=array_filter(array_keys($g['items']),static fn(string $k): bool=>page_allowed($k));
+  if(!$open) continue;
+  echo '<div class="sideGroup"><p class="sideLabel">'.e($g['label']).'</p>';
+  foreach($g['items'] as $k=>$lbl){
+   if(!page_allowed($k)) continue;
+   $on=$k===$active?' class="on"':'';
+   $cur=$k===$active?' aria-current="page"':'';
+   echo '<a href="'.BASE.'/index.php?page='.$k.'"'.$on.$cur.'><span class="ico">'.svg_icon(nav_icon_key($k)).'</span><span class="lbl">'.e($lbl).'</span></a>';
+  }
+  echo '</div>';
  }
- echo '</nav><div class="sideFoot"><a href="'.SITE_URL.'/" target="_blank" rel="noopener">Open website</a></div></aside>';
+ echo '</nav>';
+ echo '<div class="sideProfile"><a class="avatar" href="'.BASE.'/index.php?page=profile" aria-label="My profile">'.e(initials($me)).'</a>';
+ echo '<span class="sideWho"><b>'.e($me).'</b><small>'.e($role).'</small></span>';
+ echo '<a class="sideSignOut" href="'.BASE.'/index.php?page=logout" title="Sign out" aria-label="Sign out">'.svg_icon('logout').'</a></div>';
+ echo '<div class="sideFoot"><a href="'.SITE_URL.'/" target="_blank" rel="noopener">Open website</a>';
+ echo '<button class="sideShrink" id="sideShrink" type="button" aria-label="Collapse menu" title="Collapse menu"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="13 6 19 12 13 18"/><path d="M5 5v14"/></svg></button>';
+ echo '</div></aside>';
 
- echo '<div class="main" id="mainContent"><header class="top"><button class="sideToggle" id="sideToggle" type="button" aria-label="Open menu" aria-controls="side" aria-expanded="false"><span></span><span></span><span></span></button><div class="topTitles"><h1 class="pageTitle">'.e($title).'</h1>'.($sub?'<p class="pageSub">'.e($sub).'</p>':'').'</div><div class="topRight"><span class="who">'.e($u['name']??'').'</span><span class="whoRole">'.role_label(roles_of()[0]??'').'</span><a class="btnGhost sm" href="'.BASE.'/index.php?page=logout">Sign out</a></div></header>';
- if($flash){ echo '<div class="flash '.e($flash['type']).'">'.e($flash['msg']).'</div>'; }
+ /* ---- the header ---- */
+ echo '<div class="main" id="mainContent"><header class="top">';
+ echo '<button class="sideToggle" id="sideToggle" type="button" aria-label="Open menu" aria-controls="side" aria-expanded="false"><span></span><span></span><span></span></button>';
+ echo '<div class="topTitles"><h1 class="pageTitle">'.e($title).'</h1>'.($sub?'<p class="pageSub">'.e($sub).'</p>':'').'</div>';
+ echo '<div class="topRight">';
+ echo '<button class="profBtn" id="profBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="profMenu">';
+ echo '<span class="avatar">'.e(initials($me)).'</span>';
+ echo '<span class="whoWrap"><span class="who">'.e($me).'</span><span class="whoRole">'.e($role).'</span></span>';
+ echo '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+ echo '</button>';
+ echo '<div class="profMenu" id="profMenu" hidden>';
+ echo '<div class="menuHead"><b>'.e($me).'</b><small>'.e($role).' &middot; '.e($u['email']??'').'</small></div>';
+ echo '<a href="'.BASE.'/index.php?page=profile">'.svg_icon('user').'My profile</a>';
+ echo '<a href="'.SITE_URL.'/" target="_blank" rel="noopener">'.svg_icon('globe').'Open website</a>';
+ echo '<a class="danger" href="'.BASE.'/index.php?page=logout">'.svg_icon('logout').'Sign out</a>';
+ echo '</div></div></header>';
+
+ /* ---- what the last action left behind, as a notification ---- */
+ if($flash){
+  $ico=$flash['type']==='bad'?'!':($flash['type']==='warn'?'!':'✓');
+  echo '<div class="toastWrap" id="toasts"><div class="toast '.e($flash['type']).'" role="status"><span class="noteIco">'.$ico.'</span><span>'.e($flash['msg']).'</span><button type="button" aria-label="Dismiss">&times;</button></div></div>';
+ }
  echo '<div class="content">';
 }
 
+/** The icon a module carries in the rail. */
+function nav_icon_key(string $page): string{
+ $map=['dashboard'=>'grid','overview'=>'chart','reservations'=>'calendar','rooms'=>'bed','guests'=>'users',
+  'pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
+  'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
+  'reports'=>'bars','users'=>'users','profile'=>'user'];
+ return $map[$page]??'grid';
+}
+
 /**
- * One small script for the whole console. It gives the sidebar a drawer on a
- * narrow screen, and wraps every data table in a scroll box so a wide report
- * never pushes the page sideways on a phone.
+ * One small script for the whole console. It gives the rail a drawer on a
+ * narrow screen, the header a member menu, the rail a remembered collapsed
+ * state, dismissible notifications, and wraps every data table in a scroll
+ * box so a wide report never pushes the page sideways on a phone.
  */
 function page_scripts(): void{
  echo <<<'HTML'
@@ -66,6 +191,48 @@ function page_scripts(): void{
   var wide=window.matchMedia('(min-width:1081px)');
   var onWide=function(e){if(e.matches)set(false)};
   if(wide.addEventListener)wide.addEventListener('change',onWide);else if(wide.addListener)wide.addListener(onWide);
+
+  /* the member menu in the header */
+  var pb=document.getElementById('profBtn'),pm=document.getElementById('profMenu');
+  if(pb&&pm){
+    var setProf=function(on){pb.setAttribute('aria-expanded',on?'true':'false');pm.hidden=!on;};
+    pb.addEventListener('click',function(e){e.stopPropagation();setProf(pm.hidden)});
+    document.addEventListener('click',function(e){if(!pm.hidden&&!pm.contains(e.target))setProf(false)});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')setProf(false)});
+  }
+
+  /* the rail remembers whether it was left collapsed */
+  var sc=document.getElementById('sideShrink');
+  if(sc){
+    var apply=function(on){
+      document.body.classList.toggle('sideCollapsed',on);
+      sc.setAttribute('aria-label',on?'Expand menu':'Collapse menu');
+      sc.setAttribute('title',on?'Expand menu':'Collapse menu');
+    };
+    try{if(localStorage.getItem('hpn_side')==='1')apply(true)}catch(e){}
+    sc.addEventListener('click',function(){
+      var on=!document.body.classList.contains('sideCollapsed');
+      apply(on);
+      try{localStorage.setItem('hpn_side',on?'1':'0')}catch(e){}
+    });
+  }
+
+  /* notifications: any "ok" note leaves on its own, a warning or an error
+     stays until it is read and dismissed */
+  var dismiss=function(t){
+    if(!t||t.dataset.gone)return;
+    t.dataset.gone='1';
+    t.classList.add('toastOut');
+    setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t)},300);
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('#toasts .toast'),function(t){
+    var x=t.querySelector('button');
+    if(x)x.addEventListener('click',function(){dismiss(t)});
+    if(!t.classList.contains('bad')&&!t.classList.contains('warn')){
+      setTimeout(function(){dismiss(t)},6000);
+    }
+  });
+
   document.querySelectorAll('table.tbl').forEach(function(t){
     if(t.parentNode&&t.parentNode.classList.contains('tableScroll'))return;
     var w=document.createElement('div');w.className='tableScroll';
@@ -84,11 +251,21 @@ function page_foot(): void{
 
 function kpi_card(string $label,string $value,string $hint='',string $tone='navy'): void{
  $cards=['navy'=>'#0f2850','gold'=>'#b08d1a','green'=>'#14532d','red'=>'#7f1d1d','blue'=>'#0B5D78'];
- echo '<div class="kpi" style="--k:'.($cards[$tone]??$cards['navy']).'"><div class="kpiLbl">'.e($label).'</div><div class="kpiVal">'.$value.'</div>'.($hint?'<div class="kpiHint">'.e($hint).'</div>':'').'</div>';
+ echo '<div class="kpi" style="--k:'.($cards[$tone]??$cards['navy']).'">'
+  .'<span class="kpiIco">'.svg_icon(kpi_icon($label)).'</span>'
+  .'<div class="kpiLbl">'.e($label).'</div><div class="kpiVal">'.$value.'</div>'
+  .($hint?'<div class="kpiHint">'.e($hint).'</div>':'').'</div>';
 }
 
 function filter_bar(string $extra=''): void{
  echo '<div class="toolbar">'.$extra.'</div>';
+}
+
+/** The room a panel leaves empty, drawn so it reads as designed rather
+ *  than unfinished. */
+function empty_state(string $title,string $text=''): void{
+ echo '<div class="emptyState"><span class="esIco">'.svg_icon('plate').'</span><h3>'.e($title).'</h3>'
+  .($text?'<p>'.e($text).'</p>':'').'</div>';
 }
 
 function status_badge(string $status, bool $neutral=false): string{

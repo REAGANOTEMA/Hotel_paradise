@@ -386,15 +386,16 @@ tr:last-child td{border-bottom:0}
 .menuWatermark{position:absolute;top:0;bottom:0;left:0;right:0;z-index:0;pointer-events:none;user-select:none;background-repeat:repeat;background-size:640px 360px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360'%3E%3Ctext x='320' y='190' text-anchor='middle' font-family='Georgia,Times New Roman,serif' font-size='46' font-weight='700' letter-spacing='3' fill='%23071A33' fill-opacity='0.07' transform='rotate(-26 320 180)'%3EHotel Paradise on the Nile%3C/text%3E%3C/svg%3E")}
 .menuWrap>*:not(.menuWatermark){position:relative;z-index:1}
 
-/* section jump bar */
+/* category filter bar: choosing one shows only that category */
 .menuJump{position:sticky;top:82px;z-index:9;background:#ffffffef;backdrop-filter:blur(8px);border-bottom:1px solid #e7e2d6;box-shadow:0 4px 18px #071A3308;padding:0;width:100%}
-.menuJumpInner{width:94%;max-width:100%;margin:auto;padding:0;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+.menuJumpInner{width:96%;max-width:1400px;margin:auto;padding:9px 0;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none}
 .menuJumpInner::-webkit-scrollbar{display:none}
-.menuJump a{flex:none;padding:14px 12px;font-size:12px;font-weight:600;letter-spacing:.6px;color:#4a5666;border-bottom:2px solid transparent;white-space:nowrap;transition:color .18s ease,border-color .18s ease}
-.menuJump a:hover{color:var(--gold)}
-.menuJump a.active{color:var(--navy);border-bottom-color:var(--gold)}
-.jumpOrder{flex:none;margin-left:auto;padding:8px 16px;background:var(--navy);color:#fff;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;transition:background .18s ease}
-.jumpOrder:hover{background:var(--gold);color:var(--navy)}
+.catChip{flex:none;border:1px solid transparent;background:transparent;border-radius:999px;padding:8px 15px;font-size:12.5px;font-weight:600;letter-spacing:.5px;color:#4a5666;white-space:nowrap;transition:color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
+.catChip:hover{color:var(--navy);border-color:#ded5bd;background:#faf7ef}
+.catChip.on{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 4px 14px #071A332e}
+.catChip.on::after{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);margin-left:8px;vertical-align:middle}
+.jumpOrder{flex:none;margin-left:auto;padding:9px 18px;background:var(--gold);color:#071A33;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;transition:background .18s ease,box-shadow .18s ease}
+.jumpOrder:hover{background:#d8aa2e;box-shadow:0 6px 18px #C9A22755}
 
 /* sections */
 .secBlock{margin-bottom:60px;scroll-margin-top:150px;padding:0 0vw}
@@ -663,7 +664,7 @@ tr:last-child td{border-bottom:0}
   .planner{position:static;margin-top:6px}
   .bedCard{grid-template-columns:1fr}
   .bedMedia{--r:16/9}
-  .dishGrid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+  .dishGrid{grid-template-columns:repeat(3,1fr);gap:18px}
   .menuJumpInner{padding:0 5vw}
   .booking{grid-template-columns:1fr 1fr;gap:16px}
   .booking .btn{width:100%}
@@ -733,25 +734,24 @@ tr:last-child td{border-bottom:0}
 }
 @keyframes sheetIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 
-/* --- 640: the menu becomes a list of thumbnails --------------------- */
-@media(max-width:640px){
+/* --- 768: the menu goes to its three-across mobile grid ------------- */
+@media(max-width:768px){
   .menuWrap{padding-top:20px}
-  .dishGrid{grid-template-columns:1fr}
-  /* the card becomes a plate beside its words, rather than a stack */
-  .dishCard{display:grid;grid-template-columns:124px 1fr;align-items:stretch}
-  .dishOpenMedia{grid-column:1;grid-row:1/3}
-  .dishOpenMedia .shot{--r:1/1;height:100%;border-bottom:0;border-right:1px solid #ece7db}
-  .dishOpenText{grid-column:2;grid-row:1;padding:13px 14px 0}
-  .dishBody{grid-column:2;grid-row:2;padding:7px 14px 13px;margin-top:0}
-  .dishTitle{font-size:16.5px}
-  .dishDesc{font-size:12.5px;margin:0}
-  .dishFoot b{font-size:13.5px}
-  .addBtn{padding:8px 14px;font-size:11px;min-height:40px}
-  /* the plate is small here, so the hover cue is taken off the board */
+  .dishGrid{grid-template-columns:repeat(3,1fr);gap:12px}
+  /* the card is narrow here, so its insides are re-stacked: the words
+     are trimmed, and price and action sit one above the other */
+  .dishOpenText{padding:11px 11px 0}
+  .dishTitle{font-size:14.5px;margin-bottom:4px}
+  .dishDesc{font-size:12px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .dishBody{padding:9px 11px 11px}
+  .dishFoot{flex-direction:column;align-items:stretch;gap:8px}
+  .dishFoot b{font-size:13.5px;text-align:center;white-space:normal}
+  .addBtn{width:100%;justify-content:center;padding:9px 8px;font-size:11px;letter-spacing:.6px}
+  /* the plate is small here, so the hover cue and the file hint go */
   .dishPeek{display:none}
-  .dishHeld{top:8px;left:8px;font-size:8.5px;letter-spacing:1.2px;padding:4px 7px}
-  .plateGlyph{width:30px;height:30px}
-  .shotFile{font-size:8.5px;max-width:112px}
+  .shotFile{display:none}
+  .dishHeld{top:7px;left:7px;font-size:8.5px;letter-spacing:1.2px;padding:4px 7px}
+  .plateGlyph{width:32px;height:32px}
   .secBanner{--r:16/9}
   .menuWatermark{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='300'%3E%3Ctext x='260' y='160' text-anchor='middle' font-family='Georgia,Times New Roman,serif' font-size='36' font-weight='700' letter-spacing='2' fill='%23071A33' fill-opacity='0.07' transform='rotate(-26 260 150)'%3EHotel Paradise on the Nile%3C/text%3E%3C/svg%3E");background-size:520px 300px}
   .orderPanelHead{padding:18px}
@@ -848,8 +848,15 @@ tr:last-child td{border-bottom:0}
   .mobileCta{padding:9px 3vw calc(9px + env(safe-area-inset-bottom))}
   .mobileCta .btn{padding:13px 6px;font-size:12px;letter-spacing:.6px}
   .heroDots{bottom:calc(76px + env(safe-area-inset-bottom))}
-  .dishCard{grid-template-columns:108px 1fr}
-  .shotFile{max-width:92px}
+  /* three across on the smallest phone: the description steps aside and
+     the card carries the plate, the name and the price alone */
+  .dishGrid{gap:9px}
+  .dishOpenText{padding:9px 9px 0}
+  .dishTitle{font-size:13.5px}
+  .dishDesc{display:none}
+  .dishBody{padding:8px 9px 10px}
+  .dishFoot b{font-size:12.5px}
+  .addBtn{padding:8px 6px;font-size:10.5px;letter-spacing:.4px}
   .pickGrid{grid-template-columns:1fr}
   .cardBody{padding:20px 17px}
   .card h3{font-size:21px}
@@ -1098,18 +1105,23 @@ tr:last-child td{border-bottom:0}
 .acctOr{display:flex;align-items:center;gap:12px;margin:24px 0 14px;color:#98a2b3;font-size:11px;letter-spacing:3px;text-transform:uppercase}
 .acctOr::before,.acctOr::after{content:'';height:1px;background:#eaedf2;flex:1}
 
+/* ---------------------------------------------------------------
+   THE LAST POLISH
 
-
-
-
-
-
-@media (max-width: 1366px) { .dishGrid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 1024px) { .dishGrid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 768px) { .dishGrid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
-@media (max-width: 480px) { .dishGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
-@media (max-width: 390px) { .dishGrid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
-@media (max-width: 360px) { .dishGrid { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
+   Rules that apply everywhere and never fight a media query: every
+   focusable thing wears the same gold ring, buttons carry their own
+   weight, and selected text answers to the house colours.
+   --------------------------------------------------------------- */
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+::selection{background:#C9A2274d;color:var(--navy)}
+.btn{box-shadow:0 6px 18px #C9A22733;transition:background .2s ease,box-shadow .2s ease,color .2s ease,transform .2s ease,border-color .2s ease}
+.btn:hover{box-shadow:0 12px 26px #C9A22750}
+.btn.ghost,.btn.ghost2{box-shadow:none}
+.btn:focus-visible{outline:3px solid #fff;outline-offset:2px;box-shadow:0 0 0 5px var(--gold)}
+.hero .btn:focus-visible,.pageHero .btn:focus-visible{outline-color:var(--gold)}
+input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
+.nav{border-bottom:1px solid #f0ece0}
+.printBtn:focus-visible,.catChip:focus-visible,.jumpOrder:focus-visible{outline-offset:1px}
 
 
 

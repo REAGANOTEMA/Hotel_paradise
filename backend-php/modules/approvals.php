@@ -29,13 +29,13 @@ echo '</tbody></table></div></div>';
 echo '<div>';
 echo '<div class="panel"><h2>Open shifts</h2><p class="hint">Cashiers with a shift still open are expected to cash up at close.</p>';
 echo '<div class="miniList">';
-foreach($openShifts as $s){ echo '<div class="li"><span>'.e($s['uname']).'<br><small style="color:var(--muted)">'.e(ucfirst($s['outlet'])).' opened '.fmtdt($s['opened_at']).'</small></span><b>'.money($s['opening_cash']).'</b></div>'; }
-if(!count($openShifts)) echo '<p style="color:var(--muted)">No open shifts at the moment.</p>';
+foreach($openShifts as $s){ echo '<div class="li"><span>'.e($s['uname']).'<br><small>'.e(ucfirst($s['outlet'])).' opened '.fmtdt($s['opened_at']).'</small></span><b>'.money($s['opening_cash']).'</b></div>'; }
+if(!count($openShifts)) echo '<p class="emptyLine">No open shifts at the moment.</p>';
 echo '</div></div>';
 
 echo '<div class="panel"><h2>Large payments today</h2><p class="hint">Transactions above 1,000,000 that warrant a glance.</p>';
 echo '<div class="miniList">';
-foreach($highValPayments as $p){ echo '<div class="li"><span>'.money($p['amount']).'<br><small style="color:var(--muted)">'.e($p['usr']??'-').' via '.e($p['method']).', '.fmtdt($p['created_at']).'</small></span>'.status_badge($p['status']).'</div>'; }
-if(!count($highValPayments)) echo '<p style="color:var(--muted)">No large payments recorded.</p>';
+foreach($highValPayments as $p){ echo '<div class="li"><span>'.money($p['amount']).'<br><small>'.e($p['usr']??'-').' via '.e($p['method']).', '.fmtdt($p['created_at']).'</small></span>'.status_badge($p['status']).'</div>'; }
+if(!count($highValPayments)) echo '<p class="emptyLine">No large payments recorded.</p>';
 echo '</div></div></div></div>';
 page_foot();

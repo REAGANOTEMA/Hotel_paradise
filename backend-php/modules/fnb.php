@@ -172,7 +172,7 @@ if($view){
  echo '<table class="tbl"><thead><tr><th>Dish</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Amount</th></tr></thead><tbody>';
  foreach($lines[(int)$view['id']]??[] as $l){
   $note=prep_note($l['notes']??null);
-  echo '<tr><td><b>'.e($l['name']??'Item removed').'</b>'.($note?'<br><small style="color:var(--muted)">'.e($note).'</small>':'').'</td>';
+  echo '<tr><td><b>'.e($l['name']??'Item removed').'</b>'.($note?'<br><small>'.e($note).'</small>':'').'</td>';
   echo '<td class="num">'.rtrim(rtrim(number_format((float)$l['quantity'],2,'.',''),'0'),'.').'</td>';
   echo '<td class="num">'.money($l['unit_price']).'</td><td class="num">'.money($l['total']).'</td></tr>';
  }
@@ -205,7 +205,7 @@ if($view){
 
 echo '<div class="panel"><h2>Today\'s orders</h2><p class="hint">Every order placed today, newest first. Open one to see it in full or take a payment.</p>';
 if(!count($orders)){
- echo '<p style="color:var(--muted)">No orders have been placed today yet.</p>';
+ echo '<p class="emptyLine">No orders have been placed today yet.</p>';
 }else{
  echo '<table class="tbl"><thead><tr><th>Order</th><th>Time</th><th>Guest</th><th>Dishes</th><th>Outlet</th><th class="num">Total</th><th class="num">Paid</th><th>Status</th><th></th></tr></thead><tbody>';
  foreach($orders as $o){
@@ -216,7 +216,7 @@ if(!count($orders)){
   $paid=(float)$o['paid'];
   echo '<tr><td><b><a href="'.BASE.'/index.php?page=fnb&amp;view='.$oid.'">'.e($o['order_number']).'</a></b></td>';
   echo '<td>'.date('H:i',strtotime((string)$o['created_at'])).'</td>';
-  echo '<td>'.e($g['name']??'Counter').'<br><small style="color:var(--muted)">'.e($g['phone']??'').'</small></td>';
+  echo '<td>'.e($g['name']??'Counter').'<br><small>'.e($g['phone']??'').'</small></td>';
   echo '<td>'.e(implode(', ',array_slice($names,0,2))).(count($names)>2?' &hellip; ('.count($names).')':'').'</td>';
   echo '<td>'.e(ucfirst((string)$o['outlet'])).'</td>';
   echo '<td class="num">'.money($o['total']).'</td>';
