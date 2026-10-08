@@ -26,7 +26,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<a class="skipLink" href="#mainContent">Skip to content</a>';
  echo '<div class="sideScrim" id="sideScrim" hidden></div>';
 
- echo '<aside class="side" id="side"><a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/logo-256.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span></a>';
+ echo '<aside class="side" id="side"><a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/paradise-logo.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span style="color:#ffffff">HOTEL PARADISE</span><small style="color:#d4af37">ON THE NILE</small></span></a>';
  echo '<button class="sideClose" id="sideClose" type="button" aria-label="Close menu"><span></span><span></span></button>';
  echo '<div class="sideLabel">MANAGEMENT SYSTEM</div><nav class="sideNav" aria-label="Modules">';
  foreach($items as $k=>$lbl){

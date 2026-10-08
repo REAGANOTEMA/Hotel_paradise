@@ -25,7 +25,7 @@ function pagelogin(): void{
   echo '<link rel="icon" type="image/png" sizes="64x64" href="'.SITE_URL.'/images/logo-64.png">';
   echo '<link rel="apple-touch-icon" href="'.SITE_URL.'/images/logo-192.png"></head><body>';
     echo '<div class="loginWrap"><div id="particles-js" style="position:absolute;inset:0;z-index:1"></div><div class="loginCard" style="z-index:2;position:relative;">';
-  echo '<div class="sideBrand"><img class="sideLogo" src="'.SITE_URL.'/images/logo-256.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span></div>';
+    echo '<div class="sideBrand"><img class="sideLogo" src="'.SITE_URL.'/images/paradise-logo.png" alt="Hotel Paradise on the Nile logo"><span class="sbText" style="text-shadow: 0 2px 10px rgba(0,0,0,0.8)"><span style="color:#ffffff">HOTEL PARADISE</span><small style="color:#d4af37">ON THE NILE</small></span></div>';
   if($f=flash_out()){ echo '<div class="flash '.e($f['type']).'">'.e($f['msg']).'</div>'; }
   echo '<h1 style="font-size:28px;margin-bottom:6px;font-weight:700;background:linear-gradient(135deg,#071A33 0%,#d4af37 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Welcome back</h1><p>Sign in to the Hotel Paradise on the Nile management system.</p>';
   echo '<form method="post" id="loginForm">';
