@@ -156,11 +156,11 @@ function RoomsPage() {
   setBusy(false);
  };
 
-  return <div>
-   <TopBar/>
-   <PageNav/>
+   return <div>
+    <TopBar/>
+    <PageNav onDark/>
 
-<section className="pageHero hasCover">
+<section className="pageHero hasCover" id="main">
     <SmartImage
       group="rooms"
       name="suite"
@@ -236,23 +236,29 @@ function RoomsPage() {
         className="spot"
         placeholder={<BedGlyph size={86}/>}
        />
+       <div className="stepHead"><span className="stepNum">1</span><b>Room</b></div>
        <h3>{sel.type}</h3>
        <p className="bedsLine">{sel.beds} &middot; {sel.guests}</p>
-        <div className="spotTotal"><span>{sel.rate} per night</span><b>{nights ? fmt(total) : 'Pick your dates'}</b><small>{nights ? 'For ' + nights + ' night' + (nights > 1 ? 's' : '') + ', breakfast and hotel tax included. Also US$ ' + sel.usd + ' per night' : 'Choose check in and check out to see your total, quoted in Uganda Shillings'}</small>
-         {nights && fee.amount > 0 ? <small className="feeLine">{fmtPrice(subtotal)} for the room, plus a {fmt(fee.amount)} {fee.label.toLowerCase()}</small> : null}</div>
 
+       <div className="stepHead"><span className="stepNum">2</span><b>Your details</b></div>
+       <div className="planGrid">
+        <div className="planField"><label>Your name</label><input value={form.name} onChange={f('name')} placeholder="Full name"/></div>
+        <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>
+        <div className="planField"><label>Email (optional)</label><input value={form.email} onChange={f('email')} type="email" placeholder="you@email.com"/></div>
+       </div>
 
+       <div className="stepHead"><span className="stepNum">3</span><b>Dates</b></div>
+       <div className="planGrid">
+        <div className="planField"><label>Check in</label><input type="date" value={form.check_in} onChange={f('check_in')}/></div>
+        <div className="planField"><label>Check out</label><input type="date" value={form.check_out} onChange={f('check_out')}/></div>
+        <div className="planField"><label>Guests</label><select value={form.adults} onChange={f('adults')}><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+       </div>
 
-      <div className="planGrid">
-       <div className="planField"><label>Your name</label><input value={form.name} onChange={f('name')} placeholder="Full name"/></div>
-       <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>
-       <div className="planField"><label>Email (optional)</label><input value={form.email} onChange={f('email')} type="email" placeholder="you@email.com"/></div>
-       <div className="planField"><label>Check in</label><input type="date" value={form.check_in} onChange={f('check_in')}/></div>
-       <div className="planField"><label>Check out</label><input type="date" value={form.check_out} onChange={f('check_out')}/></div>
-       <div className="planField"><label>Guests</label><select value={form.adults} onChange={f('adults')}><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
-      </div>
+       <div className="stepHead"><span className="stepNum">4</span><b>Price summary</b></div>
+       <div className="spotTotal"><span>{sel.rate} per night</span><b>{nights ? fmt(total) : 'Pick your dates'}</b><small>{nights ? 'For ' + nights + ' night' + (nights > 1 ? 's' : '') + ', breakfast and hotel tax included. Also US$ ' + sel.usd + ' per night' : 'Choose check in and check out to see your total, quoted in Uganda Shillings'}</small>
+        {nights && fee.amount > 0 ? <small className="feeLine">{fmtPrice(subtotal)} for the room, plus a {fmt(fee.amount)} {fee.label.toLowerCase()}</small> : null}</div>
 
-      <button className="btn planBook" onClick={book} disabled={busy}>{busy ? 'Sending your request...' : 'Book this room'}</button>
+      <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={book} disabled={busy}>{busy ? 'Sending your request...' : 'Book this room'}</button>
       <button className="linkBtn" onClick={() => setChosen('')}>Choose another room instead</button>
      </div>
     )}

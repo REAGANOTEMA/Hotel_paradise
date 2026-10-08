@@ -525,6 +525,9 @@ function MenuPage() {
   // the whole menu rather than to an empty screen.
   const activeCat = cat && sections.some(s => s.key === cat) ? cat : null;
   const visible = activeCat ? sections.filter(s => s.key === activeCat) : sections;
+  // A section or a group the kitchen has emptied out is left off the page
+  // altogether, rather than shown as a heading with nothing beneath it.
+  const shown = visible.filter(s => s.groups.some(g => g.items.length > 0));
 
   /** One category, or the whole menu, and back to the head of the list. */
   const pickCat = (key: string | null) => {
@@ -688,9 +691,9 @@ function MenuPage() {
 
   return <div>
     <TopBar/>
-    <PageNav/>
+    <PageNav onDark/>
 
-    <section className="pageHero hasCover">
+    <section className="pageHero hasCover" id="main">
       <SmartImage
         group="dishes"
         name="steak-dinner-and-wine-on-table"
@@ -744,7 +747,15 @@ function MenuPage() {
         <button className="printBtn" onClick={() => window.print()}>Print this menu</button>
       </div>
 
-      {visible.map(section => (
+      {shown.length === 0 && (
+        <div className="stateMsg emptyState">
+          <PlateGlyph/>
+          <h3>Nothing on the menu just now</h3>
+          <p>The kitchen has nothing filed under this category at the moment. Choose another category above, or call {CALL} to ask what is being cooked.</p>
+        </div>
+      )}
+
+      {shown.map(section => (
         <section className="secBlock" id={'sec-' + section.key} key={section.key}>
           <header className="secHead">
             <SectionBanner section={section}>
@@ -754,7 +765,7 @@ function MenuPage() {
             {section.blurb && <p className="secBlurb">{section.blurb}</p>}
           </header>
 
-          {section.groups.map((g, gi) => (
+          {section.groups.filter(g => g.items.length > 0).map((g, gi) => (
             <div className={'subGroup' + (g.title === '' ? ' noHead' : '')} key={section.key + '-' + gi}>
               {g.title !== '' && <h3 className="subHead">{g.title}</h3>}
               <div className="dishGrid">
@@ -843,7 +854,7 @@ function MenuPage() {
             <div className="trayForm">
               <div className="planField"><label>Your name</label><input value={name} onChange={e => setName(e.target.value)} placeholder="Full name"/></div>
               <div className="planField"><label>Phone</label><input value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="e.g. 0759504928"/></div>
-              <button className="btn planBook" onClick={send} disabled={busy || tray.length === 0}>{busy ? 'Sending...' : 'Send my order'}</button>
+              <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={send} disabled={busy || tray.length === 0}>{busy ? 'Sending...' : 'Send my order'}</button>
               {tray.length > 0 && <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>}
             </div>
           ) : (

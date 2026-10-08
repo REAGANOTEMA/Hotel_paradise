@@ -367,10 +367,12 @@ function go(string $page,array $q=[]): void{
  header('Location: '.BASE.'/index.php?page='.$page.$qs); exit;
 }
 
+/** One badge shape, seven tones. Purely presentational: the class carries
+ *  the colour so admin.css stays the single place the look is written. */
 function badge(string $text,string $tone='grey'): string{
- $tones=['ok'=>'#2e7d32','warn'=>'#b26a00','bad'=>'#c62828','gold'=>'#C9A227','navy'=>'#1E3A5F','blue'=>'#0B5D78','grey'=>'#64748b'];
- $c=$tones[$tone]??$tones['grey'];
- return '<span class="badge" style="background:'.$c.'1a;color:'. $c.';border:1px solid '.$c.'55">'.e($text).'</span>';
+ static $tones=['ok'=>1,'warn'=>1,'bad'=>1,'gold'=>1,'navy'=>1,'blue'=>1,'grey'=>1];
+ $t=isset($tones[$tone])?$tone:'grey';
+ return '<span class="badge '.e($t).'">'.e($text).'</span>';
 }
 
 function payment_methods(): array{ return ['cash'=>'Cash','mtn_momo'=>'Mobile Money','airtel_money'=>'Airtel Money','card'=>'Card','bank'=>'Bank Transfer','other'=>'Other']; }

@@ -230,6 +230,7 @@ function Hero() {
   return (
    <section
     className="hero"
+    id="main"
     aria-roledescription="carousel"
     aria-label="Hotel Paradise on the Nile"
     tabIndex={0}
@@ -348,45 +349,47 @@ function AvailabilityStrip() {
 function Rates() {
  const [cur, setCur] = React.useState<'UGX' | 'USD'>('UGX');
  return (
-  <section className="section rates" id="rates">
-   <div className="center reveal">
-    <p className="eyebrow">ROOM RATES AND POLICIES</p>
-    <h2>Rates and policies</h2>
-     <p className="intro">Current tariffs for a night at Hotel Paradise on the Nile. Choose your currency, every rate is quoted in Uganda Shillings and in US dollars, includes breakfast and the local hotel tax, and is subject to change without notice.</p>
-    <div className="curToggle" role="group" aria-label="Choose the currency you want to see">
-     <button type="button" className={cur === 'UGX' ? 'on' : ''} aria-pressed={cur === 'UGX'} onClick={() => setCur('UGX')}>UGX</button>
-     <button type="button" className={cur === 'USD' ? 'on' : ''} aria-pressed={cur === 'USD'} onClick={() => setCur('USD')}>USD</button>
+   <section className="section band rates" id="rates">
+    <div className="bandInner">
+    <div className="center reveal">
+     <p className="eyebrow">ROOM RATES AND POLICIES</p>
+     <h2>Rates and policies</h2>
+      <p className="intro">Current tariffs for a night at Hotel Paradise on the Nile. Choose your currency, every rate is quoted in Uganda Shillings and in US dollars, includes breakfast and the local hotel tax, and is subject to change without notice.</p>
+     <div className="curToggle" role="group" aria-label="Choose the currency you want to see">
+      <button type="button" className={cur === 'UGX' ? 'on' : ''} aria-pressed={cur === 'UGX'} onClick={() => setCur('UGX')}>UGX</button>
+      <button type="button" className={cur === 'USD' ? 'on' : ''} aria-pressed={cur === 'USD'} onClick={() => setCur('USD')}>USD</button>
+     </div>
     </div>
-   </div>
-   <div className="ratesWrap">
-    <div className="rateCard reveal">
-     {rooms.map(r => {
-      const priced = r.price > 0;
-      return (
-       <div className="rateRow" key={r.type}>
-        <div>
-         <h4>{r.type}</h4>
-         <small>{priced ? 'Classic comfort, breakfast and taxes included' : 'A well equipped single room, contact the hotel for the Uganda Shilling rate'}</small>
+    <div className="ratesWrap">
+     <div className="rateCard reveal">
+      {rooms.map(r => {
+       const priced = r.price > 0;
+       return (
+        <div className="rateRow" key={r.type}>
+         <div>
+          <h4>{r.type}</h4>
+          <small>{priced ? 'Classic comfort, breakfast and taxes included' : 'A well equipped single room, contact the hotel for the Uganda Shilling rate'}</small>
+         </div>
+         <b>{cur === 'UGX'
+           ? (priced ? <>{fmtPrice(r.price)}<span>per night</span></> : <>On request<span>contact the hotel</span></>)
+           : <>US$ {r.usd}<span>per night</span></>}</b>
         </div>
-        <b>{cur === 'UGX'
-          ? (priced ? <>{fmtPrice(r.price)}<span>per night</span></> : <>On request<span>contact the hotel</span></>)
-          : <>US$ {r.usd}<span>per night</span></>}</b>
-       </div>
-      );
-     })}
+       );
+      })}
+     </div>
+     <div className="policy reveal">
+      <h4>GOOD TO KNOW</h4>
+      <p><b>Check in</b> is from 12 noon and <b>check out</b> is 10 am.</p>
+      <p>Rooms held up to 6 pm are charged at 75% of the applicable rate. After 6 pm the full rate applies.</p>
+      <p>All rates quoted include the local hotel tax of UGX 2,000 per room per day, and every rate includes breakfast.</p>
+      <p>US dollar rates are quoted for international guests and carry the same breakfast, tax and timing terms as the Uganda Shilling rates.</p>
+       <p>Baby cots are free, and children above six years sharing a room with their parents pay for breakfast only at {fmtPrice(25000)}.</p>
+      <p>Lunch is served from 12 noon to 3 pm, and dinner from 7 pm to 11 pm.</p>
+      <a className="btn" href="./rooms.html" style={{marginTop: 12}}>Choose your room</a>
+     </div>
     </div>
-    <div className="policy reveal">
-     <h4>GOOD TO KNOW</h4>
-     <p><b>Check in</b> is from 12 noon and <b>check out</b> is 10 am.</p>
-     <p>Rooms held up to 6 pm are charged at 75% of the applicable rate. After 6 pm the full rate applies.</p>
-     <p>All rates quoted include the local hotel tax of UGX 2,000 per room per day, and every rate includes breakfast.</p>
-     <p>US dollar rates are quoted for international guests and carry the same breakfast, tax and timing terms as the Uganda Shilling rates.</p>
-      <p>Baby cots are free, and children above six years sharing a room with their parents pay for breakfast only at {fmtPrice(25000)}.</p>
-     <p>Lunch is served from 12 noon to 3 pm, and dinner from 7 pm to 11 pm.</p>
-     <a className="btn" href="./rooms.html" style={{marginTop: 12}}>Choose your room</a>
     </div>
-   </div>
-  </section>
+   </section>
  );
 }
 
@@ -419,7 +422,7 @@ function Home() {
   useReveal();
   return <div>
    <TopBar/>
-   <PageNav/>
+   <PageNav onDark/>
    <Hero/>
 
    <AvailabilityStrip/>
@@ -488,11 +491,18 @@ function Home() {
      <p className="intro">Hotel Paradise on the Nile sits right on the banks of the River Nile, about a three hour drive from Entebbe Airport and only five minutes from the centre of Jinja town.</p>
    </div>
    <div className="factsGrid">
-    {facts.map(f => <div className="fact reveal" key={f.t}><h4>{f.t.toUpperCase()}</h4><p>{f.d}</p></div>)}
+    {facts.map((f, i) => (
+     <div className="fact reveal" key={f.t}>
+      <span className="factIdx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+      <h4>{f.t}</h4>
+      <p>{f.d}</p>
+     </div>
+    ))}
    </div>
   </section>
 
-  <section className="section contact" id="contact">
+  <section className="section band contact" id="contact">
+   <div className="bandInner">
    <div className="center reveal">
     <p className="eyebrow">BOOKINGS AND ENQUIRIES</p>
     <h2>How to reach us</h2>
@@ -514,6 +524,7 @@ function Home() {
       <p>{HOTEL.address}. <a href={MAP_LINK} target="_blank" rel="noreferrer">Open in Google Maps</a></p>
      </div>
     </div>
+   </div>
   </section>
 
   <Footer/>

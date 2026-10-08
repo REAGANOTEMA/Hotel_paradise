@@ -50,7 +50,7 @@ b,strong{font-variant-numeric:tabular-nums}
 .nav.dark .burger span{background:#fff}
 .brand{display:flex;flex-direction:column;color:var(--navy);font-family:'Playfair Display',serif;letter-spacing:3px;line-height:1.1}
 .brand span{font-size:25px}
-.brand small{font-family:'DM Sans';letter-spacing:4px;color:var(--gold);font-size:9px}
+.brand small{font-family:'DM Sans';letter-spacing:4px;color:var(--gold-ink);font-size:9px}
 .nav nav{display:flex;gap:26px}
 .nav nav a{font-size:13px;font-weight:600;letter-spacing:.02em;color:#33414f;white-space:nowrap;padding:6px 0;border-bottom:2px solid transparent;transition:color .18s ease,border-color .18s ease}
 .nav nav a:hover{color:var(--gold-ink)}
@@ -287,6 +287,10 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
 .contactRow:last-child{border-bottom:0}
 .contactRow b{color:var(--navy);font-size:11px;letter-spacing:.14em;white-space:nowrap;padding-top:3px}
 .contactRow span{color:#344049;text-align:right}
+/* The link colour is set for the navy footer; on this white card it must be
+   the darker Nile blue to be read. */
+.contactCard .footLink{color:var(--nile);text-decoration:underline}
+.contactCard .footLink:hover{color:var(--gold-ink)}
 
 footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1px solid rgba(255,255,255,.1)}
 .flag{height:6px;display:grid;grid-template-columns:1fr 1fr 1fr}
@@ -317,7 +321,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .brandL.light .brandLogo{border-color:rgba(201,162,39,.85);box-shadow:0 2px 14px #00000045}
 .brandWord{display:flex;flex-direction:column;line-height:1.1;color:var(--navy);font-family:'Playfair Display',serif;letter-spacing:3px}
 .brandWord span{font-size:21px}
-.brandWord small{font-family:'DM Sans';letter-spacing:4px;color:var(--gold);font-size:9px}
+.brandWord small{font-family:'DM Sans';letter-spacing:4px;color:var(--gold-ink);font-size:9px}
+/* On a navy surface the gold itself passes contrast; on ivory it must deepen. */
+.nav.dark .brandWord small,.brandL.light .brandWord small,.heroLogo .brandWord small{color:var(--gold)}
 .brandL.light .brandWord{color:#fff}
 .heroLogo{margin-bottom:22px}
 .heroLogo img{width:96px;height:96px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.92);border:3px solid var(--gold);box-shadow:0 8px 26px #00000050;padding:3px}
@@ -337,7 +343,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 /* beds page */
 .bedsWrap{display:grid;grid-template-columns:1fr 400px;gap:34px;align-items:start;max-width:1400px}
 .bedList{display:flex;flex-direction:column;gap:22px}
-.bedCard{position:relative;display:grid;grid-template-columns:290px 1fr;background:#fff;box-shadow:0 10px 35px #071A3312;border:2px solid transparent;overflow:hidden;transition:box-shadow .25s ease}
+.bedCard{position:relative;display:grid;grid-template-columns:290px 1fr;background:#fff;border-radius:var(--r);box-shadow:var(--shadow);border:2px solid transparent;overflow:hidden;transition:box-shadow .25s ease}
 .bedCard:hover{box-shadow:0 18px 45px #071A3318}
 .bedCard.chosen{border-color:var(--gold);box-shadow:0 18px 50px #071A3326}
 /* the room photograph. Portrait ratio suits a bed shot better than a squashed
@@ -353,7 +359,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .bedsLine{color:#33414f;font-size:13px;letter-spacing:.4px;margin:0 0 12px}
 .bedText{color:#687386;line-height:1.7;margin:0 0 20px;flex:1}
 .bedFoot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.bedFoot strong{color:var(--gold);font-size:18px}
+.bedFoot strong{color:var(--gold-ink);font-size:18px}
 .bedFoot strong span{display:block;font-size:10px;letter-spacing:1px;color:#8a95a5;font-weight:600}
 .bedFoot strong .usdLine{margin-top:6px;font-size:12px;color:var(--nile);letter-spacing:.5px}
 .planner{position:sticky;top:calc(var(--navh) + 18px);background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);padding:26px}
@@ -383,9 +389,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 
 /* menu page */
 .menuMeta{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 18px;color:#8a95a5;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:30px}
-.menuMetaCount{color:var(--gold);font-weight:700}
+.menuMetaCount{color:var(--gold-ink);font-weight:700}
 .printBtn{background:none;border:1px solid #c8cfd9;color:var(--navy);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 18px;transition:border-color .2s ease,color .2s ease}
-.printBtn:hover{border-color:var(--gold);color:var(--gold)}
+.printBtn:hover{border-color:var(--gold);color:var(--gold-ink)}
 
 /* diagonal brand watermark behind the whole menu */
 .menuWrap{position:relative;padding-top:36px;width:96%;max-width:100%;margin:0 auto}
@@ -406,11 +412,11 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 /* sections */
 .secBlock{margin-bottom:60px;scroll-margin-top:150px;padding:0 0vw}
 .secHead{margin-bottom:26px}
-.secEyebrow{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:4px;margin:0 0 6px}
+.secEyebrow{color:var(--gold-ink);font-size:11px;font-weight:700;letter-spacing:4px;margin:0 0 6px}
 .secHead h2,.secBanner h2{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(28px,3.4vw,42px);color:var(--navy);margin:0 0 10px;line-height:1.1}
 .secBlurb{color:#5b6675;font-size:15px;margin:0;max-width:640px}
 .subGroup{margin-bottom:30px}
-.subHead{font-size:11px;font-weight:700;letter-spacing:3.4px;text-transform:uppercase;color:var(--gold);margin:0 0 16px;padding-bottom:9px;border-bottom:1px solid #e3dccb;display:flex;align-items:center;gap:14px}
+.subHead{font-size:11px;font-weight:700;letter-spacing:3.4px;text-transform:uppercase;color:var(--gold-ink);margin:0 0 16px;padding-bottom:9px;border-bottom:1px solid #e3dccb;display:flex;align-items:center;gap:14px}
 .subHead::after{content:'';flex:1;height:1px;background:repeating-linear-gradient(90deg,#e3dccb 0 6px,transparent 6px 12px)}
 
 /* section banner: the name is laid over the photograph, on a navy scrim that
@@ -472,10 +478,10 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .trayList{margin-bottom:6px}
 .trayItem{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #eaedf2}
 .trayInfo b{display:block;font-size:14.5px}
-.trayInfo span{color:var(--gold);font-size:12px;font-weight:700}
+.trayInfo span{color:var(--gold-ink);font-size:12px;font-weight:700}
 .trayQty{display:flex;align-items:center;gap:8px}
 .trayQty button{width:26px;height:26px;border-radius:50%;border:1px solid #d9dee7;background:#fff;color:var(--navy);font-weight:700;line-height:1}
-.trayQty button:hover{border-color:var(--gold);color:var(--gold)}
+.trayQty button:hover{border-color:var(--gold);color:var(--gold-ink)}
 .trayQty em{font-style:normal;min-width:16px;text-align:center;font-weight:700}
 .lineTotal{font-weight:700;font-size:13.5px;color:var(--navy)}
 .dropBtn{background:none;border:0;color:#a8443a;font-size:11.5px;text-decoration:underline;padding:0}
@@ -489,7 +495,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 
 /* collapsed order panel, sits under the menu */
 .orderPanelWrap{padding-top:0;max-width:900px}
-.orderPanel{background:#fff;box-shadow:0 20px 55px #071A3320;scroll-margin-top:150px}
+.orderPanel{background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:150px}
 .orderPanelHead{width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px 26px;background:none;text-align:left;transition:background .2s ease}
 .orderPanelHead:hover{background:#fdfaf1}
 .orderPanelTitle b{display:block;font-family:'Playfair Display';font-size:24px;color:var(--navy)}
@@ -538,7 +544,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .modalScrim{position:absolute;inset:0;background:rgba(5,13,26,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadeIn .3s ease both}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
-.modalPanel{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);width:min(1080px,100%);max-height:min(88vh,880px);background:var(--ivory);box-shadow:0 40px 110px #00000066;overflow:hidden;animation:panelIn .42s cubic-bezier(.22,.9,.3,1) both}
+.modalPanel{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);width:min(1080px,100%);max-height:min(88vh,880px);background:var(--ivory);border-radius:var(--r);box-shadow:0 40px 110px #00000066;overflow:hidden;animation:panelIn .42s cubic-bezier(.22,.9,.3,1) both}
 @keyframes panelIn{
   from{opacity:0;transform:translateY(22px) scale(.975)}
   to{opacity:1;transform:translateY(0) scale(1)}
@@ -546,7 +552,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 /* a gold edge, so the panel reads as a plate set on the table */
 .modalPanel::before{content:'';position:absolute;inset:0;z-index:5;pointer-events:none;border:1px solid #C9A2274d;box-shadow:inset 0 0 0 1px #ffffff14}
 
-.modalClose{position:absolute;top:14px;right:14px;z-index:6;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:#fffffff2;color:var(--navy);box-shadow:0 6px 20px #071A3326;transition:background .18s ease,color .18s ease,transform .18s ease}
+.modalClose{position:absolute;top:14px;right:14px;z-index:6;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:#fffffff2;border-radius:var(--r);color:var(--navy);box-shadow:0 6px 20px #071A3326;transition:background .18s ease,color .18s ease,transform .18s ease}
 .modalClose svg{width:15px;height:15px}
 .modalClose:hover{background:var(--gold);color:#071A33;transform:rotate(90deg)}
 
@@ -562,9 +568,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .valueMark{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3.4px;text-transform:uppercase;color:var(--gold);border:1px solid #C9A22766;padding:6px 12px;background:#071A3352}
 
 .modalBody{padding:38px 40px 34px;overflow-y:auto;overscroll-behavior:contain}
-.modalCrumb{margin:0 0 10px;color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase}
+.modalCrumb{margin:0 0 10px;color:var(--gold-ink);font-size:10px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase}
 .modalTitle{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(28px,3vw,40px);line-height:1.1;color:var(--navy);margin:0 0 12px;padding-right:38px;text-wrap:balance}
-.modalPrice{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 16px;color:var(--gold);font-family:'Playfair Display',serif;font-size:30px;font-weight:600}
+.modalPrice{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 16px;color:var(--gold-ink);font-family:'Playfair Display',serif;font-size:30px;font-weight:600}
 .modalPrice small{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8a95a5}
 .modalPrice .askPrice{color:#8a95a5;font-size:22px;font-style:italic}
 .modalDesc{margin:0 0 26px;color:#4a5568;font-size:15.5px;line-height:1.78;padding-left:16px;border-left:3px solid var(--gold)}
@@ -594,7 +600,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .pickCard:has(input:checked){border-color:var(--gold);background:#fffdf5;box-shadow:0 8px 24px #C9A2271f}
 .pickCard:has(input:checked) .pickTick{background:var(--gold);border-color:var(--gold);color:#071A33}
 .pickCard:has(input:focus-visible){outline:3px solid var(--navy);outline-offset:2px}
-.pickPrice{grid-area:price;justify-self:start;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+.pickPrice{grid-area:price;justify-self:start;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold-ink)}
 .pickPrice.incl{color:#7b8794;font-weight:600;font-style:italic;text-transform:none;letter-spacing:.2px}
 
 /* --- the quantity, the running total and the add button ------------- */
@@ -614,7 +620,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .modalNote{margin:14px 0 0;color:#8a95a5;font-size:12px;line-height:1.65;text-align:center}
 
 /* --- a dish the kitchen prices by hand ------------------------------- */
-.askBox{background:#fff;border:1px solid #e6e0d2;border-left:3px solid var(--gold);padding:24px 26px;margin-bottom:26px}
+.askBox{background:#fff;border-radius:var(--r);border:1px solid #e6e0d2;border-left:3px solid var(--gold);padding:24px 26px;margin-bottom:26px}
 .askBox h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin:0 0 8px}
 .askBox p{margin:0 0 16px;color:#5b6675;font-size:14px;line-height:1.75}
 .askCall{display:inline-flex;align-items:center;gap:9px;padding:14px 22px}
@@ -623,15 +629,15 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 /* --- back to where the guest was ------------------------------------ */
 .modalBack{display:inline-flex;align-items:center;gap:10px;margin-top:26px;padding-top:20px;border-top:1px solid #e3dccb;width:100%;color:var(--nile);font-size:12px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;transition:color .18s ease}
 .modalBack svg{width:17px;height:12px;transform:rotate(180deg);transition:transform .2s ease}
-.modalBack:hover{color:var(--gold)}
+.modalBack:hover{color:var(--gold-ink)}
 .modalBack:hover svg{transform:rotate(180deg) translateX(5px)}
 
 /* contact map */
-.mapBox{min-height:320px;display:flex;flex-direction:column;background:#fff;color:var(--ink);box-shadow:0 20px 50px #00000030}
+.mapBox{min-height:320px;display:flex;flex-direction:column;background:#fff;color:var(--ink);border-radius:var(--r);overflow:hidden;box-shadow:0 20px 50px rgba(7,26,51,.16)}
 .mapBox iframe{flex:1;width:100%;min-height:300px;border:0;display:block}
 .mapBox p{padding:14px 20px;margin:0;font-size:13px;color:#344049}
 .mapBox a{color:var(--nile);text-decoration:underline}
-.mapBox a:hover{color:var(--gold)}
+.mapBox a:hover{color:var(--gold-ink)}
 
 /* ===================================================================
    Responsive
@@ -677,17 +683,16 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .booking .btn{width:100%}
   .grid{grid-template-columns:repeat(2,1fr)}
   .factsGrid{grid-template-columns:repeat(2,1fr)}
-  .pageHero{padding:76px 6vw 58px}
+  .pageHero{padding:calc(var(--navh) + 52px) 6vw 54px}
 }
 
 /* --- 1000: the drawer takes over from the horizontal navigation ----- */
 @media(max-width:1000px){
+  :root{--navh:64px}
   body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
-  .nav{height:64px;padding:0 4vw}
+  .nav{padding:0 4vw}
   .nav nav,.nav .navCta{display:none}
   .burger{display:block}
-  .drawer{top:64px}
-  .menuJump{top:64px}
   .secBlock{scroll-margin-top:126px}
   .orderPanel{scroll-margin-top:126px}
   /* the floating order button sits above the fixed booking bar */
@@ -696,12 +701,11 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .mobileCta .btn{flex:1;text-align:center;padding:14px 10px}
   /* the fixed bar sits over the bottom of the hero, so the text and the
      slide dots are lifted clear of it */
-  .heroCopy{padding:76px 6vw 118px}
+  .heroCopy{padding:calc(var(--navh) + 22px) 6vw 118px}
   .heroText{font-size:17.5px;max-width:520px}
   .heroDots{bottom:calc(84px + env(safe-area-inset-bottom))}
   .hero{min-height:620px}
   .section{padding:70px 6vw}
-  .section h2{font-size:42px}
   .booking{margin:0 15px}
   .topbar{justify-content:center;text-align:center}
   .topbar .right{display:none}
@@ -711,21 +715,13 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .ratesWrap,.contactWrap{grid-template-columns:1fr}
 }
 
-/* --- 900: the order tray and the agreement page reflow -------------- */
+/* --- 900: the order tray reflows ------------------------------------ */
 @media(max-width:900px){
   .trayItem{grid-template-columns:1fr auto;grid-template-areas:"info total" "qty drop";row-gap:12px;column-gap:8px}
   .trayInfo{grid-area:info}
   .trayQty{grid-area:qty}
   .lineTotal{grid-area:total;justify-self:end}
   .dropBtn{grid-area:drop;justify-self:end}
-  .docsheet{padding:0}
-  .dochead{padding:44px 24px}
-  .docSection{padding:34px 24px 0}
-  .docFoot{padding:28px 24px}
-  .parties{grid-template-columns:1fr}
-  .partySeal{margin:0;padding:12px 0}
-  .scopeGrid,.sigGrid{grid-template-columns:1fr}
-  .partyCard{padding:26px 24px}
   .booking{grid-template-columns:1fr}
   .cardBody{padding:24px 22px}
   /* the detail view becomes a sheet from the foot of the screen, the plate
@@ -753,7 +749,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .dishBody{padding:9px 11px 11px}
   .dishFoot{flex-direction:column;align-items:stretch;gap:8px}
   .dishFoot b{font-size:13.5px;text-align:center;white-space:normal}
-  .addBtn{width:100%;justify-content:center;padding:9px 8px;font-size:11px;letter-spacing:.6px}
+  .addBtn{width:100%;justify-content:center;padding:10px 8px;font-size:12px;letter-spacing:.4px}
   /* the plate is small here, so the hover cue and the file hint go */
   .dishPeek{display:none}
   .shotFile{display:none}
@@ -776,7 +772,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 @media(max-width:560px){
   .topbar{display:none}
   .hero{min-height:600px}
-  .heroCopy{padding:56px 5.5vw 112px}
+  .heroCopy{padding:calc(var(--navh) + 16px) 5.5vw 112px}
   .heroLogo{margin-bottom:14px}
   .heroLogo img{width:64px;height:64px}
   .hero h1{font-size:clamp(34px,9.6vw,46px)}
@@ -827,16 +823,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .addBtnWide{padding:16px 18px;font-size:12px;letter-spacing:1.2px}
   .askBox{padding:20px 18px}
   .orderPill{left:12px;right:12px;bottom:calc(94px + env(safe-area-inset-bottom))}
-  .dochead{padding:34px 18px}
-  .docSection{padding:30px 18px 0}
-  .docFoot{padding:24px 18px}
-  .docOverline{letter-spacing:3px}
-  .invTotal{padding:24px 22px}
-  .invTotal b{font-size:27px}
-  .invTotal p{text-align:left;max-width:none}
-  .sigCard{padding:20px 18px}
-  .sigLine{flex-wrap:wrap;gap:8px 14px}
-  .sigLine span{width:100%}
+  .badge{white-space:normal}
 }
 
 /* --- 420: the smallest phones still in use -------------------------- */
@@ -847,9 +834,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .brandWord span{font-size:15px;letter-spacing:1.4px}
   .brandWord small{font-size:7.5px;letter-spacing:2.4px}
   .section{padding:48px 5vw}
-  .section h2{font-size:29px}
+  .section h2{font-size:30px}
   .hero{min-height:560px}
-  .heroCopy{padding:44px 5vw 104px}
+  .heroCopy{padding:calc(var(--navh) + 14px) 5vw 104px}
   .hero h1{font-size:31px}
   .heroText{font-size:15.5px}
   .mobileCta{padding:9px 3vw calc(9px + env(safe-area-inset-bottom))}
@@ -862,8 +849,8 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .dishTitle{font-size:13.5px}
   .dishDesc{display:none}
   .dishBody{padding:8px 9px 10px}
-  .dishFoot b{font-size:12.5px}
-  .addBtn{padding:8px 6px;font-size:10.5px;letter-spacing:.4px}
+  .dishFoot b{font-size:13px}
+  .addBtn{padding:9px 6px;font-size:12px;letter-spacing:.2px}
   .pickGrid{grid-template-columns:1fr}
   .cardBody{padding:20px 17px}
   .card h3{font-size:21px}
@@ -879,7 +866,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 @media(max-height:560px) and (orientation:landscape){
   body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
   .hero{min-height:400px}
-  .heroCopy{padding:34px 6vw 96px}
+  .heroCopy{padding:calc(var(--navh) + 12px) 6vw 96px}
   .heroLogo{display:none}
   .hero h1{font-size:clamp(28px,4.6vw,40px);margin:8px 0}
   .heroText{font-size:15px}
@@ -889,7 +876,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .mobileCta .btn{padding:10px 10px}
   .section{padding:44px 6vw}
   .section h2{font-size:32px}
-  .pageHero{padding:44px 6vw 34px}
+  .pageHero{padding:calc(var(--navh) + 16px) 6vw 34px}
   .bedMedia{--r:21/9}
   .drawerPanel{width:min(70vw,320px)}
   .drawerNav{padding:16px 22px 6px}
@@ -923,7 +910,6 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .printBtn{padding:11px 18px}
   .linkBtn{padding:6px 0}
   .trayQty button{width:34px;height:34px}
-  .rfilter button,.menuCats button{padding:10px 16px}
   .curToggle button{padding:14px 28px}
   .dishFoot .addBtn{min-height:40px;display:inline-flex;align-items:center}
   /* every choice in the detail view gets a thumb sized target */
@@ -938,25 +924,26 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 /* --- very large displays: hold the measure, do not stretch it ------ */
 @media(min-width:1500px){
   .topbar,.nav{padding-left:max(5vw,calc((100% - 1580px)/2));padding-right:max(5vw,calc((100% - 1580px)/2))}
-  .section{padding:110px 7vw}
-  .section h2{font-size:58px}
-  .pageHero{padding:100px 7vw 76px}
+  .section{padding:110px 6vw}
+  .section h2{font-size:50px}
+  .pageHero{padding:calc(var(--navh) + 74px) 6vw 76px}
 }
 @media(min-width:1400px) and (min-height:820px){
   .hero{min-height:min(82vh,1000px)}
-  .heroCopy{padding:120px 8vw 150px}
+  .heroCopy{padding:calc(var(--navh) + 64px) 8vw 150px}
   .heroText{font-size:21px;max-width:640px}
 }
 @media(min-width:1900px){
   .hero{min-height:min(74vh,1000px)}
-  .section{padding:130px 7vw}
-  .section h2{font-size:64px}
+  .section{padding:130px 6vw}
+  .section h2{font-size:50px}
 }
 
 /* --- Windows high contrast, so nothing disappears ------------------- */
 @media(forced-colors:active){
   .btn,.navCta,.studioLink,.curToggle button.on{border:1px solid ButtonText}
-  .card,.fact,.panel,.drawerPanel{border:1px solid CanvasText}
+  .card,.fact,.drawerPanel{border:1px solid CanvasText}
+  .badge{border:1px solid CanvasText;forced-color-adjust:none}
   .photoOverlay{background:Canvas}
   .photoOverlay *{color:CanvasText}
   /* a picked choice has to be visible without the gold fill to show it */
@@ -982,6 +969,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .modalClose:hover{transform:none}
   .modalBack:hover svg{transform:rotate(180deg)}
   .pickCard:hover{transform:none}
+  /* the drawer's links appear together rather than one behind the other */
+  .drawer.open .drawerNav a{transition-delay:0s;transform:none}
+  .pulse,.btn.loading::after{animation-duration:1.6s}
   /* nothing waits to be scrolled into view, and nothing drifts into place */
   .reveal{opacity:1!important;transform:none!important;transition:none!important}
 }
@@ -991,13 +981,17 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   @page{margin:12mm}
   html,body{background:#fff}
   body{padding-bottom:0}
-  .topbar,.nav,.drawer,.mobileCta,.menuJump,.orderPanelWrap,.printBtn,.heroBtns,.booking,.modal,.orderPill,.dishOpen,.dishPeek{display:none!important}
+  .topbar,.nav,.skipLink,.drawer,.mobileCta,.menuJump,.orderPanelWrap,.printBtn,.heroBtns,.booking,.modal,.orderPill,.dishOpen,.dishPeek{display:none!important}
+  /* the header is gone, so nothing may keep the space it used to cover */
+  .hero,.pageHero{margin-top:0}
   .pageHero{background:#fff!important;color:var(--navy)!important;padding:0 0 14mm;border-bottom:2px solid var(--gold)}
   .pageHero h1{color:var(--navy)!important;font-size:30pt}
   .pageHero p,.pageHero .eyebrow{color:#4a5666!important}
   .pageHero.hasCover .pageHeroCover,.pageHero.hasCover::after{display:none!important}
   .reveal{opacity:1!important;transform:none!important}
   .section{padding:8mm 0 0;max-width:none}
+  .section.band{padding-left:0;padding-right:0}
+  .bandInner{padding:0}
   .menuWrap{padding-top:0}
   .menuMeta{color:#4a5666;margin-bottom:6mm}
   .menuWatermark{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360'%3E%3Ctext x='320' y='190' text-anchor='middle' font-family='Georgia,Times New Roman,serif' font-size='46' font-weight='700' letter-spacing='3' fill='%23071A33' fill-opacity='0.1' transform='rotate(-26 320 180)'%3EHotel Paradise on the Nile%3C/text%3E%3C/svg%3E")}
@@ -1018,9 +1012,10 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 
-/* Management system bridge */
-.systemLink{color:#C9A227!important;font-weight:700;border-top:1px solid #C9A22733;padding-top:14px;margin-top:6px}
-.nav nav a:last-child{color:#C9A227}
+/* Management system bridge — the drawer it sits in is navy, so the gold passes */
+.systemLink{color:var(--gold)!important;font-weight:700;border-top:1px solid #C9A22733;padding-top:14px;margin-top:6px}
+.nav nav a:last-child{color:var(--gold-ink)}
+.nav.dark nav a:last-child{color:var(--gold)}
 @media(max-width:720px){.navRight .navCta{display:none}}
 
 /* ---------------------------------------------------------------
@@ -1032,24 +1027,21 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
    --------------------------------------------------------------- */
 .payWrap{padding:40px 7vw 96px;max-width:1180px;margin:0 auto}
 .payGrid{display:grid;grid-template-columns:.92fr 1.08fr;gap:26px;align-items:start}
-.payCard{background:#fff;border:1px solid #e7e3d4;box-shadow:0 14px 40px #071A3310;padding:30px}
+.payCard{background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);padding:30px;margin:0}
 .payCard h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy);margin:4px 0 0}
 .payLine{margin:18px 0 0;display:flex;flex-direction:column;gap:10px}
 .payLine div{display:flex;justify-content:space-between;gap:18px;font-size:14px}
 .payLine dt{color:#667085;letter-spacing:1px;font-size:11px;text-transform:uppercase;padding-top:2px}
 .payLine dd{margin:0;color:var(--ink);text-align:right;font-weight:600;word-break:break-word}
-.payTotal{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed #dcd6c4;margin-top:20px;padding-top:16px}
-.payTotal span{color:#667085;font-size:12px;letter-spacing:2px;text-transform:uppercase}
-.payTotal b{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold)}
 .payTrust{display:flex;align-items:center;gap:10px;margin-top:16px;color:#7b8798;font-size:12px;line-height:1.5}
 .payTrust span{flex:1}
 .paySteps{padding-top:24px;margin-top:0}
 .paySteps ol{margin:12px 0 0;padding-left:20px;color:#33414f;font-size:14px;display:flex;flex-direction:column;gap:8px}
-.paySteps li::marker{color:var(--gold);font-weight:700}
+.paySteps li::marker{color:var(--gold-ink);font-weight:700}
 .payRow2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:2px}
 .payRow2 .planField{margin-top:14px}
 .payMethodList{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-.payMethodRow{display:flex;align-items:center;gap:14px;border:1px solid #d9dee7;background:#fff;padding:14px 16px;text-align:left;transition:border-color .18s ease,box-shadow .18s ease;cursor:pointer}
+.payMethodRow{display:flex;align-items:center;gap:14px;border:1px solid #d9dee7;background:#fff;border-radius:var(--r);padding:14px 16px;text-align:left;transition:border-color .18s ease,box-shadow .18s ease;cursor:pointer}
 .payMethodRow:hover{border-color:var(--navy)}
 .payMethodRow.sel{border-color:var(--gold);box-shadow:0 0 0 2px #C9A22730}
 .payIcon{flex:none;width:38px;height:38px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center}
@@ -1068,7 +1060,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .payCheck{width:64px;height:64px;border-radius:50%;background:#eaf7ef;color:#2e7d4f;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
 .payThanks{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,40px);color:var(--navy);margin:10px 0 6px;font-weight:600}
 .payDoneLine{color:#33414f;font-size:16px;margin:8px 0 18px}
-.doneRef{display:inline-flex;flex-direction:column;align-items:center;gap:2px;border:1px dashed var(--gold);background:#fdf8e8;padding:14px 28px;border-radius:12px;margin:6px 0 18px}
+.doneRef{display:inline-flex;flex-direction:column;align-items:center;gap:2px;border:1px dashed var(--gold);background:#fdf8e8;padding:14px 28px;border-radius:var(--r);margin:6px 0 18px}
 .doneRef span{font-size:10px;letter-spacing:2px;color:#8a6d14;text-transform:uppercase}
 .doneRef b{font-size:20px;color:var(--navy);letter-spacing:1px}
 .payDoneNote{color:#33414f;font-size:14px;margin:0 0 8px;line-height:1.7}
@@ -1087,7 +1079,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
    booking, and anything already paid against it, all read from the hotel. */
 .payLines{margin:18px 0 4px;border-top:1px solid #eee9da}
 .payLineItem{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1ece0}
-.payLineItem .photoBox{flex:none;width:56px;border-radius:8px}
+/* --r carries the aspect ratio here (SmartImage sets it), so the radius is a
+   literal rather than the token. */
+.payLineItem .photoBox{flex:none;width:56px;border-radius:6px}
 .payLineText{flex:1;min-width:0}
 .payLineText b{display:block;color:var(--navy);font-size:14px;font-weight:600}
 .payLineText small{display:block;color:#7b8798;font-size:12px;margin-top:2px;line-height:1.5}
@@ -1098,17 +1092,16 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .payMoney.paidRow b{color:#2e7d4f}
 .payDue{display:flex;justify-content:space-between;align-items:baseline;gap:16px;border-top:1px dashed #dcd6c4;margin-top:10px;padding-top:12px}
 .payDue span{color:#667085;font-size:12px;letter-spacing:2px;text-transform:uppercase}
-.payDue b{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold)}
+.payDue b{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold-ink)}
 .payDue b.clear{font-size:18px;color:#2e7d4f}
 .payHistory{margin-top:16px;border-top:1px solid #eee9da;padding-top:12px}
 .payHistoryRow{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:12.5px;color:#7b8798}
 .payHistoryRow b{color:#33414f;font-weight:600}
-.paySettled{background:#eaf7ef;border:1px solid #bfe4cd;color:#1f6b45;padding:14px 16px;border-radius:10px;font-size:14px;line-height:1.6;margin-top:16px}
-@media print{.webOnly{display:none}}
+.paySettled{background:#eaf7ef;border:1px solid #bfe4cd;color:#1f6b45;padding:14px 16px;border-radius:var(--r);font-size:14px;line-height:1.6;margin-top:16px}
 
 /* ---- the guest's account: sign in link in the header, and the 'or' rule above Google's button ---- */
 .navSignIn{font-weight:700}
-.nav .navSignIn.active{color:var(--gold)}
+.nav .navSignIn.active{color:var(--gold-ink)}
 .acctOr{display:flex;align-items:center;gap:12px;margin:24px 0 14px;color:#98a2b3;font-size:11px;letter-spacing:3px;text-transform:uppercase}
 .acctOr::before,.acctOr::after{content:'';height:1px;background:#eaedf2;flex:1}
 
@@ -1124,11 +1117,55 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .btn{box-shadow:0 6px 18px #C9A22733;transition:background .2s ease,box-shadow .2s ease,color .2s ease,transform .2s ease,border-color .2s ease}
 .btn:hover{box-shadow:0 12px 26px #C9A22750}
 .btn.ghost,.btn.ghost2{box-shadow:none}
+.btn.navy{box-shadow:0 8px 20px rgba(7,26,51,.22)}
+.btn.navy:hover{box-shadow:0 12px 26px rgba(7,26,51,.3)}
 .btn:focus-visible{outline:3px solid #fff;outline-offset:2px;box-shadow:0 0 0 5px var(--gold)}
 .hero .btn:focus-visible,.pageHero .btn:focus-visible{outline-color:var(--gold)}
+/* The spinner reads on navy and on a photograph as well as it does on gold. */
+.btn.navy.loading::after,.heroBtns .btn.loading::after,.pageHero .btn.loading::after,.rates .btn.loading::after,.contact .btn.loading::after{border-color:rgba(255,255,255,.35);border-top-color:#fff}
 input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
-.nav{border-bottom:1px solid #f0ece0}
-.printBtn:focus-visible,.catChip:focus-visible,.jumpOrder:focus-visible{outline-offset:1px}
+/* The hairline only belongs under the ivory bar; the dark bar keeps its
+   transparent edge over the photograph. */
+.nav:not(.dark){border-bottom:1px solid #f0ece0}
+.printBtn:focus-visible,.catChip:focus-visible,.jumpOrder:focus-visible,.addBtn:focus-visible,.qtyStep button:focus-visible,.pwdToggle:focus-visible{outline-offset:1px}
+
+/* ---------------------------------------------------------------
+   SHARED PIECES: a status badge, a resting message, the password
+   field and the account mark. Written once, used by every page.
+   --------------------------------------------------------------- */
+/* One badge shape, four tones — never colour alone: the label carries the
+   meaning, the tint only reinforces it. */
+.badge{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;line-height:1.4;white-space:nowrap}
+.badge::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.badge.blue{background:#E8F1F6;color:#0A4E66}
+.badge.ok{background:#EAF5EE;color:#1F6B45}
+.badge.warn{background:#FBF1E2;color:#8A5A08}
+.badge.bad{background:#FBECEC;color:#A62727}
+.badge.solid{background:var(--navy);color:#fff}
+
+/* A page at rest, or a search that found nothing, still composed */
+.stateMsg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:clamp(40px,7vw,70px) 20px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:var(--r)}
+.stateMsg h3{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--navy);margin:0}
+.stateMsg p{margin:0;max-width:52ch;line-height:1.7}
+.stateMsg .plateGlyph{width:54px;height:54px;color:#c2ab6a}
+.emptyState h3{margin-top:2px}
+/* A soft pulse for a panel that is fetching, rather than a bare spinner */
+.pulse{animation:softPulse 1.4s ease-in-out infinite}
+@keyframes softPulse{0%,100%{opacity:.55}50%{opacity:1}}
+
+/* Password field: the reveal sits inside the field's own edge */
+.pwdField{position:relative;display:block}
+.pwdField input{padding-right:52px}
+.pwdToggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:none;border:0;border-radius:var(--r);color:var(--muted);cursor:pointer;transition:color .18s ease,background .18s ease}
+.pwdToggle:hover{color:var(--navy);background:#F2F4F7}
+.pwdToggle svg{width:18px;height:18px}
+
+/* The mark that carries the sign-in and sign-up columns */
+.acctBrand{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.acctBrand img{width:56px;height:56px;border-radius:50%;object-fit:cover;background:var(--ivory);border:3px solid var(--gold);padding:2px;box-shadow:0 4px 16px rgba(7,26,51,.18)}
+.acctBrand b{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);letter-spacing:.04em;display:block;line-height:1.2}
+.acctBrand span{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-ink);font-weight:700}
+
 
 
 

@@ -288,7 +288,7 @@ function empty_state(string $title,string $text=''): void{
 }
 
 function status_badge(string $status, bool $neutral=false): string{
- $tones=['available'=>'ok','confirmed'=>'blue','checked_in'=>'gold','checked_out'=>'grey','cancelled'=>'bad','pending'=>'warn','paid'=>'ok','open'=>'gold','successful'=>'ok','reserved'=>'warn','occupied'=>'gold','dirty'=>'bad','cleaning'=>'blue','inspected'=>'ok','maintenance'=>'grey','approved'=>'ok','rejected'=>'bad','served'=>'ok','preparing'=>'warn','ready'=>'blue'];
+ $tones=['available'=>'ok','confirmed'=>'blue','checked_in'=>'gold','checked_out'=>'grey','cancelled'=>'bad','no_show'=>'bad','pending'=>'warn','paid'=>'ok','open'=>'gold','successful'=>'ok','accepted'=>'blue','reserved'=>'warn','occupied'=>'gold','dirty'=>'bad','cleaning'=>'blue','inspected'=>'ok','maintenance'=>'grey','out_of_service'=>'grey','approved'=>'ok','rejected'=>'bad','served'=>'ok','preparing'=>'warn','ready'=>'blue'];
  return badge(str_replace('_',' ',$status),$tones[$status]??'grey');
 }
 

@@ -68,6 +68,19 @@ const whenText = (date: string, time: string): string => {
 const METHOD_TEXT: Record<string, string> = {pesapal: 'Pesapal', mtn_momo: 'MTN MoMo', airtel_money: 'Airtel Money', card: 'Card', cash: 'Cash', bank: 'Bank transfer'};
 
 /**
+ * The tone of a reference status, so a guest reads it at a glance without
+ * knowing the hotel's wording: settled money is green, money still awaited
+ * is amber, anything stopped is red, and anything else stays neutral blue.
+ */
+const statusTone = (status: string): string => {
+ const v = String(status || '').toLowerCase();
+ if (v.includes('paid') || v.includes('settled') || v.includes('complete') || v.includes('cleared') || v.includes('confirmed')) return 'ok';
+ if (v.includes('cancel') || v.includes('reject') || v.includes('fail') || v.includes('void') || v.includes('expire')) return 'bad';
+ if (v.includes('pend') || v.includes('await') || v.includes('request') || v.includes('partial') || v.includes('due')) return 'warn';
+ return 'blue';
+};
+
+/**
  * The hotel on WhatsApp, in the international form wa.me wants, without the
  * plus. Every forwarded receipt goes to this one number: the front desk,
  * which is the number printed in the top bar of the site.
@@ -517,9 +530,9 @@ function PayPage() {
 
  return <div>
   <TopBar/>
-  <PageNav/>
+  <PageNav onDark/>
 
-  <section className="pageHero">
+  <section className="pageHero" id="main">
    <p className="eyebrow">SECURE CHECKOUT</p>
    <h1>Your details, then pay your way.</h1>
    <p>Review what you are paying for, add the name and phone number for the receipt, and choose how you would like to pay. Payment is handled by Pesapal, and no card details are ever stored on this website.</p>
@@ -535,9 +548,10 @@ function PayPage() {
    ) : (
    <div className="payGrid">
     <div>
-     <div className="payCard">
-      <p className="eyebrow">YOUR REQUEST</p>
-      <h3>{detail?.booking?.room_type || item || (src === 'booking' ? 'Room booking' : 'Food order')}</h3>
+      <div className="payCard">
+       <p className="eyebrow">YOUR REQUEST</p>
+       <h3>{detail?.booking?.room_type || item || (src === 'booking' ? 'Room booking' : 'Food order')}</h3>
+       {detail && <span className={'badge ' + statusTone(detail.status)} style={{marginTop: 10}}>{detail.status || 'Status'}</span>}
       <dl className="payLine">
        <div><dt>Reference</dt><dd>{ref}</dd></div>
        {detail?.booking && (
@@ -670,7 +684,7 @@ function PayPage() {
 
      {err && <div className="bookMsg" style={{marginTop: 16}}>{err}</div>}
 
-      <button className="btn planBook" style={{marginTop: 22}} onClick={pay} disabled={busy || !payable}>
+       <button className={'btn planBook' + (busy ? ' loading' : '')} style={{marginTop: 22}} onClick={pay} disabled={busy || !payable}>
        {busy ? 'Contacting Pesapal...' : settled ? 'Already paid in full' : method === 'card' || method === 'pesapal' ? 'Pay ' + fmt(payable) : 'Pay ' + fmt(payable) + ' with ' + momoLabel + ' MoMo'}
       </button>
      <p className="plannerNote">Pesapal is the merchant of record for online payments. Reviewing your request does not charge you, and you are never charged twice. For help, call <a className="footLink" href={telHref(CALL)}>{CALL}</a> or email {HOTEL.email}.</p>

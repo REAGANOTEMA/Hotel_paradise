@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, setCustomer, forgetCustomer} from './shared';
+import {TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, setCustomer, forgetCustomer, LOGO} from './shared';
 
 /*
  * The guest's own account.
@@ -18,6 +18,15 @@ import {TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, se
 
 type Mode = 'checking' | 'signin' | 'signup' | 'phone' | 'account';
 type Customer = {id: number; name: string; email: string; phone: string; google: boolean};
+
+/** The eye that shows and hides a password, stroked in the current colour. */
+const EyeIcon = ({off}: {off?: boolean}) => (
+ <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <path d="M1.5 12S5 5.5 12 5.5 22.5 12 22.5 12 19 18.5 12 18.5 1.5 12 1.5 12Z"/>
+  <circle cx="12" cy="12" r="3"/>
+  {off && <path d="M3 3l18 18"/>}
+ </svg>
+);
 
 const post = async (payload: object): Promise<any> => {
   const res = await fetch(await apiUrl('account'), {
@@ -51,6 +60,7 @@ function AccountPage() {
   const [err, setErr] = React.useState('');
   const [note, setNote] = React.useState('');
   const [googleId, setGoogleId] = React.useState('');
+  const [showPw, setShowPw] = React.useState(false);
   const btn = React.useRef<HTMLDivElement>(null);
 
   // Who is already signed in on this browser?
@@ -177,9 +187,9 @@ function AccountPage() {
 
   return <div>
    <TopBar/>
-   <PageNav/>
+   <PageNav onDark/>
 
-   <section className="pageHero">
+   <section className="pageHero" id="main">
     <p className="eyebrow">YOUR ACCOUNT</p>
     <h1>{heading}</h1>
     <p>{mode === 'phone'
@@ -191,6 +201,11 @@ function AccountPage() {
 
    <section className="payWrap" style={{paddingTop: 56}}>
     <div className="payCard" style={{maxWidth: 480, margin: '0 auto'}}>
+
+     <div className="acctBrand">
+      <img src={LOGO} alt=""/>
+      <div><b>Hotel Paradise</b><span>on the Nile &middot; Jinja</span></div>
+     </div>
 
      {mode === 'account' && cust ? (
       <>
@@ -219,7 +234,7 @@ function AccountPage() {
         <input value={phone} onChange={e => setPhone(e.target.value)} type="tel" inputMode="tel" autoFocus placeholder="e.g. 0759 504 928"/>
        </div>
        {err && <div className="bookMsg" style={{marginTop: 14}}>{err}</div>}
-       <button className="btn planBook" type="submit" disabled={busy}>{busy ? 'Saving…' : 'Finish and continue'}</button>
+        <button className={'btn planBook' + (busy ? ' loading' : '')} type="submit" disabled={busy}>{busy ? 'Saving…' : 'Finish and continue'}</button>
        <p className="plannerNote">Ugandan mobile numbers look like 0759 504 928 or +256 759 504 928. We use it to confirm your booking and your payment, and nothing else.</p>
       </form>
      ) : (
@@ -238,15 +253,18 @@ function AccountPage() {
          <label>Email address</label>
          <input value={email} onChange={e => setEmail(e.target.value)} type="email" autoComplete="email" placeholder="you@email.com"/>
         </div>
-        <div className="planField" style={{marginTop: 14}}>
+        <div className="planField pwdField" style={{marginTop: 14}}>
          <label>Password</label>
-         <input value={password} onChange={e => setPassword(e.target.value)} type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'}/>
+         <input value={password} onChange={e => setPassword(e.target.value)} type={showPw ? 'text' : 'password'} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'}/>
+         <button type="button" className="pwdToggle" onClick={() => setShowPw(v => !v)} aria-label={showPw ? 'Hide password' : 'Show password'} title={showPw ? 'Hide password' : 'Show password'}>
+          <EyeIcon off={!showPw}/>
+         </button>
         </div>
 
         {err && <div className="bookMsg" style={{marginTop: 14}}>{err}</div>}
         {note && <div className="bookMsg ok" style={{marginTop: 14}}>{note}</div>}
 
-        <button className="btn planBook" type="submit" disabled={busy}>
+        <button className={'btn planBook' + (busy ? ' loading' : '')} type="submit" disabled={busy}>
          {busy ? 'One moment…' : mode === 'signup' ? 'Continue' : 'Sign in'}
         </button>
        </form>

@@ -251,9 +251,22 @@ export function Footer() {
 
 export function PageNav({onDark = false}: {onDark?: boolean}) {
  const [open, setOpen] = React.useState(false);
+ /* The bar turns solid the moment the page moves, so the links never sit on
+    top of whatever scrolls behind them. */
+ const [stuck, setStuck] = React.useState(false);
+ const burgerRef = React.useRef<HTMLButtonElement>(null);
+ const firstLinkRef = React.useRef<HTMLAnchorElement>(null);
+ const wasOpen = React.useRef(false);
  const here = (location.pathname.split('/').pop() || 'index.html');
  const active = (href: string) => href.split('#')[0] === './' + here;
  const close = () => setOpen(false);
+
+ React.useEffect(() => {
+  const onScroll = () => setStuck(window.scrollY > 40);
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive: true});
+  return () => window.removeEventListener('scroll', onScroll);
+ }, []);
 
  React.useEffect(() => {
   if (!open) return;
@@ -264,15 +277,24 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
   return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prev; };
  }, [open]);
 
+ /* Focus goes into the menu when it opens and comes back to the burger when it
+    closes, so a keyboard guest is never dropped at the top of the page. */
+ React.useEffect(() => {
+  if (open) firstLinkRef.current?.focus();
+  else if (wasOpen.current) burgerRef.current?.focus();
+  wasOpen.current = open;
+ }, [open]);
+
  return (
   <>
-   <header className={onDark ? 'nav dark' : 'nav'}>
+   <a className="skipLink" href="#main">Skip to content</a>
+   <header className={(onDark ? 'nav dark' : 'nav') + (stuck ? ' stuck' : '')}>
     <Brand light={onDark}/>
     <nav>{NAV.map(([href, label]) => <a key={href} className={active(href) ? 'active' : ''} href={href}>{label}</a>)}</nav>
     <div className="navRight">
      <a className={'navSignIn' + (active('./account.html') ? ' active' : '')} href="./account.html">{customerFirstName() || 'Sign in'}</a>
      <a className="btn navCta" href="./rooms.html">Book now</a>
-     <button className={'burger' + (open ? ' open' : '')} onClick={() => setOpen(o => !o)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="mobile-menu">
+     <button ref={burgerRef} className={'burger' + (open ? ' open' : '')} onClick={() => setOpen(o => !o)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="mobile-menu">
       <span/><span/><span/>
      </button>
     </div>
@@ -282,7 +304,7 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
     <div className="drawerScrim" onClick={close}/>
     <aside className="drawerPanel" role="dialog" aria-modal="true" aria-label="Site menu">
      <div className="drawerNav">
-      {NAV.map(([href, label]) => <a key={href} className={active(href) ? 'active' : ''} href={href} onClick={close}>{label}</a>)}
+      {NAV.map(([href, label], i) => <a key={href} ref={i === 0 ? firstLinkRef : undefined} className={active(href) ? 'active' : ''} href={href} onClick={close}>{label}</a>)}
      </div>
       <div className="drawerFoot">
        <a className="btn" href="./rooms.html" onClick={close}>Book now</a>
