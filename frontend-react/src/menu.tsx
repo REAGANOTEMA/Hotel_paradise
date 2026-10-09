@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, BackLink} from './shared';
+import {TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {
   MENU_REVISION,
@@ -29,6 +29,19 @@ const FALLBACK: MenuSection[] = tidySections(menuSections);
 
 /** The photographs each slot is still waiting for, shown on request only. */
 const SHOW_FILE_HINTS = photoHintsEnabled();
+
+/**
+ * The food photographs that turn over behind the menu header. They are the
+ * kitchen's own plates and tables, so the header reads as the menu does, and
+ * each frame carries its widths so a phone never downloads the wide one.
+ */
+const MENU_HERO_FRAMES: HeroCoverFrame[] = [
+ {base: './images/hero/food-table', ext: 'webp', widths: [960, 1280, 1920]},
+ {base: './images/hero/food-breakfast', ext: 'webp', widths: [960, 1280, 1920]},
+ {base: './images/hero/food-pizza', ext: 'webp', widths: [960, 1280, 1920]},
+ {base: './images/hero/food-spread', ext: 'webp', widths: [960, 1280, 1920]},
+ {base: './images/hero/food-fish', ext: 'webp', widths: [960, 1280, 1688]}
+];
 
 /** Reads the live kitchen menu and folds it into the same shape as the fallback. */
 type LiveCategory = {name: string; outlet?: string; eyebrow?: string; blurb?: string; image?: string; items: any[]};
@@ -189,7 +202,7 @@ function SectionBanner({section, children}: {section: MenuSection; children: Rea
       alt=""
       ratio="21 / 8"
       widths={[640, 1024, 1440, 1920]}
-      sizes="(width:94%;max-width:100%) 100vw, 1260px"
+      sizes="96vw"
       position="72% 50%"
       className="secBanner"
       placeholder={<span className="secBannerGlyph" aria-hidden="true">{section.name.slice(0, 1).toUpperCase()}</span>}
@@ -705,7 +718,8 @@ function MenuPage() {
     <TopBar/>
     <PageNav onDark/>
 
-    <section className="pageHero canvas hasCover" id="main" style={{'--bg': "url('./images/hero/food-table-1920.webp')"} as unknown as React.CSSProperties}>
+    <section className="pageHero hasCover" id="main">
+      <PageHeroCover frames={MENU_HERO_FRAMES}/>
       <div className="pageHeroInner">
         <BackLink label="Back" fallback="./index.html"/>
         <p className="eyebrow">DINING AND BAR</p>

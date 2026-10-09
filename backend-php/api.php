@@ -376,7 +376,7 @@ if($act==='payment'){
  api_notify('payment:'.$payRef,'payment','Payment request '.$payRef,
   $name.' started a '.strtoupper($method).' payment of '.money($expected).' for the '.$label.' '.$ref.'.',
   ['reference'=>$payRef,'source'=>$label,'amount'=>$expected,'method'=>$method,'guest'=>$name,'phone'=>$phone]);
- $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,
+ $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,'status'=>'pending','paid'=>false,
     'message'=>'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.']);
 }
 

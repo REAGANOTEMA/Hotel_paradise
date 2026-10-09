@@ -431,6 +431,12 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
    down as a smart image. The picture is one of the already-resized carousel
    files, so a full-width header never has to reach for a camera original. */
 .pageHero.canvas::before{content:'';position:absolute;inset:0;z-index:0;background-image:var(--bg);background-size:cover;background-position:50% 50%;background-repeat:no-repeat}
+/* A subpage header whose photograph turns over, the way the home carousel
+   does. Each frame fades in behind the writing, and the scrim from .hasCover
+   sits over every one of them, so the text reads the same on all of them. */
+.pageHeroBg{position:absolute;inset:0;z-index:0;overflow:hidden;background:var(--navy)}
+.pageHeroBgImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%;opacity:0;visibility:hidden;transform:scale(1.06);transition:opacity 1.5s ease,transform 10s ease,visibility 0s linear 1.5s}
+.pageHeroBgImg.on{opacity:1;visibility:visible;transform:scale(1.13);transition:opacity 1.5s ease,transform 10s ease,visibility 0s}
 .pageHeroInner{position:relative;z-index:1}
 /* The small way out of a subpage, sat over the header photograph. */
 .backLink{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:8px 15px 8px 11px;border:1px solid rgba(255,255,255,.34);border-radius:999px;background:rgba(7,26,51,.34);color:#fff;font-size:12.5px;font-weight:600;letter-spacing:.02em;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .18s ease,border-color .18s ease,transform .18s ease}
@@ -518,7 +524,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 
 /* section banner: the name is laid over the photograph, on a navy scrim that
    is heaviest on the left where the text sits */
-.secBanner{box-shadow:0 14px 38px #071A3318;margin-bottom:20px}
+.secBanner{box-shadow:0 14px 38px #071A3318;margin-bottom:20px;max-height:clamp(170px,26vw,300px)}
 .secBanner .photoOverlay{padding:20px 26px;justify-content:center}
 .secBanner .photoOverlay::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#071A33f0 0%,#071A33d1 38%,#071A3340 78%,#071A331a 100%)}
 .secBanner .secEyebrow,.secBanner h2{position:relative;color:#fff}
@@ -1073,7 +1079,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .modalScrim::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.55)}
   /* the photo behind a page header and a tinted band is decoration, so it goes
      and the text keeps the system colours */
-  .pageHero.canvas::before,.section.hasTint::before,.section.hasTint::after{display:none}
+  .pageHero.canvas::before,.pageHeroBg,.section.hasTint::before,.section.hasTint::after{display:none}
   .backLink,.backTop{border:1px solid ButtonText}
   .backLink{forced-color-adjust:none;background:Canvas;color:CanvasText}
 }
@@ -1083,6 +1089,8 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
      otherwise a hidden slide would linger for the length of the delay. */
   .heroSlide{transition:opacity .01s linear,visibility 0s;transform:none}
   .heroSlide.active{transform:none}
+  /* the header photograph changes without a drift as well */
+  .pageHeroBgImg,.pageHeroBgImg.on{transition:opacity .01s linear,visibility 0s;transform:none}
   .heroPanel{transition:opacity .01s linear,visibility 0s}
   .dishCard:hover{transform:none}
   /* the detail view and the order button arrive without any movement at all */
@@ -1112,7 +1120,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .pageHero{background:#fff!important;color:var(--navy)!important;padding:0 0 14mm;border-bottom:2px solid var(--gold)}
   .pageHero h1{color:var(--navy)!important;font-size:30pt}
   .pageHero p,.pageHero .eyebrow{color:#4a5666!important}
-  .pageHero.hasCover .pageHeroCover,.pageHero.hasCover::after{display:none!important}
+  .pageHero.hasCover .pageHeroCover,.pageHero.hasCover .pageHeroBg,.pageHero.hasCover::after{display:none!important}
   .reveal{opacity:1!important;transform:none!important}
   .section{padding:8mm 0 0;max-width:none}
   .section.band{padding-left:0;padding-right:0}

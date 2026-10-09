@@ -1,11 +1,24 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, BackLink} from './shared';
+import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 
 /** The photographs each room is still waiting for, shown on request only. */
 const SHOW_FILE_HINTS = photoHintsEnabled();
+
+/**
+ * The bed photographs that turn over behind the page header. They are the
+ * hotel's own room shots, so the header shows what the page is about, and each
+ * frame carries its three widths so a phone never downloads the wide one.
+ */
+const ROOM_HERO_FRAMES: HeroCoverFrame[] = [
+ {base: './images/hero/bed-executive', ext: 'webp', widths: [960, 1280, 1920]},
+ {base: './images/hero/bed-suite', ext: 'webp', widths: [960, 1280, 1920]},
+ {base: './images/hero/bed-twin', ext: 'webp', widths: [960, 1280, 1920]},
+ {base: './images/hero/bed-triple', ext: 'webp', widths: [960, 1280, 1920]},
+ {base: './images/hero/bed-deluxe', ext: 'webp', widths: [960, 1280, 1920]}
+];
 
 function useQuery() {
  const p = new URLSearchParams(window.location.search);
@@ -160,7 +173,8 @@ function RoomsPage() {
     <TopBar/>
     <PageNav onDark/>
 
-<section className="pageHero canvas hasCover" id="main" style={{'--bg': "url('./images/hero/bed-suite-1920.webp')"} as unknown as React.CSSProperties}>
+<section className="pageHero hasCover" id="main">
+    <PageHeroCover frames={ROOM_HERO_FRAMES}/>
     <div className="pageHeroInner">
      <BackLink label="Back" fallback="./index.html"/>
      <p className="eyebrow">CHOOSE YOUR ROOM</p>

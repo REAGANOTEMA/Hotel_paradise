@@ -190,7 +190,7 @@ export const HOTEL = {
   poBox: 'P.O. Box 1139, Jinja, Uganda',
   /** Front desk first, reservations second. Both are dialled, both are answered. */
   phones: ['+256 759 504 928', '+256 773 565 668'],
-  email: 'hotel@hotelparadiseonthenile.info',
+  email: 'frontdesk@hotelparadiseonthenile.info',
   website: 'www.hotelparadiseonthenile.info',
   certification: 'UNBS Certified, US 130:2017'
 } as const;
@@ -218,7 +218,7 @@ export function TopBar() {
  );
 }
 
-export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./index.html#facilities', 'Facilities'], ['./index.html#contact', 'Contact'], ['./system/', 'Staffs Logins']] as const;
+export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./system/', 'Staffs Logins']] as const;
 
 /** The padlock that marks the staff entrance, so the last button reads as a
  *  door into the management system rather than one more page of the site. */
@@ -284,6 +284,73 @@ export function Footer() {
     </div>
    </footer>
   );
+ }
+
+/**
+ * The photograph that fills the header of a subpage, and the sequence of
+ * frames it turns over in.
+ *
+ * Each frame is served from the narrow copies that sit beside the full file, so
+ * a phone downloads a small one and a wide screen the big one. The frames cross
+ * fade behind the writing, the scrim already on the header keeps every one of
+ * them legible, and the turning stops for a guest who has asked for less motion
+ * or has moved to another tab - exactly as the home carousel behaves.
+ */
+export type HeroCoverFrame = {base: string; ext: string; widths: number[]};
+
+const coverSrc = (f: HeroCoverFrame) => {
+ const w = f.widths[f.widths.length - 1];
+ return f.base + '-' + w + '.' + f.ext;
+};
+const coverSrcSet = (f: HeroCoverFrame) =>
+ f.widths.map(w => f.base + '-' + w + '.' + f.ext + ' ' + w + 'w').join(', ');
+
+const COVER_MS = 7000;
+
+export function PageHeroCover({frames}: {frames: HeroCoverFrame[]}) {
+ const [i, setI] = React.useState(0);
+ const [still, setStill] = React.useState(false);
+ const [gone, setGone] = React.useState(false);
+
+ React.useEffect(() => {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const sync = () => setStill(mq.matches);
+  sync();
+  if (mq.addEventListener) mq.addEventListener('change', sync);
+  else if (mq.addListener) mq.addListener(sync);
+  return () => { if (mq.removeEventListener) mq.removeEventListener('change', sync); else if (mq.removeListener) mq.removeListener(sync); };
+ }, []);
+
+ React.useEffect(() => {
+  if (still || gone || frames.length < 2) return;
+  const t = window.setInterval(() => setI(v => (v + 1) % frames.length), COVER_MS);
+  return () => window.clearInterval(t);
+ }, [still, gone, frames.length]);
+
+ React.useEffect(() => {
+  const onVis = () => setGone(document.hidden);
+  document.addEventListener('visibilitychange', onVis);
+  return () => document.removeEventListener('visibilitychange', onVis);
+ }, []);
+
+ return (
+  <div className="pageHeroBg" aria-hidden="true">
+   {frames.map((f, n) => (
+    <img
+     key={f.base}
+     className={'pageHeroBgImg' + (n === i ? ' on' : '')}
+     src={coverSrc(f)}
+     srcSet={coverSrcSet(f)}
+     sizes="100vw"
+     alt=""
+     loading={n === 0 ? 'eager' : 'lazy'}
+     decoding="async"
+     fetchPriority={n === 0 ? 'high' : 'auto'}
+     draggable={false}
+    />
+   ))}
+  </div>
+ );
 }
 
 export function PageNav({onDark = false}: {onDark?: boolean}) {

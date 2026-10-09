@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 09, 2026 at 06:34 AM
+-- Generation Time: Oct 09, 2026 at 10:25 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -1257,7 +1257,7 @@ INSERT INTO `website_settings` (`id`, `setting_key`, `setting_value`, `created_a
 (4, 'po_box', 'P.O. Box 1139, Jinja, Uganda', '2026-10-05 05:31:26', '2026-10-05 05:31:26'),
 (5, 'phone_primary', '+256 759 504 928', '2026-10-05 05:31:26', '2026-10-05 05:31:26'),
 (6, 'phone_secondary', '+256 773 565 668', '2026-10-05 05:31:26', '2026-10-05 05:31:26'),
-(7, 'email', 'hotel@hotelparadiseonthenile.info', '2026-10-05 05:31:26', '2026-10-05 05:31:26'),
+(7, 'email', 'frontdesk@hotelparadiseonthenile.info', '2026-10-05 05:31:26', '2026-10-09 07:17:53'),
 (8, 'website', 'www.hotelparadiseonthenile.info', '2026-10-05 05:31:26', '2026-10-05 05:31:26'),
 (9, 'certification', 'UNBS Certified (US 130:2017)', '2026-10-05 05:31:26', '2026-10-05 05:31:26'),
 (10, 'management_system_path', '/system/', '2026-10-05 05:31:26', '2026-10-05 05:31:26'),
@@ -1822,7 +1822,7 @@ ALTER TABLE `website_enquiries`
 -- AUTO_INCREMENT for table `website_settings`
 --
 ALTER TABLE `website_settings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Constraints for dumped tables

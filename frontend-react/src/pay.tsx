@@ -148,7 +148,7 @@ function PayPage() {
  const [card, setCard] = React.useState({holder: '', number: '', exp: '', cvv: ''});
  const [busy, setBusy] = React.useState(false);
  const [err, setErr] = React.useState('');
- const [done, setDone] = React.useState<{reference: string; message: string} | null>(null);
+  const [done, setDone] = React.useState<{reference: string; message: string; paid: boolean} | null>(null);
 
   const keep = (patch: object) => setForm(f => {
    const next = {...f, ...patch} as typeof f;
@@ -234,7 +234,11 @@ function PayPage() {
    const d = await res.json();
    if (d.ok) {
     setCharged(typeof d.amount === 'number' ? Math.round(d.amount) : payable);
-    setDone({reference: String(d.reference || ref), message: String(d.message || 'The front desk will confirm your request on ' + form.phone + '.')});
+    // A receipt is only a receipt once the money is actually in. Until the
+    // gateway marks the payment successful this is a request, so no receipt is
+    // printed - the guest pays first, the receipt follows.
+    const paid = String(d.status || '').toLowerCase() === 'successful' || d.paid === true;
+    setDone({reference: String(d.reference || ref), message: String(d.message || 'The front desk will confirm your request on ' + form.phone + '.'), paid});
    } else {
     setErr(d.error || 'We could not take the payment right now. Please call ' + CALL + '.');
    }
@@ -266,7 +270,7 @@ function PayPage() {
    if (done && done.reference && done.reference !== ref) say('Payment ref', done.reference);
     say('Method', METHOD_TEXT[method] || method);
     say('Amount', money(charged || amt));
-    say('Payment status', done ? 'Request received - the front desk confirms it on ' + (normPhone(form.phone) || 'the phone given') : 'Details only - no money has been taken yet');
+    say('Payment status', done ? (done.paid ? 'Paid - receipt issued' : 'Request received - the front desk confirms it on ' + (normPhone(form.phone) || 'the phone given')) : 'Details only - no money has been taken yet');
     L.push('');
 
    if (detail && detail.booking) {
@@ -459,7 +463,7 @@ function PayPage() {
           <div class="footer">
             <p>Thank you for choosing Hotel Paradise on the Nile</p>
             <p>This is your official receipt</p>
-            <p>www.hotelparadise.co.ug</p>
+            <p>${HOTEL.website}</p>
           </div>
         </body>
       </html>`;
@@ -477,7 +481,9 @@ function PayPage() {
     if (!done || forwarded.current) return;
     forwarded.current = true;
     try { window.open(waHref, '_blank', 'noopener'); } catch { /* the button below still does it */ }
-    if (!printed.current) {
+    // The receipt waits for the payment. A pending request is not a payment, so
+    // nothing prints until the gateway confirms the money is actually in.
+    if (done.paid && !printed.current) {
       printed.current = true;
       setTimeout(() => printReceipt(), 800);
     }
@@ -512,9 +518,13 @@ function PayPage() {
      <p className="payDoneNote">{done.message}</p>
      <p className="payDoneNote2">Online payment with Pesapal is being switched on. Until it is live, no money is charged on this page and you are welcome to pay at the front desk, or call <a className="footLink" href={telHref(CALL)}>{CALL}</a>.</p>
       <div className="payDoneActions">
-        <button className="btn" onClick={printReceipt} style={{marginBottom:8}}>
-          🖨️ Print Receipt
-        </button>
+        {done.paid ? (
+          <button className="btn" onClick={printReceipt} style={{marginBottom:8}}>
+            🖨️ Print Receipt
+          </button>
+        ) : (
+          <p className="payDoneNote2" style={{marginBottom:8}}>Your official receipt becomes available here, and prints itself, the moment the hotel confirms your payment.</p>
+        )}
         <a className="btn waBtn" href={waHref} target="_blank" rel="noopener noreferrer">
          <WhatsAppIcon size={16}/> Send every detail to the hotel on WhatsApp
         </a>
