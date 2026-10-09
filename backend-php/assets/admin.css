@@ -329,35 +329,97 @@ ul.clean{list-style:none;margin:0;padding:0}
 .metaCell b{color:var(--navy);font-size:13px}
 .payRow2{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line2);font-size:13px}
 
-/* Login - the one screen with a photograph behind it. The relative path
-   starts at backend-php/assets/, so it reaches two levels up to /images. */
-.loginWrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:24px;
+/* Login - the ceremonial entrance to the management suite. A cinematic
+   Nile backdrop sits behind a two-panel card: a gold-foil brand showpiece
+   on the left, the sign-in form on the right. The relative image paths
+   start here in backend-php/assets/, reaching two levels up to /images. */
+.loginBody{background:var(--navy)}
+.loginWrap{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:104px 24px 46px;background:#03080f}
+.loginBg{position:fixed;inset:0;z-index:0;background:url('../../images/hero/view-1920.webp') center 44%/cover no-repeat;will-change:transform;animation:kenburns 30s ease-in-out infinite alternate}
+@keyframes kenburns{from{transform:scale(1.06) translate3d(-.7%,-.5%,0)}to{transform:scale(1.17) translate3d(.9%,.7%,0)}}
+.loginWrap::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
   background:
-    radial-gradient(ellipse at 50% -10%,rgba(212,175,55,.2),transparent 55%),
-    radial-gradient(ellipse at bottom,rgba(7,26,51,.95) 0%,rgba(5,13,28,.98) 70%),
-    url('../../images/hero-pool.jpg') center/cover no-repeat}
-.loginCard{width:100%;max-width:430px;background:linear-gradient(150deg,rgba(255,255,255,.985),rgba(255,255,255,.96));border-radius:22px;padding:40px 36px;box-shadow:0 40px 120px rgba(0,0,0,.45),0 0 90px rgba(212,175,55,.14);border:1px solid rgba(201,162,39,.28);position:relative;animation:cardIn .45s ease both}
-@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.loginCard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:22px 22px 0 0;background:linear-gradient(90deg,transparent,var(--gold),#f0d78d,var(--gold),transparent)}
-.loginCard .sideBrand{color:var(--navy);padding:0;margin-bottom:24px;justify-content:center;border-bottom:0}
-.loginCard .sideBrand .sideLogo{width:68px;height:68px;box-shadow:0 8px 32px rgba(212,175,55,.4),0 0 0 4px rgba(255,255,255,.9)}
-.loginCard .sideBrand .sbText span{color:var(--navy);font-size:19px;letter-spacing:1.6px}
-.loginCard .sideBrand .sbText small{color:var(--gold)}
-.loginTitle{font-family:'Playfair Display',serif;font-size:27px;font-weight:700;color:var(--navy);margin:0 0 6px;text-align:center}
-.loginSub{color:var(--muted);font-size:13.5px;line-height:1.6;text-align:center;margin:0 0 22px}
-.loginCard .field input{padding:13px 14px;font-size:14.5px;background:#fdfcf9}
-.loginCard .field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.16),0 4px 12px rgba(212,175,55,.14)}
-.loginCard .btn{width:100%;justify-content:center;padding:14px 20px;font-size:14px;letter-spacing:.8px;min-height:48px}
-.loginCard .btn:hover{box-shadow:0 12px 30px rgba(212,175,55,.45);transform:translateY(-2px)}
+    radial-gradient(ellipse at 16% 6%,rgba(224,181,58,.26),transparent 44%),
+    radial-gradient(ellipse at 88% 102%,rgba(11,93,120,.38),transparent 48%),
+    linear-gradient(180deg,rgba(3,9,20,.74) 0%,rgba(4,11,24,.84) 48%,rgba(2,7,16,.95) 100%)}
+.loginWrap::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 44%,transparent 40%,rgba(2,6,14,.74) 100%)}
+.loginParticles{position:fixed;inset:0;z-index:2;pointer-events:none}
+.loginTop{position:fixed;top:0;left:0;right:0;z-index:7;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px clamp(18px,4vw,44px)}
+.loginBrandTop{display:flex;align-items:center;gap:11px;color:#fff}
+.loginBrandTop img{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#fff;padding:2px;border:1px solid rgba(224,181,58,.65);box-shadow:0 6px 22px rgba(0,0,0,.55)}
+.loginBrandTop .lbtText{font-family:'Playfair Display',serif;line-height:1.1}
+.loginBrandTop .lbtText span{display:block;font-size:14px;letter-spacing:1.5px}
+.loginBrandTop .lbtText small{display:block;font-family:'DM Sans',sans-serif;font-size:8px;letter-spacing:3px;color:var(--gold2);margin-top:2px}
+.loginBack{display:inline-flex;align-items:center;gap:8px;padding:9px 17px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.03em;color:#f4ecd8;background:rgba(255,255,255,.06);border:1px solid rgba(224,181,58,.34);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);transition:background var(--t),border-color var(--t),color var(--t),transform var(--t)}
+.loginBack svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.loginBack:hover{background:rgba(224,181,58,.18);border-color:var(--gold2);color:#fff;transform:translateY(-1px)}
+.loginCard{position:relative;z-index:5;width:100%;max-width:940px;display:grid;grid-template-columns:1.03fr 1fr;background:linear-gradient(150deg,rgba(255,255,255,.99),rgba(247,243,234,.975));border-radius:24px;overflow:hidden;box-shadow:0 55px 150px rgba(0,0,0,.62),0 0 0 1px rgba(224,181,58,.42),0 0 130px rgba(224,181,58,.13);animation:cardIn .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.98)}to{opacity:1;transform:none}}
+.loginCard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;z-index:4;background:linear-gradient(90deg,transparent,var(--gold) 24%,#f7e6a8 50%,var(--gold) 76%,transparent)}
+.loginShowcase{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:28px;padding:46px 42px;color:#fff;overflow:hidden;background:radial-gradient(ellipse at 82% 0%,rgba(224,181,58,.3),transparent 56%),linear-gradient(160deg,#0b2244,#071A33 56%,#030f1e)}
+.loginShowcase::before{content:'';position:absolute;inset:0;background:url('../../images/hero/pool-960.webp') center/cover no-repeat;opacity:.15;mix-blend-mode:luminosity}
+.loginShowcase::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,10,20,.1) 30%,rgba(3,10,20,.92))}
+.loginShowcase>*{position:relative;z-index:2}
+.lsTop{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+.lsKicker{font-size:9.5px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold2);font-weight:700}
+.lsLogo{width:88px;height:88px;border-radius:50%;object-fit:cover;background:#fff;padding:3px;border:1px solid rgba(224,181,58,.7);box-shadow:0 14px 44px rgba(0,0,0,.55)}
+.lsName{font-family:'Playfair Display',serif;font-size:31px;font-weight:600;line-height:1.02;letter-spacing:.4px;margin:0}
+.lsName small{display:block;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:5.5px;color:var(--gold2);margin-top:9px;font-weight:600}
+.lsBlurb{color:rgba(232,238,246,.74);font-size:12.5px;line-height:1.75;margin:0;max-width:34ch}
+.lsStars{display:flex;gap:4px;color:var(--gold2);font-size:15px;letter-spacing:2px;text-shadow:0 2px 10px rgba(224,181,58,.5)}
+.lsMeta{display:flex;gap:26px;border-top:1px solid rgba(255,255,255,.13);padding-top:20px}
+.lsMeta div b{display:block;font-family:'Playfair Display',serif;font-size:21px;color:#fff;line-height:1.1}
+.lsMeta div span{font-size:9px;letter-spacing:2.2px;text-transform:uppercase;color:var(--gold2);font-weight:600}
+.loginPane{position:relative;padding:46px 44px;display:flex;flex-direction:column;justify-content:center}
+.loginKicker{display:block;font-size:10px;letter-spacing:.36em;text-transform:uppercase;color:var(--gold-deep);font-weight:700;text-align:center;margin-bottom:11px}
+.loginTitle{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--navy);margin:0 0 8px;text-align:center}
+.loginSub{color:var(--muted);font-size:13px;line-height:1.6;text-align:center;margin:0 0 22px}
+.loginCard .field input{padding:14px 15px 14px 44px;font-size:14.5px;background:#fdfcf9;border-radius:11px}
+.loginCard .field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18),0 6px 18px rgba(212,175,55,.14)}
+.loginCard .field input[aria-invalid=true]{border-color:var(--bad);box-shadow:0 0 0 3px rgba(198,40,40,.13)}
+.inputWrap{position:relative}
+.inputWrap .iIco{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--gold-deep);pointer-events:none;display:flex}
+.inputWrap .iIco svg,.pwToggle svg,.loginSecure svg,.loginHome svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pwToggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--muted);background:none;transition:background var(--t),color var(--t)}
+.pwToggle:hover,.pwToggle.on{color:var(--gold-deep);background:rgba(201,162,39,.12)}
+.loginCard .btn{width:100%;justify-content:center;padding:15px 22px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;min-height:52px;border-radius:11px;position:relative;overflow:hidden}
+.loginCard .btn::after{content:'';position:absolute;top:0;left:-70%;width:42%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.62),transparent);transform:skewX(-18deg);animation:shimmer 3.6s ease-in-out infinite}
+@keyframes shimmer{0%{left:-70%}52%,100%{left:132%}}
+.loginCard .btn:hover{box-shadow:0 16px 40px rgba(201,162,39,.5);transform:translateY(-2px)}
 .loginCard .btn:active{transform:translateY(0)}
 .loginCard .flash{margin-bottom:16px;padding:11px 13px;font-size:13px}
-.loginStepHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding:10px 12px;background:#f7f5ee;border:1px solid var(--line2);border-radius:10px;font-size:13px;color:var(--muted)}
+.fieldErr{display:block;color:var(--bad);font-size:11.5px;font-weight:600;margin-top:6px}
+.fieldErr[hidden]{display:none}
+.loginStepHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:10px 12px;background:#f7f5ee;border:1px solid var(--line2);border-radius:10px;font-size:13px;color:var(--muted)}
 .loginStepHead b{color:var(--navy)}
 .linkish{background:none;border:0;color:var(--nile);text-decoration:underline;cursor:pointer;padding:4px 0;font-size:12.5px}
 .linkish:hover{color:var(--gold)}
+.loginSecure{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px 0 0;font-size:11px;letter-spacing:.05em;color:var(--faint);text-align:center}
+.loginSecure svg{width:15px;height:15px;flex:none;color:var(--gold-deep)}
 .loginCredit{display:block;margin-top:14px;font-size:12px;color:var(--muted);text-align:center}
 .loginCredit a{color:var(--gold);font-weight:700}
 .loginCredit a:hover{text-decoration:underline}
+.loginHome{display:inline-flex;align-items:center;justify-content:center;gap:7px;margin:14px auto 0;font-size:12px;font-weight:600;color:var(--nile);letter-spacing:.03em;transition:color var(--t),gap var(--t)}
+.loginHome:hover{color:var(--gold);gap:10px}
+.loginHome svg{width:15px;height:15px}
+.loginFoot{position:relative;z-index:5;margin-top:26px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;font-size:11px;letter-spacing:.05em;color:rgba(226,232,240,.5);text-align:center}
+.loginFoot .lfDot{width:4px;height:4px;border-radius:50%;background:var(--gold2);opacity:.7}
+@media(max-width:880px){
+  .loginCard{grid-template-columns:1fr;max-width:452px}
+  .loginShowcase{padding:32px 28px;text-align:center;align-items:center;gap:18px}
+  .lsTop{align-items:center}
+  .lsBlurb,.lsMeta{display:none}
+  .lsLogo{width:72px;height:72px}
+  .lsName{font-size:25px}
+  .loginPane{padding:34px 28px}
+}
+@media(max-width:520px){
+  .loginWrap{padding:84px 14px 30px}
+  .loginBack span{display:none}
+  .loginPane{padding:28px 20px}
+  .loginTitle{font-size:26px}
+  .loginFoot{gap:8px}
+}
 
 /* Modal */
 .modal{position:fixed;inset:0;z-index:65;display:flex;align-items:center;justify-content:center;padding:18px}
@@ -404,9 +466,8 @@ ul.clean{list-style:none;margin:0;padding:0}
   .toolbar{gap:6px}
   .toolbar .btn,.toolbar .btnGhost{flex:1 1 auto}
   .res-meta{grid-template-columns:1fr}
-  .loginWrap{padding:16px}
-  .loginCard{padding:28px 22px;border-radius:16px}
-  .loginCard .sideBrand .sbText span{font-size:17px}
+  .loginCard{border-radius:18px}
+  .loginPane{padding:30px 22px}
   .whoWrap{display:none}
   .profBtn{padding:5px;border-radius:50%}
   .profBtn .chev{display:none}
