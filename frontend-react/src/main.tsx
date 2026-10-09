@@ -152,13 +152,6 @@ type HeroCopy = {
  */
 const HERO_COPY: HeroCopy[] = [
   {
-    eyebrow: 'WELCOME TO HOTEL PARADISE ON THE NILE',
-    title: 'Where the Nile meets paradise.',
-    text: 'Step into Jinja\u2019s most welcoming address, a calm and elegant landmark on the banks of the world\u2019s longest river. Your unforgettable stay begins here.',
-    primary: {label: 'Book your stay', href: './rooms.html'},
-    secondary: {label: 'Explore the hotel', href: '#facilities'}
-  },
-  {
     eyebrow: 'HEALTH CLUB AND POOL',
     title: 'Golden afternoons by the pool.',
     text: 'Cool off in our sparkling swimming pool, framed by sun loungers, lush gardens and the gentle sound of the Nile. Pure relaxation, just for you.',
@@ -171,41 +164,6 @@ const HERO_COPY: HeroCopy[] = [
     text: 'Our executive rooms wrap you in crisp linen, soft lighting and quiet luxury, so every night ends beautifully and every morning starts easy.',
     primary: {label: 'See the rooms', href: './rooms.html'},
     secondary: {label: 'Check availability', href: '#book'}
-  },
-  {
-    eyebrow: 'DELUXE DOUBLE',
-    title: 'Room to relax, side by side.',
-    text: 'A generous double bed dressed in fresh premium linen, the perfect retreat for couples and travellers who love their space and their comfort.',
-    primary: {label: 'See the rooms', href: './rooms.html'},
-    secondary: {label: 'Check availability', href: '#book'}
-  },
-  {
-    eyebrow: 'CONFERENCES AND WEDDINGS',
-    title: 'Celebrations on the Nile.',
-    text: 'From unforgettable weddings to focused conferences, our elegant halls and riverside gardens set the stage for moments your guests will remember forever.',
-    primary: {label: 'Plan your event', href: '#facilities'},
-    secondary: {label: 'Talk to us', href: '#contact'}
-  },
-  {
-    eyebrow: 'YOUR EVENT, OUR STAGE',
-    title: 'The Nile makes every occasion grander.',
-    text: 'Say your vows, welcome your guests and celebrate against a riverside backdrop that turns any gathering into a story worth telling for a lifetime.',
-    primary: {label: 'Plan your event', href: '#facilities'},
-    secondary: {label: 'Book your stay', href: './rooms.html'}
-  },
-  {
-    eyebrow: 'THE VIEW',
-    title: 'Wake up to the River Nile.',
-    text: 'Sweeping river views, warm Jinja sunshine and tranquil gardens. This is the setting that makes every stay at Paradise feel like a quiet escape.',
-    primary: {label: 'Book your stay', href: './rooms.html'},
-    secondary: {label: 'Find us', href: '#contact'}
-  },
-  {
-    eyebrow: 'A GRAND WELCOME',
-    title: 'Arrive as a guest, leave as family.',
-    text: 'Our warm entrance and attentive team greet you the moment you arrive, because here in Paradise, genuine hospitality is always personal.',
-    primary: {label: 'Book your stay', href: './rooms.html'},
-    secondary: {label: 'Call ' + CALL, href: telHref(CALL)}
   },
   {
     eyebrow: 'FROM THE GRILL',
@@ -250,30 +208,9 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'BREAKFAST IS INCLUDED',
-    title: 'Mornings made delicious.',
-    text: 'Every rate already carries breakfast, and the kitchen keeps going from the first light of morning until dinner closes at eleven.',
-    primary: {label: 'See the rates', href: '#rates'},
-    secondary: {label: 'Book your stay', href: './rooms.html'}
-  },
-  {
-    eyebrow: 'THE HOTEL',
-    title: 'Comfort in every corner.',
-    text: 'From the lobby to the gardens, every space at Paradise is designed for ease, warmth and the quiet joy of being truly looked after.',
-    primary: {label: 'Explore the hotel', href: '#facilities'},
-    secondary: {label: 'Check availability', href: '#book'}
-  },
-  {
     eyebrow: 'THE SUITE',
     title: 'Space to unwind and celebrate.',
     text: 'Our suites offer room to breathe, a place to gather and a bed that promises deep, restful sleep. Ideal for families and longer stays.',
-    primary: {label: 'See the rooms', href: './rooms.html'},
-    secondary: {label: 'Check availability', href: '#book'}
-  },
-  {
-    eyebrow: 'DELUXE COMFORT',
-    title: 'A bed you will not want to leave.',
-    text: 'Soft, spacious and beautifully finished, our deluxe beds are the heart of a good night. Sink in, switch off and let the Nile lull you to sleep.',
     primary: {label: 'See the rooms', href: './rooms.html'},
     secondary: {label: 'Check availability', href: '#book'}
   },

@@ -6763,23 +6763,26 @@
   },
   "hero": [
     {
-      "slug": "hero1-hotel-main-building",
-      "dir": "./images/",
-      "file": "hero1-hotel-main-building.jpg",
-      "ext": "jpg",
-      "w": 547,
-      "h": 365,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "hotel-pool",
-      "dir": "./images/",
-      "file": "hotel-pool.jpg",
-      "ext": "jpg",
-      "w": 801,
-      "h": 249,
-      "variants": [],
+      "slug": "pool",
+      "dir": "./images/hero/",
+      "file": "pool-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "pool-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "pool-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
       "kind": "image"
     },
     {
@@ -6789,56 +6792,6 @@
       "ext": "avif",
       "w": 0,
       "h": 0,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "double-deluxe-bed",
-      "dir": "./images/",
-      "file": "double-deluxe-bed.jpg",
-      "ext": "jpg",
-      "w": 1024,
-      "h": 683,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "hotel-paradise-on-the-nile-conferences-weddings",
-      "dir": "./images/",
-      "file": "hotel-paradise-on-the-nile-conferences-weddings.jpg",
-      "ext": "jpg",
-      "w": 715,
-      "h": 400,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "hotel-paradise-on-the-nile-conferences-weddings-cover",
-      "dir": "./images/",
-      "file": "Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover.jpg",
-      "ext": "jpg",
-      "w": 2000,
-      "h": 624,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "hotel-view-for-hero",
-      "dir": "./images/",
-      "file": "hotel-view-for-hero.jpg",
-      "ext": "jpg",
-      "w": 500,
-      "h": 350,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "hero-hotel-entrence",
-      "dir": "./images/",
-      "file": "hero-hotel-entrence.jpg",
-      "ext": "jpg",
-      "w": 548,
-      "h": 364,
       "variants": [],
       "kind": "image"
     },
@@ -6929,52 +6882,6 @@
       "kind": "image"
     },
     {
-      "slug": "food-breakfast",
-      "dir": "./images/hero/",
-      "file": "food-breakfast-1920.webp",
-      "ext": "webp",
-      "w": 1920,
-      "h": 1280,
-      "variants": [
-        {
-          "file": "food-breakfast-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 640
-        },
-        {
-          "file": "food-breakfast-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 853
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "hero-7",
-      "dir": "./images/hero/",
-      "file": "hero-7-1920.webp",
-      "ext": "webp",
-      "w": 1920,
-      "h": 1440,
-      "variants": [
-        {
-          "file": "hero-7-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 720
-        },
-        {
-          "file": "hero-7-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 960
-        }
-      ],
-      "kind": "image"
-    },
-    {
       "slug": "bed-suite",
       "dir": "./images/hero/",
       "file": "bed-suite-1920.webp",
@@ -6993,29 +6900,6 @@
           "ext": "webp",
           "w": 1280,
           "h": 853
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "bed-deluxe",
-      "dir": "./images/hero/",
-      "file": "bed-deluxe-1920.webp",
-      "ext": "webp",
-      "w": 1920,
-      "h": 2880,
-      "variants": [
-        {
-          "file": "bed-deluxe-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 1440
-        },
-        {
-          "file": "bed-deluxe-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 1920
         }
       ],
       "kind": "image"
