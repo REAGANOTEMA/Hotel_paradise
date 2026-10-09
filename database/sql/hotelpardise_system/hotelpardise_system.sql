@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 09, 2026 at 06:33 AM
+-- Generation Time: Oct 09, 2026 at 07:21 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -1227,6 +1227,26 @@ CREATE TABLE `notifications` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notification_deliveries`
+--
+
+CREATE TABLE `notification_deliveries` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `notification_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `device_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `channel` enum('web_push','fcm','apns','in_app') NOT NULL DEFAULT 'web_push',
+  `status` enum('queued','accepted','delivered','failed','read') NOT NULL DEFAULT 'queued',
+  `provider_message_id` varchar(190) DEFAULT NULL,
+  `attempts` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `last_error` varchar(500) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `notification_devices`
 --
 
@@ -1235,9 +1255,44 @@ CREATE TABLE `notification_devices` (
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `platform` enum('web','android','ios','other') NOT NULL,
   `push_token` varchar(500) NOT NULL,
+  `p256dh` varchar(255) DEFAULT NULL,
+  `auth` varchar(255) DEFAULT NULL,
   `active` tinyint(1) DEFAULT 1,
-  `last_seen_at` datetime DEFAULT NULL
+  `user_agent` varchar(255) DEFAULT NULL,
+  `last_seen_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_events`
+--
+
+CREATE TABLE `notification_events` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `event_key` varchar(190) NOT NULL,
+  `event_type` varchar(100) NOT NULL,
+  `entity_type` varchar(60) DEFAULT NULL,
+  `entity_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_preferences`
+--
+
+CREATE TABLE `notification_preferences` (
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `booking_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `order_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `payment_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `communication_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `incident_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -2962,12 +3017,35 @@ ALTER TABLE `notifications`
   ADD KEY `fk_notification_user` (`user_id`);
 
 --
+-- Indexes for table `notification_deliveries`
+--
+ALTER TABLE `notification_deliveries`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_delivery_once` (`notification_id`,`device_id`),
+  ADD KEY `idx_delivery_user` (`user_id`),
+  ADD KEY `idx_delivery_status` (`status`);
+
+--
 -- Indexes for table `notification_devices`
 --
 ALTER TABLE `notification_devices`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uq_push_token` (`push_token`(191)),
   ADD KEY `fk_nd_user` (`user_id`);
+
+--
+-- Indexes for table `notification_events`
+--
+ALTER TABLE `notification_events`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_event_key` (`event_key`),
+  ADD KEY `idx_event_entity` (`entity_type`,`entity_id`);
+
+--
+-- Indexes for table `notification_preferences`
+--
+ALTER TABLE `notification_preferences`
+  ADD PRIMARY KEY (`user_id`);
 
 --
 -- Indexes for table `orders`
@@ -3704,9 +3782,21 @@ ALTER TABLE `notifications`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `notification_deliveries`
+--
+ALTER TABLE `notification_deliveries`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `notification_devices`
 --
 ALTER TABLE `notification_devices`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `notification_events`
+--
+ALTER TABLE `notification_events`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --

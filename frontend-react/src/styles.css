@@ -290,6 +290,34 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
 .menuRow small{color:var(--muted);line-height:1.6;display:block}
 .menuRow b{color:var(--gold-ink);font-size:17px;white-space:nowrap}
 
+/* The dining rates as a small chart. Each card carries its own bar, drawn on
+   one shared scale, so the four rates read against each other at a glance. */
+.dineGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:10px}
+.dineCard{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line2);border-radius:calc(var(--r) + 6px);padding:26px 24px 24px;box-shadow:var(--shadow);overflow:hidden}
+.dineCard::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-deep))}
+.dineCard.free::before{background:linear-gradient(90deg,var(--nile),#0a5468)}
+.dineTop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.dineIco{width:44px;height:44px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--gold-soft);color:var(--gold-ink)}
+.dineCard.free .dineIco{background:rgba(11,93,120,.1);color:var(--nile)}
+.dineIco svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dineTag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold-ink);background:var(--gold-soft);border:1px solid #C9A22740;border-radius:999px;padding:5px 10px;white-space:nowrap}
+.dineCard.free .dineTag{color:var(--nile);background:rgba(11,93,120,.08);border-color:rgba(11,93,120,.25)}
+.dineCard h4{margin:0 0 8px;font-family:'Playfair Display',serif;font-size:21px;color:var(--navy)}
+.dineNote{margin:0 0 auto;color:var(--muted);font-size:13.5px;line-height:1.65}
+.dineBar{position:relative;height:8px;border-radius:999px;background:#eef0f3;margin:22px 0 16px;overflow:hidden}
+.dineFill{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--gold-deep));min-width:6px}
+.dineCard.free .dineFill{background:linear-gradient(90deg,var(--nile),#0a5468)}
+.dinePrice{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-top:1px solid var(--line2);padding-top:14px}
+.dinePrice b{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-ink)}
+.dinePrice span{font-size:11px;color:var(--faint);letter-spacing:.04em}
+.dineCard.free .dinePrice b{color:var(--nile)}
+/* A quiet bar under every room rate, drawn to the same scale as its neighbours. */
+.rateBar{height:6px;border-radius:999px;background:#eef0f3;margin-top:10px;overflow:hidden;max-width:320px}
+.rateBar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--gold-deep))}
+.rateRow.onRequest .rateBar span{background:repeating-linear-gradient(90deg,#c9d2dd 0 6px,transparent 6px 12px)}
+@media(max-width:1000px){.dineGrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.dineGrid{grid-template-columns:1fr;gap:16px}}
+
 /* The hotel's own numbers, each an illustrated plate: one landscape
    photograph under a navy scrim, so the index, the heading and the line
    all stay legible on any of them. */
@@ -1011,7 +1039,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .modalScrim{background:Canvas}
   .modalScrim::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.55)}
 }
-@media(prefers-reduced-motion:no-preference){.card,.fact,.menuRow,.rateCard{transition:opacity .6s ease,transform .25s ease,box-shadow .25s ease}.btn:hover{transform:translateY(-2px);background:#d8aa2e}.card:hover,.fact:hover,.menuRow:hover,.rateCard:hover{transform:translateY(-5px);box-shadow:0 20px 50px #071A3320}}
+@media(prefers-reduced-motion:no-preference){.card,.fact,.menuRow,.dineCard,.rateCard{transition:opacity .6s ease,transform .25s ease,box-shadow .25s ease}.btn:hover{transform:translateY(-2px);background:#d8aa2e}.card:hover,.fact:hover,.menuRow:hover,.dineCard:hover,.rateCard:hover{transform:translateY(-5px);box-shadow:0 20px 50px #071A3320}}
 @media(prefers-reduced-motion:reduce){
   /* Fades only, and no drift. visibility still has to switch instantly,
      otherwise a hidden slide would linger for the length of the delay. */

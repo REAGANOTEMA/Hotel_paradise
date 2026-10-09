@@ -313,6 +313,8 @@ function page_allowed(string $page): bool{
  if(in_array('super_admin',$r)) return true;
  $map=[
   'dashboard'=>[],
+  // The bell is every signed-in member's own: they see only their notifications.
+  'notifications'=>[],
   // The director's own page: the money, every order, every customer, and the
   // detail behind either of them. Deliberately not opened to accountants or
   // auditors - it is the view of the house, not of the ledger.

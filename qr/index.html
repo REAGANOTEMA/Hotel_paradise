@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071A33">
+<meta name="description" content="Hotel Paradise on the Nile, Jinja. Scan once to view the menu and order food, or to see the rooms and book your stay.">
+<title>Scan and choose | Hotel Paradise on the Nile</title>
+<link rel="icon" type="image/png" sizes="64x64" href="../images/logo-64.png">
+<link rel="apple-touch-icon" href="../images/logo-192.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<style>
+  :root{
+    --gold:#C9A227; --gold2:#e0b53a; --navy:#071A33; --navy2:#0f2850;
+    --nile:#0B5D78; --ink:#1c2733; --muted:#5D6878; --paper:#f6f3ea;
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'DM Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(ellipse at 50% -10%,rgba(201,162,39,.18),transparent 55%),
+      linear-gradient(170deg,#050d1c,var(--navy) 55%,var(--navy2));
+    min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:28px 18px 40px;display:flex;flex-direction:column;align-items:center;gap:20px}
+  .flagbar{width:100%;height:4px;border-radius:99px;background:linear-gradient(90deg,#000 0 33%,var(--gold) 33% 66%,#d21034 66% 100%)}
+  .brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;color:#fff}
+  .brand img{width:88px;height:88px;border-radius:50%;background:#fff;padding:3px;border:2px solid var(--gold);box-shadow:0 10px 40px rgba(0,0,0,.45);object-fit:cover}
+  .brand h1{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:23px;letter-spacing:.06em;margin:0}
+  .brand p{margin:0;color:#c9d3e0;font-size:13.5px;line-height:1.55;max-width:420px}
+  .actions{width:100%;display:grid;gap:14px;margin-top:6px}
+  .act{
+    display:flex;align-items:center;gap:16px;width:100%;text-decoration:none;
+    background:#fff;border-radius:var(--r);padding:18px;border:1px solid rgba(201,162,39,.35);
+    box-shadow:0 18px 44px rgba(0,0,0,.32);transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;min-height:84px;
+  }
+  .act:hover{transform:translateY(-2px);box-shadow:0 24px 54px rgba(0,0,0,.4);border-color:var(--gold)}
+  .act .ico{width:56px;height:56px;flex:none;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff}
+  .act.menu .ico{background:linear-gradient(150deg,#0d6e8f,var(--nile))}
+  .act.book .ico{background:linear-gradient(150deg,var(--gold2),var(--gold))}
+  .act .ico svg{width:28px;height:28px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .act.menu .ico svg{color:#fff}
+  .act.book .ico{color:#071A33}
+  .act .txt{min-width:0}
+  .act .txt b{display:block;font-family:'Playfair Display',Georgia,serif;font-size:19px;color:var(--navy);letter-spacing:.02em}
+  .act .txt small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+  .act .go{margin-left:auto;color:var(--gold);flex:none}
+  .act .go svg{width:20px;height:20px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .codes{width:100%;background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.3);border-radius:var(--r);padding:16px;box-shadow:0 18px 44px rgba(0,0,0,.3)}
+  .codes h2{font-family:'Playfair Display',Georgia,serif;font-size:15px;color:var(--navy);margin:0 0 4px;text-align:center}
+  .codes p.note{margin:0 0 12px;text-align:center;color:var(--muted);font-size:12px}
+  .codeGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .codeCell{text-align:center;background:#faf9f5;border:1px solid #e4e0d2;border-radius:12px;padding:10px}
+  .codeCell img{width:100%;max-width:180px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:8px}
+  .codeCell b{display:block;margin-top:8px;font-size:12px;color:var(--navy)}
+  .printLink{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin:14px auto 0;width:100%;text-decoration:none;
+    background:linear-gradient(180deg,var(--gold2),var(--gold));color:#071A33;font-weight:700;font-size:13px;border-radius:10px;padding:12px;min-height:46px}
+  footer{color:#8fa0b6;font-size:11.5px;text-align:center;line-height:1.6;padding:8px 4px 0}
+  footer a{color:var(--gold);text-decoration:none}
+  @media(max-width:360px){
+    .codeGrid{grid-template-columns:1fr}
+    .brand h1{font-size:20px}
+    .act{padding:14px;min-height:76px}
+  }
+  @media(prefers-reduced-motion:reduce){.act{transition:none}.act:hover{transform:none}}
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="flagbar" aria-hidden="true"></div>
+    <div class="brand">
+      <img src="../images/logo-256.png" alt="Hotel Paradise on the Nile logo">
+      <h1>HOTEL PARADISE ON THE NILE</h1>
+      <p>Welcome to Jinja. Choose what you would like to do, and the hotel opens straight to it.</p>
+    </div>
+
+    <div class="actions">
+      <a class="act menu" href="../menu.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6 2v7a2.5 2.5 0 0 0 2.5 2.5V22"/><path d="M4 2v5M8.5 2v5"/><path d="M17 2c2.4 2.6 2.6 7.5.4 10.4V22"/></svg>
+        </span>
+        <span class="txt"><b>VIEW MENU</b><small>See the food menu and place an order</small></span>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="act book" href="../rooms.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M2 19v-9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v9"/><path d="M2 15h20"/><path d="M6 10V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/></svg>
+        </span>
+        <span class="txt"><b>BOOK A ROOM</b><small>View available accommodation and begin a booking</small></span>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+
+    <section class="codes">
+      <h2>Printable codes</h2>
+      <p class="note">Two codes, one for each action. Point a phone camera at either one.</p>
+      <div class="codeGrid">
+        <div class="codeCell">
+          <img src="menu.png" alt="QR code to view the menu and order" loading="lazy">
+          <b>Menu and ordering</b>
+        </div>
+        <div class="codeCell">
+          <img src="booking.png" alt="QR code to book a room" loading="lazy">
+          <b>Rooms and booking</b>
+        </div>
+      </div>
+      <a class="printLink" href="print-sheet.png" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+        Open the print sheet
+      </a>
+    </section>
+
+    <footer>
+      Hotel Paradise on the Nile Ltd &middot; Plot 12, 19 &amp; 25 Kiira Lane, Jinja, Uganda<br>
+      <a href="https://hotelparadiseonthenile.info">hotelparadiseonthenile.info</a>
+    </footer>
+  </main>
+  <script>
+    (function(){
+      if(!('serviceWorker' in navigator)) return;
+      window.addEventListener('load',function(){
+        navigator.serviceWorker.register('../sw.js').catch(function(){});
+      });
+    })();
+  </script>
+</body>
+</html>

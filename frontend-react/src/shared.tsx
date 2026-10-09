@@ -46,6 +46,33 @@ export const apiUrl = async (act: string): Promise<string> => {
 export const LOGO = './logo-256.png';
 
 /**
+ * Registers the offline-capable service worker.
+ *
+ * It is only registered where a service worker is actually allowed (a secure
+ * context). That is HTTPS in production and localhost or 127.0.0.1 on a
+ * development machine; on a plain-HTTP host or an odd IP the browser refuses
+ * one, so this quietly does nothing rather than throwing.
+ *
+ * The worker keeps only the public site's own static files. It is explicitly
+ * written to never cache the management console, the PHP API or anything the
+ * site asks the server for, so no signed-in guest's data is ever served to
+ * another visitor or left behind on a shared phone.
+ */
+export const registerServiceWorker = (): void => {
+  try {
+    if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return;
+    const secure = window.isSecureContext
+      || location.protocol === 'https:'
+      || location.hostname === 'localhost'
+      || location.hostname === '127.0.0.1';
+    if (!secure) return;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => { /* not fatal */ });
+    });
+  } catch { /* a browser that cannot do this simply does not */ }
+};
+
+/**
  * The 3.5% the hotel carries inside every price it quotes.
  *
  * A guest reads one number. The card on the menu, the rate on the room, the
@@ -330,6 +357,10 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
      <a className="btn" href="./rooms.html">Book your stay</a>
      <a className="btn ghost" href={telHref(CALL)}>Call us</a>
     </div>
-  </>
- );
-}
+   </>
+  );
+ }
+
+/* Every page imports this module, so the service worker is offered once,
+   from one place, rather than each page having to remember to ask. */
+registerServiceWorker();

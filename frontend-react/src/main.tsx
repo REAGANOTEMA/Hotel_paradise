@@ -7,13 +7,81 @@ import {heroShots, SmartImage, type HeroShot} from './SmartImage';
 /**
  * What dining costs, worked out from the base figures so that the 3.5% the
  * hotel carries inside every price reaches this table as well.
+ *
+ * Each rate also carries the two ends of its own scale, in the same serviced
+ * shillings the price is written in. Those are what the little bar under every
+ * card is drawn from, so the four rates can be read against one another at a
+ * glance rather than compared by arithmetic.
  */
-const dining = [
- {name: 'Breakfast', price: fmtPrice(25000), note: 'For non residents, or children above six years sharing a room with their parents'},
- {name: 'Buffet meal', price: fmtPrice(40000), note: 'Served daily around lunch and dinner'},
- {name: 'A la carte menu', price: fmtPrice(6000) + ' to ' + withService(100000).toLocaleString(), note: '251 dishes, from light bites to full platters'},
- {name: 'Baby cots', price: 'Free', note: 'Available on request for your little one'}
+const DINING_TOP = withService(100000);
+
+type DineRate = {
+ name: string;
+ note: string;
+ tag: string;
+ icon: 'sun' | 'pot' | 'fork' | 'moon';
+ from: number;
+ to: number;
+ priceText: string;
+ unit: string;
+ free?: boolean;
+};
+
+const dining: DineRate[] = [
+ {name: 'Breakfast', tag: 'Included with every room', icon: 'sun',
+  note: 'For non residents, or children above six years sharing a room with their parents.',
+  from: withService(25000), to: withService(25000), priceText: fmtPrice(25000), unit: 'per person'},
+ {name: 'Buffet meal', tag: 'Lunch and dinner', icon: 'pot',
+  note: 'Served daily around lunch and dinner, a full table of hot dishes and salads.',
+  from: withService(40000), to: withService(40000), priceText: fmtPrice(40000), unit: 'per person'},
+ {name: 'A la carte menu', tag: '251 dishes', icon: 'fork',
+  note: 'From light bites to full platters, served through the day and into the evening.',
+  from: withService(6000), to: DINING_TOP, priceText: fmtPrice(6000) + ' – ' + withService(100000).toLocaleString(), unit: 'per dish'},
+ {name: 'Baby cots', tag: 'On the house', icon: 'moon',
+  note: 'Available on request for your little one, set up in your room before you arrive.',
+  from: 0, to: 0, priceText: 'Free', unit: 'on request', free: true}
 ];
+
+/** The small line drawing that heads each dining card. */
+function dineIcon(name: DineRate['icon']) {
+ const path: Record<DineRate['icon'], React.ReactElement> = {
+  sun: <><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></>,
+  pot: <><path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M2 10h20"/><path d="M9.5 6.5c0-1.4 1.2-1.4 1.2-3M14 6.5c0-1.4 1.2-1.4 1.2-3"/></>,
+  fork: <><path d="M6 2v7a2.5 2.5 0 0 0 2.5 2.5V22"/><path d="M4 2v5M8.5 2v5"/><path d="M17 2c2.4 2.6 2.6 7.5.4 10.4V22"/></>,
+  moon: <><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></>
+ };
+ return <svg viewBox="0 0 24 24" aria-hidden="true">{path[name]}</svg>;
+}
+
+/**
+ * The dining rates as a small chart: one card per rate, each with a bar drawn
+ * on a shared scale so the cheapest and the dearest are obvious side by side.
+ * The baby cot, which is free, is drawn full and blue rather than gold.
+ */
+function DiningBoard() {
+ return (
+  <div className="dineGrid">
+   {dining.map(m => {
+    const left = m.free ? 0 : Math.round((m.from / DINING_TOP) * 100);
+    const width = m.free ? 100 : Math.max(6, Math.round(((m.to - m.from) / DINING_TOP) * 100));
+    return (
+     <article className={'dineCard reveal' + (m.free ? ' free' : '')} key={m.name}>
+      <div className="dineTop">
+       <span className="dineIco">{dineIcon(m.icon)}</span>
+       <span className="dineTag">{m.tag}</span>
+      </div>
+      <h4>{m.name}</h4>
+      <p className="dineNote">{m.note}</p>
+      <div className="dineBar" aria-hidden="true">
+       <span className="dineFill" style={{marginLeft: left + '%', width: width + '%'}}/>
+      </div>
+      <div className="dinePrice"><b>{m.priceText}</b><span>{m.unit}</span></div>
+     </article>
+    );
+   })}
+  </div>
+ );
+}
 
 const facts = [
  {t: 'Rooms', d: '69 rooms spread across 3 floors', img: 'fact-rooms'},
@@ -348,6 +416,9 @@ function AvailabilityStrip() {
 
 function Rates() {
  const [cur, setCur] = React.useState<'UGX' | 'USD'>('UGX');
+ // The dearest room the hotel publishes, used only to scale the little bar in
+ // each row so a guest can see the range of rates without reading every figure.
+ const maxRate = Math.max(...rooms.filter(x => x.price > 0).map(x => x.price), 1);
  return (
    <section className="section band rates hasBackdrop" id="rates" style={{'--bg': "url('./images/hero/bed-executive-1920.webp')"} as unknown as React.CSSProperties}>
     <div className="bandInner">
@@ -364,11 +435,13 @@ function Rates() {
      <div className="rateCard reveal">
       {rooms.map(r => {
        const priced = r.price > 0;
+       const pct = priced ? Math.max(8, Math.round((r.price / maxRate) * 100)) : 100;
        return (
-        <div className="rateRow" key={r.type}>
+        <div className={'rateRow' + (priced ? '' : ' onRequest')} key={r.type}>
          <div>
           <h4>{r.type}</h4>
           <small>{priced ? 'Classic comfort, breakfast and taxes included' : 'A well equipped single room, contact the hotel for the Uganda Shilling rate'}</small>
+          <div className="rateBar" aria-hidden="true"><span style={{width: pct + '%'}}/></div>
          </div>
          <b>{cur === 'UGX'
            ? (priced ? <>{fmtPrice(r.price)}<span>per night</span></> : <>On request<span>contact the hotel</span></>)
@@ -475,9 +548,7 @@ function Home() {
     <p className="intro">Meals are served with the warmth Jinja is known for. Walk ins are always welcome, or open the full menu to browse every dish and send your order to the kitchen. Breakfast is included in every room rate.</p>
    </div>
    <div className="menuWrap">
-    {dining.map(m => (
-     <div className="menuRow reveal" key={m.name}><div><h4>{m.name}</h4><small>{m.note}</small></div><b>{m.price}</b></div>
-    ))}
+    <DiningBoard/>
    </div>
    <div className="center reveal" style={{marginTop: 40}}>
     <a className="btn" href="./menu.html">See the full menu and order</a>

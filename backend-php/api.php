@@ -17,6 +17,21 @@ set_exception_handler(function(Throwable $e){
 $out=function(array $data, int $code=200): void{ http_response_code($code); echo json_encode($data,JSON_UNESCAPED_UNICODE); exit; };
 
 /**
+ * Tells the console that something real happened. A booking, an order or a
+ * payment must never fail because a phone could not be reached, so this wraps
+ * the notification in its own guard: the worst a broken notification can do is
+ * leave a line in the error log, never an error on a guest's screen.
+ */
+function api_notify(string $eventKey,string $category,string $title,string $body,array $data=[],array $roles=[]): void{
+ try{
+  require_once __DIR__.'/app/notify.php';
+  notify_dispatch($eventKey,$category,$title,$body,$data,$roles);
+ }catch(Throwable $e){
+  error_log('[hotel api] notify '.$eventKey.' skipped: '.$e->getMessage());
+ }
+}
+
+/**
  * The service charge the hotel carries inside every price it publishes.
  *
  * A room rate and a dish price on the site already include it, so the amount a
@@ -169,6 +184,9 @@ if($act==='booking'){
    .' VALUES('.implode(',',array_fill(0,count($insCols),'?')).',NOW())',array_values($ins));
  $rid=(int)db()->lastInsertId();
  q('INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate) VALUES(?,?,NULL,1,?)',[$rid,$rt['id'],$rate]);
+ api_notify('booking:'.$num,'booking','New website booking '.$num,
+  $name.' asked for '.$rt['name'].' for '.$nights.' night'.($nights===1?'':'s').', '.$cin.' to '.$cout.'. Total '.money($total).'.',
+  ['booking_number'=>$num,'room_type'=>$rt['name'],'nights'=>$nights,'check_in'=>$cin,'check_out'=>$cout,'total'=>$total,'guest'=>$name,'phone'=>$phone]);
  $out(['ok'=>true,'booking_number'=>$num,'room_type'=>$rt['name'],'nights'=>$nights,
   'subtotal'=>$subtotal,'service_charge'=>$service,'withdrawal_fee'=>$feeAmount,'withdrawal_fee_label'=>$fee['label'],'total'=>$total,
   'message'=>'Your request has been received. Our front desk will confirm availability on the number you provided.']);
@@ -285,8 +303,12 @@ if($act==='order'){
   q('INSERT INTO orders('.implode(',',$cols).',created_at) VALUES('.implode(',',array_fill(0,count($vals),'?')).',NOW())',$vals);
   $oid=(int)db()->lastInsertId();
   foreach($rows as $r){ q('INSERT INTO order_items(order_id,menu_item_id,quantity,unit_price,total,notes) VALUES(?,?,?,?,?,?)',[$oid,$r['id'],$r['qty'],$r['price'],$r['qty']*$r['price'],$r['note']]); }
-  audit('web_order','order',$oid,['order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total,'customer'=>$name,'phone'=>$phone,'address'=>$address]);
-  $out(['ok'=>true,'order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total,'message'=>'Please keep your phone nearby. We will call '.$phone.' to confirm your order and its delivery address.']);
+ audit('web_order','order',$oid,['order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total,'customer'=>$name,'phone'=>$phone,'address'=>$address]);
+ api_notify('order:'.$num,'order','New website order '.$num,
+  $name.' placed a takeaway order, '.count($rows).' item'.(count($rows)===1?'':'s').', total '.money($total).'.',
+  ['order_number'=>$num,'items'=>count($rows),'total'=>$total,'guest'=>$name,'phone'=>$phone,'address'=>$address],
+  ['director','general_manager','cashier','kitchen']);
+ $out(['ok'=>true,'order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total,'message'=>'Please keep your phone nearby. We will call '.$phone.' to confirm your order and its delivery address.']);
 }
 
 /**
@@ -350,8 +372,11 @@ if($act==='payment'){
   q('INSERT INTO payments('.implode(',',$insCols).',created_at)'
     .' VALUES('.implode(',',array_fill(0,count($insCols),'?')).',NOW())',array_values($ins));
   $pid=(int)db()->lastInsertId();
-  audit('web_payment','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'pending']);
-  $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,
+ audit('web_payment','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'pending']);
+ api_notify('payment:'.$payRef,'payment','Payment request '.$payRef,
+  $name.' started a '.strtoupper($method).' payment of '.money($expected).' for the '.$label.' '.$ref.'.',
+  ['reference'=>$payRef,'source'=>$label,'amount'=>$expected,'method'=>$method,'guest'=>$name,'phone'=>$phone]);
+ $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,
     'message'=>'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.']);
 }
 

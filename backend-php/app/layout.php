@@ -1,12 +1,14 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__.'/notify.php';
+
 function nav_items(): array{
  return [
   'dashboard'=>'Dashboard','overview'=>'CEO / Director','reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests',
   'pos'=>'POS and Orders','fnb'=>'Food and Beverage','kitchen'=>'Kitchen','shifts'=>'Shifts','inventory'=>'Inventory','suppliers'=>'Suppliers',
   'purchases'=>'Purchases','expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals',
-  'audit'=>'Audit Trail','reports'=>'Reports','users'=>'Team and Users','profile'=>'My Profile'
+  'audit'=>'Audit Trail','reports'=>'Reports','users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile'
  ];
 }
 
@@ -23,8 +25,8 @@ function nav_groups(): array{
     'shifts'=>'Shifts','inventory'=>'Inventory','suppliers'=>'Suppliers','purchases'=>'Purchases','expenses'=>'Expenses']],
   ['label'=>'Finance and control','items'=>[
     'finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
-  ['label'=>'Administration','items'=>[
-    'users'=>'Team and Users','profile'=>'My Profile']],
+   ['label'=>'Administration','items'=>[
+     'users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile']],
  ];
 }
 
@@ -136,6 +138,33 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<button class="sideToggle" id="sideToggle" type="button" aria-label="Open menu" aria-controls="side" aria-expanded="false"><span></span><span></span><span></span></button>';
  echo '<div class="topTitles"><h1 class="pageTitle">'.e($title).'</h1>'.($sub?'<p class="pageSub">'.e($sub).'</p>':'').'</div>';
  echo '<div class="topRight">';
+ /* The bell is the same feed as the notifications page: a member sees their
+    own events, never anyone else's. It is drawn only when the tables exist. */
+ if(notify_ready()){
+  $nUnread=notify_unread((int)($u['id']??0));
+  $nItems=notify_list((int)($u['id']??0),6);
+  echo '<div class="notifyWrap">';
+  echo '<button class="notifyBtn" id="notifyBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="notifyMenu" aria-label="Notifications'.($nUnread?' ('.$nUnread.' unread)':'').'">';
+  echo svg_icon('bell');
+  echo '<span class="notifyBadge" id="notifyBadge"'.($nUnread?'':' hidden').'>'.($nUnread>99?'99+':(int)$nUnread).'</span>';
+  echo '</button>';
+  echo '<div class="notifyMenu" id="notifyMenu" hidden>';
+  echo '<div class="menuHead"><b>Notifications</b><small>'.($nUnread?$nUnread.' unread':'You are up to date').'</small></div>';
+  echo '<div class="notifyFeed" id="notifyFeed">';
+  if($nItems===[]){ echo '<p class="notifyEmpty">Nothing yet. Bookings, orders and payments will appear here.</p>'; }
+  else{
+   foreach($nItems as $n){
+    $un=$n['read_at']===null?' unread':'';
+    echo '<a class="notifyItem'.$un.'" href="'.BASE.'/index.php?page=notifications" data-id="'.(int)$n['id'].'">';
+    echo '<span class="nIco">'.svg_icon($n['type']==='payment'?'coins':($n['type']==='order'?'pot':($n['type']==='booking'?'calendar':'bell'))).'</span>';
+    echo '<span class="nTxt"><b>'.e($n['title']).'</b><small>'.e($n['body']).'</small><time>'.e(fmtdt($n['created_at'])).'</time></span>';
+    echo '</a>';
+   }
+  }
+  echo '</div>';
+  echo '<a class="notifyAll" href="'.BASE.'/index.php?page=notifications">View all notifications</a>';
+  echo '</div></div>';
+ }
  echo '<button class="profBtn" id="profBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="profMenu">';
  echo '<span class="avatar">'.e(initials($me)).'</span>';
  echo '<span class="whoWrap"><span class="who">'.e($me).'</span><span class="whoRole">'.e($role).'</span></span>';
@@ -161,7 +190,7 @@ function nav_icon_key(string $page): string{
  $map=['dashboard'=>'grid','overview'=>'chart','reservations'=>'calendar','rooms'=>'bed','guests'=>'users',
   'pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
   'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
-  'reports'=>'bars','users'=>'users','profile'=>'user'];
+  'reports'=>'bars','users'=>'users','notifications'=>'bell','profile'=>'user'];
  return $map[$page]??'grid';
 }
 
@@ -199,6 +228,34 @@ function page_scripts(): void{
     pb.addEventListener('click',function(e){e.stopPropagation();setProf(pm.hidden)});
     document.addEventListener('click',function(e){if(!pm.hidden&&!pm.contains(e.target))setProf(false)});
     document.addEventListener('keydown',function(e){if(e.key==='Escape')setProf(false)});
+  }
+
+     document.addEventListener('keydown',function(e){if(e.key==='Escape')setProf(false)});
+   }
+
+  /* the bell: the same feed the notifications page shows, refreshed quietly.
+     It never blocks the page and gives up silently if the network is gone. */
+  var nb=document.getElementById('notifyBtn'),nm=document.getElementById('notifyMenu');
+  if(nb&&nm){
+    var badge=document.getElementById('notifyBadge'),feed=document.getElementById('notifyFeed');
+    var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+    var setB=function(on){nb.setAttribute('aria-expanded',on?'true':'false');nm.hidden=!on};
+    var paint=function(d){
+      if(!d||!d.ok)return;
+      if(badge){badge.textContent=d.unread>99?'99+':d.unread;badge.hidden=d.unread<=0}
+      if(feed&&d.items){
+        feed.innerHTML=d.items.map(function(n){
+          return '<a class="notifyItem'+(n.read?'':' unread')+'" href="index.php?page=notifications" data-id="'+n.id+'">'
+            +'<span class="nTxt"><b>'+esc(n.title)+'</b><small>'+esc(n.body)+'</small><time>'+esc(n.when)+'</time></span></a>';
+        }).join('')||'<p class="notifyEmpty">Nothing yet. Bookings, orders and payments will appear here.</p>';
+      }
+    };
+    var load=function(){fetch('notify_api.php?act=feed',{credentials:'same-origin'}).then(function(r){return r.json()}).then(paint).catch(function(){})};
+    nb.addEventListener('click',function(e){e.stopPropagation();var on=nm.hidden;setB(on);if(on)load()});
+    document.addEventListener('click',function(e){if(!nm.hidden&&!nm.contains(e.target)&&!nb.contains(e.target))setB(false)});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')setB(false)});
+    load();
+    setInterval(function(){if(!document.hidden)load()},60000);
   }
 
   /* the rail remembers whether it was left collapsed */
