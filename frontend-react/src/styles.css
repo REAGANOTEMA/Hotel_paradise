@@ -13,7 +13,7 @@
 
 *{box-sizing:border-box}
 /* Stops iOS inflating text in landscape, which would otherwise break every grid. */
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;overflow-x:clip}
 body{margin:0;color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:15.5px;background:var(--ivory);line-height:1.65;-webkit-font-smoothing:antialiased}
 img,svg,video,iframe{max-width:100%}
 button{font:inherit;cursor:pointer;border:0}
@@ -290,12 +290,18 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
 .menuRow small{color:var(--muted);line-height:1.6;display:block}
 .menuRow b{color:var(--gold-ink);font-size:17px;white-space:nowrap}
 
-/* The hotel's own numbers, set as an editorial index rather than a list. */
+/* The hotel's own numbers, each an illustrated plate: one landscape
+   photograph under a navy scrim, so the index, the heading and the line
+   all stay legible on any of them. */
 .factsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.fact{position:relative;background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);padding:30px 30px 28px;transition:box-shadow .25s ease,transform .25s ease}
-.factIdx{display:block;font-family:'Playfair Display',serif;font-size:34px;line-height:1;color:var(--gold-ink);margin-bottom:12px}
-.fact h4{font-family:'Playfair Display',serif;font-weight:600;font-size:21px;letter-spacing:0;text-transform:none;color:var(--navy);margin:0 0 8px}
-.fact p{margin:0;color:var(--muted);line-height:1.75}
+.fact{position:relative;display:flex;align-items:flex-end;min-height:clamp(260px,26vw,320px);background:var(--navy);border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;isolation:isolate;transition:box-shadow .25s ease,transform .25s ease}
+.factPhoto{position:absolute;inset:0;z-index:0;height:100%;background:#0d2338}
+.factPhoto .photoImg{width:100%;height:100%}
+.factScrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(7,26,51,.10) 0%,rgba(7,26,51,.42) 42%,rgba(6,18,36,.92) 100%),linear-gradient(90deg,rgba(7,26,51,.55),rgba(7,26,51,0) 62%);pointer-events:none}
+.factBody{position:relative;z-index:2;width:100%;padding:26px 26px 26px}
+.factIdx{display:block;font-family:'Playfair Display',serif;font-size:34px;line-height:1;color:var(--gold);margin-bottom:10px;text-shadow:0 2px 12px rgba(0,0,0,.45)}
+.fact h4{font-family:'Playfair Display',serif;font-weight:600;font-size:21px;letter-spacing:0;text-transform:none;color:#fff;margin:0 0 8px;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.fact p{margin:0;color:#dbe4ee;line-height:1.6;text-shadow:0 1px 8px rgba(0,0,0,.5)}
 
 .contact{background:linear-gradient(120deg,var(--nebula),var(--navy));color:#fff}
 .contact h2{color:#fff}
@@ -310,6 +316,14 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
    the darker Nile blue to be read. */
 .contactCard .footLink{color:var(--nile);text-decoration:underline}
 .contactCard .footLink:hover{color:var(--gold-ink)}
+
+/* A dark band that carries a photograph behind it. The image is set from the
+   page as --bg, laid under a low-opacity wash so the words keep their contrast
+   and the band gains depth without the picture ever fighting the text. */
+.hasBackdrop{position:relative;overflow:hidden}
+.hasBackdrop::before{content:'';position:absolute;inset:0;z-index:0;background-image:var(--bg);background-size:cover;background-position:50% 42%;background-repeat:no-repeat;opacity:.22;pointer-events:none}
+.hasBackdrop::after{content:'';position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(7,26,51,.55),rgba(7,26,51,.78));pointer-events:none}
+.hasBackdrop>*{position:relative;z-index:1}
 
 footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1px solid rgba(255,255,255,.1)}
 .flag{height:6px;display:grid;grid-template-columns:1fr 1fr 1fr}
@@ -333,6 +347,13 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .projLink{display:inline-block;color:var(--gold);font-size:12px;letter-spacing:.4px;border-bottom:1px solid #C9A22755;transition:color .18s ease,border-color .18s ease}
 .projLink:hover{color:#fff;border-color:#fff}
 .footerCredit{padding:22px 7vw;border-top:1px solid #ffffff12;color:#73808f;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+/* The footer's own brand block, kept away from the link columns so its logo,
+   wordmark and line can compose on their own. */
+.footerLogo{display:block;width:76px;height:76px;max-width:76px;border-radius:50%;object-fit:contain;background:#fff;padding:6px;margin-bottom:14px;border:2px solid var(--gold);box-shadow:0 4px 20px rgba(212,175,55,.35)}
+.footerBrand h3{margin:0 0 1px;color:var(--gold);font-family:'Playfair Display',serif;font-size:22px;letter-spacing:.5px;font-weight:700}
+.footerBrand h4{margin:0 0 12px;color:#fff;letter-spacing:5px;font-size:11px;font-weight:400;padding-bottom:0;border-bottom:0}
+.footerTag{color:#b9c7d6}
+.footerCol p,.footerBrand p{font-size:13.5px;line-height:1.75}
 
 /* brand with logo */
 .brandL{display:flex;align-items:center;gap:13px;min-width:0}
@@ -889,6 +910,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .contactCard{padding:24px 20px}
   .bedBody{padding:20px 17px}
   .planner{padding:20px 15px}
+  .fact{min-height:248px}
+  .factBody{padding:20px 18px}
+  .factsGrid{gap:14px}
   .footerMain{padding:40px 5vw}
   .curToggle button{padding:12px 22px}
   .trayQty button{width:30px;height:30px}
@@ -1211,6 +1235,11 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
   .footerMain>div{padding:22px 0;border-bottom:1px solid rgba(255,255,255,.09)}
   .footerMain>div:last-child{border-bottom:0;padding-bottom:2px}
   .footerMain>div:first-child{padding-top:6px}
+  .footerBrand{text-align:center}
+  .footerLogo{margin:0 auto 14px}
+  .footerBrand h3{font-size:24px}
+  .footerBrand h4{letter-spacing:6px}
+  .footerPhones{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
   .footerMain h4{position:relative;border-bottom:0;margin-bottom:12px;padding-bottom:0}
   .footerMain h4::after{content:'';display:block;width:26px;height:2px;border-radius:2px;background:var(--gold);margin-top:9px}
   .footerMain p{font-size:13.5px;line-height:1.75}

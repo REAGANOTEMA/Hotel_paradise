@@ -152,9 +152,9 @@ const HERO_SEQUENCE = [
   'swimming-pool',
   'hero10',
   'suite-bed',
-  'hero/food-fruit',
+  'hero/hotel',
   'hero/food-table',
-  'dishes/classic-margherita',
+  'hero/food-pizza',
   'hotel-view'
 ];
 
@@ -283,6 +283,8 @@ export function buildImageManifest(imagesRoot) {
     food: scanFolder(path.join(imagesRoot, 'food')),
     rooms: scanFolder(path.join(imagesRoot, 'rooms')),
     gallery: scanFolder(path.join(imagesRoot, 'gallery')),
+    // The hotel's six headline facts, each illustrated by one landscape plate.
+    facilities: scanFolder(path.join(imagesRoot, 'facilities')),
     hero: scanHero(imagesRoot)
   };
 }

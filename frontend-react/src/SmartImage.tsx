@@ -1,7 +1,7 @@
 import React from 'react';
 import manifest from './image-manifest.json';
 
-export type ImageGroup = 'dishes' | 'rooms' | 'gallery';
+export type ImageGroup = 'dishes' | 'rooms' | 'gallery' | 'facilities';
 
 type Variant = {w: number; ext: string; h: number; file?: string};
 type Entry = {ext: string; w: number; h: number; variants: Variant[]};
@@ -14,6 +14,7 @@ export const IMAGE_DIR: Record<ImageHome, string> = {
   dishes: './images/dishes/',
   rooms: './images/rooms/',
   gallery: './images/gallery/',
+  facilities: './images/facilities/',
   food: './images/food/'
 };
 

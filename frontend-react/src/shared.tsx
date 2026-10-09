@@ -224,21 +224,21 @@ export function Footer() {
    <footer>
     <div className="flag"><i></i><i></i><i></i></div>
     <div className="footerMain">
-     <div>
-        <img src="./images/paradise-logo.png" alt="Hotel Paradise on the Nile" style={{maxWidth:80,height:'auto',marginBottom:12,filter:'drop-shadow(0 4px 20px rgba(212,175,55,0.3))'}} onError={(e:any)=>{e.currentTarget.style.display='none'}}/>
-        <h3 style={{color:'#d4af37',margin:'0 0 8px 0',fontFamily:'Playfair Display'}}>HOTEL PARADISE</h3>
-        <h4 style={{color:'#fff',margin:'-4px 0 12px 0',letterSpacing:'4px',fontSize:'12px',fontWeight:400}}>ON THE NILE</h4>
-        <p style={{color:'#b9c7d6',marginTop:0}}>Premium hospitality in Jinja, on the banks of the Nile.</p>
+     <div className="footerBrand">
+      <img className="footerLogo" src="./logo-192.png" alt="Hotel Paradise on the Nile logo" width={72} height={72}/>
+      <h3>HOTEL PARADISE</h3>
+      <h4>ON THE NILE</h4>
+      <p className="footerTag">Premium hospitality in Jinja, on the banks of the Nile.</p>
      </div>
-      <div><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>
-      <div><h4>STAY</h4><p>Check in from 12 noon</p><p>Check out by 10 am</p><p>Breakfast included</p></div>
-      <div><h4>CONTACT</h4>
-        <p>{HOTEL.phones.map((p, i) => (
-          <React.Fragment key={p}>{i > 0 && ' · '}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>
-        ))}</p>
-        <p><a className="footLink" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a></p>
-        <p>Front desk open 24 hours</p>
-      </div>
+     <div className="footerCol"><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>
+     <div className="footerCol"><h4>STAY</h4><p>Check in from 12 noon</p><p>Check out by 10 am</p><p>Breakfast included</p></div>
+     <div className="footerCol"><h4>CONTACT</h4>
+      <p className="footerPhones">{HOTEL.phones.map((p, i) => (
+       <React.Fragment key={p}>{i > 0 && '  ·  '}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>
+      ))}</p>
+      <p><a className="footLink" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a></p>
+      <p>Front desk open 24 hours</p>
+     </div>
      <div className="footerStudio">
       <h4>BUILT BY</h4>
       <a className="studioLink" href={STUDIO.url} target="_blank" rel="noopener noreferrer">

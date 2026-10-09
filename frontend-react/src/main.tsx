@@ -16,12 +16,12 @@ const dining = [
 ];
 
 const facts = [
- {t: 'Rooms', d: '69 rooms spread across 3 floors'},
- {t: 'Comfort', d: 'Every room furnished to standard, some air conditioned and others with fans'},
- {t: 'Bathrooms', d: 'Private bathrooms with jacuzzis, bathtubs or shower cabinets'},
- {t: 'In room', d: 'Direct dial telephones and 24 hour satellite television'},
- {t: 'Functions', d: 'Conference facilities and gardens for parties'},
- {t: 'Wellness', d: 'Health club with a swimming pool'}
+ {t: 'Rooms', d: '69 rooms spread across 3 floors', img: 'fact-rooms'},
+ {t: 'Comfort', d: 'Every room furnished to standard, some air conditioned and others with fans', img: 'fact-comfort'},
+ {t: 'Bathrooms', d: 'Private bathrooms with jacuzzis, bathtubs or shower cabinets', img: 'fact-bathrooms'},
+ {t: 'In room', d: 'Direct dial telephones and 24 hour satellite television', img: 'fact-in-room'},
+ {t: 'Functions', d: 'Conference facilities and gardens for parties', img: 'fact-functions'},
+ {t: 'Wellness', d: 'Health club with a swimming pool', img: 'fact-wellness'}
 ];
 
 const MAP_QUERY = HOTEL.shortName + ', ' + HOTEL.addressForMap;
@@ -349,7 +349,7 @@ function AvailabilityStrip() {
 function Rates() {
  const [cur, setCur] = React.useState<'UGX' | 'USD'>('UGX');
  return (
-   <section className="section band rates" id="rates">
+   <section className="section band rates hasBackdrop" id="rates" style={{'--bg': "url('./images/hero/bed-executive-1920.webp')"} as unknown as React.CSSProperties}>
     <div className="bandInner">
     <div className="center reveal">
      <p className="eyebrow">ROOM RATES AND POLICIES</p>
@@ -492,16 +492,30 @@ function Home() {
    </div>
    <div className="factsGrid">
     {facts.map((f, i) => (
-     <div className="fact reveal" key={f.t}>
-      <span className="factIdx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-      <h4>{f.t}</h4>
-      <p>{f.d}</p>
-     </div>
+     <article className="fact reveal" key={f.t}>
+      <SmartImage
+       group="facilities"
+       name={f.img}
+       alt={f.t}
+       ratio="auto"
+       widths={[480, 960, 1440, 1920]}
+       sizes="(max-width:768px) 100vw, (max-width:1050px) 50vw, 33vw"
+       position="50% 50%"
+       zoom
+       className="factPhoto"
+      />
+      <div className="factScrim" aria-hidden="true"/>
+      <div className="factBody">
+       <span className="factIdx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+       <h4>{f.t}</h4>
+       <p>{f.d}</p>
+      </div>
+     </article>
     ))}
    </div>
   </section>
 
-  <section className="section band contact" id="contact">
+  <section className="section band contact hasBackdrop" id="contact" style={{'--bg': "url('./images/hero/view-1920.webp')"} as unknown as React.CSSProperties}>
    <div className="bandInner">
    <div className="center reveal">
     <p className="eyebrow">BOOKINGS AND ENQUIRIES</p>

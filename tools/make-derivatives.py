@@ -39,6 +39,7 @@ EXTS = (".jpg", ".jpeg", ".png", ".webp")
 DISH_LADDER = (320, 480, 640, 960, 1280)
 ROOM_LADDER = (320, 480, 640, 960, 1280)
 GALLERY_LADDER = (480, 960, 1440, 1920)
+FACILITIES_LADDER = (480, 960, 1440, 1920)
 HERO_LADDER = (640, 1024, 1440, 1920, 2560)
 
 # The room card is a portrait frame. A wide photograph left alone would have its
@@ -254,6 +255,7 @@ def main():
     process(os.path.join(IMAGES, "dishes"), DISH_LADDER, "dishes")
     process(os.path.join(IMAGES, "rooms"), ROOM_LADDER, "rooms")
     process(os.path.join(IMAGES, "gallery"), GALLERY_LADDER, "gallery")
+    process(os.path.join(IMAGES, "facilities"), FACILITIES_LADDER, "facilities")
     process(IMAGES, HERO_LADDER, "hero", match=is_hero)
     print()
     print("Now rebuild the site so it picks the new copies up:  npm run build")

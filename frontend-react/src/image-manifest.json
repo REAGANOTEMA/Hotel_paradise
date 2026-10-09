@@ -6349,6 +6349,140 @@
       "variants": []
     }
   },
+  "facilities": {
+    "fact-bathrooms": {
+      "ext": "jpg",
+      "w": 1920,
+      "h": 1200,
+      "variants": [
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 300
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 600
+        },
+        {
+          "w": 1440,
+          "ext": "jpg",
+          "h": 900
+        }
+      ]
+    },
+    "fact-comfort": {
+      "ext": "jpg",
+      "w": 1920,
+      "h": 1200,
+      "variants": [
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 300
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 600
+        },
+        {
+          "w": 1440,
+          "ext": "jpg",
+          "h": 900
+        }
+      ]
+    },
+    "fact-functions": {
+      "ext": "jpg",
+      "w": 1920,
+      "h": 1200,
+      "variants": [
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 300
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 600
+        },
+        {
+          "w": 1440,
+          "ext": "jpg",
+          "h": 900
+        }
+      ]
+    },
+    "fact-in-room": {
+      "ext": "jpg",
+      "w": 1920,
+      "h": 1200,
+      "variants": [
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 300
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 600
+        },
+        {
+          "w": 1440,
+          "ext": "jpg",
+          "h": 900
+        }
+      ]
+    },
+    "fact-rooms": {
+      "ext": "jpg",
+      "w": 1920,
+      "h": 1200,
+      "variants": [
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 300
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 600
+        },
+        {
+          "w": 1440,
+          "ext": "jpg",
+          "h": 900
+        }
+      ]
+    },
+    "fact-wellness": {
+      "ext": "jpg",
+      "w": 1920,
+      "h": 1200,
+      "variants": [
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 300
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 600
+        },
+        {
+          "w": 1440,
+          "ext": "jpg",
+          "h": 900
+        }
+      ]
+    }
+  },
   "hero": [
     {
       "slug": "view",
@@ -6434,24 +6568,24 @@
       "kind": "image"
     },
     {
-      "slug": "food-fruit",
+      "slug": "hotel",
       "dir": "./images/hero/",
-      "file": "food-fruit-1920.webp",
+      "file": "hotel-1920.webp",
       "ext": "webp",
       "w": 1920,
-      "h": 2880,
+      "h": 1280,
       "variants": [
         {
-          "file": "food-fruit-960.webp",
+          "file": "hotel-960.webp",
           "ext": "webp",
           "w": 960,
-          "h": 1440
+          "h": 640
         },
         {
-          "file": "food-fruit-1280.webp",
+          "file": "hotel-1280.webp",
           "ext": "webp",
           "w": 1280,
-          "h": 1920
+          "h": 853
         }
       ],
       "kind": "image"
@@ -6480,42 +6614,24 @@
       "kind": "image"
     },
     {
-      "slug": "classic-margherita",
-      "dir": "./images/dishes/",
-      "file": "classic-margherita.jpg",
-      "ext": "jpg",
-      "w": 1400,
-      "h": 1750,
+      "slug": "food-pizza",
+      "dir": "./images/hero/",
+      "file": "food-pizza-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
       "variants": [
         {
-          "file": "classic-margherita-320.jpg",
-          "ext": "jpg",
-          "w": 320,
-          "h": 400
-        },
-        {
-          "file": "classic-margherita-480.jpg",
-          "ext": "jpg",
-          "w": 480,
-          "h": 600
-        },
-        {
-          "file": "classic-margherita-640.jpg",
-          "ext": "jpg",
-          "w": 640,
-          "h": 800
-        },
-        {
-          "file": "classic-margherita-960.jpg",
-          "ext": "jpg",
+          "file": "food-pizza-960.webp",
+          "ext": "webp",
           "w": 960,
-          "h": 1200
+          "h": 640
         },
         {
-          "file": "classic-margherita-1280.jpg",
-          "ext": "jpg",
+          "file": "food-pizza-1280.webp",
+          "ext": "webp",
           "w": 1280,
-          "h": 1600
+          "h": 853
         }
       ],
       "kind": "image"
