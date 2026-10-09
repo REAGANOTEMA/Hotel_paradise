@@ -268,6 +268,10 @@ if($order){
  echo '<div class="field" style="margin:0"><label>Guest</label><div>'.e($g['name']??'Counter order').'</div></div>';
  if($g) echo '<div class="field" style="margin:0"><label>Phone</label><div><a href="'.BASE.'/index.php?page=overview&amp;customer='.(int)(val('SELECT id FROM customers WHERE phone LIKE ?',['%'.phone_key($g['phone']).'%'])?:0).'">'.e($g['phone']).'</a></div></div>';
  echo '<div class="field" style="margin:0"><label>Taken by</label><div>'.e($order['taken_by']??'Website').'</div></div>';
+ $d=order_delivery($order);
+ if($d['email']) echo '<div class="field" style="margin:0"><label>Email</label><div>'.e($d['email']).'</div></div>';
+ if($d['address']) echo '<div class="field" style="margin:0"><label>Deliver to</label><div>'.e($d['address']).'</div></div>';
+ if($d['notes']) echo '<div class="field" style="margin:0"><label>Note from guest</label><div>'.e($d['notes']).'</div></div>';
  echo '<div class="field" style="margin:0"><label>Total</label><div><b>'.money($order['total']).'</b> &middot; paid '.money($order['paid']).'</div></div>';
  echo '</div>';
 

@@ -457,8 +457,11 @@ function MenuPage() {
   // The category the guest has picked. null means the whole menu, so the
   // page still opens as one printed list until a category is chosen.
   const [cat, setCat] = React.useState<string | null>(null);
-  const [name, setName] = React.useState('');
-  const [phone, setPhone] = React.useState('');
+  const [name, setName] = React.useState(() => { try { return window.localStorage.getItem('hpn_name') || ''; } catch { return ''; } });
+  const [phone, setPhone] = React.useState(() => { try { return window.localStorage.getItem('hpn_phone') || ''; } catch { return ''; } });
+  const [email, setEmail] = React.useState(() => { try { return window.localStorage.getItem('hpn_email') || ''; } catch { return ''; } });
+  const [address, setAddress] = React.useState('');
+  const [notes, setNotes] = React.useState('');
   const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
   const [busy, setBusy] = React.useState(false);
   const [picked, setPicked] = React.useState<{dish: MenuItem; section: MenuSection | null; group: string} | null>(null);
@@ -585,10 +588,11 @@ function MenuPage() {
   const send = async () => {
     if (!tray.length) { setMsg({ok: false, text: 'Add at least one dish to your order first.'}); return; }
     if (!name.trim() || !phone.trim()) { setMsg({ok: false, text: 'Please add your name and phone number so we can confirm your order.'}); return; }
+    if (!address.trim()) { setMsg({ok: false, text: 'Please add the address we should deliver your order to, so the kitchen knows where it is going.'}); return; }
     setBusy(true); setMsg(null);
     try {
       const res = await fetch(await apiUrl('order'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
-        name: name.trim(), phone: phone.trim(),
+        name: name.trim(), phone: phone.trim(), email: email.trim(), address: address.trim(), notes: notes.trim(),
         items: tray.map(x => ({
           id: x.dish.id,
           qty: x.qty,
@@ -636,9 +640,12 @@ function MenuPage() {
                     <div class="r"><span>Order No:</span><span>${d.order_number}</span></div>
                     <div class="r"><span>Date:</span><span>${dateStr}</span></div>
                     <div class="r"><span>Time:</span><span>${timeStr}</span></div>
-                    <div class="r"><span>Customer:</span><span>${name.trim()}</span></div>
-                    <div class="r"><span>Phone:</span><span>${phone.trim()}</span></div>
-                  </div>
+                     <div class="r"><span>Customer:</span><span>${name.trim()}</span></div>
+                     <div class="r"><span>Phone:</span><span>${phone.trim()}</span></div>
+                     ${email.trim() ? `<div class="r"><span>Email:</span><span>${email.trim()}</span></div>` : ''}
+                     ${address.trim() ? `<div class="r"><span>Deliver to:</span><span>${address.trim()}</span></div>` : ''}
+                     ${notes.trim() ? `<div class="r"><span>Note:</span><span>${notes.trim()}</span></div>` : ''}
+                   </div>
                   <div class="sec">
                     <div class="st">FOOD ORDER</div>`;
             tray.forEach((x) => {
@@ -672,11 +679,16 @@ function MenuPage() {
         } catch {}
         // The order is with the kitchen and its total is fixed on the server.
         // Hand the guest to checkout so the payment follows the order number.
+        try {
+          window.localStorage.setItem('hpn_name', name.trim());
+          window.localStorage.setItem('hpn_phone', phone.trim());
+          if (email.trim()) window.localStorage.setItem('hpn_email', email.trim());
+        } catch {}
         const p = new URLSearchParams({
          src: 'order', ref: String(d.order_number || ''),
          amt: String(Math.round(Number(d.total) || subtotal || 0)),
          item: count + ' dish' + (count === 1 ? '' : 'es'), qty: String(count), unit: 'meal',
-         name: name.trim(), phone: phone.trim()
+         name: name.trim(), phone: phone.trim(), email: email.trim(), address: address.trim()
         });
         window.location.assign('./pay.html?' + p.toString());
         return;
@@ -852,8 +864,11 @@ function MenuPage() {
 
           {live ? (
             <div className="trayForm">
-              <div className="planField"><label>Your name</label><input value={name} onChange={e => setName(e.target.value)} placeholder="Full name"/></div>
-              <div className="planField"><label>Phone</label><input value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="e.g. 0759504928"/></div>
+              <div className="planField"><label>Your name</label><input value={name} onChange={e => setName(e.target.value)} placeholder="Full name" autoComplete="name"/></div>
+              <div className="planField"><label>Phone</label><input value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="e.g. 0759504928" autoComplete="tel"/></div>
+              <div className="planField"><label>Email <small>optional</small></label><input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="you@example.com" autoComplete="email"/></div>
+              <div className="planField wide"><label>Delivery address</label><textarea value={address} onChange={e => setAddress(e.target.value)} rows={2} placeholder="Where should we deliver your order? Add the area, street, building and any landmark we should look for."/></div>
+              <div className="planField wide"><label>Notes for the kitchen <small>optional</small></label><textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder="Allergies, how spicy you like it, or a delivery time."/></div>
               <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={send} disabled={busy || tray.length === 0}>{busy ? 'Sending...' : 'Send my order'}</button>
               {tray.length > 0 && <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>}
             </div>

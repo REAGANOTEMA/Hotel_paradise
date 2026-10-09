@@ -191,7 +191,17 @@ export function TopBar() {
  );
 }
 
-export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./index.html#facilities', 'Facilities'], ['./index.html#contact', 'Contact'], ['./system/', 'Management System']] as const;
+export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./index.html#facilities', 'Facilities'], ['./index.html#contact', 'Contact'], ['./system/', 'Staffs Logins']] as const;
+
+/** The padlock that marks the staff entrance, so the last button reads as a
+ *  door into the management system rather than one more page of the site. */
+export const LockIcon = ({size = 14}: {size?: number}) => (
+ <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+  <rect x="4.5" y="10.5" width="15" height="10" rx="2.4" stroke="currentColor" strokeWidth="1.9"/>
+  <path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
+  <circle cx="12" cy="15.6" r="1.5" fill="currentColor"/>
+ </svg>
+);
 
 /** The studio that designed and built this website and the management system behind it. */
 export const STUDIO = {
@@ -290,7 +300,7 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
    <a className="skipLink" href="#main">Skip to content</a>
    <header className={(onDark ? 'nav dark' : 'nav') + (stuck ? ' stuck' : '')}>
     <Brand light={onDark}/>
-    <nav>{NAV.map(([href, label]) => <a key={href} className={active(href) ? 'active' : ''} href={href}>{label}</a>)}</nav>
+    <nav>{NAV.map(([href, label]) => <a key={href} className={(active(href) ? 'active ' : '') + (label === 'Staffs Logins' ? 'staffNav' : '')} href={href}>{label === 'Staffs Logins' && <LockIcon/>}<span>{label}</span></a>)}</nav>
     <div className="navRight">
      <a className={'navSignIn' + (active('./account.html') ? ' active' : '')} href="./account.html">{customerFirstName() || 'Sign in'}</a>
      <a className="btn navCta" href="./rooms.html">Book now</a>
@@ -304,12 +314,12 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
     <div className="drawerScrim" onClick={close}/>
     <aside className="drawerPanel" role="dialog" aria-modal="true" aria-label="Site menu">
      <div className="drawerNav">
-      {NAV.map(([href, label], i) => <a key={href} ref={i === 0 ? firstLinkRef : undefined} className={active(href) ? 'active' : ''} href={href} onClick={close}>{label}</a>)}
+      {NAV.map(([href, label], i) => <a key={href} ref={i === 0 ? firstLinkRef : undefined} className={(active(href) ? 'active ' : '') + (label === 'Staffs Logins' ? 'staffNav' : '')} href={href} onClick={close}>{label === 'Staffs Logins' && <LockIcon/>}{label}</a>)}
      </div>
       <div className="drawerFoot">
        <a className="btn" href="./rooms.html" onClick={close}>Book now</a>
        <a className="drawerCall systemLink" href="./account.html" onClick={close}>{customerFirstName() ? 'My account · ' + customerFirstName() : 'Sign in or create an account'}</a>
-       <a className="drawerCall systemLink" href="./system/" onClick={close}>Management system</a>
+       <a className="drawerCall systemLink" href="./system/" onClick={close}><LockIcon/> Staffs Logins</a>
        <a className="drawerCall" href={telHref(CALL)}>Call {CALL}</a>
        <p className="drawerNote">{HOTEL.address}</p>
       </div>

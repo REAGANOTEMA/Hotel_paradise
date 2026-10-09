@@ -352,6 +352,21 @@ function prep_note(?string $note): string{
 }
 
 /**
+ * The contact details a web order carried: email, the address it is to be
+ * delivered to, and any note the guest left. Every field is optional, so a
+ * console reading an order from a database that has not run the upgrade gets
+ * blanks rather than an error and simply shows what it has.
+ */
+function order_delivery(?array $order): array{
+ $out=['email'=>'','address'=>'','notes'=>''];
+ if(!is_array($order)) return $out;
+ $out['email']=trim((string)($order['customer_email']??''));
+ $out['address']=trim((string)($order['delivery_address']??''));
+ $out['notes']=trim((string)($order['delivery_notes']??''));
+ return $out;
+}
+
+/**
  * One sheet of paper.
  *
  * $kind     what the paper is called, in the bar across the top

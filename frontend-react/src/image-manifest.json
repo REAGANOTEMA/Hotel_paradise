@@ -6434,36 +6434,49 @@
       "kind": "image"
     },
     {
-      "slug": "food-breakfast",
+      "slug": "food-fruit",
       "dir": "./images/hero/",
-      "file": "food-breakfast-1920.webp",
+      "file": "food-fruit-1920.webp",
       "ext": "webp",
       "w": 1920,
-      "h": 1280,
+      "h": 2880,
       "variants": [
         {
-          "file": "food-breakfast-960.webp",
+          "file": "food-fruit-960.webp",
           "ext": "webp",
           "w": 960,
-          "h": 640
+          "h": 1440
         },
         {
-          "file": "food-breakfast-1280.webp",
+          "file": "food-fruit-1280.webp",
           "ext": "webp",
           "w": 1280,
-          "h": 853
+          "h": 1920
         }
       ],
       "kind": "image"
     },
     {
-      "slug": "hero8",
-      "dir": "./images/",
-      "file": "hero8.jpg",
-      "ext": "jpg",
-      "w": 678,
-      "h": 452,
-      "variants": [],
+      "slug": "food-table",
+      "dir": "./images/hero/",
+      "file": "food-table-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "food-table-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "food-table-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
       "kind": "image"
     },
     {

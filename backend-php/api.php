@@ -221,10 +221,15 @@ if($act==='menu'){
 
 if($act==='order'){
   require_once __DIR__.'/app/menu_extras.php';
-  $name=trim($body['name']??''); $phone=trim($body['phone']??'');
+  $name=trim((string)($body['name']??''));
+  $phone=trim((string)($body['phone']??''));
+  $email=trim((string)($body['email']??''));
+  $address=trim((string)($body['address']??''));
+  $cnotes=trim((string)($body['notes']??''));
   $lines=$body['items']??[];
   if(!is_array($lines)||count($lines)===0){ $out(['ok'=>false,'error'=>'Your order is empty. Add at least one dish first.'],422); }
   if($name===''||$phone===''){ $out(['ok'=>false,'error'=>'Please provide your name and phone number so we can confirm your order.'],422); }
+  if($address===''){ $out(['ok'=>false,'error'=>'Please add the address the order is to be delivered to.'],422); }
   $rows=[];
   foreach($lines as $ln){
     $qty=(int)($ln['qty']??1);
@@ -266,11 +271,22 @@ if($act==='order'){
   $service=$sub>0?service_charge($sub):0.0;
   $total=round($sub+$service,2);
   $num=next_number('ORD','orders','order_number');
-  q('INSERT INTO orders(hotel_id,user_id,shift_id,order_number,outlet,order_type,status,subtotal,tax,total,created_at) VALUES(1,1,NULL,?,\'restaurant\',\'takeaway\',\'pending\',?,?,?,NOW())',[$num,$sub,$service,$total]);
+  // The guest's contact details are written as real columns wherever the
+  // database has them, so the kitchen, the front desk and the director's
+  // console can read them directly instead of parsing a note. A database that
+  // has not yet run the upgrade still takes the order exactly as before: the
+  // name and number stay in the line notes, and the extra fields are skipped.
+  $detail=['customer_name'=>$name,'customer_phone'=>$phone,'customer_email'=>$email,'delivery_address'=>$address,'delivery_notes'=>$cnotes];
+  $cust=[];
+  foreach(existing_columns('orders',array_keys($detail)) as $c){ $cust[$c]=$detail[$c]; }
+  $cols=['hotel_id','user_id','shift_id','order_number','outlet','order_type','status','subtotal','tax','total'];
+  $vals=[1,1,null,$num,'restaurant','takeaway','pending',$sub,$service,$total];
+  foreach($cust as $c=>$v){ $cols[]=$c; $vals[]=$v; }
+  q('INSERT INTO orders('.implode(',',$cols).',created_at) VALUES('.implode(',',array_fill(0,count($vals),'?')).',NOW())',$vals);
   $oid=(int)db()->lastInsertId();
   foreach($rows as $r){ q('INSERT INTO order_items(order_id,menu_item_id,quantity,unit_price,total,notes) VALUES(?,?,?,?,?,?)',[$oid,$r['id'],$r['qty'],$r['price'],$r['qty']*$r['price'],$r['note']]); }
-  audit('web_order','order',$oid,['order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total]);
-  $out(['ok'=>true,'order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total,'message'=>'Please keep your phone nearby. We will call '.$phone.' to confirm collection and payment.']);
+  audit('web_order','order',$oid,['order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total,'customer'=>$name,'phone'=>$phone,'address'=>$address]);
+  $out(['ok'=>true,'order_number'=>$num,'subtotal'=>$sub,'service_charge'=>$service,'total'=>$total,'message'=>'Please keep your phone nearby. We will call '.$phone.' to confirm your order and its delivery address.']);
 }
 
 /**

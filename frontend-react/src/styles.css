@@ -51,11 +51,24 @@ b,strong{font-variant-numeric:tabular-nums}
 .brand{display:flex;flex-direction:column;color:var(--navy);font-family:'Playfair Display',serif;letter-spacing:3px;line-height:1.1}
 .brand span{font-size:25px}
 .brand small{font-family:'DM Sans';letter-spacing:4px;color:var(--gold-ink);font-size:9px}
-.nav nav{display:flex;gap:26px}
-.nav nav a{font-size:13px;font-weight:600;letter-spacing:.02em;color:#33414f;white-space:nowrap;padding:6px 0;border-bottom:2px solid transparent;transition:color .18s ease,border-color .18s ease}
-.nav nav a:hover{color:var(--gold-ink)}
-.nav nav a.active{color:var(--gold-ink);border-bottom-color:var(--gold)}
-.nav.dark nav a.active{color:var(--gold);border-bottom-color:var(--gold)}
+/* Each destination in the header is a real button: a soft surface that lifts
+   and warms on hover, and a gold plate with a hairline ring for the page you
+   are on. The last one, the staff entrance, is set apart as a gold key. */
+.nav nav{display:flex;gap:8px;align-items:center}
+.nav nav a{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;letter-spacing:.02em;color:#33414f;white-space:nowrap;padding:9px 15px;border:1px solid transparent;border-radius:9px;transition:color .18s ease,background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease}
+.nav nav a>svg{flex:none;opacity:.9}
+.nav nav a:hover{color:var(--gold-ink);background:var(--gold-soft);border-color:#C9A22740;transform:translateY(-1px)}
+.nav nav a.active{color:var(--gold-ink);background:var(--gold-soft);border-color:var(--gold);box-shadow:0 3px 12px rgba(201,162,39,.20)}
+.nav nav a.active>span{font-weight:700}
+/* The staff door: a gold-outlined key that fills on hover, so it is never
+   mistaken for one more page of the public site. */
+.nav nav a.staffNav{color:var(--gold-ink);font-weight:700;border-color:#C9A22766;background:linear-gradient(180deg,#C9A2271c,#C9A22708)}
+.nav nav a.staffNav:hover{background:var(--gold);border-color:var(--gold-deep);color:#1f1a05;transform:translateY(-1px);box-shadow:0 10px 22px rgba(201,162,39,.30)}
+.nav.dark nav a{color:#e9eff6}
+.nav.dark nav a:hover{color:var(--gold);background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.30)}
+.nav.dark nav a.active{color:var(--gold);background:rgba(201,162,39,.16);border-color:var(--gold)}
+.nav.dark nav a.staffNav{color:var(--gold);border-color:#C9A22780;background:rgba(201,162,39,.14)}
+.nav.dark nav a.staffNav:hover{color:#071A33;background:var(--gold);border-color:var(--gold)}
 .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:var(--navy);border:1px solid transparent;border-radius:var(--r);padding:13px 24px;min-height:44px;font-weight:700;font-size:13px;letter-spacing:.02em;text-align:center;box-shadow:0 6px 18px rgba(201,162,39,.22);transition:background .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
 .btn:hover{background:var(--gold-deep);transform:translateY(-1px);box-shadow:0 12px 26px rgba(201,162,39,.32)}
 .btn:active{transform:translateY(0);box-shadow:inset 0 1px 3px rgba(7,26,51,.25)}
@@ -109,6 +122,12 @@ b,strong{font-variant-numeric:tabular-nums}
 .drawerNav a:hover::after,.drawerNav a.active::after{opacity:1;transform:translate(2px,-50%)}
 .drawerNav a.active{color:var(--gold)}
 .drawerNav a.active::before{content:'';position:absolute;left:-26px;top:0;bottom:0;width:4px;background:var(--gold)}
+/* the staff door keeps its lock and its gold even when nothing is active */
+.drawerNav a.staffNav{color:var(--gold)}
+.drawerNav a.staffNav svg{margin-right:9px;vertical-align:middle}
+.drawerNav a.staffNav::after{content:'\2192';color:var(--gold);opacity:.55}
+.drawerNav a.staffNav:hover{color:#fff}
+.drawerNav a.staffNav:hover::after{opacity:1}
 .drawerFoot{margin-top:auto;padding:20px 26px 30px;border-top:1px solid rgba(255,255,255,.09)}
 .drawerFoot .btn{display:flex;width:100%;padding:15px 20px;text-align:center}
 .drawerCall{display:block;margin:16px 0 4px;color:#eef4f8;font-size:15px;font-weight:600;text-align:center;letter-spacing:.4px}
@@ -492,6 +511,18 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .trayForm .planField{margin-bottom:12px}
 .trayForm .bookMsg{margin:14px 0 0}
 .trayForm a{color:var(--nile);text-decoration:underline;font-weight:700}
+/* The order form lays out in two tidy columns on a wide panel and one on a
+   phone, so collecting a full set of contact details never feels like a wall
+   of stacked boxes. Address and notes run the full width. */
+.trayForm{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+.trayForm .planField{margin-bottom:15px}
+.trayForm .planField.wide,.trayForm .planBook,.trayForm .linkBtn,.trayForm .bookMsg{grid-column:1 / -1}
+.planField label small{font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--faint)}
+.planField textarea{width:100%;min-height:74px;padding:12px 14px;border:1px solid #D8DCE3;border-radius:8px;background:#fff;font-family:inherit;font-size:15px;line-height:1.5;color:var(--ink);resize:vertical;transition:border-color .18s ease,box-shadow .18s ease}
+.planField textarea:hover{border-color:#B9C0CB}
+.planField textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft);outline:0}
+.planField textarea::placeholder{color:var(--faint)}
+@media (max-width:560px){.trayForm{grid-template-columns:1fr}.planField textarea{font-size:16px}}
 
 /* collapsed order panel, sits under the menu */
 .orderPanelWrap{padding-top:0;max-width:900px}
@@ -660,7 +691,8 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 /* --- 1200: keep the header comfortable before it gets tight --------- */
 @media(max-width:1200px){
   .nav{padding:0 3.5vw}
-  .nav nav{gap:19px}
+  .nav nav{gap:4px}
+  .nav nav a{padding:7px 10px}
   .nav a{font-size:12.5px}
   .nav .btn{padding:12px 17px;font-size:12.5px}
   .footerMain{grid-template-columns:1.6fr 1fr 1fr 1fr;gap:34px}
@@ -1014,10 +1046,10 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 
 /* Management system bridge — the drawer it sits in is navy, so the gold passes */
 .systemLink{color:var(--gold)!important;font-weight:700;border-top:1px solid #C9A22733;padding-top:14px;margin-top:6px}
-.nav nav a:last-child{color:var(--gold-ink)}
-.nav.dark nav a:last-child{color:var(--gold)}
 @media(max-width:720px){.navRight .navCta{display:none}}
-
+/* Before the drawer takes over, the header is at its most crowded: drop the
+   duplicate "Book now" so the six destinations keep their room. */
+@media(max-width:1120px){.navRight .navCta{display:none}}
 /* ---------------------------------------------------------------
    Checkout (pay.html)
    Reached after a room booking or a food order. Left column is the
@@ -1165,6 +1197,33 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 .acctBrand img{width:56px;height:56px;border-radius:50%;object-fit:cover;background:var(--ivory);border:3px solid var(--gold);padding:2px;box-shadow:0 4px 16px rgba(7,26,51,.18)}
 .acctBrand b{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);letter-spacing:.04em;display:block;line-height:1.2}
 .acctBrand span{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-ink);font-weight:700}
+
+
+/* ---------------------------------------------------------------
+   FOOTER ON A PHONE
+   The desktop footer is a five-column directory. On a phone it becomes a
+   warm, well-spaced stack: the flag ribbon opens it, the brand gets room
+   to breathe, every phone number and the email are full hit-rows, and the
+   studio card runs the full width so it is easy to reach with a thumb.
+   --------------------------------------------------------------- */
+@media(max-width:640px){
+  .footerMain{grid-template-columns:1fr;padding:36px 6vw 28px;gap:0}
+  .footerMain>div{padding:22px 0;border-bottom:1px solid rgba(255,255,255,.09)}
+  .footerMain>div:last-child{border-bottom:0;padding-bottom:2px}
+  .footerMain>div:first-child{padding-top:6px}
+  .footerMain h4{position:relative;border-bottom:0;margin-bottom:12px;padding-bottom:0}
+  .footerMain h4::after{content:'';display:block;width:26px;height:2px;border-radius:2px;background:var(--gold);margin-top:9px}
+  .footerMain p{font-size:13.5px;line-height:1.75}
+  /* Phone and email links stretch to a comfortable tap target. */
+  .footerMain .footLink{display:inline-flex;align-items:center;min-height:34px}
+  .footerStudio{gap:12px}
+  .footerStudio .studioLink{display:flex;width:100%;padding:16px 18px;border-radius:12px}
+  .studioName{font-size:15px}
+  .studioUrl{font-size:12.5px}
+  .studioWa{width:100%;justify-content:center;margin-top:4px;padding:13px 16px;border-radius:12px}
+  .footerCredit{padding:22px 6vw;gap:8px}
+  .footerCredit span{line-height:1.6}
+}
 
 
 

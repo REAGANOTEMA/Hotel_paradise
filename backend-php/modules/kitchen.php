@@ -83,6 +83,10 @@ $ticket=function(array $o) use ($lines): string{
  $m['Placed']=fmtdt($o['created_at']);
  $g=order_customer($o['any_notes']??null);
  if($g){ $m['Guest']=$g['name']; $m['Phone']=$g['phone']; }
+ $d=order_delivery($o);
+ if($d['email']) $m['Email']=$d['email'];
+ if($d['address']) $m['Deliver to']=$d['address'];
+ if($d['notes']) $m['Note']=$d['notes'];
  $ls=[];
  foreach($lines[(int)$o['id']]??[] as $l){
   $ls[]=['name'=>(string)($l['name']??'Item removed'),'qty'=>'x'.rtrim(rtrim(number_format((float)$l['quantity'],2,'.',''),'0'),'.'),
@@ -121,6 +125,8 @@ foreach($active as $o){
  echo '<p class="docketMeta">'.e(ucfirst((string)$o['outlet'])).' &middot; '.e($o['order_type']==='room'?'Room service':ucfirst((string)$o['order_type']));
  if($o['table_name']) echo ' &middot; '.e((string)$o['table_name']);
  echo ' &middot; <b>'.$mins.' min</b></p>';
+ $d=order_delivery($o);
+ if($d['address']) echo '<p class="docketAddr">Deliver to: '.e($d['address']).'</p>';
  echo '<ul class="docketItems">';
  foreach($lines[$oid]??[] as $l){
   $qty=(float)$l['quantity'];
@@ -166,6 +172,7 @@ echo '<style>
 .docket header b{font-family:\'Playfair Display\',serif;font-size:16px;color:var(--navy)}
 .docketMeta{margin:6px 0 2px;font-size:12px;color:var(--muted)}
 .docketMeta b{color:var(--navy)}
+.docketAddr{margin:2px 0 0;font-size:12px;font-weight:600;color:var(--navy);background:var(--goldSoft);border-left:3px solid var(--gold);padding:5px 8px;border-radius:6px;overflow-wrap:anywhere}
 .docketItems{list-style:none;margin:8px 0 0;padding:0;flex:1}
 .docketItems li{padding:6px 0;border-bottom:1px dashed #eeeae0;font-size:13.5px;color:var(--navy)}
 .docketItems li b{display:inline-block;min-width:34px;color:var(--gold)}

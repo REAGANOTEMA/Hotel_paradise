@@ -165,9 +165,13 @@ if($view){
  echo '<div class="res-meta" style="margin-bottom:16px">';
  echo '<div class="field" style="margin:0"><label>Guest</label><div>'.e($g['name']??'Counter order').'</div></div>';
  if($g) echo '<div class="field" style="margin:0"><label>Phone</label><div>'.e($g['phone']).'</div></div>';
+ $d=order_delivery($view);
+ if($d['email']) echo '<div class="field" style="margin:0"><label>Email</label><div>'.e($d['email']).'</div></div>';
+ if($d['address']) echo '<div class="field" style="margin:0"><label>Deliver to</label><div>'.e($d['address']).'</div></div>';
  echo '<div class="field" style="margin:0"><label>Service</label><div>'.e($view['order_type']==='room'?'Room service':ucfirst((string)$view['order_type'])).($view['table_name']?' &middot; '.e((string)$view['table_name']):'').'</div></div>';
  echo '<div class="field" style="margin:0"><label>Paid</label><div><b>'.money($view['paid']).' of '.money($view['total']).'</b></div></div>';
  echo '</div>';
+ if($d['notes']) echo '<p class="hint" style="margin:-6px 0 14px">Note from guest: '.e($d['notes']).'</p>';
 
  echo '<table class="tbl"><thead><tr><th>Dish</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Amount</th></tr></thead><tbody>';
  foreach($lines[(int)$view['id']]??[] as $l){
