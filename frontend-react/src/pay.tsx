@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken, rooms as bedRooms, WhatsAppIcon} from './shared';
+import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken, rooms as bedRooms, WhatsAppIcon, BackLink} from './shared';
 import {SmartImage} from './SmartImage';
 
 /*
@@ -532,10 +532,13 @@ function PayPage() {
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero" id="main">
+  <section className="pageHero canvas hasCover" id="main" style={{'--bg': "url('./images/hero/pool-1920.webp')"} as unknown as React.CSSProperties}>
+   <div className="pageHeroInner">
+   <BackLink label="Back" fallback="./index.html"/>
    <p className="eyebrow">SECURE CHECKOUT</p>
    <h1>Your details, then pay your way.</h1>
    <p>Review what you are paying for, add the name and phone number for the receipt, and choose how you would like to pay. Payment is handled by Pesapal, and no card details are ever stored on this website.</p>
+   </div>
   </section>
 
   <section className="payWrap section" style={{paddingTop: 56}}>

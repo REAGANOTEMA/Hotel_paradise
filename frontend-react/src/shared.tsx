@@ -357,9 +357,74 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
      <a className="btn" href="./rooms.html">Book your stay</a>
      <a className="btn ghost" href={telHref(CALL)}>Call us</a>
     </div>
+
+    <BackToTop/>
    </>
   );
  }
+
+/**
+ * The way back out of a page.
+ *
+ * A guest who reaches a room, a dish or the checkout from a search result, a
+ * chat or a bookmark has no history of ours to step back into. So this steps
+ * back through the visit when one of our own pages is behind it, and otherwise
+ * follows the link home. Either way there is always a way out.
+ */
+export function BackLink({fallback = './index.html', label = 'Back'}: {fallback?: string; label?: string}) {
+ const go = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  let ours = false;
+  try {
+   const from = new URL(document.referrer);
+   ours = !!document.referrer && from.origin === location.origin && from.pathname !== location.pathname;
+  } catch { ours = false; }
+  if (ours && window.history.length > 1) {
+   e.preventDefault();
+   window.history.back();
+  }
+ };
+ return (
+  <a className="backLink" href={fallback} onClick={go}>
+   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7"/></svg>
+   <span>{label}</span>
+  </a>
+ );
+}
+
+/**
+ * The way back to the top, for the pages that run long.
+ *
+ * The menu carries more than two hundred dishes and the home page a dozen
+ * bands, so by the time a guest has read this far the top is a long way up.
+ * The button keeps out of the way until the page has actually moved, and it
+ * jumps rather than slides for anyone who asked for less motion.
+ */
+export function BackToTop() {
+ const [on, setOn] = React.useState(false);
+ React.useEffect(() => {
+  const onScroll = () => setOn(window.scrollY > 600);
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive: true});
+  return () => window.removeEventListener('scroll', onScroll);
+ }, []);
+ const toTop = () => {
+  let soft = true;
+  try { soft = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { soft = true; }
+  window.scrollTo({top: 0, behavior: soft ? 'smooth' : 'auto'});
+ };
+ return (
+  <button
+   type="button"
+   className={'backTop' + (on ? ' on' : '')}
+   onClick={toTop}
+   aria-label="Back to top"
+   aria-hidden={!on}
+  >
+   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V6M6 11l6-6 6 6"/></svg>
+   <span>Top</span>
+  </button>
+ );
+}
 
 /* Every page imports this module, so the service worker is offered once,
    from one place, rather than each page having to remember to ask. */

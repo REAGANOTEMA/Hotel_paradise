@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL} from './shared';
+import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, BackLink} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 
 /** The photographs each room is still waiting for, shown on request only. */
@@ -160,17 +160,9 @@ function RoomsPage() {
     <TopBar/>
     <PageNav onDark/>
 
-<section className="pageHero hasCover" id="main">
-    <SmartImage
-      group="rooms"
-      name="suite"
-      alt="Hotel Paradise on the Nile - Suite"
-      className="pageHeroCover"
-      widths={[640,1024,1440,1920]}
-      sizes="100vw"
-      position="50% 50%"
-    />
+<section className="pageHero canvas hasCover" id="main" style={{'--bg': "url('./images/hero/bed-suite-1920.webp')"} as unknown as React.CSSProperties}>
     <div className="pageHeroInner">
+     <BackLink label="Back" fallback="./index.html"/>
      <p className="eyebrow">CHOOSE YOUR ROOM</p>
      <h1>Rooms and beds, your way.</h1>
      <p>Every room type is photographed, so you can see exactly what you are booking. Choose the one you like, and change or drop it as often as you like before you book. Rates are per night, shown in Uganda Shillings and US dollars, and include breakfast and the local hotel tax.</p>

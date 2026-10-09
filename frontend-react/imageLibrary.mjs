@@ -143,19 +143,37 @@ function scanFolder(dir) {
  *   hero/view     a photograph in /images/hero
  *   hero1         a photograph in /images itself
  *   hotel-view    a video, played over hotel-view-poster.jpg
+ *
+ * Every slot is a different picture. `/images/hero` holds the resized WebP set
+ * the page is built from, so the carousel never falls back to a multi megabyte
+ * camera original, and no two slides are the same photograph under two names.
+ * The order is matched, one for one, to HERO_COPY on the home page. The
+ * headline shots the hotel asked for come first - the main building, the pool,
+ * the beds, the conference and wedding scenes, the view, the entrance and the
+ * signature dishes and drinks - and the remaining classic hero photographs
+ * follow behind them.
  */
 const HERO_SEQUENCE = [
+  'hero1-hotel-main-building',
+  'hotel-pool',
+  'execuitive-bed',
+  'double-deluxe-bed',
+  'hotel-paradise-on-the-nile-conferences-weddings',
+  'hotel-paradise-on-the-nile-conferences-weddings-cover',
+  'hotel-view-for-hero',
+  'hero-hotel-entrence',
+  'burger-hero',
+  'steak-with-wedges',
+  'juice-hero',
+  'wine-hero',
   'hero/view',
-  'food/steak-dinner-and-wine-on-table',
-  'hero1',
-  'hero2',
-  'swimming-pool',
-  'hero10',
-  'suite-bed',
-  'hero/hotel',
   'hero/food-table',
-  'hero/food-pizza',
-  'hotel-view'
+  'hero/food-breakfast',
+  'hero/hero-7',
+  'hero/bed-suite',
+  'hero/bed-deluxe',
+  'hero/food-fish',
+  'hero/food-pizza'
 ];
 
 const VIDEO_EXTS = ['.mp4', '.webm', '.mov', '.m4v'];

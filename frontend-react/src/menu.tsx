@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref} from './shared';
+import {TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, BackLink} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {
   MENU_REVISION,
@@ -701,21 +701,13 @@ function MenuPage() {
     setBusy(false);
   };
 
-  return <div>
+  return <div className="menuPage">
     <TopBar/>
     <PageNav onDark/>
 
-    <section className="pageHero hasCover" id="main">
-      <SmartImage
-        group="dishes"
-        name="steak-dinner-and-wine-on-table"
-        alt="A steak dinner and a glass of wine on the table at Hotel Paradise on the Nile"
-        className="pageHeroCover"
-        widths={[640, 1024, 1440, 1920]}
-        sizes="100vw"
-        position="50% 50%"
-      />
+    <section className="pageHero canvas hasCover" id="main" style={{'--bg': "url('./images/hero/food-table-1920.webp')"} as unknown as React.CSSProperties}>
       <div className="pageHeroInner">
+        <BackLink label="Back" fallback="./index.html"/>
         <p className="eyebrow">DINING AND BAR</p>
         <h1>Our menu, your order.</h1>
         <p>

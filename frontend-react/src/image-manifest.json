@@ -522,33 +522,18 @@
     },
     "classic-margherita": {
       "ext": "jpg",
-      "w": 1400,
-      "h": 1750,
+      "w": 500,
+      "h": 300,
       "variants": [
         {
           "w": 320,
           "ext": "jpg",
-          "h": 400
+          "h": 192
         },
         {
           "w": 480,
           "ext": "jpg",
-          "h": 600
-        },
-        {
-          "w": 640,
-          "ext": "jpg",
-          "h": 800
-        },
-        {
-          "w": 960,
-          "ext": "jpg",
-          "h": 1200
-        },
-        {
-          "w": 1280,
-          "ext": "jpg",
-          "h": 1600
+          "h": 288
         }
       ]
     },
@@ -1811,7 +1796,28 @@
       "ext": "jpg",
       "w": 2500,
       "h": 1736,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 222
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 333
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 444
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 667
+        }
+      ]
     },
     "premium-wet-fried-tilapia": {
       "ext": "webp",
@@ -1918,7 +1924,28 @@
       "ext": "webp",
       "w": 1452,
       "h": 1089,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 240
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 360
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 480
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 720
+        }
+      ]
     },
     "steak-cheese-sandwich": {
       "ext": "jpg",
@@ -3000,7 +3027,33 @@
       "ext": "jpg",
       "w": 1500,
       "h": 2000,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 427
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 640
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 853
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 1280
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 1707
+        }
+      ]
     },
     "chilli-chicken": {
       "ext": "jpg",
@@ -3018,7 +3071,33 @@
       "ext": "jpg",
       "w": 1748,
       "h": 980,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 179
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 269
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 359
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 538
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 718
+        }
+      ]
     },
     "chocolate-fudge-slice": {
       "ext": "jpg",
@@ -3081,7 +3160,28 @@
       "ext": "jpg",
       "w": 1707,
       "h": 2560,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 480
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 720
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 960
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 1440
+        }
+      ]
     },
     "classic-margherita": {
       "ext": "jpg",
@@ -3866,7 +3966,23 @@
       "ext": "jpg",
       "w": 1500,
       "h": 1500,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 320
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 480
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 640
+        }
+      ]
     },
     "golden-fried-prawns": {
       "ext": "webp",
@@ -4224,7 +4340,33 @@
       "ext": "jpg",
       "w": 1920,
       "h": 2592,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 432
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 648
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 864
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 1296
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 1728
+        }
+      ]
     },
     "local-spirit": {
       "ext": "jpg",
@@ -5105,7 +5247,28 @@
       "ext": "jpg",
       "w": 2500,
       "h": 1736,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 222
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 333
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 444
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 667
+        }
+      ]
     },
     "premium-wet-fried-tilapia": {
       "ext": "webp",
@@ -5360,7 +5523,33 @@
       "ext": "jpg",
       "w": 1600,
       "h": 1600,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 320
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 480
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 640
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 960
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 1280
+        }
+      ]
     },
     "sizzler-shrimp-or-prawns-plate": {
       "ext": "jpg",
@@ -5408,7 +5597,23 @@
       "ext": "jpg",
       "w": 1500,
       "h": 1000,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 213
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 320
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 427
+        }
+      ]
     },
     "spanish-omelet": {
       "ext": "jpg",
@@ -5453,7 +5658,28 @@
       "ext": "webp",
       "w": 1452,
       "h": 1089,
-      "variants": []
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 240
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 360
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 480
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 720
+        }
+      ]
     },
     "special-mixed-vegetables-and-sprout": {
       "ext": "jpg",
@@ -5920,6 +6146,38 @@
     }
   },
   "rooms": {
+    "deluxe-double": {
+      "ext": "jpg",
+      "w": 4000,
+      "h": 6000,
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 480
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 720
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 960
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 1440
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 1920
+        }
+      ]
+    },
     "deluxe-double-2": {
       "ext": "jpg",
       "w": 4000,
@@ -5960,12 +6218,6 @@
       "ext": "jpg",
       "w": 6000,
       "h": 4000,
-      "variants": []
-    },
-    "deluxe-double": {
-      "ext": "jpg",
-      "w": 4000,
-      "h": 6000,
       "variants": []
     },
     "executive-deluxe": {
@@ -6208,6 +6460,38 @@
       "h": 4000,
       "variants": []
     },
+    "triple-room": {
+      "ext": "jpg",
+      "w": 6000,
+      "h": 4000,
+      "variants": [
+        {
+          "w": 320,
+          "ext": "jpg",
+          "h": 213
+        },
+        {
+          "w": 480,
+          "ext": "jpg",
+          "h": 320
+        },
+        {
+          "w": 640,
+          "ext": "jpg",
+          "h": 427
+        },
+        {
+          "w": 960,
+          "ext": "jpg",
+          "h": 640
+        },
+        {
+          "w": 1280,
+          "ext": "jpg",
+          "h": 853
+        }
+      ]
+    },
     "triple-room-2": {
       "ext": "jpg",
       "w": 4000,
@@ -6221,12 +6505,6 @@
       "variants": []
     },
     "triple-room-4": {
-      "ext": "jpg",
-      "w": 6000,
-      "h": 4000,
-      "variants": []
-    },
-    "triple-room": {
       "ext": "jpg",
       "w": 6000,
       "h": 4000,
@@ -6485,6 +6763,126 @@
   },
   "hero": [
     {
+      "slug": "hero1-hotel-main-building",
+      "dir": "./images/",
+      "file": "hero1-hotel-main-building.jpg",
+      "ext": "jpg",
+      "w": 547,
+      "h": 365,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "hotel-pool",
+      "dir": "./images/",
+      "file": "hotel-pool.jpg",
+      "ext": "jpg",
+      "w": 801,
+      "h": 249,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "execuitive-bed",
+      "dir": "./images/",
+      "file": "execuitive-bed.avif",
+      "ext": "avif",
+      "w": 0,
+      "h": 0,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "double-deluxe-bed",
+      "dir": "./images/",
+      "file": "double-deluxe-bed.jpg",
+      "ext": "jpg",
+      "w": 1024,
+      "h": 683,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "hotel-paradise-on-the-nile-conferences-weddings",
+      "dir": "./images/",
+      "file": "hotel-paradise-on-the-nile-conferences-weddings.jpg",
+      "ext": "jpg",
+      "w": 715,
+      "h": 400,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "hotel-paradise-on-the-nile-conferences-weddings-cover",
+      "dir": "./images/",
+      "file": "Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover.jpg",
+      "ext": "jpg",
+      "w": 2000,
+      "h": 624,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "hotel-view-for-hero",
+      "dir": "./images/",
+      "file": "hotel-view-for-hero.jpg",
+      "ext": "jpg",
+      "w": 500,
+      "h": 350,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "hero-hotel-entrence",
+      "dir": "./images/",
+      "file": "hero-hotel-entrence.jpg",
+      "ext": "jpg",
+      "w": 548,
+      "h": 364,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "burger-hero",
+      "dir": "./images/",
+      "file": "burger-hero.jpg",
+      "ext": "jpg",
+      "w": 739,
+      "h": 415,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "steak-with-wedges",
+      "dir": "./images/",
+      "file": "steak-with-wedges.jpg",
+      "ext": "jpg",
+      "w": 1440,
+      "h": 720,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "juice-hero",
+      "dir": "./images/",
+      "file": "juice-hero.jpg",
+      "ext": "jpg",
+      "w": 500,
+      "h": 375,
+      "variants": [],
+      "kind": "image"
+    },
+    {
+      "slug": "wine-hero",
+      "dir": "./images/",
+      "file": "wine-hero.jpg",
+      "ext": "jpg",
+      "w": 678,
+      "h": 452,
+      "variants": [],
+      "kind": "image"
+    },
+    {
       "slug": "view",
       "dir": "./images/hero/",
       "file": "view-1920.webp",
@@ -6500,89 +6898,6 @@
         },
         {
           "file": "view-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 853
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "steak-dinner-and-wine-on-table",
-      "dir": "./images/food/",
-      "file": "steak-dinner-and-wine-on-table.jpg",
-      "ext": "jpg",
-      "w": 612,
-      "h": 408,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "hero1",
-      "dir": "./images/",
-      "file": "hero1.jpg",
-      "ext": "jpg",
-      "w": 1680,
-      "h": 1050,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "hero2",
-      "dir": "./images/",
-      "file": "hero2.jpg",
-      "ext": "jpg",
-      "w": 6000,
-      "h": 4000,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "swimming-pool",
-      "dir": "./images/",
-      "file": "swimming-pool.jpeg",
-      "ext": "jpeg",
-      "w": 1020,
-      "h": 765,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "hero10",
-      "dir": "./images/",
-      "file": "hero10.jpg",
-      "ext": "jpg",
-      "w": 6000,
-      "h": 4000,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "suite-bed",
-      "dir": "./images/",
-      "file": "suite-bed.png",
-      "ext": "png",
-      "w": 1024,
-      "h": 683,
-      "variants": [],
-      "kind": "image"
-    },
-    {
-      "slug": "hotel",
-      "dir": "./images/hero/",
-      "file": "hotel-1920.webp",
-      "ext": "webp",
-      "w": 1920,
-      "h": 1280,
-      "variants": [
-        {
-          "file": "hotel-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 640
-        },
-        {
-          "file": "hotel-1280.webp",
           "ext": "webp",
           "w": 1280,
           "h": 853
@@ -6614,6 +6929,121 @@
       "kind": "image"
     },
     {
+      "slug": "food-breakfast",
+      "dir": "./images/hero/",
+      "file": "food-breakfast-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "food-breakfast-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "food-breakfast-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "hero-7",
+      "dir": "./images/hero/",
+      "file": "hero-7-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1440,
+      "variants": [
+        {
+          "file": "hero-7-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 720
+        },
+        {
+          "file": "hero-7-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 960
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "bed-suite",
+      "dir": "./images/hero/",
+      "file": "bed-suite-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "bed-suite-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "bed-suite-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "bed-deluxe",
+      "dir": "./images/hero/",
+      "file": "bed-deluxe-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 2880,
+      "variants": [
+        {
+          "file": "bed-deluxe-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 1440
+        },
+        {
+          "file": "bed-deluxe-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 1920
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "food-fish",
+      "dir": "./images/hero/",
+      "file": "food-fish-1688.webp",
+      "ext": "webp",
+      "w": 1688,
+      "h": 1100,
+      "variants": [
+        {
+          "file": "food-fish-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 626
+        },
+        {
+          "file": "food-fish-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 834
+        }
+      ],
+      "kind": "image"
+    },
+    {
       "slug": "food-pizza",
       "dir": "./images/hero/",
       "file": "food-pizza-1920.webp",
@@ -6635,23 +7065,6 @@
         }
       ],
       "kind": "image"
-    },
-    {
-      "slug": "hotel-view",
-      "dir": "./images/",
-      "file": "hotel-view.mp4",
-      "ext": "mp4",
-      "w": 0,
-      "h": 0,
-      "variants": [],
-      "kind": "video",
-      "poster": {
-        "dir": "./images/",
-        "file": "hotel-view-poster.jpg",
-        "ext": "jpg",
-        "w": 1600,
-        "h": 900
-      }
     }
   ]
 }

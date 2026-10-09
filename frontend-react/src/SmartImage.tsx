@@ -171,24 +171,31 @@ const bare = (name: string) =>
     .replace(/^-+|-+$/g, '');
 
 /**
- * Builds a srcset from the widths the photograph really has, so nothing is ever
- * asked to scale up. A missing derivative simply drops out of the list.
+ * The files a photograph may be served as, smallest first.
+ *
+ * Only widths the file really has are offered, so nothing is ever asked to
+ * scale up. The original joins the list only when it is not wildly larger than
+ * the widest copy the layout can use: a 6000px camera plate must never be
+ * picked to fill a 460px card just because it is the only file wider than the
+ * phone, which would quietly undo every small copy the build made. Where that
+ * ceiling is passed the derivatives carry the load on their own.
  */
-function srcSetFor(entry: Entry, dir: ImageHome, slug: string, widths: number[]) {
-  const candidates: Array<{file: string; w: number}> = [];
-  for (const w of widths) {
-    const variant = entry.variants.find(v => v.w >= w);
-    if (variant) candidates.push({file: slug + '-' + variant.w + '.' + variant.ext, w});
-  }
-  // The original is the ceiling: never advertise a width it cannot fill.
-  if (entry.w) candidates.push({file: slug + '.' + entry.ext, w: entry.w});
+function candidatesFor(entry: Entry, slug: string, widths: number[]): Array<{file: string; w: number}> {
+  const out: Array<{file: string; w: number}> = [];
+  const seen = new Set<string>();
+  const add = (file: string, w: number) => {
+    if (!seen.has(file)) { seen.add(file); out.push({file, w}); }
+  };
 
-  const seen = new Set<number>();
-  return candidates
-    .filter(c => (seen.has(c.w) ? false : (seen.add(c.w), true)))
-    .sort((a, b) => a.w - b.w)
-    .map(c => IMAGE_DIR[dir] + c.file + ' ' + c.w + 'w')
-    .join(', ');
+  for (const target of widths) {
+    const variant = entry.variants.find(v => v.w >= target);
+    if (variant) add(slug + '-' + variant.w + '.' + variant.ext, variant.w);
+  }
+
+  const ceiling = widths.length ? Math.max(...widths) : 0;
+  if (entry.w && entry.w <= ceiling * 1.6) add(slug + '.' + entry.ext, entry.w);
+
+  return out.sort((a, b) => a.w - b.w);
 }
 
 export function SmartImage({
@@ -247,8 +254,13 @@ export function SmartImage({
     );
   }
 
-  const srcset = srcSetFor(entry, home, slug, w);
-  const src = IMAGE_DIR[home] + slug + '.' + entry.ext;
+  const candidates = candidatesFor(entry, slug, w);
+  const srcset = candidates.map(c => IMAGE_DIR[home] + c.file + ' ' + c.w + 'w').join(', ');
+  // With derivatives on disk the fallback is the widest of them, never the
+  // multi megabyte original behind them.
+  const src = IMAGE_DIR[home] + (candidates.length
+    ? candidates[candidates.length - 1].file
+    : slug + '.' + entry.ext);
 
   return (
     <div className={'photoBox ' + className + (zoom ? ' zooms' : '')} style={box}>

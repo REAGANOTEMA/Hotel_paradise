@@ -140,6 +140,18 @@ b,strong{font-variant-numeric:tabular-nums}
 .skipLink{position:fixed;left:16px;top:12px;z-index:80;transform:translateY(-280%);background:var(--gold);color:var(--navy);padding:12px 18px;border-radius:var(--r);font-weight:700;font-size:13px;box-shadow:0 10px 26px rgba(7,26,51,.35);transition:transform .2s ease}
 .skipLink:focus{transform:none}
 
+/* The way back to the top of a long page. It is out of the layout until the
+   page has moved, and it is hidden rather than merely faded so it is never a
+   tab stop a guest has to pass. On a phone it sits above the fixed booking
+   bar; on the menu it also clears the order pill when an order is open. */
+.backTop{position:fixed;right:24px;bottom:28px;z-index:24;display:inline-flex;align-items:center;gap:7px;padding:12px 17px 12px 14px;border-radius:999px;background:var(--navy);color:#fff;font-weight:600;font-size:12.5px;letter-spacing:.03em;box-shadow:0 16px 40px rgba(7,26,51,.34);opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .24s ease,transform .24s ease,visibility 0s linear .24s;cursor:pointer}
+.backTop.on{opacity:1;visibility:visible;transform:none;transition:opacity .24s ease,transform .24s ease,visibility 0s}
+.backTop svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.backTop:hover{background:var(--gold);color:var(--navy)}
+.backTop:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+/* the menu's order pill shares the bottom right, so the top button steps over it */
+.menuPage .backTop{bottom:100px}
+
 /* The hero is drawn underneath the header, which sits over it in return, so
    the photograph runs to the very top of the page without the header taking
    a band out of it. */
@@ -353,6 +365,15 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
 .hasBackdrop::after{content:'';position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(7,26,51,.55),rgba(7,26,51,.78));pointer-events:none}
 .hasBackdrop>*{position:relative;z-index:1}
 
+/* A light section that leans on a photograph without giving up its easy
+   reading. The picture comes through a whisper-thin ivory wash set from the
+   page as --bg, so the section gains depth and the writing stays the first
+   thing read on it. */
+.section.hasTint{position:relative;overflow:hidden}
+.section.hasTint::before{content:'';position:absolute;inset:0;z-index:0;background-image:var(--bg);background-size:cover;background-position:50% 45%;background-repeat:no-repeat;opacity:.07;pointer-events:none}
+.section.hasTint::after{content:'';position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,var(--ivory),rgba(248,245,236,.7) 26%,rgba(248,245,236,.7) 74%,var(--ivory));pointer-events:none}
+.section.hasTint>*{position:relative;z-index:1}
+
 footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1px solid rgba(255,255,255,.1)}
 .flag{height:6px;display:grid;grid-template-columns:1fr 1fr 1fr}
 .flag i:nth-child(1){background:#000}
@@ -406,7 +427,15 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .pageHero.hasCover{padding-bottom:74px}
 .pageHeroCover{position:absolute!important;inset:0;aspect-ratio:auto!important;background:var(--navy)}
 .pageHero.hasCover::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,26,51,.92) 0%,rgba(7,26,51,.6) 48%,rgba(7,26,51,.28) 100%),linear-gradient(0deg,rgba(7,26,51,.3) 0%,rgba(7,26,51,0) 40%)}
+/* A page header whose photograph is set from the page as --bg rather than laid
+   down as a smart image. The picture is one of the already-resized carousel
+   files, so a full-width header never has to reach for a camera original. */
+.pageHero.canvas::before{content:'';position:absolute;inset:0;z-index:0;background-image:var(--bg);background-size:cover;background-position:50% 50%;background-repeat:no-repeat}
 .pageHeroInner{position:relative;z-index:1}
+/* The small way out of a subpage, sat over the header photograph. */
+.backLink{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:8px 15px 8px 11px;border:1px solid rgba(255,255,255,.34);border-radius:999px;background:rgba(7,26,51,.34);color:#fff;font-size:12.5px;font-weight:600;letter-spacing:.02em;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.backLink svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.backLink:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);transform:translateY(-1px)}
 
 /* beds page */
 .bedsWrap{display:grid;grid-template-columns:1fr 400px;gap:34px;align-items:start;max-width:1400px}
@@ -778,6 +807,10 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .orderPanel{scroll-margin-top:126px}
   /* the floating order button sits above the fixed booking bar */
   .orderPill{bottom:calc(96px + env(safe-area-inset-bottom))}
+  /* the way back to the top clears the fixed booking bar, and on the menu it
+     also clears the order pill when one is open */
+  .backTop{right:16px;bottom:calc(90px + env(safe-area-inset-bottom))}
+  .menuPage .backTop{bottom:calc(162px + env(safe-area-inset-bottom))}
   .mobileCta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:25;gap:10px;padding:10px 4vw calc(10px + env(safe-area-inset-bottom));background:rgba(7,26,51,.96);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid rgba(201,162,39,.35);box-shadow:0 -10px 30px #071A3340}
   .mobileCta .btn{flex:1;text-align:center;padding:14px 10px}
   /* the fixed bar sits over the bottom of the hero, so the text and the
@@ -1038,6 +1071,11 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .modalPanel{border:1px solid CanvasText}
   .modalScrim{background:Canvas}
   .modalScrim::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.55)}
+  /* the photo behind a page header and a tinted band is decoration, so it goes
+     and the text keeps the system colours */
+  .pageHero.canvas::before,.section.hasTint::before,.section.hasTint::after{display:none}
+  .backLink,.backTop{border:1px solid ButtonText}
+  .backLink{forced-color-adjust:none;background:Canvas;color:CanvasText}
 }
 @media(prefers-reduced-motion:no-preference){.card,.fact,.menuRow,.dineCard,.rateCard{transition:opacity .6s ease,transform .25s ease,box-shadow .25s ease}.btn:hover{transform:translateY(-2px);background:#d8aa2e}.card:hover,.fact:hover,.menuRow:hover,.dineCard:hover,.rateCard:hover{transform:translateY(-5px);box-shadow:0 20px 50px #071A3320}}
 @media(prefers-reduced-motion:reduce){
@@ -1053,6 +1091,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .modalClose:hover{transform:none}
   .modalBack:hover svg{transform:rotate(180deg)}
   .pickCard:hover{transform:none}
+  /* the top button simply appears and leaves, without the lift */
+  .backTop{transition:opacity .01s linear,visibility 0s}
+  .backTop.on{transform:none}
   /* the drawer's links appear together rather than one behind the other */
   .drawer.open .drawerNav a{transition-delay:0s;transform:none}
   .pulse,.btn.loading::after{animation-duration:1.6s}
@@ -1065,7 +1106,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   @page{margin:12mm}
   html,body{background:#fff}
   body{padding-bottom:0}
-  .topbar,.nav,.skipLink,.drawer,.mobileCta,.menuJump,.orderPanelWrap,.printBtn,.heroBtns,.booking,.modal,.orderPill,.dishOpen,.dishPeek{display:none!important}
+  .topbar,.nav,.skipLink,.drawer,.mobileCta,.menuJump,.orderPanelWrap,.printBtn,.heroBtns,.booking,.modal,.orderPill,.dishOpen,.dishPeek,.backTop,.backLink{display:none!important}
   /* the header is gone, so nothing may keep the space it used to cover */
   .hero,.pageHero{margin-top:0}
   .pageHero{background:#fff!important;color:var(--navy)!important;padding:0 0 14mm;border-bottom:2px solid var(--gold)}

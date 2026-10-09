@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, setCustomer, forgetCustomer, LOGO} from './shared';
+import {TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, setCustomer, forgetCustomer, LOGO, BackLink} from './shared';
 
 /*
  * The guest's own account.
@@ -189,7 +189,9 @@ function AccountPage() {
    <TopBar/>
    <PageNav onDark/>
 
-   <section className="pageHero" id="main">
+   <section className="pageHero canvas hasCover" id="main" style={{'--bg': "url('./images/hero/bed-executive-1920.webp')"} as unknown as React.CSSProperties}>
+    <div className="pageHeroInner">
+    <BackLink label="Back" fallback="./index.html"/>
     <p className="eyebrow">YOUR ACCOUNT</p>
     <h1>{heading}</h1>
     <p>{mode === 'phone'
@@ -197,6 +199,7 @@ function AccountPage() {
       : mode === 'account'
         ? 'Your details are kept here so a booking or an order does not ask for them twice.'
         : 'One account for room bookings and food orders. Sign in with Google, or with an email address and a password.'}</p>
+    </div>
    </section>
 
    <section className="payWrap" style={{paddingTop: 56}}>

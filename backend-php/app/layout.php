@@ -136,6 +136,12 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  /* ---- the header ---- */
  echo '<div class="main" id="mainContent"><header class="top">';
  echo '<button class="sideToggle" id="sideToggle" type="button" aria-label="Open menu" aria-controls="side" aria-expanded="false"><span></span><span></span><span></span></button>';
+ /* Every module but the dashboard carries a way back. It steps through the
+    visit when a console page is behind it, and otherwise opens the dashboard,
+    so nobody is left with no way out of a deep page. */
+ if($active!=='dashboard'){
+  echo '<a class="topBack" id="topBack" href="'.BASE.'/index.php?page=dashboard" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Back</span></a>';
+ }
  echo '<div class="topTitles"><h1 class="pageTitle">'.e($title).'</h1>'.($sub?'<p class="pageSub">'.e($sub).'</p>':'').'</div>';
  echo '<div class="topRight">';
  /* The bell is the same feed as the notifications page: a member sees their
@@ -230,9 +236,6 @@ function page_scripts(): void{
     document.addEventListener('keydown',function(e){if(e.key==='Escape')setProf(false)});
   }
 
-     document.addEventListener('keydown',function(e){if(e.key==='Escape')setProf(false)});
-   }
-
   /* the bell: the same feed the notifications page shows, refreshed quietly.
      It never blocks the page and gives up silently if the network is gone. */
   var nb=document.getElementById('notifyBtn'),nm=document.getElementById('notifyMenu');
@@ -312,13 +315,44 @@ function page_scripts(): void{
     var w=document.createElement('div');w.className='tableScroll';
     t.parentNode.insertBefore(w,t);w.appendChild(t);
   });
+
+  /* the way back to the top, for the long tables and reports. It waits until
+     the page has moved, then jumps or slides according to the guest's own
+     motion setting. */
+  var tt=document.getElementById('toTop');
+  if(tt){
+    var tick=function(){tt.classList.toggle('on',window.scrollY>600)};
+    tick();
+    window.addEventListener('scroll',tick,{passive:true});
+    tt.addEventListener('click',function(){
+      var reduce=false;
+      try{reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
+      window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+    });
+  }
+
+  /* the way out of a module: back through the visit when one of ours is
+     behind it, else the dashboard the link already points at. */
+  var tb=document.getElementById('topBack');
+  if(tb){
+    tb.addEventListener('click',function(e){
+      var ours=false;
+      try{
+        var r=document.referrer?new URL(document.referrer):null;
+        ours=!!r&&r.origin===location.origin&&r.pathname!==location.pathname;
+      }catch(err){ours=false}
+      if(ours&&history.length>1){e.preventDefault();history.back();}
+    });
+  }
 })();
 </script>
 HTML;
 }
 
 function page_foot(): void{
- echo '</div></div></div>';
+ echo '</div></div>';
+ echo '<button class="toTop" id="toTop" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 11l6-6 6 6"/></svg><span>Top</span></button>';
+ echo '</div>';
  page_scripts();
  echo '</body></html>';
 }

@@ -114,7 +114,13 @@ b,strong{font-variant-numeric:tabular-nums}
 .sideToggle span:nth-child(1){top:15px}
 .sideToggle span:nth-child(2){top:21px}
 .sideToggle span:nth-child(3){top:27px}
-.topTitles{min-width:0}
+.topTitles{min-width:0;margin-right:auto}
+/* The way out of a module, sat in the header beside the title. It reads as the
+   quiet partner of the rail's own brand link, gold on paper. */
+.topBack{display:inline-flex;align-items:center;gap:6px;flex:none;margin-left:-4px;padding:7px 13px 7px 9px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:600;transition:border-color var(--t),box-shadow var(--t),color var(--t)}
+.topBack svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.topBack:hover{border-color:rgba(201,162,39,.65);color:var(--gold-deep);box-shadow:var(--sh1)}
+.topBack:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .pageTitle{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);letter-spacing:.02em}
 .pageSub{margin:2px 0 0;color:var(--muted);font-size:12.5px}
 .topRight{display:flex;align-items:center;gap:12px;flex:none;position:relative}
@@ -501,8 +507,18 @@ ul.clean{list-style:none;margin:0;padding:0}
  .notifyList .nRead{display:none}
 }
 
+/* The way back to the top of a long report or table. It is out of the layout
+   until the page has moved, and hidden rather than faded so it never becomes a
+   tab stop on the way past. */
+.toTop{position:fixed;right:24px;bottom:24px;z-index:24;display:inline-flex;align-items:center;gap:7px;padding:12px 17px 12px 14px;border:0;border-radius:999px;background:var(--navy);color:#fff;font-weight:600;font-size:12.5px;letter-spacing:.03em;box-shadow:0 16px 40px rgba(7,26,51,.34);opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .24s ease,transform .24s ease,visibility 0s linear .24s}
+.toTop.on{opacity:1;visibility:visible;transform:none;transition:opacity .24s ease,transform .24s ease,visibility 0s}
+.toTop svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.toTop:hover{background:var(--gold);color:var(--navy)}
+.toTop:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+@media(max-width:560px){.toTop{right:14px;bottom:14px}}
+
 @media print{
-  .side,.top,.sideScrim,.skipLink,.toolbar .btn,.toastWrap{display:none!important}
+  .side,.top,.sideScrim,.skipLink,.toolbar .btn,.toastWrap,.toTop,.topBack{display:none!important}
   .main{margin:0}
   .content{padding:0}
   body{background:#fff}

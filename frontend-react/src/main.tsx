@@ -99,7 +99,7 @@ const MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIC
 const HERO_WIDTHS = [640, 1024, 1440, 1920, 2560];
 
 /** The carousel turns over on this, and so does the zoom on each slide. */
-const SLIDE_MS = 4000;
+const SLIDE_MS = 5000;
 
 /** Only widths the file really has, so a 680px photo is never asked to fill 2560. */
 const heroSrcSet = (shot: HeroShot) => {
@@ -152,67 +152,137 @@ type HeroCopy = {
  */
 const HERO_COPY: HeroCopy[] = [
   {
-    eyebrow: 'HOTEL PARADISE ON THE NILE',
-    title: 'Where luxury meets the Nile.',
-    text: 'A calm, refined stay in the heart of Jinja, right beside the river.',
+    eyebrow: 'WELCOME TO HOTEL PARADISE ON THE NILE',
+    title: 'Where the Nile meets paradise.',
+    text: 'Step into Jinja\u2019s most welcoming address, a calm and elegant landmark on the banks of the world\u2019s longest river. Your unforgettable stay begins here.',
     primary: {label: 'Book your stay', href: './rooms.html'},
-    secondary: {label: 'Order food', href: './menu.html'}
+    secondary: {label: 'Explore the hotel', href: '#facilities'}
   },
   {
-    eyebrow: 'DINING AND BAR',
-    title: 'A great dinner, a fine table.',
-    text: 'Beef from the grill and a glass of wine, with the Nile a few steps from your table. Dinner every evening until eleven.',
+    eyebrow: 'HEALTH CLUB AND POOL',
+    title: 'Golden afternoons by the pool.',
+    text: 'Cool off in our sparkling swimming pool, framed by sun loungers, lush gardens and the gentle sound of the Nile. Pure relaxation, just for you.',
+    primary: {label: 'See the facilities', href: '#facilities'},
+    secondary: {label: 'Check availability', href: '#book'}
+  },
+  {
+    eyebrow: 'EXECUTIVE COMFORT',
+    title: 'Rest like you truly deserve.',
+    text: 'Our executive rooms wrap you in crisp linen, soft lighting and quiet luxury, so every night ends beautifully and every morning starts easy.',
+    primary: {label: 'See the rooms', href: './rooms.html'},
+    secondary: {label: 'Check availability', href: '#book'}
+  },
+  {
+    eyebrow: 'DELUXE DOUBLE',
+    title: 'Room to relax, side by side.',
+    text: 'A generous double bed dressed in fresh premium linen, the perfect retreat for couples and travellers who love their space and their comfort.',
+    primary: {label: 'See the rooms', href: './rooms.html'},
+    secondary: {label: 'Check availability', href: '#book'}
+  },
+  {
+    eyebrow: 'CONFERENCES AND WEDDINGS',
+    title: 'Celebrations on the Nile.',
+    text: 'From unforgettable weddings to focused conferences, our elegant halls and riverside gardens set the stage for moments your guests will remember forever.',
+    primary: {label: 'Plan your event', href: '#facilities'},
+    secondary: {label: 'Talk to us', href: '#contact'}
+  },
+  {
+    eyebrow: 'YOUR EVENT, OUR STAGE',
+    title: 'The Nile makes every occasion grander.',
+    text: 'Say your vows, welcome your guests and celebrate against a riverside backdrop that turns any gathering into a story worth telling for a lifetime.',
+    primary: {label: 'Plan your event', href: '#facilities'},
+    secondary: {label: 'Book your stay', href: './rooms.html'}
+  },
+  {
+    eyebrow: 'THE VIEW',
+    title: 'Wake up to the River Nile.',
+    text: 'Sweeping river views, warm Jinja sunshine and tranquil gardens. This is the setting that makes every stay at Paradise feel like a quiet escape.',
+    primary: {label: 'Book your stay', href: './rooms.html'},
+    secondary: {label: 'Find us', href: '#contact'}
+  },
+  {
+    eyebrow: 'A GRAND WELCOME',
+    title: 'Arrive as a guest, leave as family.',
+    text: 'Our warm entrance and attentive team greet you the moment you arrive, because here in Paradise, genuine hospitality is always personal.',
+    primary: {label: 'Book your stay', href: './rooms.html'},
+    secondary: {label: 'Call ' + CALL, href: telHref(CALL)}
+  },
+  {
+    eyebrow: 'FROM THE GRILL',
+    title: 'Burgers worth crossing town for.',
+    text: 'Juicy, flame grilled and stacked high, our signature burgers arrive with golden fries and all the trimmings. One bite and you will be back for more.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
+    eyebrow: 'STEAK NIGHT',
+    title: 'Perfectly grilled, every time.',
+    text: 'Tender steak seared to your liking and served sizzling with crisp potato wedges and a rich sauce. This is dinner done the way it should be.',
+    primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'Send an order', href: './menu.html#order'}
+  },
+  {
+    eyebrow: 'FRESHLY PRESSED',
+    title: 'A splash of tropical sunshine.',
+    text: 'Bright, refreshing and full of flavour, our juices are pressed to order from ripe local fruit. The freshest way to begin or end your day.',
+    primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'Send an order', href: './menu.html#order'}
+  },
+  {
+    eyebrow: 'FROM THE BAR',
+    title: 'Raise a glass to the evening.',
+    text: 'A carefully chosen wine list and a relaxed riverside bar turn every night into a celebration. Come for dinner, stay for the golden hour.',
+    primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'See the rates', href: '#rates'}
+  },
+  {
+    eyebrow: 'TAKE THE TOUR',
+    title: 'See Paradise before you arrive.',
+    text: 'A look around the rooms, the pool and the gardens on the banks of the Nile. Book online in a moment, or call the front desk and let us welcome you.',
+    primary: {label: 'Book your stay', href: './rooms.html'},
+    secondary: {label: 'Call ' + CALL, href: telHref(CALL)}
+  },
+  {
     eyebrow: 'DINING AND BAR',
-    title: 'Good food, generous plates.',
-    text: 'An a la carte menu of Ugandan classics and international favourites, served through the day and into the evening.',
+    title: 'A great dinner, a fine table.',
+    text: 'Beef from the grill and a glass of wine, with the Nile a few steps from your table. Dinner is served every evening until eleven.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'BREAKFAST IS INCLUDED',
-    title: 'Sit down to something warm.',
-    text: 'Every rate you see already carries breakfast, and the kitchen keeps going from the first light of morning until dinner closes at eleven.',
+    title: 'Mornings made delicious.',
+    text: 'Every rate already carries breakfast, and the kitchen keeps going from the first light of morning until dinner closes at eleven.',
     primary: {label: 'See the rates', href: '#rates'},
     secondary: {label: 'Book your stay', href: './rooms.html'}
   },
   {
-    eyebrow: 'HEALTH CLUB AND POOL',
-    title: 'Swim, then take the gardens.',
-    text: 'A health club with a swimming pool, gardens for a slow afternoon, and conference space ready for the functions you are planning.',
-    primary: {label: 'See the facilities', href: '#facilities'},
+    eyebrow: 'THE HOTEL',
+    title: 'Comfort in every corner.',
+    text: 'From the lobby to the gardens, every space at Paradise is designed for ease, warmth and the quiet joy of being truly looked after.',
+    primary: {label: 'Explore the hotel', href: '#facilities'},
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'JINJA, UGANDA',
-    title: 'Five minutes from the centre of Jinja.',
-    text: 'On the banks of the River Nile, and about three hours by road from Entebbe Airport.',
-    primary: {label: 'Find us', href: '#contact'},
-    secondary: {label: 'Call ' + CALL, href: telHref(CALL)}
-  },
-  {
-    eyebrow: 'ROOMS AND BEDS',
-    title: 'Eight ways to sleep well.',
-    text: 'From a quiet single to a suite made for the whole family. Every room is furnished to the same standard, and breakfast is included.',
+    eyebrow: 'THE SUITE',
+    title: 'Space to unwind and celebrate.',
+    text: 'Our suites offer room to breathe, a place to gather and a bed that promises deep, restful sleep. Ideal for families and longer stays.',
     primary: {label: 'See the rooms', href: './rooms.html'},
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'RATES AND POLICIES',
-    title: 'Breakfast included, every night.',
-    text: 'Rates in Uganda Shillings and in US dollars, with breakfast and the local hotel tax already worked into the price.',
-    primary: {label: 'See the rates', href: '#rates'},
+    eyebrow: 'DELUXE COMFORT',
+    title: 'A bed you will not want to leave.',
+    text: 'Soft, spacious and beautifully finished, our deluxe beds are the heart of a good night. Sink in, switch off and let the Nile lull you to sleep.',
+    primary: {label: 'See the rooms', href: './rooms.html'},
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'DINNER SERVICE',
-    title: 'From the grill, until late.',
-    text: 'Lunch is served from noon until three and dinner from seven until eleven. Walk in for a table, or send the order ahead and sit down to it.',
+    eyebrow: 'FRESH FROM THE NILE',
+    title: 'Catch of the day, served with pride.',
+    text: 'Fresh tilapia and river fish, seasoned and grilled to perfection by our chefs. A true taste of Jinja, straight from the water to your plate.',
     primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'See the rates', href: '#rates'}
+    secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'FROM THE PIZZA OVEN',
@@ -220,13 +290,6 @@ const HERO_COPY: HeroCopy[] = [
     text: 'Juicy tomato, mozzarella and basil on a thin, floury crust, pulled hot from the oven in the same kitchen that serves the rest of the menu.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
-  },
-  {
-    eyebrow: 'TAKE THE TOUR',
-    title: 'See Paradise before you arrive.',
-    text: 'A look around the rooms, the pool and the gardens, on the banks of the Nile in Jinja. Book online in a moment, or call the front desk.',
-    primary: {label: 'Book your stay', href: './rooms.html'},
-    secondary: {label: 'Call ' + CALL, href: telHref(CALL)}
   }
 ];
 
@@ -502,7 +565,7 @@ function Home() {
 
    <p className="stripNote reveal">Your room has its own page. When you choose below, you will see the bed clearly and you are free to change your mind before booking.</p>
 
-   <section className="section" id="rooms">
+   <section className="section hasTint" id="rooms" style={{'--bg': "url('./images/hero/bed-twin-1920.webp')"} as unknown as React.CSSProperties}>
     <div className="center reveal">
      <p className="eyebrow">STAY IN PARADISE</p>
      <h2>Rooms and beds</h2>
@@ -541,7 +604,7 @@ function Home() {
    <Rates/>
 
 
-  <section className="section" id="dining">
+  <section className="section hasTint" id="dining" style={{'--bg': "url('./images/hero/food-fruit-1920.webp')"} as unknown as React.CSSProperties}>
    <div className="center reveal">
     <p className="eyebrow">DINING AND BAR</p>
     <h2>Good food, great moments</h2>
@@ -555,7 +618,7 @@ function Home() {
    </div>
   </section>
 
-  <section className="section" id="facilities">
+  <section className="section hasTint" id="facilities" style={{'--bg': "url('./images/Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover.jpg')"} as unknown as React.CSSProperties}>
    <div className="center reveal">
     <p className="eyebrow">THE HOTEL</p>
     <h2>Everything you need, in one place</h2>
