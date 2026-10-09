@@ -62,6 +62,40 @@ if ($type === "profile" && $id > 0) {
   exit;
 }
 
+if ($type === "integrity") {
+  if (!has_role("director") && !has_role("super_admin") && !has_role("general_manager") && !has_role("auditor")) {
+    http_response_code(403);
+    exit("Forbidden - oversight access only");
+  }
+  $status = $_GET["status"] ?? "open_cleared";
+  $where = "hotel_id=1";
+  if ($status === "open") $where .= " AND status='open'";
+  elseif ($status === "all") $where = "hotel_id=1";
+  else $where .= " AND status IN('open','reviewed')";
+  $rows = [];
+  try {
+    $rows = rows("SELECT id,seen_at,flag_type,severity,status,staff_name,guest_name,room_id,
+      reservation_id,amount,expected,detail FROM integrity_flags WHERE $where
+      ORDER BY FIELD(severity,'high','medium','low'),id DESC");
+  } catch (\Throwable $e) { $rows = []; }
+
+  header("Content-Type: text/csv; charset=utf-8");
+  header("Content-Disposition: attachment; filename=integrity-".date("Ymd-His").".csv");
+  header("X-Content-Type-Options: nosniff");
+  $out = fopen("php://output", "w");
+  fputs($out, "\xEF\xBB\xBF");
+  fputcsv($out, ["ID","Found","Type","Severity","Status","Staff","Guest","Room","Reservation","Amount","Expected","Detail"]);
+  foreach ($rows as $r) {
+    fputcsv($out, [
+      $r["id"], $r["seen_at"], $r["flag_type"], $r["severity"], $r["status"],
+      $r["staff_name"], $r["guest_name"], $r["room_id"], $r["reservation_id"],
+      $r["amount"], $r["expected"], $r["detail"],
+    ]);
+  }
+  fclose($out);
+  exit;
+}
+
 http_response_code(400);
 exit("Invalid request");
 

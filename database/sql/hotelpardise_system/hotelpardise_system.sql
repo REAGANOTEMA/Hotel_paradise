@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 09, 2026 at 11:31 AM
+-- Generation Time: Oct 09, 2026 at 11:45 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -706,6 +706,36 @@ CREATE TABLE `housekeeping_tasks` (
   `verified_by` bigint(20) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `integrity_flags`
+--
+
+CREATE TABLE `integrity_flags` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `flag_key` varchar(190) NOT NULL,
+  `flag_type` varchar(60) NOT NULL,
+  `severity` enum('high','medium','low') NOT NULL DEFAULT 'medium',
+  `ref_type` varchar(40) NOT NULL DEFAULT '',
+  `ref_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `room_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `reservation_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `staff_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `staff_name` varchar(190) DEFAULT NULL,
+  `guest_name` varchar(190) DEFAULT NULL,
+  `amount` decimal(14,2) DEFAULT NULL,
+  `expected` decimal(14,2) DEFAULT NULL,
+  `detail` varchar(500) NOT NULL DEFAULT '',
+  `status` enum('open','reviewed','cleared') NOT NULL DEFAULT 'open',
+  `resolved_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `resolved_at` datetime DEFAULT NULL,
+  `seen_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -2878,6 +2908,16 @@ ALTER TABLE `housekeeping_tasks`
   ADD KEY `fk_hk_verifier` (`verified_by`);
 
 --
+-- Indexes for table `integrity_flags`
+--
+ALTER TABLE `integrity_flags`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_integrity_flag_key` (`flag_key`),
+  ADD KEY `idx_integrity_status` (`status`),
+  ADD KEY `idx_integrity_severity` (`severity`),
+  ADD KEY `idx_integrity_type` (`flag_type`);
+
+--
 -- Indexes for table `inventory_categories`
 --
 ALTER TABLE `inventory_categories`
@@ -3695,6 +3735,12 @@ ALTER TABLE `hotel_groups`
 -- AUTO_INCREMENT for table `housekeeping_tasks`
 --
 ALTER TABLE `housekeeping_tasks`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `integrity_flags`
+--
+ALTER TABLE `integrity_flags`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --

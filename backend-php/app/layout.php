@@ -14,7 +14,7 @@ require_once __DIR__.'/notify.php';
 function nav_groups(): array{
  return [
   ['label'=>'Overview','items'=>[
-    'dashboard'=>'Dashboard','overview'=>'CEO / Director']],
+    'dashboard'=>'Dashboard','overview'=>'CEO / Director','integrity'=>'Integrity & Control']],
   ['label'=>'Front desk','items'=>[
     'reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
   ['label'=>'Food and beverage','items'=>[
@@ -191,7 +191,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 
 /** The icon a module carries in the rail. */
 function nav_icon_key(string $page): string{
- $map=['dashboard'=>'grid','overview'=>'chart','reservations'=>'calendar','rooms'=>'bed','guests'=>'users',
+   $map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations'=>'calendar','rooms'=>'bed','guests'=>'users',
   'pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
   'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
   'reports'=>'bars','users'=>'users','notifications'=>'bell','profile'=>'user'];
@@ -377,7 +377,7 @@ function empty_state(string $title,string $text=''): void{
 }
 
 function status_badge(string $status, bool $neutral=false): string{
- $tones=['available'=>'ok','confirmed'=>'blue','checked_in'=>'gold','checked_out'=>'grey','cancelled'=>'bad','no_show'=>'bad','pending'=>'warn','paid'=>'ok','open'=>'gold','successful'=>'ok','accepted'=>'blue','reserved'=>'warn','occupied'=>'gold','dirty'=>'bad','cleaning'=>'blue','inspected'=>'ok','maintenance'=>'grey','out_of_service'=>'grey','approved'=>'ok','rejected'=>'bad','served'=>'ok','preparing'=>'warn','ready'=>'blue'];
+ $tones=['available'=>'ok','confirmed'=>'blue','checked_in'=>'gold','checked_out'=>'grey','cancelled'=>'bad','no_show'=>'bad','pending'=>'warn','paid'=>'ok','open'=>'gold','successful'=>'ok','accepted'=>'blue','reserved'=>'warn','occupied'=>'gold','dirty'=>'bad','cleaning'=>'blue','inspected'=>'ok','maintenance'=>'grey','out_of_service'=>'grey','approved'=>'ok','rejected'=>'bad','served'=>'ok','preparing'=>'warn','ready'=>'blue','reviewed'=>'blue','cleared'=>'ok'];
  return badge(str_replace('_',' ',$status),$tones[$status]??'grey');
 }
 

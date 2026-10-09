@@ -319,6 +319,10 @@ function page_allowed(string $page): bool{
   // detail behind either of them. Deliberately not opened to accountants or
   // auditors - it is the view of the house, not of the ledger.
   'overview'=>['director','general_manager'],
+  // The integrity desk: the director's own reading of what the front desk did
+  // against what the books prove. Kept to the oversight roles, never the desk
+  // it watches.
+  'integrity'=>['director','general_manager','auditor'],
   'reservations'=>['receptionist','general_manager','director','accountant','events_manager'],
   'rooms'=>['receptionist','housekeeping','general_manager','director','maintenance'],
   'guests'=>['receptionist','general_manager','director','accountant'],
