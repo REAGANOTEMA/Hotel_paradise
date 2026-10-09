@@ -17,6 +17,10 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $rid=(int)db()->lastInsertId();
    foreach($clean as $iid=>$qty){ q('INSERT INTO purchase_requisition_items(requisition_id,item_id,requested_qty) VALUES(?,?,?)',[$rid,$iid,$qty]); }
    audit('create','requisition',$rid,['number'=>$num]);
+   $dname=(string)val('SELECT name FROM departments WHERE id=?',[$dept]);
+   notify_console('req:'.$rid,'incident','Requisition '.$num.' awaiting approval',
+    $dname.' · '.count($clean).' item line(s)'.(trim((string)($_POST['note']??''))!==''?' — '.trim((string)$_POST['note']):''),
+    ['requisition_id'=>$rid,'number'=>$num],['director','general_manager'],'requisition',$rid);
    flash('Requisition '.$num.' sent for approval.');
    go('purchases');
    break;
@@ -24,9 +28,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $rid=(int)($_POST['id']??0); $nst=$_POST['nst']??'';
    $r=row('SELECT * FROM purchase_requisitions WHERE id=?',[$rid]); if(!$r) break;
    if(in_array($nst,['approved','rejected'])){
-    q('UPDATE purchase_requisitions SET status=?,approved_by=?,approved_at=NOW() WHERE id=?',[$nst,$u['id'],$rid]);
-    audit('requisition_'.$nst,'requisition',$rid,['status'=>$r['status']]);
-    flash('Requisition '.$r['number'].' '.$nst.'.');
+     q('UPDATE purchase_requisitions SET status=?,approved_by=?,approved_at=NOW() WHERE id=?',[$nst,$u['id'],$rid]);
+     audit('requisition_'.$nst,'requisition',$rid,['status'=>$r['status']]);
+     notify_console('req-'.$nst.':'.$rid,'communication','Requisition '.$r['number'].' '.$nst,
+      'The request is now '.$nst.'.',
+      ['requisition_id'=>$rid],['director','general_manager','storekeeper'],'requisition',$rid);
+     flash('Requisition '.$r['number'].' '.$nst.'.');
    }
    go('purchases');
    break;
@@ -40,6 +47,10 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $oid=(int)db()->lastInsertId();
    foreach($rows as $it){ q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$it['item_id'],$it['requested_qty'],0,0]); }
    audit('create','purchase_order',$oid,['number'=>$num,'from_requisition'=>$rid]);
+   $supName=(string)val('SELECT name FROM suppliers WHERE id=?',[(int)($_POST['supplier_id']??0)]);
+   notify_console('po-from-req:'.$oid,'order','Purchase order '.$num.' created',
+    'Raised from requisition '.$r['number'].' to supplier '.$supName.'.',
+    ['purchase_order_id'=>$oid,'number'=>$num],['director','general_manager','storekeeper'],'purchase_order',$oid);
    flash('Purchase order '.$num.' created from requisition. Enter unit costs on the order.');
    go('purchases',['view'=>$oid]);
    break;
@@ -54,6 +65,10 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $oid=(int)db()->lastInsertId();
    foreach($clean as $iid=>$d){ $tot=$d[0]*$d[1]; q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$iid,$d[0],$d[1],$tot]); }
    audit('create','purchase_order',$oid,['number'=>$num]);
+   $supName=(string)val('SELECT name FROM suppliers WHERE id=?',[$sup]);
+   notify_console('po:'.$oid,'order','Purchase order '.$num.' created',
+    'Sent to supplier '.$supName.' with '.count($clean).' item line(s).',
+    ['purchase_order_id'=>$oid,'number'=>$num],['director','general_manager','storekeeper'],'purchase_order',$oid);
    flash('Purchase order '.$num.' created.');
    go('purchases',['view'=>$oid]);
    break;
@@ -84,6 +99,10 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $rcvQty=val('SELECT COALESCE(SUM(received_qty),0) FROM purchase_order_items WHERE order_id=?',[$oid]);
    q('UPDATE purchase_orders SET status=? WHERE id=?',[$rcvQty>=$totQty?'received':'partially_received',$oid]);
    audit('goods_receive','purchase_order',$oid,['location'=>$loc]);
+   $pnum=(string)val('SELECT number FROM purchase_orders WHERE id=?',[$oid]);
+   notify_console('grn:'.$oid,'communication','Goods received for '.$pnum,
+    'Received into '.$loc.'. Stock levels have been updated.',
+    ['purchase_order_id'=>$oid],['director','general_manager','storekeeper','accountant'],'purchase_order',$oid);
    flash('Goods received and stock updated.');
    go('purchases',['view'=>$oid]);
    break;
@@ -91,6 +110,10 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $oid=(int)($_POST['oid']??0);
    q('UPDATE purchase_orders SET status=\'cancelled\' WHERE id=?',[$oid]);
    audit('cancel','purchase_order',$oid);
+   $pnum=(string)val('SELECT number FROM purchase_orders WHERE id=?',[$oid]);
+   notify_console('po-cancel:'.$oid,'incident','Purchase order '.$pnum.' cancelled',
+    'The order has been cancelled before or during delivery.',
+    ['purchase_order_id'=>$oid],['director','general_manager','storekeeper','accountant'],'purchase_order',$oid);
    flash('Purchase order cancelled.');
    go('purchases');
    break;

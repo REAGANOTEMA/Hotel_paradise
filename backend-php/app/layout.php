@@ -3,30 +3,28 @@ declare(strict_types=1);
 
 require_once __DIR__.'/notify.php';
 
-function nav_items(): array{
- return [
-  'dashboard'=>'Dashboard','overview'=>'CEO / Director','reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests',
-  'pos'=>'POS and Orders','fnb'=>'Food and Beverage','kitchen'=>'Kitchen','shifts'=>'Shifts','inventory'=>'Inventory','suppliers'=>'Suppliers',
-  'purchases'=>'Purchases','expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals',
-  'audit'=>'Audit Trail','reports'=>'Reports','users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile'
- ];
-}
-
 /** The rail, in groups. Every group and every link is dropped when the
  *  signed-in member is not allowed to open that module, so each person
- *  sees only their own console. */
+ *  sees only their own console.
+ *
+ *  A module appears once and in the one group that owns it, so nothing is
+ *  repeated and no module sits where it does not belong: the CEO/Director's
+ *  whole-house view leads its own group rather than sitting under Front desk,
+ *  and each operational area keeps its own tools together. */
 function nav_groups(): array{
  return [
+  ['label'=>'Overview','items'=>[
+    'dashboard'=>'Dashboard','overview'=>'CEO / Director']],
   ['label'=>'Front desk','items'=>[
-    'dashboard'=>'Dashboard','overview'=>'CEO / Director','reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
+    'reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
   ['label'=>'Food and beverage','items'=>[
     'pos'=>'POS and Orders','fnb'=>'Food and Beverage','kitchen'=>'Kitchen']],
   ['label'=>'Operations','items'=>[
     'shifts'=>'Shifts','inventory'=>'Inventory','suppliers'=>'Suppliers','purchases'=>'Purchases','expenses'=>'Expenses']],
   ['label'=>'Finance and control','items'=>[
     'finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
-   ['label'=>'Administration','items'=>[
-     'users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile']],
+  ['label'=>'Administration','items'=>[
+    'users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile']],
  ];
 }
 

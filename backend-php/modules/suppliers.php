@@ -7,7 +7,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   $id=(int)($_POST['id']??0); $name=trim($_POST['name']??''); if(!$name){ flash('Supplier name required.','bad'); go('suppliers'); }
   $d=[trim($_POST['contact_person']??''),trim($_POST['phone']??''),trim($_POST['email']??''),trim($_POST['address']??''),trim($_POST['tax_id']??''),isset($_POST['active'])?1:0];
   if($id){ q('UPDATE suppliers SET contact_person=?,phone=?,email=?,address=?,tax_id=?,active=? WHERE id=?',array_merge($d,[$id])); audit('update','supplier',$id); flash('Supplier updated.'); }
-  else{ q('INSERT INTO suppliers(hotel_id,name,contact_person,phone,email,address,tax_id,active,created_at) VALUES(1,?,?,?,?,?,?,?,NOW())',array_merge([$name],$d)); audit('create','supplier',(int)db()->lastInsertId()); flash('Supplier added.'); }
+  else{ q('INSERT INTO suppliers(hotel_id,name,contact_person,phone,email,address,tax_id,active,created_at) VALUES(1,?,?,?,?,?,?,?,NOW())',array_merge([$name],$d)); $sid=(int)db()->lastInsertId(); audit('create','supplier',$sid); notify_console('supplier-new:'.$sid,'communication','New supplier: '.$name, trim(($_POST['contact_person']??'').' '.($_POST['phone']??''))?:'Registered as a vendor.', ['supplier_id'=>$sid],['director','general_manager','storekeeper'],'supplier',$sid); flash('Supplier added.'); }
   go('suppliers');
  }
 }

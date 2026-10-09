@@ -13,8 +13,13 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   $expected=$sh['opening_cash']+$paySum;
   $variance=$counted-$expected;
   q('UPDATE shifts SET closed_at=NOW(),expected_cash=?,counted_cash=?,variance=?,status=\'closed\' WHERE id=?',[$expected,$counted,$variance,$sid]);
-  audit('close_shift','shift',$sid,['expected'=>$expected,'counted'=>$counted,'variance'=>$variance]);
-  flash('Shift closed. Variance '.($variance<0?'-':'').money(abs($variance)).'.');
+   audit('close_shift','shift',$sid,['expected'=>$expected,'counted'=>$counted,'variance'=>$variance]);
+   if(abs($variance)>0.01){
+    notify_console('shift-variance:'.$sid,'incident','Cash variance on '.ucfirst((string)$sh['outlet']).' shift',
+     $u['name'].' closed with a variance of '.($variance<0?'-':'').money(abs($variance)).' (expected '.money($expected).', counted '.money($counted).').',
+     ['shift_id'=>$sid],['director','general_manager','accountant'],'shift',$sid);
+   }
+   flash('Shift closed. Variance '.($variance<0?'-':'').money(abs($variance)).'.');
   go('shifts');
  }
 }

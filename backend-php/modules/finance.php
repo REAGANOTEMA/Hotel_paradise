@@ -10,9 +10,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   if(!$p||!$reason){ flash('Select a valid payment and give a reason.','bad'); go('finance'); }
   q('INSERT INTO voids(hotel_id,ref_type,ref_id,reason,amount,user_id,approved_by,created_at) VALUES(1,\'payment\',?,?,?,?,?,NOW())',[$pid,$reason,$p['amount'],$u['id'],$u['id']]);
   if($p['reservation_id']){ q('UPDATE reservations SET paid=GREATEST(paid-?,0) WHERE id=?',[$p['amount'],$p['reservation_id']]); }
-  q('UPDATE payments SET status=\'reversed\' WHERE id=?',[$pid]);
-  audit('reverse_payment','payment',$pid,['amount'=>$p['amount'],'reason'=>$reason]);
-  flash('Payment '.$pid.' reversed and voided on record.');
+   q('UPDATE payments SET status=\'reversed\' WHERE id=?',[$pid]);
+   audit('reverse_payment','payment',$pid,['amount'=>$p['amount'],'reason'=>$reason]);
+   notify_console('void-payment:'.$pid,'incident','Payment #'.$pid.' reversed',
+    money($p['amount']).' voided. Reason: '.$reason.'.',
+    ['payment_id'=>$pid],['director','general_manager','accountant'],'payment',$pid);
+   flash('Payment '.$pid.' reversed and voided on record.');
   go('finance');
  }
 }

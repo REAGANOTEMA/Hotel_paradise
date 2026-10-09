@@ -2,6 +2,7 @@
 declare(strict_types=1);
 $u = current_user();
 $uid = (int)($u["id"] ?? 0);
+$me = row("SELECT * FROM users WHERE id=?", [$uid]);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $act = $_GET["act"] ?? "";

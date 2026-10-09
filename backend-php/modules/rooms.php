@@ -10,6 +10,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $old=row('SELECT status FROM rooms WHERE id=?',[$room]);
    q('UPDATE rooms SET status=? WHERE id=?',[$st,$room]);
    audit('room_status','room',$room,$old,['status'=>$st]);
+   if($st==='maintenance'||$st==='out_of_service'){
+    $rn=(string)val('SELECT room_number FROM rooms WHERE id=?',[$room]);
+    notify_console('room-'.$st.':'.$room,'incident','Room '.$rn.' '.str_replace('_',' ',$st),
+     'The room has been taken out of the sellable count (was '.str_replace('_',' ',(string)($old['status']??'')).').',
+     ['room_id'=>$room],['director','general_manager','receptionist'],'room',$room);
+   }
    flash('Room status updated to '.str_replace('_',' ',$st).'.');
   }
   go('rooms');
@@ -28,7 +34,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 
 $flt=$_GET['st']??'';
 $types_all=rows('SELECT * FROM room_types ORDER BY base_rate DESC');
-$whereAll=$flt?'AND status=?':'';
+$whereAll=$flt?'WHERE status=?':'';
 $all=rows("SELECT * FROM rooms $whereAll".($whereAll?' ORDER BY status,room_number':''),$flt?[$flt]:[]);
 $floors=rows('SELECT DISTINCT floor FROM rooms ORDER BY floor');
 

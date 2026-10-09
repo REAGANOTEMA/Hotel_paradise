@@ -35,10 +35,14 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    if($paidNow<=0){ flash('Enter the amount collected.','bad'); go('fnb',['view'=>$oid]); }
    q('INSERT INTO payments(hotel_id,user_id,order_id,amount,method,status,created_at) VALUES(1,?,?,?,?,\'successful\',NOW())',
      [$u['id'],$oid,$paidNow,$method]);
+   $payId=(int)db()->lastInsertId();
    audit('payment','order',$oid,['amount'=>$paidNow,'method'=>$method]);
    if($discount>0) q('UPDATE orders SET discount=?,total=? WHERE id=?',[$discount,$due,$oid]);
    $got=(float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE order_id=? AND status=\'successful\'',[$oid]);
    q('UPDATE orders SET status=? WHERE id=?',[$got+0.001>=$due?'paid':'partially_paid',$oid]);
+   notify_console('desk-fnb-payment:'.$payId,'payment','F&B payment '.money($paidNow),
+    'Received by '.str_replace('_',' ',(string)$method).' for order '.$r['order_number'].'.',
+    ['order_id'=>$oid,'payment_id'=>$payId],['director','general_manager','accountant','cashier'],'payment',$payId);
    flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.');
    go('fnb',['view'=>$oid,'printed'=>1]);
    break;
@@ -49,6 +53,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    if(in_array($nst,['accepted','preparing','ready','served','cancelled'],true)){
     q('UPDATE orders SET status=? WHERE id=?',[$nst,$oid]);
     audit('order_status','order',$oid,['status'=>$r['status']],['status'=>$nst]);
+    if($nst==='cancelled'){
+     notify_console('desk-fnb-cancel:'.$oid,'incident','Order '.$r['order_number'].' cancelled',
+      'Cancelled from Food and Beverage (was '.str_replace('_',' ',(string)$r['status']).').',
+      ['order_id'=>$oid],['director','general_manager','cashier'],'order',$oid);
+    }
     flash('Order '.$r['order_number'].' updated to '.$nst.'.');
    }
    go('fnb',['view'=>$oid]);

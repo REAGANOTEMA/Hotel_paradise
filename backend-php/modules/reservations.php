@@ -29,11 +29,15 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
    q('INSERT INTO reservations(hotel_id,guest_id,booking_number,source,check_in,check_out,adults,children,status,room_rate,nights,subtotal,tax,total,paid,notes,created_at) VALUES(1,?,?,?,?,?,?,?,\'pending\',?,?,?,0,?,0,?,NOW())',
      [$gid,$num,$_POST['source']??'walk_in',$ci,$co,(int)($_POST['adults']??1),(int)($_POST['children']??0),$rate,$nights,$subtotal,$total,trim($_POST['notes']??'')]);
    $rid=(int)db()->lastInsertId();
-   q('INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate) VALUES(?,?,NULL,?,?)',[$rid,$rt,$qty,$rate]);
-   audit('create','reservation',$rid,['booking_no'=>$num]);
-   flash('Booking '.$num.' created for '.(int)$qty.' room(s).');
-   go('reservations',['view'=>$rid]);
-   break;
+    q('INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate) VALUES(?,?,NULL,?,?)',[$rid,$rt,$qty,$rate]);
+    audit('create','reservation',$rid,['booking_no'=>$num]);
+    $gname=(string)val('SELECT full_name FROM guests WHERE id=?',[$gid]);
+    notify_console('desk-booking:'.$rid,'booking','New booking '.$num,
+     $gname.' · '.(int)$qty.' room(s) · '.$nights.' night(s) · '.money($total),
+     ['reservation_id'=>$rid,'booking_number'=>$num],['director','general_manager','receptionist'],'reservation',$rid);
+    flash('Booking '.$num.' created for '.(int)$qty.' room(s).');
+    go('reservations',['view'=>$rid]);
+    break;
 
   case 'status':
    $st=$_POST['status']??''; $r=row('SELECT * FROM reservations WHERE id=?',[$id]); if(!$r) break;
@@ -64,6 +68,15 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
    $old=['status'=>$r['status']];
    q('UPDATE reservations SET status=?,updated_at=NOW() WHERE id=?',[$st,$id]);
    audit('reservation_status','reservation',$id,$old,['status'=>$st]);
+   if($st==='cancelled'||$st==='no_show'){
+    notify_console('desk-res-status:'.$id.':'.$st,'incident','Booking '.$r['booking_number'].' '.str_replace('_',' ',$st),
+     'Front desk marked the booking '.str_replace('_',' ',$st).' (was '.str_replace('_',' ',(string)$r['status']).').',
+     ['reservation_id'=>$id],['director','general_manager','receptionist'],'reservation',$id);
+   }elseif($st==='checked_in'){
+    notify_console('desk-checkin:'.$id,'booking','Guest checked in: '.$r['booking_number'],
+     'Booking '.$r['booking_number'].' is now in house.',
+     ['reservation_id'=>$id],['director','general_manager','receptionist'],'reservation',$id);
+   }
    flash('Reservation marked as '.str_replace('_',' ',$st).'.');
    go('reservations',['view'=>$id]);
    break;
@@ -73,9 +86,14 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
    if($amount<=0){ flash('Enter a valid payment amount.','bad'); go('reservations',['view'=>$id]); }
    $method=$_POST['method']??'cash';
    q('INSERT INTO payments(hotel_id,user_id,reservation_id,amount,method,status,created_at) VALUES(1,?,?,?,?,\'successful\',NOW())',[current_user()['id'],$id,$amount,$method]);
-   q('INSERT INTO guest_folio_entries(hotel_id,reservation_id,entry_type,description,amount,user_id,created_at) VALUES(1,?,?,?,?,NOW())',[$id,'payment',ucfirst(str_replace('_',' ',$method)).' payment',$amount,current_user()['id']]);
+   $payId=(int)db()->lastInsertId();
+   q('INSERT INTO guest_folio_entries(hotel_id,reservation_id,entry_type,description,amount,user_id,created_at) VALUES(1,?,?,?,?,?,NOW())',[$id,'payment',ucfirst(str_replace('_',' ',$method)).' payment',$amount,current_user()['id']]);
    q('UPDATE reservations SET paid=paid+?,updated_at=NOW() WHERE id=?',[$amount,$id]);
    audit('payment','reservation',$id,['amount'=>$amount,'method'=>$method]);
+   $bn=(string)val('SELECT booking_number FROM reservations WHERE id=?',[$id]);
+   notify_console('desk-payment:'.$payId,'payment','Reservation payment '.money($amount),
+    'Received by '.str_replace('_',' ',(string)$method).' against booking '.$bn.'.',
+    ['reservation_id'=>$id,'payment_id'=>$payId],['director','general_manager','accountant','cashier'],'payment',$payId);
    flash('Payment of '.money($amount).' recorded.');
    go('reservations',['view'=>$id]);
    break;
@@ -83,7 +101,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
   case 'folio':
    $amount=(float)($_POST['amount']??0); $desc=trim($_POST['description']??'');
    if(!$desc||$amount<=0){ flash('Enter a description and amount.','bad'); go('reservations',['view'=>$id]); }
-   q('INSERT INTO guest_folio_entries(hotel_id,reservation_id,entry_type,description,amount,user_id,created_at) VALUES(1,?,?,?,?,NOW())',[$id,'charge',$desc,$amount,current_user()['id']]);
+   q('INSERT INTO guest_folio_entries(hotel_id,reservation_id,entry_type,description,amount,user_id,created_at) VALUES(1,?,?,?,?,?,NOW())',[$id,'charge',$desc,$amount,current_user()['id']]);
    audit('folio_charge','reservation',$id,['description'=>$desc,'amount'=>$amount]);
    flash('Charge added to the guest folio.');
    go('reservations',['view'=>$id]);

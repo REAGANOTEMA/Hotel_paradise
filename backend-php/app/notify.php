@@ -127,6 +127,25 @@ function notify_dispatch(string $eventKey,string $category,string $title,string 
  return ['ok'=>true,'duplicate'=>false,'notifications'=>$made,'queued'=>$queued,'error'=>null];
 }
 
+/**
+ * Raises an event from a console action. The same guarantees as
+ * notify_dispatch - the books always win, and this never throws - plus one rule
+ * that only makes sense behind a sign-in: the member who performed the action
+ * is not rung for it, so nobody is notified of the booking they just took or
+ * the payment they just entered. Give it an event key unique to the action; the
+ * UNIQUE key on notification_events then makes a double submit ring once.
+ */
+function notify_console(string $eventKey,string $category,string $title,string $body,
+ array $data=[],array $roles=[],?string $entityType=null,?int $entityId=null): void
+{
+ try{
+  $me=current_user();
+  notify_dispatch($eventKey,$category,$title,$body,$data,$roles,$me['id']??null,'',$entityType,$entityId);
+ }catch(\Throwable $e){
+  error_log('[hotel notify] console '.$eventKey.' skipped: '.$e->getMessage());
+ }
+}
+
 /** Queues one in-app notification for every push-capable device a member has. */
 function notify_queue_for_user(int $notificationId,int $userId): int
 {

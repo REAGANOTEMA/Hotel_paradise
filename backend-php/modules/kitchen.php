@@ -41,6 +41,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
  }
  q('UPDATE orders SET status=? WHERE id=?',[$to,$oid]);
  audit('order_status','order',$oid,['status'=>$r['status']],['status'=>$to]);
+ if($to==='ready'){
+  notify_console('kitchen-ready:'.$oid,'order','Order '.$r['order_number'].' is ready',
+   'The kitchen has plated it. It is waiting on the pass to be collected and served.',
+   ['order_id'=>$oid],['director','general_manager','cashier'],'order',$oid);
+ }
  flash('Order '.$r['order_number'].' is now '.$to.'.');
  go('kitchen');
 }

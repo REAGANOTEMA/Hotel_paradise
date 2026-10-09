@@ -42,6 +42,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     audit('order_item','menu_item',(int)$iid,['order'=>$oid,'qty'=>(float)$qty]);
    }
    audit('create','order',$oid,['number'=>$num]);
+   notify_console('desk-order:'.$oid,'order','New order '.$num,
+    ucfirst(str_replace('_',' ',(string)$outlet)).' · '.count($items).' item line(s) · '.money($sub),
+    ['order_id'=>$oid,'order_number'=>$num],['director','general_manager','cashier','kitchen'],'order',$oid);
    flash('Order '.$num.' sent to the kitchen or service area.');
    go('pos');
    break;
@@ -54,9 +57,14 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     if($nst==='cancelled'){
      q('INSERT INTO voids(hotel_id,ref_type,ref_id,reason,amount,user_id,created_at) VALUES(1,\'order\',?,?,?,?,NOW())',[$oid,trim($_POST['reason']),abs($r['status']==='pending'?0:val('SELECT SUM(total) FROM order_items WHERE order_id=?',[$oid])),$u['id']]);
     }
-    q('UPDATE orders SET status=? WHERE id=?',[$nst,$oid]);
-    audit('order_status','order',$oid,['status'=>$r['status']],['status'=>$nst]);
-    flash('Order '.$r['order_number'].' updated to '.$nst.'.');
+     q('UPDATE orders SET status=? WHERE id=?',[$nst,$oid]);
+     audit('order_status','order',$oid,['status'=>$r['status']],['status'=>$nst]);
+     if($nst==='cancelled'){
+      notify_console('desk-order-cancel:'.$oid,'incident','Order '.$r['order_number'].' cancelled',
+       'Cancelled from the POS. Reason: '.trim((string)($_POST['reason']??'not given')).'.',
+       ['order_id'=>$oid],['director','general_manager','cashier','kitchen'],'order',$oid);
+     }
+     flash('Order '.$r['order_number'].' updated to '.$nst.'.');
    }
    go('pos');
    break;
@@ -68,13 +76,17 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $due=$r['total']-$discount;
    $paidNow=(float)($_POST['amount']??$due);
    $grandPaid=(float)$r['subtotal']>0?0:0;
-   if($paidNow>0){
-    q('INSERT INTO payments(hotel_id,user_id,order_id,amount,method,status,created_at) VALUES(1,?,?,?,?,\'successful\',NOW())',[$u['id'],$oid,$paidNow,$method]);
-    audit('payment','order',$oid,['amount'=>$paidNow,'method'=>$method]);
-    q('UPDATE orders SET discount=?,subtotal=?,total=? WHERE id=?',[$discount,$r['subtotal'],$due,$oid]);
-    $tot=val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE order_id=? AND status=\'successful\'',[$oid]);
-    q('UPDATE orders SET status=? WHERE id=?',[$tot>=$due?'paid':'partially_paid',$oid]);
-    flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.');
+    if($paidNow>0){
+     q('INSERT INTO payments(hotel_id,user_id,order_id,amount,method,status,created_at) VALUES(1,?,?,?,?,\'successful\',NOW())',[$u['id'],$oid,$paidNow,$method]);
+     $payId=(int)db()->lastInsertId();
+     audit('payment','order',$oid,['amount'=>$paidNow,'method'=>$method]);
+     q('UPDATE orders SET discount=?,subtotal=?,total=? WHERE id=?',[$discount,$r['subtotal'],$due,$oid]);
+     $tot=val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE order_id=? AND status=\'successful\'',[$oid]);
+     q('UPDATE orders SET status=? WHERE id=?',[$tot>=$due?'paid':'partially_paid',$oid]);
+     notify_console('desk-order-payment:'.$payId,'payment','Order payment '.money($paidNow),
+      'Received by '.str_replace('_',' ',(string)$method).' for order '.$r['order_number'].'.',
+      ['order_id'=>$oid,'payment_id'=>$payId],['director','general_manager','accountant','cashier'],'payment',$payId);
+     flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.');
    } else { flash('Enter the amount collected.','bad'); }
    go('pos');
    break;

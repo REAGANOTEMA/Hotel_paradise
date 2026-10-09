@@ -2,6 +2,17 @@
 declare(strict_types=1);
 $u=current_user();
 
+/** After a stock move, ring once a day for each item that has fallen to or
+ *  below its reorder level. The event key carries the date, so a busy day
+ *  raises one alert per item rather than one per movement. */
+$lowStockAlert=function(int $iid,string $loc): void{
+ $r=row('SELECT i.name,i.unit,i.reorder_level,COALESCE(SUM(sl.quantity),0) qty FROM inventory_items i LEFT JOIN stock_levels sl ON sl.item_id=i.id WHERE i.id=? GROUP BY i.id',[$iid]);
+ if(!$r||(float)$r['qty']>(float)$r['reorder_level']) return;
+ notify_console('lowstock:'.$iid.':'.date('Y-m-d'),'incident','Low stock: '.$r['name'],
+  'Down to '.num($r['qty']).' '.$r['unit'].' (reorder at '.num($r['reorder_level']).') after a movement at '.$loc.'.',
+  ['item_id'=>$iid],['director','general_manager','storekeeper','accountant'],'inventory_item',$iid);
+};
+
 if($_SERVER['REQUEST_METHOD']==='POST'){
  $act=$_GET['act']??'';
  switch($act){
@@ -32,6 +43,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,NOW())',[$iid,$loc,$type,$delta,'Count adjusted to '.$qty.' '.$note,$u['id']]);
     q('UPDATE stock_levels SET quantity=? WHERE item_id=? AND location=?',[$qty,$iid,$loc]);
     audit('stock_count_adjust','inventory_item',$iid,['location'=>$loc,'new'=>$qty]);
+    $lowStockAlert($iid,$loc);
     flash('Stock level set to '.$qty.' at '.$loc.'.');
     go('inventory');
    }
@@ -41,11 +53,13 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
      q('UPDATE stock_levels SET quantity=quantity-? WHERE item_id=? AND location=?',[$qty,$iid,$loc]);
      q('UPDATE stock_levels SET quantity=quantity+? WHERE item_id=? AND location=?',[$qty,$iid,$dst]);
      audit('transfer','inventory_item',$iid,['from'=>$loc,'to'=>$dst,'qty'=>$qty]);
+     $lowStockAlert($iid,$loc);
      flash('Transferred '.$qty.' from '.$loc.' to '.$dst.'.'); go('inventory');
    }
    q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,NOW())',[$iid,$loc,$type,$sign*$qty,$note,$u['id']]);
    q('UPDATE stock_levels SET quantity=quantity+? WHERE item_id=? AND location=?',[$sign*$qty,$iid,$loc]);
    audit('stock_movement','inventory_item',$iid,['type'=>$type,'qty'=>$sign*$qty,'location'=>$loc]);
+   $lowStockAlert($iid,$loc);
    flash(ucfirst(str_replace('_',' ',$type)).' of '.$qty.' recorded at '.$loc.'.');
    go('inventory');
    break;

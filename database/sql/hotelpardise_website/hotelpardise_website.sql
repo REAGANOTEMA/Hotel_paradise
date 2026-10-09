@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 09, 2026 at 10:25 AM
+-- Generation Time: Oct 09, 2026 at 10:46 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -1179,6 +1179,24 @@ INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `voice_recordings`
+--
+
+CREATE TABLE `voice_recordings` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `hotel_id` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `user_id` int(10) UNSIGNED DEFAULT NULL,
+  `filename` varchar(255) NOT NULL,
+  `original_name` varchar(255) NOT NULL,
+  `filesize` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `mime_type` varchar(120) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `voids`
 --
 
@@ -1554,6 +1572,14 @@ ALTER TABLE `user_roles`
   ADD KEY `role_id` (`role_id`);
 
 --
+-- Indexes for table `voice_recordings`
+--
+ALTER TABLE `voice_recordings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_vr_hotel` (`hotel_id`),
+  ADD KEY `idx_vr_user` (`user_id`);
+
+--
 -- Indexes for table `voids`
 --
 ALTER TABLE `voids`
@@ -1799,6 +1825,12 @@ ALTER TABLE `suppliers`
 --
 ALTER TABLE `users`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+
+--
+-- AUTO_INCREMENT for table `voice_recordings`
+--
+ALTER TABLE `voice_recordings`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `voids`

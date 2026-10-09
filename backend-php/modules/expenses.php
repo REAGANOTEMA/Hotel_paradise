@@ -13,7 +13,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    if(!$dept||!$desc||$amount<=0){ flash('Complete the department, description and amount.','bad'); go('expenses'); }
    $num=next_number('EXP','expenses','number');
    q('INSERT INTO expenses(hotel_id,number,department_id,requested_by,category,description,amount,status,references_txt,created_at) VALUES(1,?,?,?,?,?,?,\'pending\',?,NOW())',[$num,$dept,$u['id'],$cat,$desc,$amount,trim($_POST['references_txt'])]);
-   audit('create','expense',(int)db()->lastInsertId(),['number'=>$num]);
+   $eid=(int)db()->lastInsertId();
+   audit('create','expense',$eid,['number'=>$num]);
+   $dname=(string)val('SELECT name FROM departments WHERE id=?',[$dept]);
+   notify_console('expense:'.$eid,'incident','Expense '.$num.' awaiting approval',
+    $dname.' · '.$cat.' · '.money($amount).' — '.$desc,
+    ['expense_id'=>$eid,'number'=>$num],['director','general_manager','accountant'],'expense',$eid);
    flash('Expense '.$num.' submitted for approval.');
    go('expenses');
    break;
@@ -21,9 +26,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $id=(int)($_POST['id']??0); $nst=$_POST['nst']??'';
    $r=row('SELECT * FROM expenses WHERE id=?',[$id]); if(!$r) break;
    if(in_array($nst,['approved','rejected'])){
-    q('UPDATE expenses SET status=?,approved_by=?,approved_at=NOW() WHERE id=?',[$nst,$u['id'],$id]);
-    audit('expense_'.$nst,'expense',$id,['status'=>$r['status']]);
-    flash('Expense '.$r['number'].' '.$nst.'.');
+     q('UPDATE expenses SET status=?,approved_by=?,approved_at=NOW() WHERE id=?',[$nst,$u['id'],$id]);
+     audit('expense_'.$nst,'expense',$id,['status'=>$r['status']]);
+     notify_console('expense-'.$nst.':'.$id,'communication','Expense '.$r['number'].' '.$nst,
+      money($r['amount']).' for '.$r['description'].'.',
+      ['expense_id'=>$id],['director','general_manager','accountant'],'expense',$id);
+     flash('Expense '.$r['number'].' '.$nst.'.');
    }
    go('expenses');
    break;
@@ -33,6 +41,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    if(!$r){ flash('Only approved expenses can be paid.','bad'); go('expenses'); }
    q('UPDATE expenses SET status=\'paid\',paid_at=NOW(),payment_method=? WHERE id=?',[$_POST['method']??'cash',$id]);
    audit('expense_paid','expense',$id,['method'=>$_POST['method']??'cash']);
+   notify_console('expense-paid:'.$id,'payment','Expense '.$r['number'].' paid',
+    money($r['amount']).' paid by '.str_replace('_',' ',(string)($_POST['method']??'cash')).' — '.$r['description'].'.',
+    ['expense_id'=>$id],['director','general_manager','accountant'],'expense',$id);
    flash('Expense '.$r['number'].' marked as paid.');
    go('expenses');
    break;
@@ -62,7 +73,7 @@ echo '<table class="tbl"><thead><tr><th>Number</th><th>Department</th><th>Catego
 foreach($list as $e){
  echo '<tr><td><b>'.e($e['number']).'</b><br><small>'.e($e['reqby']).'</small></td><td>'.e($e['dept']).'</td><td>'.e($e['category']).'</td><td>'.e($e['description']).'</td><td class="num">'.money($e['amount']).'</td><td>'.status_badge($e['status']).'</td><td style="white-space:nowrap">';
  if($e['status']==='pending'){ form_open('expenses','status',['id'=>$e['id']]); echo '<input type="hidden" name="nst" value="approved"><button class="btn sm tick">Approve</button>'; form_close(); form_open('expenses','status',['id'=>$e['id']]); echo '<input type="hidden" name="nst" value="rejected"><button class="btn sm danger">Reject</button>'; form_close(); }
- if($e['status']==='approved'){ form_open('expenses','pay',['id'=>$e['id']]); echo '<select name="method" style="padding:6px;border:1px solid var(--line);border-radius:8px">'; foreach(['cash'=>'Cash','mtn_momo'=>'Mobile Money','airtel_money'=>'Airtel Money','bank'=>'Bank'] as $k=>$v2) echo '<option>'.$v2.'</option>'; echo '</select> <button class="btn sm blue">Mark paid</button>'; form_close(); }
+  if($e['status']==='approved'){ form_open('expenses','pay',['id'=>$e['id']]); echo '<select name="method" style="padding:6px;border:1px solid var(--line);border-radius:8px">'; foreach(payment_methods() as $k=>$v2) echo '<option value="'.e($k).'">'.e($v2).'</option>'; echo '</select> <button class="btn sm blue">Mark paid</button>'; form_close(); }
  echo '</td></tr>';
 }
 if(!count($list)) echo '<tr><td colspan="7" style="text-align:center;color:var(--muted)">No expenses found.</td></tr>';

@@ -18,6 +18,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $rid=val('SELECT id FROM roles WHERE name=?',[$role]);
    if($rid) q('INSERT INTO user_roles(user_id,role_id) VALUES(?,?)',[$uid,$rid]);
    audit('save_user','user',$uid,['role'=>$role]);
+   if(!$id){
+    notify_console('user-new:'.$uid,'communication','New staff account: '.$name,
+     $email.' was added with the '.role_label($role).' role.',
+     ['user_id'=>$uid],['director','general_manager','super_admin'],'user',$uid);
+   }
    flash(($id?'Updated':'Added').' user account with the '.$role.' role.');
    go('users');
    break;
@@ -26,6 +31,10 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    if($id===(int)(current_user()['id']??0)){ flash('You cannot change your own account status.','bad'); go('users'); }
    q('UPDATE users SET status=? WHERE id=?',[$nst,$id]);
    audit(($nst==='suspended'?'suspend':'activate'),'user',$id);
+   $uname=(string)val('SELECT name FROM users WHERE id=?',[$id]);
+   notify_console('user-'.$nst.':'.$id,'communication','Staff account '.$nst.': '.$uname,
+    'The account was '.$nst.' by '.current_user()['name'].'.',
+    ['user_id'=>$id],['director','general_manager','super_admin'],'user',$id);
    flash('User '.$nst.'.');
    go('users');
    break;
