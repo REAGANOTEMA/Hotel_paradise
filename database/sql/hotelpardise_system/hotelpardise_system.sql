@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 08, 2026 at 06:11 AM
+-- Generation Time: Oct 09, 2026 at 06:33 AM
 -- Server version: 10.11.19-MariaDB
--- PHP Version: 8.4.25
+-- PHP Version: 8.4.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -1255,6 +1255,11 @@ CREATE TABLE `orders` (
   `order_type` enum('table','room','takeaway','delivery') NOT NULL,
   `table_name` varchar(60) DEFAULT NULL,
   `room_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `customer_name` varchar(160) DEFAULT NULL,
+  `customer_phone` varchar(40) DEFAULT NULL,
+  `customer_email` varchar(190) DEFAULT NULL,
+  `delivery_address` varchar(255) DEFAULT NULL,
+  `delivery_notes` text DEFAULT NULL,
   `status` enum('pending','accepted','preparing','ready','served','partially_paid','paid','cancelled') DEFAULT 'pending',
   `discount` decimal(14,2) DEFAULT 0.00,
   `subtotal` decimal(14,2) DEFAULT 0.00,
