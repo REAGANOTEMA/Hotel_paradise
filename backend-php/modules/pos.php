@@ -86,9 +86,14 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
      notify_console('desk-order-payment:'.$payId,'payment','Order payment '.money($paidNow),
       'Received by '.str_replace('_',' ',(string)$method).' for order '.$r['order_number'].'.',
       ['order_id'=>$oid,'payment_id'=>$payId],['director','general_manager','accountant','cashier'],'payment',$payId);
-     flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.');
-   } else { flash('Enter the amount collected.','bad'); }
-   go('pos');
+     // Settled money emails the guest their copy and prints the hotel's. Nothing
+     // is sent or printed for a request that was not paid.
+     require_once __DIR__.'/../app/receipts.php';
+     $receipt=receipts_after_payment($payId);
+     $sentNote=($receipt['email_sent']??false)?' The receipt was emailed to '.$receipt['email_to'].'.':'';
+     flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.'.$sentNote);
+     go('pos',['pay'=>$payId]);
+   } else { flash('Enter the amount collected.','bad'); go('pos'); }
    break;
  }
 }
@@ -184,4 +189,11 @@ btns.forEach(function(b){ b.addEventListener("click",function(){
   document.querySelectorAll(".itemCard").forEach(function(c){ c.style.display=(c.className.indexOf(b.dataset.cat)>-1||b.dataset.cat==="All")?"block":"none"; });
 });});
 </script>';
+require_once __DIR__.'/../app/receipts.php';
+// A payment just taken in this session leaves a hotel copy for the printer and
+// a fresh flag on it, so it prints by itself. A page opened any other way has
+// no fresh receipt and prints nothing.
+$payPrint=(int)($_GET['pay']??0);
+if($payPrint>0) receipts_hotel_template($payPrint,true);
+receipt_print('pos');
 page_foot();

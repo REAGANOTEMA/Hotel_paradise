@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 09, 2026 at 10:47 AM
+-- Generation Time: Oct 09, 2026 at 11:31 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -1634,6 +1634,28 @@ CREATE TABLE `purchase_requisition_items` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `receipt_deliveries`
+--
+
+CREATE TABLE `receipt_deliveries` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `payment_id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `source` varchar(20) NOT NULL DEFAULT '',
+  `reference` varchar(120) NOT NULL DEFAULT '',
+  `channel` enum('email','print') NOT NULL DEFAULT 'email',
+  `recipient` varchar(190) NOT NULL DEFAULT '',
+  `status` enum('sent','failed') NOT NULL DEFAULT 'failed',
+  `attempts` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `last_error` varchar(500) DEFAULT NULL,
+  `provider_message_id` varchar(190) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `reception_activity_log`
 --
 
@@ -3192,6 +3214,14 @@ ALTER TABLE `purchase_requisition_items`
   ADD KEY `item_id` (`item_id`);
 
 --
+-- Indexes for table `receipt_deliveries`
+--
+ALTER TABLE `receipt_deliveries`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_receipt_payment_channel` (`payment_id`,`channel`),
+  ADD KEY `idx_receipt_source` (`source`);
+
+--
 -- Indexes for table `reception_activity_log`
 --
 ALTER TABLE `reception_activity_log`
@@ -3899,6 +3929,12 @@ ALTER TABLE `purchase_requisitions`
 -- AUTO_INCREMENT for table `purchase_requisition_items`
 --
 ALTER TABLE `purchase_requisition_items`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `receipt_deliveries`
+--
+ALTER TABLE `receipt_deliveries`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --

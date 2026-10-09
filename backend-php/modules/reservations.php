@@ -94,8 +94,16 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
    notify_console('desk-payment:'.$payId,'payment','Reservation payment '.money($amount),
     'Received by '.str_replace('_',' ',(string)$method).' against booking '.$bn.'.',
     ['reservation_id'=>$id,'payment_id'=>$payId],['director','general_manager','accountant','cashier'],'payment',$payId);
-   flash('Payment of '.money($amount).' recorded.');
-   go('reservations',['view'=>$id]);
+   // The money is in, so the guest's receipt is emailed now and the hotel's copy
+   // is queued to print on the folio page. A payment that was not taken never
+   // reaches here, so neither happens without money.
+   require_once __DIR__.'/../app/receipts.php';
+   $receipt=receipts_after_payment($payId);
+   $sentNote=($receipt['email_sent']??false)
+    ?' The receipt was emailed to '.$receipt['email_to'].'.'
+    :(($receipt!==null&&($receipt['email_to']??'')==='')?' No email address was on file, so nothing was emailed.':'');
+   flash('Payment of '.money($amount).' recorded.'.$sentNote);
+   go('reservations',['view'=>$id,'pay'=>$payId]);
    break;
 
   case 'folio':
@@ -160,6 +168,13 @@ if($view){
  echo '<div class="field"><label>Amount</label><input type="number" step="500" min="1" name="amount"></div>';
  echo '<button class="btn blue">Add charge</button>'; form_close();
  echo '</div></div></div>';
+ // A payment just recorded arrives here with its id. The hotel copy is drawn
+ // fresh so the browser prints it by itself; the guest's copy has already gone
+ // by email. A booking opened without a payment prints nothing.
+ require_once __DIR__.'/../app/receipts.php';
+ $payPrint=(int)($_GET['pay']??0);
+ if($payPrint>0) receipts_hotel_template($payPrint,true);
+ receipt_print('reservations');
  page_foot(); exit;
 }
 

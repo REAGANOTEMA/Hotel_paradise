@@ -43,7 +43,15 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    notify_console('desk-fnb-payment:'.$payId,'payment','F&B payment '.money($paidNow),
     'Received by '.str_replace('_',' ',(string)$method).' for order '.$r['order_number'].'.',
     ['order_id'=>$oid,'payment_id'=>$payId],['director','general_manager','accountant','cashier'],'payment',$payId);
-   flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.');
+   // The money is in, so the guest's copy goes to their email at once. The bill
+   // below prints itself as the hotel's copy. Neither happens on a request that
+   // was not paid, because this call only ever sees a settled payment.
+   require_once __DIR__.'/../app/receipts.php';
+   $receipt=receipts_after_payment($payId);
+   $sentNote=($receipt['email_sent']??false)
+    ?' The receipt was emailed to '.$receipt['email_to'].'.'
+    :(($receipt!==null&&($receipt['email_to']??'')==='')?' No email address was on file, so nothing was emailed.':'');
+   flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.'.$sentNote);
    go('fnb',['view'=>$oid,'printed'=>1]);
    break;
   case 'status':
