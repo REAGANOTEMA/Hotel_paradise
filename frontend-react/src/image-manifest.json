@@ -7427,63 +7427,135 @@
       "kind": "image"
     },
     {
-      "slug": "hotel-paradise",
-      "dir": "./images/",
-      "file": "Hotel-paradise.webp",
+      "slug": "hotel",
+      "dir": "./images/hero/",
+      "file": "hotel-1920.webp",
       "ext": "webp",
-      "w": 864,
-      "h": 576,
-      "variants": [],
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "hotel-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "hotel-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
       "kind": "image"
     },
     {
-      "slug": "execuitive-bed",
-      "dir": "./images/",
-      "file": "execuitive-bed.avif",
-      "ext": "avif",
-      "w": 0,
-      "h": 0,
-      "variants": [],
+      "slug": "bed-executive",
+      "dir": "./images/hero/",
+      "file": "bed-executive-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "bed-executive-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "bed-executive-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
       "kind": "image"
     },
     {
-      "slug": "paradise-banquet-hall-768x1024",
-      "dir": "./images/",
-      "file": "paradise-banquet-hall-768x1024.jpg",
-      "ext": "jpg",
-      "w": 768,
-      "h": 1024,
-      "variants": [],
+      "slug": "food-table",
+      "dir": "./images/hero/",
+      "file": "food-table-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "food-table-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "food-table-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
       "kind": "image"
     },
     {
-      "slug": "steak-with-wedges",
-      "dir": "./images/",
-      "file": "steak-with-wedges.jpg",
-      "ext": "jpg",
-      "w": 1440,
-      "h": 720,
-      "variants": [],
+      "slug": "burger",
+      "dir": "./images/hero/",
+      "file": "burger-1200.webp",
+      "ext": "webp",
+      "w": 1200,
+      "h": 900,
+      "variants": [
+        {
+          "file": "burger-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 720
+        }
+      ],
       "kind": "image"
     },
     {
-      "slug": "juice-hero",
-      "dir": "./images/",
-      "file": "juice-hero.jpg",
-      "ext": "jpg",
-      "w": 500,
-      "h": 375,
-      "variants": [],
+      "slug": "food-fruit",
+      "dir": "./images/hero/",
+      "file": "food-fruit-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 2880,
+      "variants": [
+        {
+          "file": "food-fruit-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 1440
+        },
+        {
+          "file": "food-fruit-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 1920
+        }
+      ],
       "kind": "image"
     },
     {
-      "slug": "wine-hero",
-      "dir": "./images/",
-      "file": "wine-hero.jpg",
-      "ext": "jpg",
-      "w": 678,
-      "h": 452,
-      "variants": [],
+      "slug": "food-spread",
+      "dir": "./images/hero/",
+      "file": "food-spread-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "food-spread-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "food-spread-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
       "kind": "image"
     },
     {
@@ -7510,21 +7582,21 @@
       "kind": "image"
     },
     {
-      "slug": "food-table",
+      "slug": "food-pizza-two",
       "dir": "./images/hero/",
-      "file": "food-table-1920.webp",
+      "file": "food-pizza-two-1920.webp",
       "ext": "webp",
       "w": 1920,
       "h": 1280,
       "variants": [
         {
-          "file": "food-table-960.webp",
+          "file": "food-pizza-two-960.webp",
           "ext": "webp",
           "w": 960,
           "h": 640
         },
         {
-          "file": "food-table-1280.webp",
+          "file": "food-pizza-two-1280.webp",
           "ext": "webp",
           "w": 1280,
           "h": 853

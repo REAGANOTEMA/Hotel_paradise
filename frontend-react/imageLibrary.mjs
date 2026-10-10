@@ -155,14 +155,14 @@ function scanFolder(dir) {
  */
 const HERO_SEQUENCE = [
   'hero/pool',
-  'hotel-paradise',
-  'execuitive-bed',
-  'paradise-banquet-hall-768x1024',
-  'steak-with-wedges',
-  'juice-hero',
-  'wine-hero',
-  'hero/view',
+  'hero/hotel',
+  'hero/bed-executive',
   'hero/food-table',
+  'hero/burger',
+  'hero/food-fruit',
+  'hero/food-spread',
+  'hero/view',
+  'hero/food-pizza-two',
   'hero/bed-suite',
   'hero/food-fish',
   'hero/food-pizza'

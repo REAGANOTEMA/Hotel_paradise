@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, setCustomer, forgetCustomer, LOGO, BackLink} from './shared';
+import {TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, setCustomer, forgetCustomer, LOGO, BackLink, bgUrl} from './shared';
 
 /*
  * The guest's own account.
@@ -189,7 +189,7 @@ function AccountPage() {
    <TopBar/>
    <PageNav onDark/>
 
-   <section className="pageHero canvas hasCover" id="main" style={{'--bg': "url('./images/hero/bed-executive-1920.webp')"} as unknown as React.CSSProperties}>
+   <section className="pageHero canvas hasCover" id="main" style={{'--bg': bgUrl('./images/hero/bed-executive-1920.webp')} as unknown as React.CSSProperties}>
     <div className="pageHeroInner">
     <BackLink label="Back" fallback="./index.html"/>
     <p className="eyebrow">YOUR ACCOUNT</p>

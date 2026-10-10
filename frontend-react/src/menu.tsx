@@ -173,7 +173,7 @@ function DishShot({dish, large = false, hint = true}: {dish: MenuItem; large?: b
       alt={dish.name}
       ratio={large ? '16 / 10' : '4 / 3'}
       widths={large ? [640, 1024, 1440] : [320, 480, 640, 960]}
-      sizes={large ? '(max-width:900px) 100vw, 46vw' : '(max-width:640px) 132px, (max-width:1050px) 240px, (width:94%;max-width:100%) 300px, 340px'}
+      sizes={large ? '(max-width:900px) 100vw, 46vw' : '(max-width:640px) 132px, (max-width:1050px) 240px, 320px'}
       position="50% 52%"
       zoom={!large}
       className={large ? 'shot shotLarge' : 'shot'}
@@ -676,7 +676,8 @@ function MenuPage() {
             receiptHtml += `
                   </div>
                   <div class="tot">
-                    <div class="tr"><span>Subtotal:</span><span>UGX ${Math.round(subtotal).toLocaleString()}</span></div>
+                    <div class="tr"><span>Subtotal:</span><span>UGX ${Math.round(Number(d.subtotal) || subtotal).toLocaleString()}</span></div>
+                    <div class="tr"><span>Service charge (3.5%):</span><span>UGX ${Math.round(Number(d.service_charge) || (Number(d.subtotal) || subtotal) * 0.035).toLocaleString()}</span></div>
                     <div class="tr gt"><span>TOTAL:</span><span>UGX ${Math.round(Number(d.total)||subtotal).toLocaleString()}</span></div>
                   </div>
                   <div class="f">

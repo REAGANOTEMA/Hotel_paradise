@@ -48,6 +48,17 @@ function service_charge(float $amount): float{
 }
 
 /**
+ * Whether a website payment settles itself.
+ *
+ * Pesapal is not connected yet, so without this a submitted payment would sit
+ * as pending until a cashier confirmed it by hand - and the guest would never
+ * see a receipt. While this is on, a submitted payment is treated as received
+ * the moment it is made, the receipt is produced, and the reference settles.
+ * Turn it off the day the real gateway is live.
+ */
+const PAYMENT_DEMO_SETTLE = true;
+
+/**
  * Some installations were built before the menu tables grew their optional
  * columns. Selecting a column that is not there is a fatal error, which used to
  * take the whole menu down, so a column is only ever asked for once we have
@@ -397,6 +408,18 @@ if($act==='payment'){
  api_notify('payment:'.$payRef,'payment','Payment request '.$payRef,
   $name.' started a '.strtoupper($method).' payment of '.money($expected).' for the '.$label.' '.$ref.'.',
   ['reference'=>$payRef,'source'=>$label,'amount'=>$expected,'method'=>$method,'guest'=>$name,'phone'=>$phone]);
+ // No gateway is connected yet, so a payment settles here the moment it is
+ // made: the row is marked successful, the receipt is produced, and the
+ // reference reads as paid. The guest's own page then prints that receipt.
+ if(PAYMENT_DEMO_SETTLE){
+  q('UPDATE payments SET status=\'successful\' WHERE id=?',[$pid]);
+  require_once __DIR__.'/app/receipts.php';
+  $rcpt=receipts_after_payment($pid);
+  audit('web_payment_settled','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'successful']);
+  $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'demo','online'=>true,'status'=>'successful','paid'=>true,
+    'receipt_sent'=>(bool)($rcpt['email_sent']??false),
+    'message'=>'Payment received. Your receipt is ready'.(($rcpt['email_sent']??false)?' and a copy has been emailed to you':'').'.']);
+ }
  $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,'status'=>'pending','paid'=>false,
     'message'=>'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.']);
 }
@@ -486,7 +509,7 @@ if($act==='checkout'){
   $payments=$paymentsFor($oid,null);
   $total=(float)$o['total'];
   $lines=rows('SELECT oi.quantity,oi.unit_price,oi.total,oi.notes,mi.name'
-    .nullable_column('menu_items','image','image','mi')
+    .', '.nullable_column('menu_items','image','image','mi')
     .' FROM order_items oi'
     .' LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id=? ORDER BY oi.id',[$oid]);
   $items=array_map(function(array $l): array{

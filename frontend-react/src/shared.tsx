@@ -45,6 +45,16 @@ export const apiUrl = async (act: string): Promise<string> => {
 
 export const LOGO = './logo-256.png';
 
+/* A background photograph handed to CSS through a custom property.
+ *
+ * A url() token that sits inside a custom property is resolved against the
+ * stylesheet that uses it, not against the page. A relative path would then be
+ * looked for under /assets/, where the stylesheet lives, and 404. Resolving the
+ * path against the document's own base here makes the value absolute, so
+ * whichever stylesheet consumes it, the browser has the real URL. */
+export const bgUrl = (path: string): string =>
+  `url('${new URL(path, document.baseURI).href}')`;
+
 /**
  * Registers the offline-capable service worker.
  *

@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, CALL, telHref} from './shared';
+import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, CALL, telHref, bgUrl} from './shared';
 import {heroShots, SmartImage, type HeroShot} from './SmartImage';
 
 /**
@@ -427,7 +427,7 @@ function Rates() {
  // each row so a guest can see the range of rates without reading every figure.
  const maxRate = Math.max(...rooms.filter(x => x.price > 0).map(x => x.price), 1);
  return (
-   <section className="section band rates hasBackdrop" id="rates" style={{'--bg': "url('./images/hero/bed-executive-1920.webp')"} as unknown as React.CSSProperties}>
+   <section className="section band rates hasBackdrop" id="rates" style={{'--bg': bgUrl('./images/hero/bed-executive-1920.webp')} as unknown as React.CSSProperties}>
     <div className="bandInner">
     <div className="center reveal">
      <p className="eyebrow">ROOM RATES AND POLICIES</p>
@@ -509,7 +509,7 @@ function Home() {
 
    <p className="stripNote reveal">Your room has its own page. When you choose below, you will see the bed clearly and you are free to change your mind before booking.</p>
 
-   <section className="section hasTint" id="rooms" style={{'--bg': "url('./images/hero/bed-twin-1920.webp')"} as unknown as React.CSSProperties}>
+   <section className="section hasTint" id="rooms" style={{'--bg': bgUrl('./images/hero/bed-twin-1920.webp')} as unknown as React.CSSProperties}>
     <div className="center reveal">
      <p className="eyebrow">STAY IN PARADISE</p>
      <h2>Rooms and beds</h2>
@@ -548,7 +548,7 @@ function Home() {
    <Rates/>
 
 
-  <section className="section hasTint" id="dining" style={{'--bg': "url('./images/hero/food-fruit-1920.webp')"} as unknown as React.CSSProperties}>
+  <section className="section hasTint" id="dining" style={{'--bg': bgUrl('./images/hero/food-fruit-1920.webp')} as unknown as React.CSSProperties}>
    <div className="center reveal">
     <p className="eyebrow">DINING AND BAR</p>
     <h2>Good food, great moments</h2>
@@ -557,12 +557,26 @@ function Home() {
    <div className="menuWrap">
     <DiningBoard/>
    </div>
+   <div className="promoStrip">
+    <a className="promo reveal" href="./menu.html">
+     <SmartImage group="site" name="steak-with-wedges" alt="Grilled steak with potato wedges" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 45%" zoom/>
+     <span><b>From the grill</b><small>Steaks and platters &rarr;</small></span>
+    </a>
+    <a className="promo reveal" href="./menu.html">
+     <SmartImage group="site" name="juice-hero" alt="Freshly pressed tropical juice" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 50%" zoom/>
+     <span><b>Freshly pressed</b><small>Juices and smoothies &rarr;</small></span>
+    </a>
+    <a className="promo reveal" href="./menu.html">
+     <SmartImage group="site" name="wine-hero" alt="Wine poured at the riverside bar" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 50%" zoom/>
+     <span><b>The bar</b><small>Wine and cocktails &rarr;</small></span>
+    </a>
+   </div>
    <div className="center reveal" style={{marginTop: 40}}>
     <a className="btn" href="./menu.html">See the full menu and order</a>
    </div>
   </section>
 
-  <section className="section hasTint" id="facilities" style={{'--bg': "url('./images/Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover.jpg')"} as unknown as React.CSSProperties}>
+  <section className="section hasTint" id="facilities" style={{'--bg': bgUrl('./images/Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover.jpg')} as unknown as React.CSSProperties}>
    <div className="center reveal">
     <p className="eyebrow">THE HOTEL</p>
     <h2>Everything you need, in one place</h2>
@@ -607,7 +621,7 @@ function Home() {
     </div>
    </section>
 
-  <section className="section band contact hasBackdrop" id="contact" style={{'--bg': "url('./images/hero/view-1920.webp')"} as unknown as React.CSSProperties}>
+  <section className="section band contact hasBackdrop" id="contact" style={{'--bg': bgUrl('./images/hero/view-1920.webp')} as unknown as React.CSSProperties}>
    <div className="bandInner">
    <div className="center reveal">
     <p className="eyebrow">BOOKINGS AND ENQUIRIES</p>
