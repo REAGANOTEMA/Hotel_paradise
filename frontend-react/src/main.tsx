@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, CALL, telHref, bgUrl} from './shared';
+import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, telHref, bgUrl, useReveal} from './shared';
 import {heroShots, SmartImage, type HeroShot} from './SmartImage';
 
 /**
@@ -166,25 +166,25 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Book a room', href: './rooms.html'}
   },
   {
-    eyebrow: 'EXECUTIVE COMFORT',
-    title: 'Rest like you truly deserve.',
-    text: 'Our executive rooms wrap you in crisp linen, soft lighting and quiet luxury, so every night ends beautifully and every morning starts easy.',
-    primary: {label: 'See the rooms', href: './rooms.html'},
-    secondary: {label: 'Check availability', href: '#book'}
-  },
-  {
-    eyebrow: 'WEDDINGS, CONFERENCES AND FUNCTIONS',
-    title: 'Halls and gardens on the river.',
-    text: 'Our banquet hall and conference rooms sit in the gardens of the Nile, with a kitchen that feeds a full house. Tell us what you are planning and we will carry the details.',
-    primary: {label: 'Plan an event', href: './events.html'},
-    secondary: {label: 'See the halls', href: './events.html#occasions'}
-  },
-  {
-    eyebrow: 'STEAK NIGHT',
-    title: 'Perfectly grilled, every time.',
-    text: 'Tender steak seared to your liking and served sizzling with crisp potato wedges and a rich sauce. This is dinner done the way it should be.',
+    eyebrow: 'DINING IN PARADISE',
+    title: 'A table set by the river.',
+    text: 'Our dining room and riverside terrace welcome you for breakfast, lunch and dinner, with a kitchen that serves every dish fresh through the day.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
+  },
+  {
+    eyebrow: 'BREAKFAST INCLUDED',
+    title: 'Every morning starts well.',
+    text: 'A full breakfast is included in every room rate, served each morning with fresh bread, fruit, eggs and hot coffee. The calmest way to open a day in Jinja.',
+    primary: {label: 'See the rooms', href: './rooms.html'},
+    secondary: {label: 'Open the menu', href: './menu.html'}
+  },
+  {
+    eyebrow: 'FROM THE BREAKFAST TABLE',
+    title: 'Freshly made, every morning.',
+    text: 'Omelets, pastries, fruit and freshly baked bread, laid out each morning for our guests and served with a smile as the day begins.',
+    primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'See the rooms', href: './rooms.html'}
   },
   {
     eyebrow: 'FRESHLY PRESSED',
@@ -194,23 +194,23 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'FROM THE BAR',
-    title: 'Raise a glass to the evening.',
-    text: 'A carefully chosen wine list and a relaxed riverside bar turn every night into a celebration. Come for dinner, stay for the golden hour.',
+    eyebrow: 'FRESH FROM THE NILE',
+    title: 'Catch of the day, served with pride.',
+    text: 'Fresh tilapia and river fish, seasoned and grilled to perfection by our chefs. A true taste of Jinja, straight from the water to your plate.',
     primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'Send an order', href: './menu.html#order'}
+  },
+  {
+    eyebrow: 'THE NILE VIEW',
+    title: 'Sunsets from the river.',
+    text: 'Golden light over the Nile, from the rooms, the terrace and the lawns that run down to the water. A stay in Jinja does not get calmer than this.',
+    primary: {label: 'See the rooms', href: './rooms.html'},
     secondary: {label: 'See the facilities', href: './facilities.html'}
   },
   {
-    eyebrow: 'TAKE THE TOUR',
-    title: 'See Paradise before you arrive.',
-    text: 'A look around the rooms, the pool and the gardens on the banks of the Nile. Book online in a moment, or call the front desk and let us welcome you.',
-    primary: {label: 'Book your stay', href: './rooms.html'},
-    secondary: {label: 'Call ' + CALL, href: telHref(CALL)}
-  },
-  {
-    eyebrow: 'DINING AND BAR',
-    title: 'A great dinner, a fine table.',
-    text: 'Beef from the grill and a glass of wine, with the Nile a few steps from your table. Dinner is served every evening until eleven.',
+    eyebrow: 'FROM THE PIZZA OVEN',
+    title: 'A proper margherita.',
+    text: 'Juicy tomato, mozzarella and basil on a thin, floury crust, pulled hot from the oven in the same kitchen that serves the rest of the menu.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
@@ -222,18 +222,25 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'FRESH FROM THE NILE',
-    title: 'Catch of the day, served with pride.',
-    text: 'Fresh tilapia and river fish, seasoned and grilled to perfection by our chefs. A true taste of Jinja, straight from the water to your plate.',
+    eyebrow: 'GRILLED TO PERFECTION',
+    title: 'Whole fish, straight from the grill.',
+    text: 'Seasoned whole tilapia and fillets cooked over the flame and served sizzling, a house favourite with chips or a fresh salad.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'FROM THE PIZZA OVEN',
-    title: 'A proper margherita.',
-    text: 'Juicy tomato, mozzarella and basil on a thin, floury crust, pulled hot from the oven in the same kitchen that serves the rest of the menu.',
+    eyebrow: 'CHICKEN DISHES',
+    title: 'Golden, tender and full of flavour.',
+    text: 'Grilled, fried or slow roasted, our chicken plates are cooked to order and served hot with the sides you choose.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
+  },
+  {
+    eyebrow: 'EVENTS AND BUFFETS',
+    title: 'A feast for every occasion.',
+    text: 'From conferences to weddings, our kitchen lays a full buffet in the halls and the gardens. Tell us what you are planning and we will cater it.',
+    primary: {label: 'Plan an event', href: './events.html'},
+    secondary: {label: 'Open the menu', href: './menu.html'}
   }
 ];
 
@@ -471,31 +478,6 @@ function Rates() {
     </div>
    </section>
  );
-}
-
-/**
- * Anything marked `.reveal` rises into place the first time it is scrolled
- * past, and is then left alone. Everything is shown the moment the browser
- * cannot do this, so the page never holds its writing back from a guest.
- */
-function useReveal() {
-  React.useEffect(() => {
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
-    if (!('IntersectionObserver' in window)) {
-      nodes.forEach(n => n.classList.add('in'));
-      return;
-    }
-    const io = new IntersectionObserver(
-      entries => entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      }),
-      {threshold: 0.12, rootMargin: '0px 0px -6% 0px'}
-    );
-    nodes.forEach(n => io.observe(n));
-    return () => io.disconnect();
-  }, []);
 }
 
 function Home() {

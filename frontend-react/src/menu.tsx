@@ -38,9 +38,9 @@ const SHOW_FILE_HINTS = photoHintsEnabled();
 const MENU_HERO_FRAMES: HeroCoverFrame[] = [
  {base: './images/hero/food-table', ext: 'webp', widths: [960, 1280, 1920]},
  {base: './images/hero/food-breakfast', ext: 'webp', widths: [960, 1280, 1920]},
- {base: './images/hero/food-pizza', ext: 'webp', widths: [960, 1280, 1920]},
- {base: './images/hero/food-spread', ext: 'webp', widths: [960, 1280, 1920]},
- {base: './images/hero/food-fish', ext: 'webp', widths: [960, 1280, 1688]}
+ {base: './images/hero/food-pizza-two', ext: 'webp', widths: [960, 1280, 1920]},
+ {base: './images/hero/food-fish', ext: 'webp', widths: [960, 1280, 1688]},
+ {base: './images/hero/food-sandwich', ext: 'webp', widths: [960, 1280, 1707]}
 ];
 
 /** Reads the live kitchen menu and folds it into the same shape as the fallback. */

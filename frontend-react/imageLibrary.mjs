@@ -156,16 +156,17 @@ function scanFolder(dir) {
 const HERO_SEQUENCE = [
   'hero/pool',
   'hero/hotel',
-  'hero/bed-executive',
-  'hero/food-table',
-  'hero/burger',
-  'hero/food-fruit',
-  'hero/food-spread',
+  'hero/dinning-space',
+  'hero/break-fast-hero',
+  'hero/breakfast2-hero',
+  'hero/juice-hero-with-bread',
+  'hero/sea-food-hero',
   'hero/view',
   'hero/food-pizza-two',
   'hero/bed-suite',
   'hero/food-fish',
-  'hero/food-pizza'
+  'hero/chicken-hero',
+  'hero/food-buffe-ready-for-serving-inoutside-cathering'
 ];
 
 const VIDEO_EXTS = ['.mp4', '.webm', '.mov', '.m4v'];

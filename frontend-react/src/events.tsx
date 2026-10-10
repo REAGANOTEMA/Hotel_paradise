@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL} from './shared';
+import {TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
 import {SmartImage, type ImageGroup} from './SmartImage';
 
 /**
@@ -42,6 +42,8 @@ function EventsPage() {
  const [form, setForm] = React.useState({name: '', phone: '', email: '', event_type: '', event_date: '', guests: '', venue: '', message: ''});
  const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
  const [busy, setBusy] = React.useState(false);
+
+ useReveal();
 
  const f = (k: keyof typeof form) => ((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({...form, [k]: e.target.value}));
 

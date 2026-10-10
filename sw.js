@@ -14,7 +14,7 @@
  *     a booking, an order or a payment look as though it was submitted
  *     when the server has not confirmed it: those pages are network-only.
  */
-const VERSION = 'hpn-2026-11';
+const VERSION = 'hpn-2026-12';
 const STATIC_CACHE = VERSION + '-static';
 const RUNTIME_CACHE = VERSION + '-runtime';
 const OFFLINE_URL = './offline.html';

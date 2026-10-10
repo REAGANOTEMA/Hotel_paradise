@@ -43,7 +43,7 @@ export const apiUrl = async (act: string): Promise<string> => {
   return `${apiBase}?act=${act}`;
 };
 
-export const LOGO = './logo-256.png';
+export const LOGO = './logo-512.webp';
 
 /* A background photograph handed to CSS through a custom property.
  *
@@ -501,6 +501,37 @@ export function BackToTop() {
    <span>Top</span>
   </button>
  );
+}
+
+/**
+ * Reveals anything marked `.reveal` as it scrolls into view.
+ *
+ * The mark starts its elements hidden, so a page that uses it must run this
+ * once from its own root component or nothing marked would ever be shown.
+ * Everything is revealed at once when the browser cannot observe scrolling or
+ * the guest has asked for less motion, so the writing is never held back.
+ */
+export function useReveal() {
+  React.useEffect(() => {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+    const still = (() => {
+      try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
+    })();
+    if (!('IntersectionObserver' in window) || still) {
+      nodes.forEach(n => n.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }),
+      {threshold: 0.12, rootMargin: '0px 0px -6% 0px'}
+    );
+    nodes.forEach(n => io.observe(n));
+    return () => io.disconnect();
+  }, []);
 }
 
 /* Every page imports this module, so the service worker is offered once,

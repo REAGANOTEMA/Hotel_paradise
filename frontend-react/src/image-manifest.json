@@ -7536,21 +7536,21 @@
       "kind": "image"
     },
     {
-      "slug": "food-spread",
+      "slug": "food-breakfast",
       "dir": "./images/hero/",
-      "file": "food-spread-1920.webp",
+      "file": "food-breakfast-1920.webp",
       "ext": "webp",
       "w": 1920,
       "h": 1280,
       "variants": [
         {
-          "file": "food-spread-960.webp",
+          "file": "food-breakfast-960.webp",
           "ext": "webp",
           "w": 960,
           "h": 640
         },
         {
-          "file": "food-spread-1280.webp",
+          "file": "food-breakfast-1280.webp",
           "ext": "webp",
           "w": 1280,
           "h": 853
@@ -7651,24 +7651,24 @@
       "kind": "image"
     },
     {
-      "slug": "food-pizza",
+      "slug": "food-sandwich",
       "dir": "./images/hero/",
-      "file": "food-pizza-1920.webp",
+      "file": "food-sandwich-1707.webp",
       "ext": "webp",
-      "w": 1920,
-      "h": 1280,
+      "w": 1707,
+      "h": 2560,
       "variants": [
         {
-          "file": "food-pizza-960.webp",
+          "file": "food-sandwich-960.webp",
           "ext": "webp",
           "w": 960,
-          "h": 640
+          "h": 1440
         },
         {
-          "file": "food-pizza-1280.webp",
+          "file": "food-sandwich-1280.webp",
           "ext": "webp",
           "w": 1280,
-          "h": 853
+          "h": 1920
         }
       ],
       "kind": "image"
