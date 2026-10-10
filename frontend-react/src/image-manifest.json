@@ -6798,16 +6798,40 @@
       "h": 933,
       "variants": []
     },
+    "break-fast-hero": {
+      "ext": "jpg",
+      "w": 596,
+      "h": 335,
+      "variants": []
+    },
+    "breakfast2-hero": {
+      "ext": "jpg",
+      "w": 500,
+      "h": 265,
+      "variants": []
+    },
     "burger-hero": {
       "ext": "jpg",
       "w": 739,
       "h": 415,
       "variants": []
     },
+    "chicken-hero": {
+      "ext": "png",
+      "w": 767,
+      "h": 628,
+      "variants": []
+    },
     "classicop-e-margherita": {
       "ext": "webp",
       "w": 500,
       "h": 300,
+      "variants": []
+    },
+    "dinning-space": {
+      "ext": "jpg",
+      "w": 678,
+      "h": 452,
       "variants": []
     },
     "double-deluxe-bed": {
@@ -6826,6 +6850,12 @@
       "ext": "webp",
       "w": 768,
       "h": 512,
+      "variants": []
+    },
+    "food-buffe-ready-for-serving-inoutside-cathering": {
+      "ext": "jpg",
+      "w": 727,
+      "h": 345,
       "variants": []
     },
     "gym": {
@@ -6954,6 +6984,12 @@
       "h": 900,
       "variants": []
     },
+    "juice-hero-with-bread": {
+      "ext": "jpg",
+      "w": 597,
+      "h": 335,
+      "variants": []
+    },
     "juice-hero": {
       "ext": "jpg",
       "w": 500,
@@ -6998,6 +7034,12 @@
       "ext": "png",
       "w": 1254,
       "h": 1254,
+      "variants": []
+    },
+    "sea-food-hero": {
+      "ext": "jpg",
+      "w": 1800,
+      "h": 1201,
       "variants": []
     },
     "single-room": {
@@ -7450,110 +7492,77 @@
       "kind": "image"
     },
     {
-      "slug": "bed-executive",
+      "slug": "dinning-space",
       "dir": "./images/hero/",
-      "file": "bed-executive-1920.webp",
+      "file": "dinning-space.webp",
       "ext": "webp",
-      "w": 1920,
-      "h": 1280,
+      "w": 678,
+      "h": 452,
       "variants": [
         {
-          "file": "bed-executive-960.webp",
+          "file": "dinning-space-640.webp",
           "ext": "webp",
-          "w": 960,
-          "h": 640
-        },
-        {
-          "file": "bed-executive-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 853
+          "w": 640,
+          "h": 427
         }
       ],
       "kind": "image"
     },
     {
-      "slug": "food-table",
+      "slug": "break-fast-hero",
       "dir": "./images/hero/",
-      "file": "food-table-1920.webp",
+      "file": "break-fast-hero.webp",
       "ext": "webp",
-      "w": 1920,
-      "h": 1280,
-      "variants": [
-        {
-          "file": "food-table-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 640
-        },
-        {
-          "file": "food-table-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 853
-        }
-      ],
+      "w": 596,
+      "h": 335,
+      "variants": [],
       "kind": "image"
     },
     {
-      "slug": "burger",
+      "slug": "breakfast2-hero",
       "dir": "./images/hero/",
-      "file": "burger-1200.webp",
+      "file": "breakfast2-hero.webp",
       "ext": "webp",
-      "w": 1200,
-      "h": 900,
-      "variants": [
-        {
-          "file": "burger-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 720
-        }
-      ],
+      "w": 500,
+      "h": 265,
+      "variants": [],
       "kind": "image"
     },
     {
-      "slug": "food-fruit",
+      "slug": "juice-hero-with-bread",
       "dir": "./images/hero/",
-      "file": "food-fruit-1920.webp",
+      "file": "juice-hero-with-bread.webp",
       "ext": "webp",
-      "w": 1920,
-      "h": 2880,
-      "variants": [
-        {
-          "file": "food-fruit-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 1440
-        },
-        {
-          "file": "food-fruit-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 1920
-        }
-      ],
+      "w": 597,
+      "h": 335,
+      "variants": [],
       "kind": "image"
     },
     {
-      "slug": "food-breakfast",
+      "slug": "sea-food-hero",
       "dir": "./images/hero/",
-      "file": "food-breakfast-1920.webp",
+      "file": "sea-food-hero.webp",
       "ext": "webp",
-      "w": 1920,
-      "h": 1280,
+      "w": 1800,
+      "h": 1201,
       "variants": [
         {
-          "file": "food-breakfast-960.webp",
+          "file": "sea-food-hero-640.webp",
           "ext": "webp",
-          "w": 960,
-          "h": 640
+          "w": 640,
+          "h": 427
         },
         {
-          "file": "food-breakfast-1280.webp",
+          "file": "sea-food-hero-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 641
+        },
+        {
+          "file": "sea-food-hero-1280.webp",
           "ext": "webp",
           "w": 1280,
-          "h": 853
+          "h": 854
         }
       ],
       "kind": "image"
@@ -7651,24 +7660,35 @@
       "kind": "image"
     },
     {
-      "slug": "food-sandwich",
+      "slug": "chicken-hero",
       "dir": "./images/hero/",
-      "file": "food-sandwich-1707.webp",
+      "file": "chicken-hero.webp",
       "ext": "webp",
-      "w": 1707,
-      "h": 2560,
+      "w": 767,
+      "h": 628,
       "variants": [
         {
-          "file": "food-sandwich-960.webp",
+          "file": "chicken-hero-640.webp",
           "ext": "webp",
-          "w": 960,
-          "h": 1440
-        },
+          "w": 640,
+          "h": 524
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "food-buffe-ready-for-serving-inoutside-cathering",
+      "dir": "./images/hero/",
+      "file": "food-buffe-ready-for-serving-inoutside-cathering.webp",
+      "ext": "webp",
+      "w": 727,
+      "h": 345,
+      "variants": [
         {
-          "file": "food-sandwich-1280.webp",
+          "file": "food-buffe-ready-for-serving-inoutside-cathering-640.webp",
           "ext": "webp",
-          "w": 1280,
-          "h": 1920
+          "w": 640,
+          "h": 304
         }
       ],
       "kind": "image"
