@@ -122,7 +122,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 
 $view=(int)($_GET['view']??0);
 if($view){
- $o=row('SELECT po.*,s.name supplier,d.name dept FROM purchase_orders po JOIN suppliers s ON s.id=po.supplier_id LEFT JOIN purchase_requisitions pr ON pr.id=po.requisition_id LEFT JOIN departments d ON d.id=pr.department_id WHERE po.id=?',[$view]); if(!$o){ page_head('Purchases'); echo '<div class="panel"><p>Not found.</p></div>'; page_foot(); exit; }
+ $o=row('SELECT po.*,s.name supplier,d.name dept FROM purchase_orders po JOIN suppliers s ON s.id=po.supplier_id LEFT JOIN purchase_requisitions pr ON pr.id=po.requisition_id LEFT JOIN departments d ON d.id=pr.department_id WHERE po.id=?',[$view]); if(!$o){ page_head('Purchases','purchases'); echo '<div class="panel"><p>Not found.</p></div>'; page_foot(); exit; }
  $items=rows('SELECT poi.*,i.name iname FROM purchase_order_items poi JOIN inventory_items i ON i.id=poi.item_id WHERE poi.order_id=?',[$view]);
  page_head('Purchase order '.$o['number'],'purchases','Supplier: '.$o['supplier']);
  echo '<div class="toolbar"><a class="btnGhost sm" href="'.BASE.'/index.php?page=purchases">&larr; Purchases</a>'.status_badge($o['status']).'</div>';

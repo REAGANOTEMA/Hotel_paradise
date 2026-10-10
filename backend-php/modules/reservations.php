@@ -118,7 +118,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
 }
 
 if($view){
- $r=row('SELECT r.*,g.full_name,g.phone,g.email,g.nationality,g.id_type,g.id_number FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE r.id=?',[$view]); if(!$r) { page_head('Reservation'); echo '<div class="panel"><p>Not found.</p></div>'; page_foot(); exit; }
+ $r=row('SELECT r.*,g.full_name,g.phone,g.email,g.nationality,g.id_type,g.id_number FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE r.id=?',[$view]); if(!$r) { page_head('Reservation','reservations'); echo '<div class="panel"><p>Not found.</p></div>'; page_foot(); exit; }
  $rooms=rows('SELECT rt.name,rr.quantity,rr.nightly_rate,rn.room_number FROM reservation_rooms rr JOIN room_types rt ON rt.id=rr.room_type_id LEFT JOIN rooms rn ON rn.id=rr.room_id WHERE rr.reservation_id=?',[$view]);
  $folio=rows('SELECT * FROM guest_folio_entries WHERE reservation_id=? ORDER BY id',[$view]);
  $payments=rows('SELECT * FROM payments WHERE reservation_id=? ORDER BY id',[$view]);

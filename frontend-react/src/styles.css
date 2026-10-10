@@ -1447,6 +1447,60 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
   .facGallery{grid-template-columns:1fr}
 }
 
+/* ---------------------------------------------------------------
+   TACTILE DEPTH
+   A solid button reads as a raised key: a soft highlight along its
+   top edge, a grounded shadow beneath it, and a real press. Ghost
+   buttons stay flat on purpose, so they are left alone.
+   --------------------------------------------------------------- */
+.btn:not(.ghost):not(.ghost2){
+  background-image:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 52%);
+  box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 -1px 0 rgba(7,26,51,.12) inset,0 2px 3px rgba(7,26,51,.10),0 10px 24px rgba(201,162,39,.24);
+}
+.btn:not(.ghost):not(.ghost2):hover{
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 -1px 0 rgba(7,26,51,.14) inset,0 3px 6px rgba(7,26,51,.12),0 16px 34px rgba(201,162,39,.34);
+}
+.btn:not(.ghost):not(.ghost2):active{
+  box-shadow:0 2px 5px rgba(7,26,51,.20) inset,0 1px 2px rgba(7,26,51,.10);
+}
+.btn.navy:not(.ghost):not(.ghost2){
+  box-shadow:0 1px 0 rgba(255,255,255,.20) inset,0 -1px 0 rgba(0,0,0,.25) inset,0 2px 3px rgba(7,26,51,.16),0 10px 24px rgba(7,26,51,.26);
+}
+.btn.navy:not(.ghost):not(.ghost2):hover{
+  box-shadow:0 1px 0 rgba(255,255,255,.26) inset,0 -1px 0 rgba(0,0,0,.28) inset,0 3px 6px rgba(7,26,51,.18),0 16px 34px rgba(7,26,51,.34);
+}
+
+/* ---------------------------------------------------------------
+   A SINGLE, PATIENT ATTENTION CUE
+   Only the handful of genuine booking calls to action wear this.
+   Every eight and a half seconds a small nudge draws the eye, then
+   it rests. The nudge stops the instant a guest points at it, tabs
+   to it, or presses it, and never runs at all for anyone who has
+   asked for less motion. No button is ever shaken while it is being
+   used.
+   --------------------------------------------------------------- */
+@keyframes ctaNudge{
+  0%,70%,100%{transform:translate3d(0,0,0)}
+  73%{transform:translate3d(-2px,0,0) rotate(-.5deg)}
+  76%{transform:translate3d(2px,0,0) rotate(.5deg)}
+  79%{transform:translate3d(-1.4px,0,0) rotate(-.32deg)}
+  82%{transform:translate3d(1px,0,0) rotate(.22deg)}
+  85%{transform:translate3d(0,0,0)}
+}
+.ctaAttn{position:relative;overflow:hidden;animation:ctaNudge 8.5s ease-in-out infinite}
+.ctaAttn:hover,.ctaAttn:focus,.ctaAttn:focus-visible,.ctaAttn:active,.ctaAttn.loading{animation:none}
+.ctaAttn::before{
+  content:'';position:absolute;top:0;bottom:0;left:-70%;width:45%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
+  transform:skewX(-18deg);opacity:0;pointer-events:none;
+}
+.ctaAttn:hover::before{animation:ctaShine .85s ease}
+@keyframes ctaShine{0%{left:-70%;opacity:0}22%{opacity:.85}100%{left:120%;opacity:0}}
+@media(prefers-reduced-motion:reduce){
+  .ctaAttn{animation:none}
+  .ctaAttn:hover::before{animation:none}
+}
+
 
 
 

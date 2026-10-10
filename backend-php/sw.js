@@ -23,8 +23,8 @@ self.addEventListener('push', function(event){
   var title = payload.title || 'Hotel Paradise on the Nile';
   var options = {
     body: payload.body || 'You have a new notification.',
-    icon: '../images/icon-192.png',
-    badge: '../images/icon-192.png',
+    icon: '../images/logo-192.png',
+    badge: '../images/logo-192.png',
     tag: payload.tag || 'hpn-notification',
     renotify: true,
     data: payload.data || {}

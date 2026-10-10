@@ -416,7 +416,7 @@ function AvailabilityStrip() {
    <div><label>Check out</label><input type="date" value={st.cout} onChange={f('cout')}/></div>
    <div><label>Guests</label><select value={st.adults} onChange={f('adults')}><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
    <div><label>Room type</label><select value={st.type} onChange={f('type')}><option value="">Any available</option>{rooms.map(r => <option key={r.id}>{r.type}</option>)}</select></div>
-   <button className="btn" onClick={go}>Choose your room</button>
+    <button className="btn ctaAttn" onClick={go}>Choose your room</button>
   </section>
  );
 }

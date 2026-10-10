@@ -29,12 +29,16 @@ const EyeIcon = ({off}: {off?: boolean}) => (
 );
 
 const post = async (payload: object): Promise<any> => {
-  const res = await fetch(await apiUrl('account'), {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(payload)
-  });
-  try { return await res.json(); } catch { return {ok: false, error: 'We could not reach the account service. Please call ' + CALL + '.'}; }
+  try {
+    const res = await fetch(await apiUrl('account'), {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch {
+    return {ok: false, error: 'We could not reach the account service. Please call ' + CALL + '.'};
+  }
 };
 
 /** Only a path inside this site is ever sent to, never another host. */

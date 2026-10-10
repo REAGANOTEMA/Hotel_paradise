@@ -407,7 +407,7 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
     <nav>{NAV.map(([href, label]) => <a key={href} className={(active(href) ? 'active ' : '') + (label === 'Staffs Logins' ? 'staffNav' : '')} href={href}>{label === 'Staffs Logins' && <LockIcon/>}<span>{label}</span></a>)}</nav>
     <div className="navRight">
      <a className={'navSignIn' + (active('./account.html') ? ' active' : '')} href="./account.html">{customerFirstName() || 'Sign in'}</a>
-     <a className="btn navCta" href="./rooms.html">Book now</a>
+     <a className="btn navCta ctaAttn" href="./rooms.html">Book now</a>
      <button ref={burgerRef} className={'burger' + (open ? ' open' : '')} onClick={() => setOpen(o => !o)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="mobile-menu">
       <span/><span/><span/>
      </button>
@@ -431,7 +431,7 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
     </div>
 
     <div className="mobileCta">
-     <a className="btn" href="./rooms.html">Book your stay</a>
+     <a className="btn ctaAttn" href="./rooms.html">Book your stay</a>
      <a className="btn ghost" href={telHref(CALL)}>Call us</a>
     </div>
 
