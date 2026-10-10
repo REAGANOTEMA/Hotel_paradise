@@ -4,8 +4,57 @@ RewriteEngine On
 RewriteRule ^admin/?$ backend-php/index.php [R,L]
 RewriteRule ^backend/?$ backend-php/index.php [R,L]
 
-# Security
+# Correct MIME types for the web app files.
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+    AddType image/webp .webp
+</IfModule>
+
+# Compress the text files the site serves. Cuts the stylesheet and the scripts
+# to roughly a quarter of their size on the wire. Images are already compressed
+# and are deliberately left alone.
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+    AddOutputFilterByType DEFLATE application/javascript text/javascript application/json
+    AddOutputFilterByType DEFLATE application/xml image/svg+xml application/manifest+json
+    AddOutputFilterByType DEFLATE application/rss+xml application/xhtml+xml
+    # Do not double-compress files that are already compressed.
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|avif|ico|zip|gz|bz2|7z|rar|mp4|woff2?)$ no-gzip dont-vary
+</IfModule>
+
+# Caching. The scripts and stylesheet keep the same file name across deploys, so
+# they must always be revalidated; the photographs are effectively immutable and
+# can be held for a month.
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png  "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType image/avif "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+    ExpiresByType image/x-icon "access plus 30 days"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType text/css "access plus 0 seconds"
+    ExpiresByType application/javascript "access plus 0 seconds"
+    ExpiresByType text/javascript "access plus 0 seconds"
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType application/manifest+json "access plus 0 seconds"
+</IfModule>
+
 <IfModule mod_headers.c>
+    # Revalidate the code, cache the pictures hard.
+    <FilesMatch "\.(?:css|js)$">
+        Header set Cache-Control "public, max-age=0, must-revalidate"
+    </FilesMatch>
+    <FilesMatch "\.(?:jpg|jpeg|png|webp|avif|gif|svg|ico)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+    <FilesMatch "\.(?:html|webmanifest)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+
+    # Security
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>

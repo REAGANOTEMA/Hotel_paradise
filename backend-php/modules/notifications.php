@@ -43,11 +43,14 @@ $devices=$installed?notify_devices($uid):[];
 $devicesActive=count(array_filter($devices,fn($d)=>(int)$d['active']===1));
 
 $prefs=[];
-foreach(NOTIFY_CATEGORIES as $cat=>$col){
- $prefs[$cat]=true;
- if($installed){
-  $r=row('SELECT '.$col.' AS on_ FROM notification_preferences WHERE user_id=?',[$uid]);
-  if($r!==null) $prefs[$cat]=((int)$r['on_']===1);
+foreach(NOTIFY_CATEGORIES as $cat=>$col){ $prefs[$cat]=true; }
+if($installed){
+ // One row holds every switch; read it once rather than once per category.
+ $pr=row('SELECT * FROM notification_preferences WHERE user_id=?',[$uid]);
+ if($pr!==null){
+  foreach(NOTIFY_CATEGORIES as $cat=>$col){
+   if(array_key_exists($col,$pr)) $prefs[$cat]=((int)$pr[$col]===1);
+  }
  }
 }
 $catLabel=['booking'=>'Bookings','order'=>'Restaurant orders','payment'=>'Payments','communication'=>'Messages','incident'=>'Incidents'];

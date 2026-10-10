@@ -2,7 +2,6 @@
 declare(strict_types=1);
 $u = current_user();
 $uid = (int)($u["id"] ?? 0);
-$me = row("SELECT * FROM users WHERE id=?", [$uid]);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $act = $_GET["act"] ?? "";
@@ -24,7 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
         $filename = 'profile_' . $uid . '_' . time() . '.' . $ext;
         if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $uploadDir . $filename)) {
-          $oldImg = $me['profile_image'] ?? '';
+          $oldRow = row("SELECT profile_image FROM users WHERE id=?", [$uid]);
+          $oldImg = $oldRow['profile_image'] ?? '';
           if ($oldImg && file_exists($uploadDir . $oldImg)) {
             @unlink($uploadDir . $oldImg);
           }

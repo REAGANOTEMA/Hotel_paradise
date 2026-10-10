@@ -2,18 +2,23 @@
 declare(strict_types=1);
 
 $t=today();
+// A day as a half-open range (00:00:00 today up to, not including, 00:00:00
+// tomorrow). Written as a range rather than DATE(created_at)=? so MySQL can
+// use the index on the column instead of scanning the whole table.
+$day0=$t.' 00:00:00';
+$day1=date('Y-m-d',strtotime($t.' +1 day')).' 00:00:00';
 $k=[
- 'arrivals'=>val("SELECT COUNT(*) FROM reservations WHERE status IN('pending','confirmed') AND DATE(check_in)=?",[$t]),
+ 'arrivals'=>val("SELECT COUNT(*) FROM reservations WHERE status IN('pending','confirmed') AND check_in>=? AND check_in<?",[$day0,$day1]),
  'inhouse'=>val("SELECT COUNT(*) FROM rooms WHERE status='occupied'"),
  'avail'=>val("SELECT COUNT(*) FROM rooms WHERE status='available'"),
- 'depart'=>val("SELECT COUNT(*) FROM reservations WHERE status='checked_in' AND DATE(check_out)=?",[$t]),
- 'rev'=>val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND DATE(created_at)=?",[$t]),
+ 'depart'=>val("SELECT COUNT(*) FROM reservations WHERE status='checked_in' AND check_out>=? AND check_out<?",[$day0,$day1]),
+ 'rev'=>val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND created_at>=? AND created_at<?",[$day0,$day1]),
  'pend'=>val("SELECT COUNT(*) FROM expenses WHERE status='pending'",[])+val("SELECT COUNT(*) FROM purchase_requisitions WHERE status='pending'",[]),
  'low'=>val("SELECT COUNT(*) FROM stock_levels sl JOIN inventory_items i ON i.id=sl.item_id WHERE sl.quantity<=i.reorder_level AND i.active=1",[]),
 ];
-$arrivals=rows("SELECT r.id,r.booking_number,g.full_name,rt.name rtype,r.adults FROM reservations r JOIN guests g ON g.id=r.guest_id JOIN reservation_rooms rr ON rr.reservation_id=r.id JOIN room_types rt ON rt.id=rr.room_type_id WHERE r.status IN('pending','confirmed') AND DATE(r.check_in)=? ORDER BY r.check_in",[$t]);
+$arrivals=rows("SELECT r.id,r.booking_number,g.full_name,rt.name rtype,r.adults FROM reservations r JOIN guests g ON g.id=r.guest_id JOIN reservation_rooms rr ON rr.reservation_id=r.id JOIN room_types rt ON rt.id=rr.room_type_id WHERE r.status IN('pending','confirmed') AND r.check_in>=? AND r.check_in<? ORDER BY r.check_in",[$day0,$day1]);
 $inhouse=rows("SELECT r.id,g.full_name,rt.name rtype,rr.room_id,rn.room_number FROM reservations r JOIN guests g ON g.id=r.guest_id JOIN reservation_rooms rr ON rr.reservation_id=r.id JOIN room_types rt ON rt.id=rr.room_type_id LEFT JOIN rooms rn ON rn.id=rr.room_id WHERE r.status='checked_in' ORDER BY g.full_name");
-$payments=rows("SELECT p.id,p.amount,p.method,p.status,DATE(p.created_at) d,u.name usr FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE DATE(p.created_at)=? ORDER BY p.id DESC LIMIT 8",[$t]);
+$payments=rows("SELECT p.id,p.amount,p.method,p.status,DATE(p.created_at) d,u.name usr FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE p.created_at>=? AND p.created_at<? ORDER BY p.id DESC LIMIT 8",[$day0,$day1]);
 $pend=rows("SELECT 'expense' kind,e.number ref,e.amount amount,e.department_name dept FROM (SELECT e.id,e.number,e.amount,d.name department_name FROM expenses e LEFT JOIN departments d ON d.id=e.department_id WHERE e.status='pending') e UNION ALL SELECT 'requisition',pr.number,0,d.name FROM purchase_requisitions pr LEFT JOIN departments d ON d.id=pr.department_id WHERE pr.status='pending' LIMIT 6",[]);
 
 page_head('Dashboard','dashboard',date('l, j F Y'));

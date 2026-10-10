@@ -293,8 +293,9 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
  if(!integrity_ready()){ flash('The findings table is not available.','bad'); go('integrity'); }
 
  if($act==='scan'){
-  $found=integrity_store(integrity_scan());
-  integrity_notify(integrity_scan());
+  $scan=integrity_scan();
+  $found=integrity_store($scan);
+  integrity_notify($scan);
   audit('integrity_scan','integrity',null,['flags'=>$found]);
   flash($found.' finding(s) recorded from the latest scan.');
   go('integrity');

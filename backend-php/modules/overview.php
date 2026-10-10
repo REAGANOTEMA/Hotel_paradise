@@ -75,31 +75,39 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 $t=today();
 $monthStart=date('Y-m-01');
 $yesterday = date('Y-m-d', strtotime('-1 day'));
+// Days and the year as half-open ranges so the date columns can use their
+// indexes. DATE(created_at)=? and YEAR(created_at)=? force a full scan.
+$day0=$t.' 00:00:00';
+$day1=date('Y-m-d',strtotime($t.' +1 day')).' 00:00:00';
+$yday0=$yesterday.' 00:00:00';
+$yday1=$day0;
+$year0=date('Y').'-01-01 00:00:00';
+$year1=(date('Y')+1).'-01-01 00:00:00';
 
 $k=[
- 'today'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND DATE(created_at)=?",[$t]),
- 'yesterday'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND DATE(created_at)=?",[$yesterday]),
+ 'today'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND created_at>=? AND created_at<?",[$day0,$day1]),
+ 'yesterday'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND created_at>=? AND created_at<?",[$yday0,$yday1]),
  'month'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND created_at>=?",[$monthStart.' 00:00:00']),
- 'year'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND YEAR(created_at)=?",[date('Y')]),
- 'orders'=>(int)val('SELECT COUNT(*) FROM orders WHERE DATE(created_at)=?',[$t]),
- 'orders_yesterday'=>(int)val('SELECT COUNT(*) FROM orders WHERE DATE(created_at)=?',[$yesterday]),
- 'billed'=>(float)val('SELECT COALESCE(SUM(total),0) FROM orders WHERE DATE(created_at)=?',[$t]),
+ 'year'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND created_at>=? AND created_at<?",[$year0,$year1]),
+ 'orders'=>(int)val('SELECT COUNT(*) FROM orders WHERE created_at>=? AND created_at<?',[$day0,$day1]),
+ 'orders_yesterday'=>(int)val('SELECT COUNT(*) FROM orders WHERE created_at>=? AND created_at<?',[$yday0,$yday1]),
+ 'billed'=>(float)val('SELECT COALESCE(SUM(total),0) FROM orders WHERE created_at>=? AND created_at<?',[$day0,$day1]),
  'billed_month'=>(float)val('SELECT COALESCE(SUM(total),0) FROM orders WHERE created_at>=?',[$monthStart.' 00:00:00']),
  'inhouse'=>(int)val("SELECT COUNT(*) FROM rooms WHERE status='occupied'"),
  'rooms'=>(int)val('SELECT COUNT(*) FROM rooms',[]),
  'available'=>(int)val("SELECT COUNT(*) FROM rooms WHERE status='available'"),
  'cleaning'=>(int)val("SELECT COUNT(*) FROM rooms WHERE status='cleaning'"),
  'maintenance'=>(int)val("SELECT COUNT(*) FROM rooms WHERE status='maintenance'"),
- 'owed'=>(int)val("SELECT COUNT(*) FROM orders WHERE DATE(created_at)=? AND status IN('pending','accepted','preparing','ready','partially_paid')",[$t]),
+ 'owed'=>(int)val("SELECT COUNT(*) FROM orders WHERE created_at>=? AND created_at<? AND status IN('pending','accepted','preparing','ready','partially_paid')",[$day0,$day1]),
  'owed_all'=>(int)val("SELECT COUNT(*) FROM orders WHERE status IN('pending','accepted','preparing','ready','partially_paid')",[]),
- 'arrivals'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status IN('pending','confirmed') AND DATE(check_in)=?",[$t]),
- 'departures'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status IN('checked_in','confirmed') AND DATE(check_out)=?",[$t]),
+ 'arrivals'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status IN('pending','confirmed') AND check_in>=? AND check_in<?",[$day0,$day1]),
+ 'departures'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status IN('checked_in','confirmed') AND check_out>=? AND check_out<?",[$day0,$day1]),
  'confirmed'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status='confirmed'",[]),
  'checked_in'=>(int)val("SELECT COUNT(*) FROM reservations WHERE status='checked_in'",[]),
- 'expenses_today'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM expenses WHERE DATE(created_at)=?",[$t]),
+ 'expenses_today'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM expenses WHERE created_at>=? AND created_at<?",[$day0,$day1]),
  'expenses_month'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM expenses WHERE created_at>=?",[$monthStart.' 00:00:00']),
  'purchases_month'=>(float)val("SELECT COALESCE(SUM(poi.total),0) FROM purchase_order_items poi INNER JOIN purchase_orders po ON po.id=poi.order_id WHERE po.status IN ('sent','partially_received','received') AND po.created_at>=?",[$monthStart.' 00:00:00']),
- 'voids_today'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM voids WHERE DATE(created_at)=?",[$t]),
+ 'voids_today'=>(float)val("SELECT COALESCE(SUM(amount),0) FROM voids WHERE created_at>=? AND created_at<?",[$day0,$day1]),
  'unpaid_reservations'=>(float)val("SELECT COALESCE(SUM(total-paid),0) FROM reservations WHERE total>paid AND status IN('confirmed','checked_in','pending')",[]),
 ];
 

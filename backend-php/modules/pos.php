@@ -22,13 +22,20 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    if(!count($items)){ flash('Add at least one item to the order.','bad'); go('pos'); }
    $shift=row('SELECT id FROM shifts WHERE user_id=? AND status=\'open\'',[$u['id']]);
    $num=next_number('ORD','orders','order_number');
+   // Read every chosen menu item once, then price the cart and write the lines
+   // from that one map instead of re-querying each item twice.
+   $ids=array_values(array_unique(array_map('intval',array_keys($items))));
+   $itemMap=[];
+   if($ids){
+     $iph=implode(',',array_fill(0,count($ids),'?'));
+     foreach(rows("SELECT id,price,name FROM menu_items WHERE active=1 AND id IN($iph)",$ids) as $mi) $itemMap[(int)$mi['id']]=$mi;
+   }
    $sub=0;
    foreach($items as $iid=>$qty){ $total=0;
      if(is_array($qty)){ foreach($qty as $unit) $total+=(float)$unit; $qty=$total; }
      if((float)$qty<=0) continue;
-     $it=row('SELECT price FROM menu_items WHERE id=? AND active=1',[(int)$iid]);
-     if(!$it) continue;
-     $sub+=$it['price']*(float)$qty;
+     if(!isset($itemMap[(int)$iid])) continue;
+     $sub+=$itemMap[(int)$iid]['price']*(float)$qty;
    }
    q('INSERT INTO orders(hotel_id,user_id,shift_id,order_number,outlet,order_type,table_name,status,subtotal,tax,total,created_at) VALUES(1,?,?,?,?,?,?,\'pending\',?,0,?,NOW())',
      [$u['id'],$shift['id']??null,$num,$outlet,$otype,trim($_POST['table_name']??''),$sub,$sub]);
@@ -36,8 +43,8 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    foreach($items as $iid=>$qty){
     if(is_array($qty)){ $qty=array_sum($qty); }
     if((float)$qty<=0) continue;
-    $it=row('SELECT price,name FROM menu_items WHERE id=? AND active=1',[(int)$iid]);
-    if(!$it) continue;
+    if(!isset($itemMap[(int)$iid])) continue;
+    $it=$itemMap[(int)$iid];
     q('INSERT INTO order_items(order_id,menu_item_id,quantity,unit_price,total) VALUES(?,?,?,?,?)',[$oid,(int)$iid,(float)$qty,$it['price'],$it['price']*(float)$qty]);
     audit('order_item','menu_item',(int)$iid,['order'=>$oid,'qty'=>(float)$qty]);
    }
@@ -140,9 +147,18 @@ echo '</div></div>';
 
 echo '<div class="panel"><h2>Today\'s orders</h2><p class="hint">Kitchen and service workflow.</p>';
 $ordersToday=rows('SELECT o.* FROM orders o ORDER BY o.id DESC LIMIT 15');
+// Fetch every order's lines in one pass instead of one query per order.
+$linesBy=[];
+if($ordersToday){
+ $oids=array_map(fn($o)=>(int)$o['id'],$ordersToday);
+ $oph=implode(',',array_fill(0,count($oids),'?'));
+ foreach(rows("SELECT oi.order_id,mi.name,oi.quantity FROM order_items oi JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id IN($oph) ORDER BY oi.id",$oids) as $ln){
+  $linesBy[(int)$ln['order_id']][]=$ln;
+ }
+}
 echo '<div class="miniList">';
 foreach($ordersToday as $o){
- $itRows=rows('SELECT mi.name,oi.quantity FROM order_items oi JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id=?',[$o['id']]);
+ $itRows=$linesBy[(int)$o['id']]??[];
  echo '<div class="li" style="flex-direction:column;align-items:stretch">';
  echo '<div style="display:flex;justify-content:space-between;gap:10px"><span><b>'.e($o['order_number']).'</b> &middot; '.e($o['outlet']).' &middot; '.e($o['order_type']).($o['table_name']?' &middot; '.e($o['table_name']):'').'<br><small>';
  $first=true; foreach($itRows as $i){ if(!$first) echo ', '; echo e($i['name']).' x'.(float)$i['quantity']; $first=false; } echo '</small></span><b>'.money($o['total']).'</b>'.status_badge($o['status']).'</div>';

@@ -56,9 +56,12 @@ function notify_ready(): bool
 {
  static $r=null;
  if($r!==null) return $r;
- return $r=(notify_table('notification_events') && notify_table('notification_deliveries')
-  && notify_table('notifications') && notify_table('notification_devices')
-  && notify_table('notification_preferences'));
+ try{
+  // One lookup instead of five: the header bell asks this on every page.
+  $n=(int)val("SELECT COUNT(DISTINCT TABLE_NAME) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE()
+   AND TABLE_NAME IN('notification_events','notification_deliveries','notifications','notification_devices','notification_preferences')");
+ }catch(\Throwable $e){ $n=0; }
+ return $r=($n===5);
 }
 
 /** Active members holding any of the named roles. */

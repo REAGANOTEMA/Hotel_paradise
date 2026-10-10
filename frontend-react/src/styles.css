@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+/* Web fonts (DM Sans + Playfair Display) are loaded from the page <head> with
+   a preconnect, not with @import here. A CSS @import cannot start the font
+   request until this whole sheet has arrived, which serialises the critical
+   path; the <link> in the HTML starts it immediately. */
 :root{
   /* The house colours, and the tints the rest of the sheet reaches for. */
   --gold:#C9A227;--gold-deep:#A9861B;--gold-soft:#C9A2271a;--gold-ink:#8A6D14;

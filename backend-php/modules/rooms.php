@@ -37,13 +37,19 @@ $types_all=rows('SELECT * FROM room_types ORDER BY base_rate DESC');
 $whereAll=$flt?'WHERE status=?':'';
 $all=rows("SELECT * FROM rooms $whereAll".($whereAll?' ORDER BY status,room_number':''),$flt?[$flt]:[]);
 $floors=rows('SELECT DISTINCT floor FROM rooms ORDER BY floor');
+// One grouped count and one name lookup, instead of one query per room type
+// and one per room rendered.
+$typeCounts=[];
+foreach(rows('SELECT room_type_id,COUNT(*) c FROM rooms GROUP BY room_type_id') as $tc) $typeCounts[(int)$tc['room_type_id']]=(int)$tc['c'];
+$typeNames=[];
+foreach($types_all as $rt) $typeNames[(int)$rt['id']]=$rt['name'];
 
 page_head('Rooms','rooms','Room status board and tariffs');
 
 echo '<div class="panel"><h2>Room types and tariffs</h2><p class="hint">Nightly rates in Uganda Shillings, matching the published tariff.</p>';
 echo '<table class="tbl"><thead><tr><th>Room type</th><th class="num">Rate per night</th><th class="num">Rooms</th><th>Active</th><th>Update rate</th></tr></thead><tbody>';
 foreach($types_all as $t){
- $cnt=val('SELECT COUNT(*) FROM rooms WHERE room_type_id=?',[$t['id']]);
+ $cnt=$typeCounts[(int)$t['id']]??0;
  echo '<tr><td><b>'.e($t['name']).'</b></td><td class="num">'.money($t['base_rate']).'</td><td class="num">'.(int)$cnt.'</td><td>'.($t['active']?badge('Active','ok'):badge('Hidden','grey')).'</td>';
  echo '<td>'; form_open('rooms','rate',['type_id'=>$t['id']]);
  echo '<div style="display:flex;gap:6px"><input name="rate" type="number" value="'.(int)$t['base_rate'].'" style="width:130px;padding:7px 10px;border:1px solid var(--line);border-radius:8px">';
@@ -61,7 +67,7 @@ echo '</div>';
 foreach($floors as $f){
  echo '<h3 style="margin:22px 0 12px">'.e($f['floor']).'</h3><div class="roomGrid">';
  foreach($all as $r) if($r['floor']===$f['floor']){
-  $tname=val('SELECT name FROM room_types WHERE id=?',[$r['room_type_id']]);
+  $tname=$typeNames[(int)$r['room_type_id']]??'';
   echo '<div class="room '.e($r['status']).'"><div class="rno">'.e($r['room_number']).'</div><div class="rtype">'.e($tname).'</div>';
   echo '<form method="post" action="'.BASE.'/index.php?page=rooms&amp;act=status" style="margin-top:10px">';
   echo '<input type="hidden" name="room_id" value="'.(int)$r['id'].'">';
