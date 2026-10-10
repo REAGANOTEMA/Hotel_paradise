@@ -19,7 +19,7 @@ if (!existsSync(dist)) throw new Error(`no build to deploy: ${dist} is missing`)
 // pay.html and account.html used to be missing from this list, which meant
 // their scripts were counted as dead weight and deleted on every deploy - the
 // page then loaded a script that was no longer there.
-const html = ['index.html', 'menu.html', 'rooms.html', 'pay.html', 'account.html', 'events.html', 'facilities.html'];
+const html = ['index.html', 'menu.html', 'rooms.html', 'pay.html', 'account.html', 'events.html', 'facilities.html', 'terms.html', 'privacy.html', 'cookies.html'];
 const referenced = new Set();
 for (const page of html) {
   const file = join(dist, page);

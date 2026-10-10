@@ -381,6 +381,11 @@ export function Footer() {
      <div className="footerBrand">
       <img className="footerLogo" src="./images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel Paradise on the Nile" width={96} height={96}/>
       <p className="footerTag">Premium hospitality in Jinja, on the banks of the Nile.</p>
+      <div className="footerTagMore">
+       <span>Sixty nine rooms and suites, riverside dining, a swimming pool and gardens for every occasion, all within one calm address.</span>
+       <span>From a restful night to a wedding for two hundred guests, our team carries the details so you can simply arrive.</span>
+       <span>Open your door to the Nile, and let Jinja&rsquo;s warmest welcome do the rest.</span>
+      </div>
      </div>
      <div className="footerCol"><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>
      <div className="footerCol"><h4>STAY</h4><p>Check in from 12 noon</p><p>Check out by 10 am</p><p>Breakfast included</p></div>
@@ -407,6 +412,13 @@ export function Footer() {
      <span>Hotel Paradise on the Nile Ltd, Jinja, Uganda</span>
      <span>Designed, built and supported by <a className="projLink" href={STUDIO.url} target="_blank" rel="noopener noreferrer">{STUDIO.name}</a></span>
     </div>
+    <nav className="footerLegal" aria-label="Legal">
+     <a href="./terms.html">Terms &amp; Conditions</a>
+     <span className="dot" aria-hidden="true">·</span>
+     <a href="./privacy.html">Privacy Policy</a>
+     <span className="dot" aria-hidden="true">·</span>
+     <a href="./cookies.html">Cookie Policy</a>
+    </nav>
     <InstallApp/>
    </footer>
   );

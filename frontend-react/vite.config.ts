@@ -53,7 +53,10 @@ export default defineConfig({
         pay: 'pay.html',
         account: 'account.html',
         events: 'events.html',
-        facilities: 'facilities.html'
+        facilities: 'facilities.html',
+        terms: 'terms.html',
+        privacy: 'privacy.html',
+        cookies: 'cookies.html'
       },
       // The file name of a bundle is not its content hash.
       //

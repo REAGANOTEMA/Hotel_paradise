@@ -1763,6 +1763,79 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
 @media(forced-colors:active){.installApp{border:1px solid ButtonText}}
 @media(prefers-reduced-motion:reduce){.installSheet{animation:none}.installApp:hover{transform:none}}
 
+/* ---------------------------------------------------------------
+   The three lines under the footer's greeting. Each is set on its
+   own row behind a small gold bead, so the brand block reads as a
+   considered paragraph rather than a block of small print.
+   --------------------------------------------------------------- */
+.footerTagMore{margin:14px auto 0;max-width:390px;text-align:left}
+.footerTagMore span{display:flex;gap:11px;align-items:flex-start;margin-top:9px;color:#8e9dae;font-size:12.5px;line-height:1.7}
+.footerTagMore span::before{content:'';flex:none;margin-top:.62em;width:6px;height:6px;border-radius:50%;background:linear-gradient(160deg,#eccd68,#c19a21)}
+
+/* The legal strip at the very foot of the page. Quiet, centred, and built
+   from the same navy as the ground it sits on, so it never competes with
+   the brand block above it. */
+.footerLegal{padding:16px 7vw;border-top:1px solid #ffffff12;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 18px;font-size:12px;letter-spacing:.05em}
+.footerLegal a{color:#9aa8b8;transition:color .18s ease}
+.footerLegal a:hover{color:var(--gold)}
+.footerLegal .dot{color:#43505f}
+
+/* ==================================================================
+   LEGAL PAGES (Terms, Privacy, Cookies)
+
+   A long document that still reads as the hotel. A photographed
+   header opens it, a contents rail keeps its place down the side,
+   and each clause is a quiet plate on ivory, numbered in navy. Only
+   transform and box-shadow move on hover, so a phone stays smooth.
+   ================================================================== */
+.legal{max-width:1180px;margin:auto;padding:clamp(40px,6vw,74px) 6vw clamp(64px,8vw,110px)}
+.legalGrid{display:grid;grid-template-columns:288px minmax(0,1fr);gap:clamp(28px,4vw,58px);align-items:start}
+
+/* the contents rail */
+.legalToc{position:sticky;top:calc(var(--navh) + 22px);background:#fff;border:1px solid var(--line2);border-radius:14px;padding:24px 22px;box-shadow:var(--shadow)}
+.legalToc h2{font-family:'Playfair Display',serif;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--navy);margin:0}
+.legalToc .legalRule{width:44px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--gold),#e6c54a);margin:10px 0 16px}
+.legalToc ol{list-style:none;counter-reset:toc;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+.legalToc a{display:flex;gap:12px;align-items:baseline;color:#4a5666;font-size:13px;line-height:1.42;padding:8px;border-radius:8px;transition:color .18s ease,background .18s ease}
+.legalToc a::before{counter-increment:toc;content:counter(toc,decimal-leading-zero);font-family:'Playfair Display',serif;font-size:12px;color:var(--gold-ink);flex:none;min-width:20px}
+.legalToc a:hover{color:var(--gold-ink);background:var(--gold-soft)}
+
+/* the document itself */
+.legalBody{min-width:0}
+.legalMeta{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;letter-spacing:.05em;color:var(--muted);background:#fff;border:1px solid var(--line2);border-radius:999px;padding:7px 16px;margin:0 0 26px;box-shadow:var(--shadow)}
+.legalMeta b{color:var(--gold-ink);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.legalLead{font-size:16.5px;line-height:1.78;color:#3c4855;margin:0 0 34px;padding-left:20px;border-left:3px solid var(--gold)}
+.legalClause{background:#fff;border:1px solid var(--line2);border-radius:14px;padding:clamp(22px,3vw,34px) clamp(22px,3vw,38px);margin:0 0 20px;box-shadow:var(--shadow);scroll-margin-top:calc(var(--navh) + 22px);transition:box-shadow .3s ease,border-color .3s ease}
+.legalClause:hover{border-color:#C9A22740;box-shadow:0 3px 8px rgba(7,26,51,.05),0 22px 46px rgba(7,26,51,.10)}
+.legalClause h2{display:flex;gap:15px;align-items:center;font-family:'Playfair Display',serif;font-size:clamp(1.15rem,1.8vw,1.45rem);color:var(--navy);margin:0 0 16px;line-height:1.28}
+.legalClause h2 .legalNum{flex:none;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--gold);background:linear-gradient(160deg,var(--navy2),var(--navy));box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 14px rgba(7,26,51,.24)}
+.legalClause p{margin:0 0 12px;color:#3c4855;line-height:1.78}
+.legalClause p:last-child{margin-bottom:0}
+.legalClause ul{margin:0 0 12px;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.legalClause ul:last-child{margin-bottom:0}
+.legalClause ul li{position:relative;padding-left:26px;color:#3c4855;line-height:1.68}
+.legalClause ul li::before{content:'';position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:50%;background:linear-gradient(160deg,#eccd68,#c19a21)}
+.legalClause a{color:var(--nile);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+.legalClause a:hover{color:var(--gold-ink)}
+
+/* the closing note */
+.legalFoot{margin-top:34px;background:linear-gradient(120deg,var(--nebula),var(--navy));color:#fff;border-radius:14px;padding:clamp(24px,3vw,38px);box-shadow:0 24px 60px rgba(7,26,51,.28)}
+.legalFoot h3{font-family:'Playfair Display',serif;font-size:1.3rem;margin:0 0 10px}
+.legalFoot p{color:#cdd8e4;line-height:1.75;margin:0 0 18px;max-width:62ch}
+.legalFoot p:last-child{margin-bottom:0}
+.legalFoot a{color:var(--gold);text-decoration:none;border-bottom:1px solid #C9A22766}
+.legalFoot a:hover{color:#fff;border-color:#fff}
+.legalFoot .btn{background:var(--gold);color:var(--navy)}
+.legalFoot .btn:hover{background:#fff;color:var(--navy)}
+
+@media(max-width:900px){
+  .legalGrid{grid-template-columns:1fr;gap:26px}
+  .legalToc{position:static}
+}
+@media(prefers-reduced-motion:reduce){
+  .legalClause:hover{box-shadow:var(--shadow)}
+}
+
 
 
 
