@@ -227,29 +227,43 @@ table.tbl{width:100%;border-collapse:collapse}
 .badge.blue{background:rgba(11,93,120,.1);color:#0a5468;border-color:rgba(11,93,120,.38)}
 .badge.grey{background:rgba(100,116,139,.14);color:#475569;border-color:rgba(100,116,139,.44)}
 
-/* Buttons */
+/* Buttons — a raised, physical control set.
+
+   Each solid button is a key with a light top edge, a shaded underside and a
+   layered shadow so it sits above the panel. Gold is the primary action, blue
+   the operational one, green for a confirmation and red for a destructive one.
+   Only transform and shadow move, so a table full of buttons stays cheap. */
 .btn,.btnGhost{
   display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  background:linear-gradient(180deg,var(--gold2),var(--gold));color:#071A33;
+  background:linear-gradient(180deg,#e6c65e,#d3ab2c 46%,#bd961c);
+  color:#071A33;
   padding:9px 16px;border-radius:8px;font-weight:700;font-size:12.5px;border:0;letter-spacing:.02em;
-  box-shadow:0 4px 12px rgba(201,162,39,.28);transition:transform var(--t),box-shadow var(--t),background var(--t),border-color var(--t),color var(--t);min-height:40px
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 1px rgba(120,90,10,.26),
+    0 1px 1px rgba(7,26,51,.14),0 4px 10px rgba(7,26,51,.14),0 10px 22px rgba(201,162,39,.24);
+  transition:transform var(--t),box-shadow var(--t),background var(--t),border-color var(--t),color var(--t);min-height:40px
 }
-.btn:hover{background:linear-gradient(180deg,#eac03d,#d5a920);transform:translateY(-1px);box-shadow:0 6px 16px rgba(201,162,39,.38)}
-.btn:active{transform:translateY(0);box-shadow:0 2px 6px rgba(201,162,39,.28)}
+.btn:hover{
+  background:linear-gradient(180deg,#eecd68,#dab435 46%,#c39c1f);transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -2px 1px rgba(120,90,10,.28),0 2px 3px rgba(7,26,51,.16),0 9px 18px rgba(7,26,51,.18),0 18px 36px rgba(201,162,39,.32)
+}
+.btn:active{transform:translateY(1px);box-shadow:inset 0 2px 5px rgba(90,66,8,.42),0 1px 2px rgba(7,26,51,.16)}
 .btn:focus-visible,.btnGhost:focus-visible{outline:none;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--gold)}
-.btn[disabled],.btnGhost[disabled],.btn.loading{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;pointer-events:none}
+.btn[disabled],.btnGhost[disabled],.btn.loading{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none;pointer-events:none;background-image:none}
 .btn.loading::after{content:'';width:12px;height:12px;border:2px solid rgba(7,26,51,.3);border-top-color:#071A33;border-radius:50%;animation:spin .8s linear infinite;margin-left:4px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .btnGhost{background:transparent;color:var(--navy);border:1px solid var(--line);box-shadow:none}
 .btnGhost:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,162,39,.08);transform:translateY(-1px)}
 .btn.sm,.btnGhost.sm{padding:6px 12px;font-size:12px;border-radius:8px;min-height:32px;box-shadow:none}
 .btn.sm:hover,.btnGhost.sm:hover{box-shadow:0 4px 12px rgba(201,162,39,.24)}
-.btn.danger{background:linear-gradient(180deg,#d64545,#c62828);color:#fff;box-shadow:0 4px 12px rgba(198,40,40,.28)}
-.btn.danger:hover{box-shadow:0 6px 16px rgba(198,40,40,.38)}
-.btn.blue{background:linear-gradient(180deg,#0d6a89,#0B5D78);color:#fff;box-shadow:0 4px 12px rgba(11,93,120,.28)}
-.btn.blue:hover{box-shadow:0 6px 16px rgba(11,93,120,.38)}
-.btn.tick{background:linear-gradient(180deg,#35913a,#2e7d32);color:#fff;box-shadow:0 4px 12px rgba(46,125,50,.28)}
-.btn.tick:hover{box-shadow:0 6px 16px rgba(46,125,50,.38)}
+.btn.danger{background:linear-gradient(180deg,#dc4b4b,#c62828 55%,#a81f1f);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 1px rgba(80,0,0,.3),0 2px 4px rgba(150,20,20,.24),0 10px 22px rgba(198,40,40,.26)}
+.btn.danger:hover{background:linear-gradient(180deg,#e05454,#cb2d2d 55%,#ad2323);transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -2px 1px rgba(80,0,0,.32),0 4px 8px rgba(150,20,20,.26),0 16px 34px rgba(198,40,40,.34)}
+.btn.danger:active{transform:translateY(1px);box-shadow:inset 0 2px 5px rgba(70,0,0,.46)}
+.btn.blue{background:linear-gradient(180deg,#14809f,#0d6a89 52%,#0B5D78);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.26),inset 0 -2px 1px rgba(0,40,55,.32),0 2px 4px rgba(7,26,51,.18),0 10px 22px rgba(11,93,120,.28)}
+.btn.blue:hover{background:linear-gradient(180deg,#1890b2,#127d9e 52%,#0d6a89);transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 1px rgba(0,40,55,.34),0 4px 8px rgba(7,26,51,.2),0 16px 34px rgba(11,93,120,.36)}
+.btn.tick{background:linear-gradient(180deg,#3fa144,#2e7d32 55%,#26702a);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -2px 1px rgba(0,45,0,.3),0 2px 4px rgba(7,26,51,.16),0 10px 22px rgba(46,125,50,.26)}
+.btn.tick:hover{background:linear-gradient(180deg,#48b04d,#338c37 55%,#2a7a2e);transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),inset 0 -2px 1px rgba(0,45,0,.32),0 4px 8px rgba(7,26,51,.18),0 16px 34px rgba(46,125,50,.34)}
+@media(prefers-reduced-motion:reduce){.btn:hover,.btn:active{transform:none}}
 .bar{display:flex;gap:8px;flex-wrap:wrap}
 .grow{flex:1;min-width:160px}
 

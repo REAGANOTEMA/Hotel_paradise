@@ -202,6 +202,13 @@ const bare = (name: string) =>
  * picked to fill a 460px card just because it is the only file wider than the
  * phone, which would quietly undo every small copy the build made. Where that
  * ceiling is passed the derivatives carry the load on their own.
+ *
+ * The original is also dropped when a built copy already reaches most of its
+ * width. A 1440px plate whose 960px copy is on disk is not worth downloading at
+ * three or four times the weight to gain a few percent of sharpness on a card
+ * that is only 400px wide, so the copy is served and the original is kept back.
+ * Only a genuinely under-covered file - one with no copy, or copies far smaller
+ * than it - still hands the original over.
  */
 function candidatesFor(entry: Entry, slug: string, widths: number[]): Array<{file: string; w: number}> {
   const out: Array<{file: string; w: number}> = [];
@@ -216,7 +223,9 @@ function candidatesFor(entry: Entry, slug: string, widths: number[]): Array<{fil
   }
 
   const ceiling = widths.length ? Math.max(...widths) : 0;
-  if (entry.w && entry.w <= ceiling * 1.6) add(slug + '.' + entry.ext, entry.w);
+  const widestCopy = entry.variants.reduce((m, v) => Math.max(m, v.w), 0);
+  const copyNearlyCovers = widestCopy >= entry.w * 0.6;
+  if (entry.w && entry.w <= ceiling * 1.6 && !copyNearlyCovers) add(slug + '.' + entry.ext, entry.w);
 
   return out.sort((a, b) => a.w - b.w);
 }

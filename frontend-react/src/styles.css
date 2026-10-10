@@ -1083,7 +1083,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .backLink,.backTop{border:1px solid ButtonText}
   .backLink{forced-color-adjust:none;background:Canvas;color:CanvasText}
 }
-@media(prefers-reduced-motion:no-preference){.card,.fact,.menuRow,.dineCard,.rateCard{transition:opacity .6s ease,transform .25s ease,box-shadow .25s ease}.btn:hover{transform:translateY(-2px);background:#d8aa2e}.card:hover,.fact:hover,.menuRow:hover,.dineCard:hover,.rateCard:hover{transform:translateY(-5px);box-shadow:0 20px 50px #071A3320}}
+@media(prefers-reduced-motion:no-preference){.card,.fact,.menuRow,.dineCard,.rateCard{transition:opacity .6s ease,transform .25s ease,box-shadow .25s ease}.card:hover,.fact:hover,.menuRow:hover,.dineCard:hover,.rateCard:hover{transform:translateY(-5px);box-shadow:0 20px 50px #071A3320}}
 @media(prefers-reduced-motion:reduce){
   /* Fades only, and no drift. visibility still has to switch instantly,
      otherwise a hidden slide would linger for the length of the delay. */
@@ -1448,26 +1448,96 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 }
 
 /* ---------------------------------------------------------------
-   TACTILE DEPTH
-   A solid button reads as a raised key: a soft highlight along its
-   top edge, a grounded shadow beneath it, and a real press. Ghost
-   buttons stay flat on purpose, so they are left alone.
+   TACTILE DEPTH — THE HOUSE BUTTON SYSTEM
+
+   Every solid control is built as one physical key: a brushed cap
+   with a soft highlight along its top edge, a shaded underside, and
+   a layered shadow beneath that grounds it on the page. Gold is the
+   primary booking action, navy is the operational and secondary
+   action, and red only where something is being removed or
+   cancelled. Outline buttons stay flat on purpose and are left out
+   of this.
+
+   Only transform and shadow move. No button animates a layout
+   property, so a page full of them stays cheap to hover and press,
+   and the press reads naturally on a touchscreen because :active is
+   the ground truth, not a hover guess.
    --------------------------------------------------------------- */
-.btn:not(.ghost):not(.ghost2){
-  background-image:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 52%);
-  box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 -1px 0 rgba(7,26,51,.12) inset,0 2px 3px rgba(7,26,51,.10),0 10px 24px rgba(201,162,39,.24);
+.btn:not(.ghost):not(.ghost2):not(.navy):not(.danger){
+  background-image:linear-gradient(180deg,#e6c65e 0%,#d3ab2c 42%,#c19a20 78%,#ab8616 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.62),
+    inset 0 -2px 1px rgba(120,90,10,.28),
+    0 1px 1px rgba(7,26,51,.14),
+    0 5px 12px rgba(7,26,51,.16),
+    0 12px 26px rgba(201,162,39,.24);
+  transition:transform .16s cubic-bezier(.3,.7,.4,1),box-shadow .16s ease,background-color .16s ease,color .16s ease,border-color .16s ease;
 }
-.btn:not(.ghost):not(.ghost2):hover{
-  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 -1px 0 rgba(7,26,51,.14) inset,0 3px 6px rgba(7,26,51,.12),0 16px 34px rgba(201,162,39,.34);
+.btn:not(.ghost):not(.ghost2):not(.navy):not(.danger):hover{
+  background-image:linear-gradient(180deg,#eecd68 0%,#dab435 42%,#c8a124 78%,#b28c19 100%);
+  transform:translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.72),
+    inset 0 -2px 1px rgba(120,90,10,.3),
+    0 2px 2px rgba(7,26,51,.16),
+    0 9px 18px rgba(7,26,51,.2),
+    0 18px 38px rgba(201,162,39,.32);
 }
-.btn:not(.ghost):not(.ghost2):active{
-  box-shadow:0 2px 5px rgba(7,26,51,.20) inset,0 1px 2px rgba(7,26,51,.10);
+.btn:not(.ghost):not(.ghost2):not(.navy):not(.danger):active{
+  transform:translateY(1px);
+  box-shadow:
+    inset 0 2px 5px rgba(90,66,8,.44),
+    inset 0 -1px 0 rgba(255,255,255,.18),
+    0 1px 2px rgba(7,26,51,.16);
 }
+/* The navy key: a deep operational surface for confirmations, printing,
+   checkout and the dashboard's own actions. Never competes with gold. */
 .btn.navy:not(.ghost):not(.ghost2){
-  box-shadow:0 1px 0 rgba(255,255,255,.20) inset,0 -1px 0 rgba(0,0,0,.25) inset,0 2px 3px rgba(7,26,51,.16),0 10px 24px rgba(7,26,51,.26);
+  background-image:linear-gradient(180deg,#1b3a63 0%,#123056 46%,#0d2444 82%,#081a30 100%);
+  color:#fff;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.24),
+    inset 0 -2px 1px rgba(0,0,0,.32),
+    0 1px 1px rgba(7,26,51,.2),
+    0 5px 12px rgba(7,26,51,.22),
+    0 14px 30px rgba(7,26,51,.3);
 }
 .btn.navy:not(.ghost):not(.ghost2):hover{
-  box-shadow:0 1px 0 rgba(255,255,255,.26) inset,0 -1px 0 rgba(0,0,0,.28) inset,0 3px 6px rgba(7,26,51,.18),0 16px 34px rgba(7,26,51,.34);
+  background-image:linear-gradient(180deg,#22456f 0%,#173964 46%,#102b4e 82%,#0a1f38 100%);
+  transform:translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.3),
+    inset 0 -2px 1px rgba(0,0,0,.34),
+    0 2px 2px rgba(7,26,51,.22),
+    0 10px 22px rgba(7,26,51,.28),
+    0 20px 42px rgba(7,26,51,.36);
+}
+.btn.navy:not(.ghost):not(.ghost2):active{
+  transform:translateY(1px);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.45),0 1px 2px rgba(7,26,51,.2);
+}
+/* A destructive or cancelling action reads red, and red alone. */
+.btn.danger:not(.ghost):not(.ghost2){
+  background-image:linear-gradient(180deg,#dc4b4b,#c62828 55%,#a81f1f);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 1px rgba(80,0,0,.3),0 2px 4px rgba(150,20,20,.24),0 10px 22px rgba(198,40,40,.26);
+}
+.btn.danger:not(.ghost):not(.ghost2):hover{
+  background-image:linear-gradient(180deg,#e05454,#cb2d2d 55%,#ad2323);
+  transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -2px 1px rgba(80,0,0,.32),0 4px 8px rgba(150,20,20,.26),0 16px 34px rgba(198,40,40,.34);
+}
+.btn.danger:not(.ghost):not(.ghost2):active{
+  transform:translateY(1px);
+  box-shadow:inset 0 2px 5px rgba(70,0,0,.46),0 1px 2px rgba(150,20,20,.2);
+}
+/* A disabled key is unmistakably dead, and keeps none of the lift. */
+.btn:not(.ghost):not(.ghost2)[disabled],.btn:not(.ghost):not(.ghost2):disabled{
+  background-image:none;box-shadow:none;transform:none;opacity:.5;
+}
+/* For anyone who asked for less motion the keys still change depth, but
+   they never travel. */
+@media(prefers-reduced-motion:reduce){
+  .btn:hover,.btn:active,.btn:focus{transform:none}
 }
 
 /* ---------------------------------------------------------------
