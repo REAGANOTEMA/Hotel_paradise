@@ -2,10 +2,166 @@
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
-import {SmartImage, photoHintsEnabled} from './SmartImage';
+import {SmartImage, photoHintsEnabled, type ImageGroup} from './SmartImage';
 
 /** The photographs each room is still waiting for, shown on request only. */
 const SHOW_FILE_HINTS = photoHintsEnabled();
+
+/**
+ * One photograph in a room's tour: the group it lives in (rooms on disk,
+ * the bed working folders, or the site root) and the slug to find it by.
+ */
+type BedSlide = {group: ImageGroup; name: string; position?: string};
+
+/**
+ * The photographs each room type turns through. Every list opens on the room's
+ * main plate - for the newly delivered rooms that is the photograph the hotel
+ * provided (single-room, tripple-room, executive-deluxe-room) - and then walks
+ * through the bed shots the hotel keeps in the working folders, finishing on
+ * the bathroom. A room is never shown as one lonely picture again.
+ */
+const ROOM_SLIDES: Record<string, BedSlide[]> = {
+  'Suite': [
+   {group: 'rooms', name: 'suite', position: '50% 45%'},
+   {group: 'beds-suit', name: 'suit1', position: '50% 40%'},
+   {group: 'beds-suit', name: 'suit2', position: '50% 45%'},
+   {group: 'beds-suit', name: 'suit3', position: '50% 45%'},
+   {group: 'beds-suit', name: 'suit4', position: '50% 40%'},
+   {group: 'beds-suit', name: 'bathroom-suit-room', position: '50% 35%'},
+   {group: 'beds-suit', name: 'toilet-suit-room', position: '50% 50%'}
+  ],
+  'Family Room': [
+   {group: 'rooms', name: 'family-room', position: '50% 45%'},
+   {group: 'rooms', name: 'family-room-2', position: '50% 45%'},
+   {group: 'rooms', name: 'family-room-3', position: '50% 45%'}
+  ],
+  'Triple Room': [
+   {group: 'site', name: 'tripple-room', position: '50% 45%'},
+   {group: 'rooms', name: 'triple-room', position: '50% 45%'},
+   {group: 'rooms', name: 'triple-room-2', position: '50% 45%'},
+   {group: 'rooms', name: 'triple-room-3', position: '50% 40%'},
+   {group: 'beds-triple', name: 'triple-bed', position: '50% 45%'},
+   {group: 'beds-triple', name: 'toilet-bathroom', position: '50% 45%'}
+  ],
+  'Executive Deluxe': [
+   {group: 'site', name: 'executive-deluxe-room', position: '50% 45%'},
+   {group: 'beds-exec', name: 'executive-bed1', position: '50% 45%'},
+   {group: 'beds-exec', name: 'executive-bed2', position: '50% 45%'},
+   {group: 'beds-exec', name: 'executive-bed3', position: '50% 40%'},
+   {group: 'beds-exec', name: 'executive-room-window-view', position: '50% 50%'},
+   {group: 'beds-exec', name: 'bathroom', position: '50% 40%'},
+   {group: 'beds-exec', name: 'toilet', position: '50% 45%'}
+  ],
+  'Deluxe Double': [
+   {group: 'rooms', name: 'deluxe-double', position: '50% 45%'},
+   {group: 'rooms', name: 'deluxe-double-2', position: '50% 45%'},
+   {group: 'rooms', name: 'deluxe-double-3', position: '50% 40%'},
+   {group: 'rooms', name: 'deluxe-double-4', position: '50% 45%'}
+  ],
+  'Standard Double': [
+   {group: 'rooms', name: 'standard-double', position: '50% 45%'},
+   {group: 'site', name: 'double-deluxe-bed', position: '50% 45%'},
+   {group: 'rooms', name: 'standard-double-2', position: '50% 45%'}
+  ],
+  'Standard Twin': [
+   {group: 'rooms', name: 'standard-twin', position: '50% 45%'},
+   {group: 'rooms', name: 'standard-twin-2', position: '50% 45%'},
+   {group: 'beds-twin', name: 'bed1', position: '50% 45%'},
+   {group: 'beds-twin', name: 'tv-readingspace', position: '50% 50%'}
+  ],
+  'Standard Single': [
+   {group: 'site', name: 'single-room', position: '50% 45%'},
+   {group: 'rooms', name: 'standard-single', position: '50% 45%'},
+   {group: 'rooms', name: 'standard-single-2', position: '50% 45%'}
+  ]
+};
+
+/** The fallback frame a room is drawn from when every working folder is empty. */
+const roomFallback = (type: string): BedSlide[] => [{group: 'rooms', name: roomImage(type), position: '50% 45%'}];
+
+const SLIDE_MS = 5000;
+
+/**
+ * A room photograph that turns over: the mainplate first, then the bed shots
+ * the hotel keeps in the working folder. It behaves exactly like the home
+ * carousel - the turning stops for a guest who asked for less motion or
+ * moved to another tab - and every control is a real button.
+ */
+function BedSlider({slides, alt, ratio, sizes, className, placeholder}: {
+  slides: BedSlide[];
+  alt: string;
+  ratio: string;
+  sizes?: string;
+  className?: string;
+  placeholder?: React.ReactNode;
+}) {
+  const n = slides.length;
+  const [i, setI] = React.useState(0);
+  const [still, setStill] = React.useState(false);
+  const [gone, setGone] = React.useState(false);
+
+  React.useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setStill(mq.matches);
+    sync();
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else if (mq.addListener) mq.addListener(sync);
+    return () => { if (mq.removeEventListener) mq.removeEventListener('change', sync); else if (mq.removeListener) mq.removeListener(sync); };
+  }, []);
+
+  React.useEffect(() => {
+    const onVis = () => setGone(document.hidden);
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, []);
+
+  React.useEffect(() => {
+    if (still || gone || n < 2) return;
+    const t = window.setInterval(() => setI(v => (v + 1) % n), SLIDE_MS);
+    return () => window.clearInterval(t);
+  }, [still, gone, n]);
+
+  const step = (d: number) => setI(v => (v + d + n) % n);
+
+  return (
+   <div className={'bedSlider' + (className ? ' ' + className : '')} role="group" aria-roledescription="carousel" aria-label={alt + ', ' + n + ' photographs'}>
+    <div className="bedSliderStage" style={{aspectRatio: ratio}}>
+     {slides.map((s, idx) => (
+      <div key={s.group + '/' + s.name} className={'bedSlide' + (idx === i ? ' on' : '')} aria-hidden={idx !== i}>
+       <SmartImage
+        group={s.group}
+        name={s.name}
+        alt={idx === 0 ? alt : ''}
+        ratio={ratio}
+        widths={[320, 480, 640, 960]}
+        sizes={sizes}
+        position={s.position || '50% 45%'}
+        className={className}
+        placeholder={idx === 0 ? placeholder : undefined}
+       />
+      </div>
+     ))}
+    </div>
+    {n > 1 && (
+     <div className="bedSliderBar">
+      <button type="button" className="bedArrow" onClick={() => step(-1)} aria-label={'Previous photograph of ' + alt}>
+       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div className="bedDots" role="tablist" aria-label="Choose a photograph">
+       {slides.map((s, idx) => (
+        <button key={s.group + '/' + s.name} type="button" role="tab" aria-selected={idx === i}
+         aria-label={'Photograph ' + (idx + 1) + ' of ' + n + ' for ' + alt}
+         className={'bedDot' + (idx === i ? ' on' : '')} onClick={() => setI(idx)}/>
+       ))}
+      </div>
+      <button type="button" className="bedArrow" onClick={() => step(1)} aria-label={'Next photograph of ' + alt}>
+       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+     </div>
+    )}
+   </div>
+  );
+}
 
 /**
  * The bed photographs that turn over behind the page header. They are the
@@ -188,15 +344,11 @@ function RoomsPage() {
       const active = chosen === r.type;
       return (
        <article className={'bedCard' + (active ? ' chosen' : '')} id={'bed-' + r.id} key={r.id}>
-        <SmartImage
-         group="rooms"
-         name={roomImage(r.type)}
+        <BedSlider
+         slides={ROOM_SLIDES[r.type]?.length ? ROOM_SLIDES[r.type] : roomFallback(r.type)}
          alt={r.type}
          ratio="3 / 4"
-         widths={[320, 480, 640, 960]}
          sizes="(max-width:1050px) 100vw, 300px"
-         position="50% 45%"
-         zoom
          className="bedMedia"
          placeholder={<>
           <BedGlyph size={92}/>
@@ -231,14 +383,11 @@ function RoomsPage() {
       </div>
      ) : (
       <div className="plannerActive">
-       <SmartImage
-        group="rooms"
-        name={roomImage(sel.type)}
+       <BedSlider
+        slides={ROOM_SLIDES[sel.type]?.length ? ROOM_SLIDES[sel.type] : roomFallback(sel.type)}
         alt={sel.type}
         ratio="16 / 10"
-        widths={[320, 480, 640]}
         sizes="(max-width:1050px) 100vw, 360px"
-        position="50% 45%"
         className="spot"
         placeholder={<BedGlyph size={86}/>}
        />

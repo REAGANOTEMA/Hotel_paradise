@@ -155,8 +155,15 @@ const HERO_COPY: HeroCopy[] = [
     eyebrow: 'HEALTH CLUB AND POOL',
     title: 'Golden afternoons by the pool.',
     text: 'Cool off in our sparkling swimming pool, framed by sun loungers, lush gardens and the gentle sound of the Nile. Pure relaxation, just for you.',
-    primary: {label: 'See the facilities', href: '#facilities'},
+    primary: {label: 'See the facilities', href: './facilities.html'},
     secondary: {label: 'Check availability', href: '#book'}
+  },
+  {
+    eyebrow: 'WELCOME TO THE HOTEL',
+    title: 'Paradise sits right on the Nile.',
+    text: 'Sixty nine rooms across three floors, dining on the riverbank, a pool and grounds for functions - all of Jinja\'s best address in one calm corner of town.',
+    primary: {label: 'See the facilities', href: './facilities.html'},
+    secondary: {label: 'Book a room', href: './rooms.html'}
   },
   {
     eyebrow: 'EXECUTIVE COMFORT',
@@ -166,11 +173,11 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'FROM THE GRILL',
-    title: 'Burgers worth crossing town for.',
-    text: 'Juicy, flame grilled and stacked high, our signature burgers arrive with golden fries and all the trimmings. One bite and you will be back for more.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'Send an order', href: './menu.html#order'}
+    eyebrow: 'WEDDINGS, CONFERENCES AND FUNCTIONS',
+    title: 'Halls and gardens on the river.',
+    text: 'Our banquet hall and conference rooms sit in the gardens of the Nile, with a kitchen that feeds a full house. Tell us what you are planning and we will carry the details.',
+    primary: {label: 'Plan an event', href: './events.html'},
+    secondary: {label: 'See the halls', href: './events.html#occasions'}
   },
   {
     eyebrow: 'STEAK NIGHT',
@@ -191,7 +198,7 @@ const HERO_COPY: HeroCopy[] = [
     title: 'Raise a glass to the evening.',
     text: 'A carefully chosen wine list and a relaxed riverside bar turn every night into a celebration. Come for dinner, stay for the golden hour.',
     primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'See the rates', href: '#rates'}
+    secondary: {label: 'See the facilities', href: './facilities.html'}
   },
   {
     eyebrow: 'TAKE THE TOUR',
@@ -581,10 +588,24 @@ function Home() {
        <h4>{f.t}</h4>
        <p>{f.d}</p>
       </div>
-     </article>
-    ))}
-   </div>
-  </section>
+</article>
+     ))}
+    </div>
+    <div className="promoStrip">
+     <a className="promo reveal" href="./facilities.html">
+      <SmartImage group="site" name="Hotel-paradise" alt="The main building of Hotel Paradise on the Nile" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 40%" zoom/>
+      <span><b>The hotel</b><small>Sixty nine rooms around the river view &rarr;</small></span>
+     </a>
+     <a className="promo reveal" href="./facilities.html">
+      <SmartImage group="site" name="Pool-768x512" alt="The pool at Hotel Paradise on the Nile" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 50%" zoom/>
+      <span><b>The pool</b><small>Cool off by the Nile &rarr;</small></span>
+     </a>
+     <a className="promo reveal" href="./facilities.html">
+      <SmartImage group="site" name="Bar" alt="The bar at Hotel Paradise on the Nile" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 42%" zoom/>
+      <span><b>The bar</b><small>Evenings start here &rarr;</small></span>
+     </a>
+    </div>
+   </section>
 
   <section className="section band contact hasBackdrop" id="contact" style={{'--bg': "url('./images/hero/view-1920.webp')"} as unknown as React.CSSProperties}>
    <div className="bandInner">

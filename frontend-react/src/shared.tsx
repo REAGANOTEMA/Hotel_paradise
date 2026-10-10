@@ -130,11 +130,11 @@ export type Room = {
 };
 
 export const rooms: Room[] = [
-     {id: 1, type: 'Suite', rate: fmtPrice(248000), usd: '100 to 120', price: 248000, guests: 'Up to 3 guests', beds: 'One king sized bed', pillow: 'The grand retreat', text: 'Our most spacious room, generous in space and comfort, with premium furnishings, a king sized bed and a calm, elegant atmosphere.', featured: true},
-  {id: 2, type: 'Family Room', rate: fmtPrice(314000), usd: '122 to 125', price: 314000, guests: 'Up to 4 guests', beds: 'One double bed and two single beds', pillow: 'Made for families', text: 'Roomier than most, with a double bed and two single beds, made for families travelling together with comfort in mind.', featured: true},
+     {id: 1, type: 'Suite', rate: fmtPrice(248000), usd: '100', price: 248000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'The grand retreat', text: 'Our most spacious room, generous in space and comfort, with premium furnishings, a king sized bed and a calm, elegant atmosphere.', featured: true},
+  {id: 2, type: 'Family Room', rate: fmtPrice(314000), usd: '122 to 125', price: 314000, guests: 'Up to 4 guests', beds: 'One king sized bed and extra beds', pillow: 'Made for families', text: 'Roomier than most, with a king sized bed and extra beds, made for families travelling together with comfort in mind.', featured: true},
   {id: 3, type: 'Triple Room', rate: fmtPrice(213000), usd: '100', price: 213000, guests: 'Up to 3 guests', beds: 'Three single beds', pillow: 'For three guests', text: 'A comfortable setting with three single beds, ideal for friends or a small group staying together.'},
   {id: 4, type: 'Executive Deluxe', rate: fmtPrice(202000), usd: '80', price: 202000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'Business ready', text: 'An elevated stay with refined touches and a king sized bed, well suited to business and leisure travellers alike.'},
-  {id: 5, type: 'Deluxe Double', rate: fmtPrice(178000), usd: '70', price: 178000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'The popular choice', text: 'Elegant double accommodation with a restful, warm and private atmosphere and a comfortable double bed.'},
+  {id: 5, type: 'Deluxe Double', rate: fmtPrice(178000), usd: '70', price: 178000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'The popular choice', text: 'Elegant double accommodation with a restful, warm and private atmosphere and a comfortable king sized bed.'},
      {id: 6, type: 'Standard Double', rate: fmtPrice(155000), usd: '60', price: 155000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'Quiet and cosy', text: 'A well kept double room with a comfortable bed, everything you need for a good night in Jinja.'},
      {id: 7, type: 'Standard Twin', rate: fmtPrice(142000), usd: '60', price: 142000, guests: 'Up to 2 guests', beds: 'Two single beds', pillow: 'Two beds', text: 'A neatly kept room with two comfortable single beds for a peaceful night of rest.'},
      {id: 8, type: 'Standard Single', rate: fmtPrice(128000), usd: '55', price: 128000, guests: '1 guest', beds: 'One single bed', pillow: 'Great value', text: 'A simple, well equipped single room with a comfortable single bed, and the best value on the river.'}
@@ -218,7 +218,7 @@ export function TopBar() {
  );
 }
 
-export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./system/', 'Staffs Logins']] as const;
+export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./events.html', 'Plan an event'], ['./facilities.html', 'Facilities'], ['./system/', 'Staffs Logins']] as const;
 
 /** The padlock that marks the staff entrance, so the last button reads as a
  *  door into the management system rather than one more page of the site. */
@@ -252,7 +252,7 @@ export function Footer() {
     <div className="flag"><i></i><i></i><i></i></div>
     <div className="footerMain">
      <div className="footerBrand">
-      <img className="footerLogo" src="./logo-192.png" alt="Hotel Paradise on the Nile logo" width={72} height={72}/>
+      <img className="footerLogo" src="./images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel Paradise on the Nile logo" width={72} height={72}/>
       <h3>HOTEL PARADISE</h3>
       <h4>ON THE NILE</h4>
       <p className="footerTag">Premium hospitality in Jinja, on the banks of the Nile.</p>

@@ -324,6 +324,10 @@ function page_allowed(string $page): bool{
   // it watches.
   'integrity'=>['director','general_manager','auditor'],
   'reservations'=>['receptionist','general_manager','director','accountant','events_manager'],
+  // Events and enquiries arrive from the website (Plan an event, Facilities)
+  // and land here: the events team owns the follow up, marketing helps warm a
+  // lead, and the front desk runs facility enquiries the way it runs bookings.
+  'events'=>['events_manager','marketing','receptionist','general_manager','director'],
   'rooms'=>['receptionist','housekeeping','general_manager','director','maintenance'],
   'guests'=>['receptionist','general_manager','director','accountant'],
   'pos'=>['waiter','bar_staff','cashier','kitchen','general_manager','director'],
@@ -334,7 +338,10 @@ function page_allowed(string $page): bool{
   'shifts'=>['cashier','general_manager','director','accountant'],
   'inventory'=>['storekeeper','general_manager','director','accountant'],
   'suppliers'=>['procurement','storekeeper','general_manager','director','accountant'],
-  'purchases'=>['procurement','storekeeper','general_manager','director','accountant'],
+  // Every department raises requisitions against the store, so the purchases
+  // module is open to the whole floor: the kitchen asks for food, housekeeping
+  // for linen, maintenance for parts, the events team for function supplies.
+  'purchases'=>['procurement','storekeeper','general_manager','director','accountant','receptionist','housekeeping','kitchen','maintenance','waiter','bar_staff','events_manager','marketing'],
   'expenses'=>['accountant','general_manager','director','receptionist','housekeeping','kitchen'],
   'finance'=>['accountant','general_manager','director','cashier'],
   'approvals'=>['general_manager','director','accountant'],
@@ -384,6 +391,6 @@ function badge(string $text,string $tone='grey'): string{
 function payment_methods(): array{ return ['cash'=>'Cash','mtn_momo'=>'Mobile Money','airtel_money'=>'Airtel Money','card'=>'Card','bank'=>'Bank Transfer','other'=>'Other']; }
 
 function role_label(string $r): string{
- $map=['super_admin'=>'Administrator','director'=>'Director','general_manager'=>'General Manager','accountant'=>'Finance','cashier'=>'Cashier','receptionist'=>'Front Desk','waiter'=>'Waiter','bar_staff'=>'Bar Staff','kitchen'=>'Kitchen','storekeeper'=>'Storekeeper','procurement'=>'Procurement','housekeeping'=>'Housekeeping','auditor'=>'Auditor'];
+ $map=['super_admin'=>'Administrator','director'=>'Director','general_manager'=>'General Manager','accountant'=>'Finance','cashier'=>'Cashier','receptionist'=>'Front Desk','waiter'=>'Waiter','bar_staff'=>'Bar Staff','kitchen'=>'Kitchen','storekeeper'=>'Storekeeper','procurement'=>'Procurement','housekeeping'=>'Housekeeping','auditor'=>'Auditor','events_manager'=>'Events Manager','marketing'=>'Marketing','maintenance'=>'Maintenance'];
  return $map[$r]??str_replace('_',' ',$r);
 }

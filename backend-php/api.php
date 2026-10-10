@@ -718,4 +718,113 @@ if($act==='account'){
   $out(['ok'=>false,'error'=>'Unknown account request'],400);
 }
 
+/**
+ * The website lets a guest ask about an event or a facility. Those rows live
+ * in tables that arrived with the site - but a database installed in the field
+ * may not have run that step yet. Rather than reject a wedding enquiry with a
+ * 500, every write is guarded by a self-healing create: the first real enquiry
+ * on an old install makes the table, and every one after finds it waiting.
+ */
+function ensure_events_tables(): void{
+ db()->exec('CREATE TABLE IF NOT EXISTS event_requests(
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  hotel_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
+  request_number VARCHAR(24) NOT NULL,
+  full_name VARCHAR(120) NOT NULL,
+  phone VARCHAR(40) NOT NULL,
+  email VARCHAR(160) NULL,
+  event_type VARCHAR(80) NOT NULL,
+  event_date DATE NULL,
+  guests INT UNSIGNED NULL,
+  venue VARCHAR(80) NULL,
+  message TEXT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT \'new\',
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NULL,
+  PRIMARY KEY(id),
+  UNIQUE KEY uq_event_number(request_number)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
+ db()->exec('CREATE TABLE IF NOT EXISTS facility_enquiries(
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  hotel_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
+  enquiry_number VARCHAR(24) NOT NULL,
+  full_name VARCHAR(120) NOT NULL,
+  phone VARCHAR(40) NOT NULL,
+  email VARCHAR(160) NULL,
+  facility VARCHAR(80) NULL,
+  preferred_date DATE NULL,
+  guests INT UNSIGNED NULL,
+  message TEXT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT \'new\',
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NULL,
+  PRIMARY KEY(id),
+  UNIQUE KEY uq_enquiry_number(enquiry_number)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
+}
+
+/** A date sent by the browser is only ever the shape the site's own field
+ *  produces; anything else is dropped, never stored. */
+function clean_date(string $d): string{ return preg_match('/^\d{4}-\d{2}-\d{2}$/',$d)==1?$d:''; }
+
+/**
+ * A "Plan an event" enquiry from the website. Name and a phone number are the
+ * whole contract - everything else is optional because a good events team
+ * closes a lead over the phone, not on a form. The team is the one to notice:
+ * the row goes straight to the console and the phones of the events, marketing
+ * and management roles ring with it.
+ */
+if($act==='event'){
+  ensure_events_tables();
+  $name=trim((string)($body['name']??''));
+  $phone=trim((string)($body['phone']??''));
+  $email=trim((string)($body['email']??''));
+  $eve=trim((string)($body['event_type']??''));
+  $date=clean_date((string)($body['event_date']??''));
+  $guests=(int)($body['guests']??0);
+  $venue=trim((string)($body['venue']??''));
+  $message=trim((string)($body['message']??''));
+  if($name===''||$phone===''){ $out(['ok'=>false,'error'=>'Please provide your name and phone number so our events team can reach you.'],422); }
+  $num=next_number('EVT','event_requests','request_number');
+  q('INSERT INTO event_requests(hotel_id,request_number,full_name,phone,email,event_type,event_date,guests,venue,message,status,created_at) VALUES(1,?,?,?,?,?,?,?,?,?,\'new\',NOW())',
+    [$num,$name,$phone,$email!==''?$email:null,$eve,$date!==''?$date:null,$guests>0?$guests:null,$venue!==''?$venue:null,$message!==''?$message:null]);
+  $eid=(int)db()->lastInsertId();
+  audit('web_event','event_requests',$eid,['request_number'=>$num,'event_type'=>$eve,'event_date'=>$date,'guests'=>$guests,'venue'=>$venue,'phone'=>$phone]);
+  api_notify('event:'.$num,'communication','New event enquiry '.$num,
+    $name.' wants to plan '.($eve!==''?mb_strtolower($eve):'an event').' ('.$num.').'.($guests>0?' '.$guests.' guests.':'').($date!==''?(' '.$date.'.'):'').' Please call '.$phone.'.',
+    ['request_number'=>$num,'event_type'=>$eve,'event_date'=>$date,'guests'=>$guests,'venue'=>$venue,'name'=>$name,'phone'=>$phone],
+    ['director','general_manager','events_manager','marketing']);
+  $out(['ok'=>true,'reference'=>$num,
+    'message'=>'Thank you, '.$name.'. Our events team will call '.$phone.' and walk you through dates, venues and a menu.']);
+}
+
+/**
+ * A facilities enquiry from the website, written against the same contract as
+ * an event: name and phone, everything else a friendly front desk can earn
+ * over a call. Comfort and garden questions are a front desk lead, so it rings
+ * there first and is echoed to management so nothing is missed.
+ */
+if($act==='facility'){
+  ensure_events_tables();
+  $name=trim((string)($body['name']??''));
+  $phone=trim((string)($body['phone']??''));
+  $email=trim((string)($body['email']??''));
+  $fac=trim((string)($body['facility']??''));
+  $date=clean_date((string)($body['date']??''));
+  $guests=(int)($body['guests']??0);
+  $message=trim((string)($body['message']??''));
+  if($name===''||$phone===''){ $out(['ok'=>false,'error'=>'Please provide your name and phone number so the front desk can answer.'],422); }
+  $num=next_number('FAQ','facility_enquiries','enquiry_number');
+  q('INSERT INTO facility_enquiries(hotel_id,enquiry_number,full_name,phone,email,facility,preferred_date,guests,message,status,created_at) VALUES(1,?,?,?,?,?,?,?,?,\'new\',NOW())',
+    [$num,$name,$phone,$email!==''?$email:null,$fac!==''?$fac:null,$date!==''?$date:null,$guests>0?$guests:null,$message!==''?$message:null]);
+  $fid=(int)db()->lastInsertId();
+  audit('web_enquiry','facility_enquiries',$fid,['enquiry_number'=>$num,'facility'=>$fac,'preferred_date'=>$date,'guests'=>$guests,'phone'=>$phone]);
+  api_notify('facility:'.$num,'communication','New facility enquiry '.$num,
+    $name.' asked about '.($fac!==''?$fac:'the hotel facilities').' ('.$num.').'.($date!==''?(' '.$date.'.'):'').($guests>0?(' '.$guests.' people.'):'').' Please call '.$phone.'.',
+    ['enquiry_number'=>$num,'facility'=>$fac,'preferred_date'=>$date,'guests'=>$guests,'name'=>$name,'phone'=>$phone],
+    ['director','general_manager','receptionist','marketing']);
+  $out(['ok'=>true,'reference'=>$num,
+    'message'=>'Thank you, '.$name.'. The front desk will call '.$phone.' to confirm your visit.']);
+}
+
 $out(['ok'=>false,'error'=>'Unknown request'],404);

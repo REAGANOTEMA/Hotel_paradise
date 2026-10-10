@@ -17,6 +17,8 @@ function nav_groups(): array{
     'dashboard'=>'Dashboard','overview'=>'CEO / Director','integrity'=>'Integrity & Control']],
   ['label'=>'Front desk','items'=>[
     'reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
+  ['label'=>'Events','items'=>[
+    'events'=>'Events & Enquiries']],
   ['label'=>'Food and beverage','items'=>[
     'pos'=>'POS and Orders','fnb'=>'Food and Beverage','kitchen'=>'Kitchen']],
   ['label'=>'Operations','items'=>[
@@ -35,6 +37,7 @@ function svg_icon(string $name): string{
   'grid'=>'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',
   'chart'=>'<path d="M21.2 15.9A10 10 0 1 1 8 2.8"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>',
   'calendar'=>'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>',
+  'event'=>'<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M8 2.5v4M16 2.5v4M3 9.5h18"/><path d="M9.5 15l1.9 1.9 3.6-4"/>',
   'bed'=>'<path d="M2 19v-9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v9"/><path d="M2 15h20"/><path d="M6 10V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/>',
   'users'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   'cart'=>'<circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.4 11.2a2 2 0 0 0 2 1.6h8.5a2 2 0 0 0 2-1.55L21.5 7H6"/>',
@@ -73,6 +76,7 @@ function kpi_icon(string $label): string{
   '/approval|pending|awaiting/i'=>'check','/stock|reorder|level/i'=>'box','/inventory|item/i'=>'box',
   '/order|pass|cook|meal|dish/i'=>'pot','/table|cover/i'=>'plate','/shift|hour|time/i'=>'clock',
   '/expense|cost|bill/i'=>'wallet','/purchase|requisition/i'=>'bag','/supplier|deliver/i'=>'truck',
+  '/event|enquiry|function|wedding|conference/i'=>'event',
   '/audit|trail|log/i'=>'file','/report|chart|analy/i'=>'bars','/task|alert|issue|risk/i'=>'alert',
   '/balance|cash|profit|income/i'=>'trend','/team|user|staff/i'=>'users',
  ];

@@ -155,8 +155,9 @@ function scanFolder(dir) {
  */
 const HERO_SEQUENCE = [
   'hero/pool',
+  'hotel-paradise',
   'execuitive-bed',
-  'burger-hero',
+  'paradise-banquet-hall-768x1024',
   'steak-with-wedges',
   'juice-hero',
   'wine-hero',
@@ -294,6 +295,18 @@ export function buildImageManifest(imagesRoot) {
     gallery: scanFolder(path.join(imagesRoot, 'gallery')),
     // The hotel's six headline facts, each illustrated by one landscape plate.
     facilities: scanFolder(path.join(imagesRoot, 'facilities')),
+    // Photographs that live in the site root itself: the new room plates
+    // (single-room, tripple-room, executive-deluxe-room), the pool, the gym,
+    // the bar, the main building and the hotel logo.
+    site: scanFolder(imagesRoot),
+    // The meeting rooms and banquet halls the events page is built from.
+    halls: scanFolder(path.join(imagesRoot, 'meeting-rooms')),
+    // The rooms page bed tours: each room type keeps its own working folder of
+    // bed photographs, named beds-* so a slug can never collide with a dish.
+    'beds-exec': scanFolder(path.join(imagesRoot, 'executive-beds-images')),
+    'beds-suit': scanFolder(path.join(imagesRoot, 'suit-beds-images')),
+    'beds-triple': scanFolder(path.join(imagesRoot, 'triple-beds-images')),
+    'beds-twin': scanFolder(path.join(imagesRoot, 'twin-bed-images')),
     hero: scanHero(imagesRoot)
   };
 }

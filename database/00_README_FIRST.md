@@ -46,6 +46,12 @@ can only be loaded into an **empty** database. A database that already has
 tables is a site being used, and its rows are not this install's to touch; the
 installer says so and stops rather than doubling everything.
 
+New features that arrive after a fresh install are small standalone patches in
+`sql/hotelpardise_system/` (named by date, e.g.
+`2026-10-10_events_enquiries.sql`). Each is `CREATE TABLE IF NOT EXISTS`-safe to
+re-run, never edits existing tables, and does not belong in the dumps — the
+dumps are the blank slate, the patches are the upgrades shipped on top.
+
 Order still matters, and not because of the dumps: the accounts and the grants
 are not in them, and a `GRANT` naming a table cannot be granted before that
 table exists. Databases, dumps, accounts, grants — any other order fails

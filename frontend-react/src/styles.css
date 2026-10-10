@@ -1331,6 +1331,122 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
   .footerCredit span{line-height:1.6}
 }
 
+/* ---------------------------------------------------------------
+   THE ROOM TOUR: a bed photograph that turns over.
+   The stage holds the aspect ratio and each slide fades in over it,
+   with the same pause-for-motion-settings the home carousel has.
+   --------------------------------------------------------------- */
+.bedSlide,.bedSliderStage{background:var(--navy)}
+.bedSliderStage{position:relative;overflow:hidden}
+.bedSlide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .65s ease,visibility 0s linear .65s}
+.bedSlide.on{opacity:1;visibility:visible;transition:opacity .65s ease,visibility 0s}
+/* The slide's own box is told 100% tall, so the stage aspect win is kept. */
+.bedSlide .photoBox{width:100%;height:100%;aspect-ratio:auto}
+.bedSliderBar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+.bedArrow{flex:none;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;border:1px solid var(--line2);color:var(--navy);cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease;box-shadow:0 4px 12px rgba(7,26,51,.08)}
+.bedArrow:hover{background:var(--gold);border-color:var(--gold);transform:translateY(-1px)}
+.bedArrow svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bedDots{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap;min-width:0}
+.bedDot{width:9px;height:9px;border-radius:50%;background:#D8DEE6;border:0;padding:0;cursor:pointer;transition:background .18s ease,transform .18s ease}
+.bedDot:hover{background:#B9C0CB}
+.bedDot.on{background:var(--gold);transform:scale(1.2)}
+
+/* ---------------------------------------------------------------
+   THE EVENTS PAGE: venues, occasions, the equation and the form.
+   --------------------------------------------------------------- */
+.pill{display:inline-block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--nile);font-weight:700;border:1px solid rgba(11,93,120,.35);border-radius:999px;padding:6px 12px;margin:0 0 12px}
+.venueGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;margin-top:8px}
+.venue{background:#fff;border:1px solid var(--line2);border-radius:calc(var(--r) + 6px);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.venue .photo{width:100%}
+.venueBody{padding:24px 26px 28px;display:flex;flex-direction:column;flex:1}
+.venueBody h3{font-family:'Playfair Display',serif;font-size:1.42rem;color:var(--navy);margin:2px 0 10px}
+.venueBody p{color:var(--muted);font-size:15px;line-height:1.7;margin:0}
+.occGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.occ{background:#fff;border:1px solid var(--line2);border-left:3px solid var(--gold);border-radius:var(--r);padding:24px 24px 26px;box-shadow:var(--shadow)}
+.occ h3{font-family:'Playfair Display',serif;font-size:1.22rem;color:var(--navy);margin:0 0 10px}
+.occ p{color:var(--muted);font-size:14.5px;line-height:1.7;margin:0}
+.evSplit{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,4vw,56px);align-items:center;margin-top:8px}
+.evWrite{display:flex;flex-direction:column;gap:14px}
+.evPill{display:flex;flex-direction:column;gap:5px;background:#fff;border:1px solid var(--line2);border-left:3px solid var(--gold);border-radius:var(--r);padding:18px 22px;box-shadow:var(--shadow)}
+.evPill b{font-family:'Playfair Display',serif;font-size:1.08rem;color:var(--navy)}
+.evPill span{color:var(--muted);font-size:14.5px;line-height:1.65}
+.evGall{display:flex;flex-direction:column;gap:14px}
+.evGallRow .photo{width:100%}
+.evGallRow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.evForm{max-width:780px;margin:0 auto;background:#fff;border:1px solid var(--line2);border-radius:calc(var(--r) + 4px);padding:clamp(20px,3vw,30px);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
+.evForm textarea{width:100%;padding:12px 14px;border:1px solid #D8DCE3;border-radius:8px;background:#fff;font-family:inherit;font-size:15px;color:var(--ink);resize:vertical;transition:border-color .18s ease,box-shadow .18s ease}
+.evForm textarea:hover{border-color:#B9C0CB}
+.evForm textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft);outline:0}
+.evForm .planBook{margin-top:6px}
+.evFormNote{color:var(--faint);font-size:13px;text-align:center;margin:4px 0 0;line-height:1.7}
+
+/* ---------------------------------------------------------------
+   THE FACILITIES PAGE: deep alternating panels, then the gifts.
+   --------------------------------------------------------------- */
+.facStack{display:flex;flex-direction:column;gap:clamp(40px,6vw,72px)}
+.fac{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,4vw,56px);align-items:center}
+.fac.rev{grid-template-columns:0.95fr 1.05fr}
+.fac.rev .facIdx{text-align:right}
+.fac .photo{width:100%}
+.facBody{display:flex;flex-direction:column}
+.facIdx{font-family:'Playfair Display',serif;font-size:13px;letter-spacing:3px;color:var(--gold-ink);opacity:.7;margin-bottom:10px}
+.facBody h2{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--navy);margin:10px 0 14px;line-height:1.15}
+.facText{color:var(--muted);font-size:16px;line-height:1.75;margin:0}
+.giftGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+.gift{background:#fff;border:1px solid var(--line2);border-radius:var(--r);padding:20px 22px;box-shadow:var(--shadow)}
+.gift b{display:block;font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--navy);margin-bottom:6px}
+.gift span{color:var(--muted);font-size:13.5px;line-height:1.6}
+.facGallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+.facGallery .photo{width:100%}
+
+/* ---------------------------------------------------------------
+   THE HOME PROMO STRIP: the hotel, the pool and the bar as a
+   row of routes into the facilities page.
+   --------------------------------------------------------------- */
+.promoStrip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:34px auto 0;max-width:1100px}
+.promo{position:relative;border-radius:calc(var(--r) + 6px);overflow:hidden;display:block;line-height:0;box-shadow:var(--shadow)}
+.promo .photoBox{width:100%}
+.promo span{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;flex-direction:column;gap:3px;padding:26px 18px 15px;background:linear-gradient(0deg,rgba(7,26,51,.85) 0%,rgba(7,26,51,.35) 60%,transparent);color:#fff;line-height:1.25}
+.promo b{font-family:'Playfair Display',serif;font-size:20px;font-weight:600}
+.promo small{color:#d6dfea;font-size:12.5px;letter-spacing:.3px}
+.promo .photoImg{transition:transform .7s cubic-bezier(.22,.7,.3,1)}
+.promo:hover .photoImg{transform:scale(1.05)}
+
+/* ---------------------------------------------------------------
+   THE NAVIGATION WITH SIX DESTINATIONS: the two new pages and the
+   rooms and the menu all want to stay on one line until the drawer.
+   --------------------------------------------------------------- */
+@media(max-width:1120px){
+  .brand span{font-size:22px}
+  .navRight{gap:8px}
+  .nav nav a{font-size:11.5px;padding:7px 8px;gap:5px}
+  .nav nav{gap:2px}
+}
+
+/* ---------------------------------------------------------------
+   THE NEW PAGES ON SMALLER SCREENS
+   --------------------------------------------------------------- */
+@media(max-width:1050px){
+  .evSplit{grid-template-columns:1fr}
+  .evGall{margin-top:6px}
+}
+@media(max-width:900px){
+  .venueGrid,.occGrid,.giftGrid{grid-template-columns:repeat(2,1fr)}
+  .fac,.fac.rev{grid-template-columns:1fr}
+  .fac.rev .photo{order:0}
+  .facGallery{grid-template-columns:1fr}
+}
+@media(max-width:900px) and (min-width:561px){
+  .facGallery{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:768px){
+  .promoStrip{grid-template-columns:1fr;gap:14px}
+}
+@media(max-width:560px){
+  .venueGrid,.occGrid,.giftGrid,.evForm .planGrid{grid-template-columns:1fr}
+  .facGallery{grid-template-columns:1fr}
+}
+
 
 
 

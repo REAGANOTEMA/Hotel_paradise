@@ -51,7 +51,9 @@ export default defineConfig({
         rooms: 'rooms.html',
         menu: 'menu.html',
         pay: 'pay.html',
-        account: 'account.html'
+        account: 'account.html',
+        events: 'events.html',
+        facilities: 'facilities.html'
       },
       // The file name of a bundle is not its content hash.
       //

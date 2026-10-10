@@ -1,7 +1,17 @@
 import React from 'react';
 import manifest from './image-manifest.json';
 
-export type ImageGroup = 'dishes' | 'rooms' | 'gallery' | 'facilities';
+export type ImageGroup =
+  | 'dishes'
+  | 'rooms'
+  | 'gallery'
+  | 'facilities'
+  | 'site'
+  | 'halls'
+  | 'beds-exec'
+  | 'beds-suit'
+  | 'beds-triple'
+  | 'beds-twin';
 
 type Variant = {w: number; ext: string; h: number; file?: string};
 type Entry = {ext: string; w: number; h: number; variants: Variant[]};
@@ -15,7 +25,13 @@ export const IMAGE_DIR: Record<ImageHome, string> = {
   rooms: './images/rooms/',
   gallery: './images/gallery/',
   facilities: './images/facilities/',
-  food: './images/food/'
+  food: './images/food/',
+  site: './images/',
+  halls: './images/meeting-rooms/',
+  'beds-exec': './images/executive-beds-images/',
+  'beds-suit': './images/suit-beds-images/',
+  'beds-triple': './images/triple-beds-images/',
+  'beds-twin': './images/twin-bed-images/'
 };
 
 /** The poster a film slot waits on. It lives in the folder of the film. */
