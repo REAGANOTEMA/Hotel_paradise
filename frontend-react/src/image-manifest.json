@@ -8030,6 +8030,12 @@
       "h": 265,
       "variants": []
     },
+    "buffet": {
+      "ext": "jpg",
+      "w": 1600,
+      "h": 941,
+      "variants": []
+    },
     "burger-hero": {
       "ext": "jpg",
       "w": 739,
@@ -8204,6 +8210,12 @@
       "h": 900,
       "variants": []
     },
+    "jinja-main-bridge-view-from-hotel-at-night": {
+      "ext": "jpg",
+      "w": 738,
+      "h": 416,
+      "variants": []
+    },
     "juice-hero-with-bread": {
       "ext": "jpg",
       "w": 597,
@@ -8266,6 +8278,12 @@
           "h": 960
         }
       ]
+    },
+    "pizza-and-drinks-and-souce": {
+      "ext": "jpg",
+      "w": 1500,
+      "h": 1000,
+      "variants": []
     },
     "sea-food-hero": {
       "ext": "jpg",
@@ -9354,18 +9372,24 @@
       "kind": "image"
     },
     {
-      "slug": "dinning-space",
+      "slug": "pizza-and-drinks-and-souce",
       "dir": "./images/hero/",
-      "file": "dinning-space.webp",
+      "file": "pizza-and-drinks-and-souce-1500.webp",
       "ext": "webp",
-      "w": 678,
-      "h": 452,
+      "w": 1500,
+      "h": 1000,
       "variants": [
         {
-          "file": "dinning-space-640.webp",
+          "file": "pizza-and-drinks-and-souce-960.webp",
           "ext": "webp",
-          "w": 640,
-          "h": 427
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "pizza-and-drinks-and-souce-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
         }
       ],
       "kind": "image"
@@ -9430,26 +9454,13 @@
       "kind": "image"
     },
     {
-      "slug": "view",
+      "slug": "jinja-main-bridge-view-from-hotel-at-night",
       "dir": "./images/hero/",
-      "file": "view-1920.webp",
+      "file": "jinja-main-bridge-view-from-hotel-at-night-738.webp",
       "ext": "webp",
-      "w": 1920,
-      "h": 1280,
-      "variants": [
-        {
-          "file": "view-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 640
-        },
-        {
-          "file": "view-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 853
-        }
-      ],
+      "w": 738,
+      "h": 416,
+      "variants": [],
       "kind": "image"
     },
     {
@@ -9539,18 +9550,24 @@
       "kind": "image"
     },
     {
-      "slug": "food-buffe-ready-for-serving-inoutside-cathering",
+      "slug": "buffet",
       "dir": "./images/hero/",
-      "file": "food-buffe-ready-for-serving-inoutside-cathering.webp",
+      "file": "buffet-1600.webp",
       "ext": "webp",
-      "w": 727,
-      "h": 345,
+      "w": 1600,
+      "h": 941,
       "variants": [
         {
-          "file": "food-buffe-ready-for-serving-inoutside-cathering-640.webp",
+          "file": "buffet-960.webp",
           "ext": "webp",
-          "w": 640,
-          "h": 304
+          "w": 960,
+          "h": 565
+        },
+        {
+          "file": "buffet-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 753
         }
       ],
       "kind": "image"

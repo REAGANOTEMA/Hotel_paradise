@@ -106,9 +106,15 @@ function FacilitiesPage() {
     {gifts.map(g => <div className="gift reveal" key={g.t}><b>{g.t}</b><span>{g.d}</span></div>)}
    </div>
    <div className="facGallery reveal">
-    <SmartImage group="site" name="Hotel-paradise" alt="The main building of Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" position="50% 40%" zoom className="photo"/>
-    <SmartImage group="facilities" name="fact-wellness" alt="Relaxation and wellness at Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" zoom className="photo"/>
-    <SmartImage group="gallery" name="pool1" alt="The pool at Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" position="50% 45%" zoom className="photo"/>
+    <SmartImage group="site" name="Hotel-paradise" alt="The main building of Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" position="50% 40%" zoom className="photo">
+     <span className="frameCap">The main building, on the banks of the Nile</span>
+    </SmartImage>
+    <SmartImage group="facilities" name="fact-wellness" alt="Relaxation and wellness at Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" zoom className="photo">
+     <span className="frameCap">Relaxation and wellness, indoors and out</span>
+    </SmartImage>
+    <SmartImage group="gallery" name="pool1" alt="The pool at Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" position="50% 45%" zoom className="photo">
+     <span className="frameCap">The pool, a few steps from the river</span>
+    </SmartImage>
    </div>
   </section>
 

@@ -131,11 +131,17 @@ function EventsPage() {
     </div>
     <div className="evGall reveal">
      <div className="evGallRow">
-      <SmartImage group="halls" name="nile-hall-meeting-room2" alt="Horizon spread across the Nile Hall" ratio="16 / 10" widths={[320, 480, 640]} sizes="(max-width:1050px) 100vw, 460px" className="photo"/>
+      <SmartImage group="halls" name="nile-hall-meeting-room2" alt="Horizon spread across the Nile Hall" ratio="16 / 10" widths={[320, 480, 640]} sizes="(max-width:1050px) 100vw, 460px" className="photo">
+       <span className="frameCap">Horizon spread across the Nile Hall</span>
+      </SmartImage>
      </div>
      <div className="evGallRow two">
-      <SmartImage group="halls" name="nile-hall-meeting-room3" alt="A riverside function table" ratio="4 / 3" widths={[320, 480, 640]} sizes="(max-width:1050px) 100vw, 220px" className="photo"/>
-      <SmartImage group="site" name="paradise-banquet-hall-768x1024" alt="The banquet hall dressed for dinner" ratio="4 / 5" widths={[320, 480, 640]} sizes="(max-width:1050px) 100vw, 220px" className="photo"/>
+      <SmartImage group="halls" name="nile-hall-meeting-room3" alt="A riverside function table" ratio="4 / 3" widths={[320, 480, 640]} sizes="(max-width:1050px) 100vw, 220px" className="photo">
+       <span className="frameCap">A riverside function table</span>
+      </SmartImage>
+      <SmartImage group="site" name="paradise-banquet-hall-768x1024" alt="The banquet hall dressed for dinner" ratio="4 / 5" widths={[320, 480, 640]} sizes="(max-width:1050px) 100vw, 220px" className="photo">
+       <span className="frameCap">The banquet hall, dressed for dinner</span>
+      </SmartImage>
      </div>
     </div>
    </div>

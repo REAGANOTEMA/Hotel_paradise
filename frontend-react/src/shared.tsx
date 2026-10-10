@@ -256,15 +256,130 @@ export const WhatsAppIcon = ({size = 15}: {size?: number}) => (
   </svg>
 );
 
+/** The browser's install prompt. It is not part of the standard DOM types. */
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{outcome: 'accepted' | 'dismissed'}>;
+};
+
+const INSTALL_KEY = 'hpn_install_dismissed';
+
+/**
+ * Offers the site as an app, once, and quietly.
+ *
+ * Where the browser can install it directly (Chrome and Edge on Android,
+ * Windows and macOS) it asks with the browser's own prompt. On iOS Safari,
+ * which has no such prompt, it explains the two taps to the Home Screen
+ * instead. A guest already using the installed app never sees it, a guest
+ * who dismisses it is remembered, and it only appears after the page has
+ * been read for a while rather than the moment it opens.
+ */
+export function InstallApp() {
+  const [evt, setEvt] = React.useState<InstallPromptEvent | null>(null);
+  const [ios, setIos] = React.useState(false);
+  const [show, setShow] = React.useState(false);
+  const [sheet, setSheet] = React.useState(false);
+  const timer = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    try {
+      if (window.matchMedia('(display-mode: standalone)').matches) return;
+      if ((navigator as unknown as {standalone?: boolean}).standalone) return;
+      if (window.localStorage.getItem(INSTALL_KEY) === '1') return;
+    } catch { /* private mode: carry on without the memory */ }
+
+    const reveal = () => {
+      if (timer.current) window.clearTimeout(timer.current);
+      timer.current = window.setTimeout(() => setShow(true), 9000);
+    };
+
+    const onPrompt = (e: Event) => {
+      e.preventDefault();
+      setEvt(e as InstallPromptEvent);
+      reveal();
+    };
+    const onInstalled = () => {
+      setShow(false); setSheet(false);
+      try { window.localStorage.setItem(INSTALL_KEY, '1'); } catch {}
+    };
+
+    window.addEventListener('beforeinstallprompt', onPrompt);
+    window.addEventListener('appinstalled', onInstalled);
+
+    const ua = navigator.userAgent || '';
+    const isIos = /iPad|iPhone|iPod/.test(ua) && !('MSStream' in window);
+    const isSafari = /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(ua);
+    if (isIos && isSafari) { setIos(true); reveal(); }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onPrompt);
+      window.removeEventListener('appinstalled', onInstalled);
+      if (timer.current) window.clearTimeout(timer.current);
+    };
+  }, []);
+
+  const dismiss = () => {
+    setShow(false); setSheet(false);
+    try { window.localStorage.setItem(INSTALL_KEY, '1'); } catch {}
+  };
+
+  const install = async () => {
+    if (evt) {
+      try { await evt.prompt(); await evt.userChoice; } catch {}
+      setEvt(null); dismiss();
+    } else {
+      setSheet(true);
+    }
+  };
+
+  if (!show && !sheet) return null;
+
+  return (
+   <>
+    {show && !sheet && (
+     <button type="button" className="installApp" onClick={install} aria-label="Install Hotel Paradise as an app">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+       <path d="M12 3v11m0 0 4-4m-4 4-4-4"/><path d="M5 17v2.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V17"/>
+      </svg>
+      <span>Install app</span>
+     </button>
+    )}
+    {sheet && (
+     <div className="installSheet" role="dialog" aria-modal="true" aria-label="Install the app" onClick={e => { if (e.target === e.currentTarget) setSheet(false); }}>
+      <div className="installCard">
+       <button type="button" className="installClose" onClick={dismiss} aria-label="Close">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+       </button>
+       <h3>Keep the hotel in your pocket</h3>
+       <p>{ios ? 'Add Hotel Paradise to your Home Screen, and it opens like any other app.' : 'Install Hotel Paradise from your browser for one-tap access, even offline.'}</p>
+       {ios ? (
+        <ol className="installSteps">
+         <li><b>1</b><span>Tap the <strong>Share</strong> button at the foot of Safari.</span></li>
+         <li><b>2</b><span>Choose <strong>Add to Home Screen</strong>.</span></li>
+         <li><b>3</b><span>Tap <strong>Add</strong>. The hotel is on your Home Screen.</span></li>
+        </ol>
+       ) : (
+        <ol className="installSteps">
+         <li><b>1</b><span>Open the browser menu (the three dots, top right).</span></li>
+         <li><b>2</b><span>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</span></li>
+         <li><b>3</b><span>Confirm, and the hotel is on your device.</span></li>
+        </ol>
+       )}
+       <button type="button" className="btn" onClick={dismiss}>Got it</button>
+      </div>
+     </div>
+    )}
+   </>
+  );
+}
+
 export function Footer() {
   return (
    <footer>
     <div className="flag"><i></i><i></i><i></i></div>
     <div className="footerMain">
      <div className="footerBrand">
-      <img className="footerLogo" src="./images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel Paradise on the Nile logo" width={72} height={72}/>
-      <h3>HOTEL PARADISE</h3>
-      <h4>ON THE NILE</h4>
+      <img className="footerLogo" src="./images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel Paradise on the Nile" width={96} height={96}/>
       <p className="footerTag">Premium hospitality in Jinja, on the banks of the Nile.</p>
      </div>
      <div className="footerCol"><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>
@@ -292,6 +407,7 @@ export function Footer() {
      <span>Hotel Paradise on the Nile Ltd, Jinja, Uganda</span>
      <span>Designed, built and supported by <a className="projLink" href={STUDIO.url} target="_blank" rel="noopener noreferrer">{STUDIO.name}</a></span>
     </div>
+    <InstallApp/>
    </footer>
   );
  }
