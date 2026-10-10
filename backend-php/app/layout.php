@@ -195,7 +195,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 
 /** The icon a module carries in the rail. */
 function nav_icon_key(string $page): string{
-   $map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations'=>'calendar','rooms'=>'bed','guests'=>'users',
+   $map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations'=>'calendar','rooms'=>'bed','guests'=>'users','events'=>'event',
   'pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
   'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
   'reports'=>'bars','users'=>'users','notifications'=>'bell','profile'=>'user'];

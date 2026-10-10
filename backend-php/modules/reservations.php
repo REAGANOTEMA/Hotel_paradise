@@ -102,7 +102,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
    $sentNote=($receipt['email_sent']??false)
     ?' The receipt was emailed to '.$receipt['email_to'].'.'
     :(($receipt!==null&&($receipt['email_to']??'')==='')?' No email address was on file, so nothing was emailed.':'');
-   flash('Payment of '.money($amount).' recorded.'.$sentNote);
+   flash('Payment of '.money($amount).' recorded.'.$sentNote.receipts_copy_note($receipt));
    go('reservations',['view'=>$id,'pay'=>$payId]);
    break;
 

@@ -91,7 +91,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
      require_once __DIR__.'/../app/receipts.php';
      $receipt=receipts_after_payment($payId);
      $sentNote=($receipt['email_sent']??false)?' The receipt was emailed to '.$receipt['email_to'].'.':'';
-     flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.'.$sentNote);
+     flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.'.$sentNote.receipts_copy_note($receipt));
      go('pos',['pay'=>$payId]);
    } else { flash('Enter the amount collected.','bad'); go('pos'); }
    break;

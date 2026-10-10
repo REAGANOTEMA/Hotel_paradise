@@ -324,6 +324,11 @@ if($act==='order'){
 if($act==='payment'){
   $src=trim((string)($body['source']??'')); $ref=trim((string)($body['reference']??''));
   $name=trim((string)($body['name']??'')); $phone=trim((string)($body['phone']??''));
+  // The address the guest typed at checkout, so the receipt that follows a
+  // confirmed payment has somewhere to go even when the booking or the order
+  // was placed without one. It is only ever written onto a record that has no
+  // address of its own, so a guest can never overwrite the hotel's own record.
+  $email=filter_var(trim((string)($body['email']??'')),FILTER_VALIDATE_EMAIL)?:'';
   $method=strtolower(trim((string)($body['method']??'')));
   if(!in_array($method,['pesapal','mtn_momo','airtel_money','card'],true)){
     $out(['ok'=>false,'error'=>'Please choose a payment method.'],422);
@@ -336,13 +341,29 @@ if($act==='payment'){
 
   $rid=null; $oid=null; $expected=0.0; $atDesk=0.0;
   if($src==='booking'){
-    $r=row('SELECT id,total'.nullable_column('reservations','paid','paid').' FROM reservations WHERE booking_number=?',[$ref]);
+    $r=row('SELECT id,total,'.nullable_column('reservations','paid','paid').' FROM reservations WHERE booking_number=?',[$ref]);
     if(!$r){ $out(['ok'=>false,'error'=>'We could not find that booking reference. Please call +256 759 504 928.'],404); }
     $rid=(int)$r['id']; $expected=(float)$r['total']; $atDesk=(float)($r['paid']??0);
   }else{
     $o=row('SELECT id,total FROM orders WHERE order_number=?',[$ref]);
     if(!$o){ $out(['ok'=>false,'error'=>'We could not find that order reference. Please call +256 759 504 928.'],404); }
     $oid=(int)$o['id']; $expected=(float)$o['total'];
+  }
+  // Keep the address on the record it belongs to, but never overwrite a real
+  // one: the receipt is built from the booking or the order, so the address has
+  // to live there. A database without the order column simply keeps the guests
+  // copy as it was.
+  if($email!==''){
+    try{
+      if($oid!==null&&existing_columns('orders',['customer_email'])!==[]){
+        q('UPDATE orders SET customer_email=? WHERE id=? AND (customer_email IS NULL OR customer_email=\'\')',[$email,$oid]);
+      }
+      if($rid!==null){
+        q('UPDATE guests g JOIN reservations r ON r.guest_id=g.id SET g.email=? WHERE r.id=? AND (g.email IS NULL OR g.email=\'\')',[$email,$rid]);
+      }
+    }catch(Throwable $e){
+      error_log('[hotel api] could not attach payment email: '.$e->getMessage());
+    }
   }
   // What is still owed, not what the reference started at. A booking settled at
   // the front desk and a payment that has already gone through both reduce the

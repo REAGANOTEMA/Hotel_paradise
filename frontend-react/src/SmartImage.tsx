@@ -62,7 +62,14 @@ export type HeroShot = {
  * carousel can lay its slides out before anything is fetched. Every other group
  * is keyed by slug, which is why HeroShot carries the extra field.
  */
-const LIB = manifest as Record<ImageGroup, Record<string, Entry>> & {hero: HeroShot[]; food?: Record<string, Entry>};
+// The manifest is generated from whatever is on disk, so a group whose folder
+// is empty or absent is simply missing from it. Partial says that honestly and
+// keeps typecheck working even before the first build has rewritten the file,
+// while every read below is already guarded with optional chaining.
+const LIB = manifest as unknown as Partial<Record<ImageGroup, Record<string, Entry>>> & {
+  hero: HeroShot[];
+  food?: Record<string, Entry>;
+};
 
 /**
  * Finds the photograph for a slot and the folder it actually lives in.
@@ -72,10 +79,10 @@ const LIB = manifest as Record<ImageGroup, Record<string, Entry>> & {hero: HeroS
  * shows as an empty box. The other groups read from their own folder alone.
  */
 function entryFor(group: ImageGroup, slug: string): {entry: Entry | null; dir: ImageHome} {
-  const here = LIB[group]?.[slug];
+  const here = LIB[group]?.[slug] ?? null;
   if (here) return {entry: here, dir: group};
   if (group === 'dishes') {
-    const filed = LIB.food?.[slug];
+    const filed = LIB.food?.[slug] ?? null;
     if (filed) return {entry: filed, dir: 'food'};
   }
   return {entry: null, dir: group};

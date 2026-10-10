@@ -35,8 +35,8 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   $sentNote=($receipt['email_sent']??false)
    ?' The receipt was emailed to '.$receipt['email_to'].'.'
    :(($receipt!==null&&($receipt['email_to']??'')==='')?' No email address was on file, so nothing was emailed.':'');
-  flash('Payment #'.$pid.' confirmed as received.'.$sentNote);
-  go('finance',['receipt'=>$pid]);
+   flash('Payment #'.$pid.' confirmed as received.'.$sentNote.receipts_copy_note($receipt));
+   go('finance',['receipt'=>$pid]);
  }
 }
 

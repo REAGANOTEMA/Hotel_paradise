@@ -24,7 +24,7 @@ declare(strict_types=1);
  * The three public entry points are:
  *
  *   mail_send($to,$subject,$html,$text,$opts)  send one message
- *   mail_html($title,$body,$preheader)         a branded HTML shell
+ *   mail_html($title,$body,$preheader,$staff)  a branded HTML shell
  *   mail_configured()                          whether a transport is set up
  */
 
@@ -126,7 +126,7 @@ function mail_encode(string $text): string
  * clients strip <style> and dislike modern layout, so the design has to live in
  * attributes to survive Outlook, Gmail and a phone alike.
  */
-function mail_html(string $title,string $bodyHtml,string $preheader=''): string
+function mail_html(string $title,string $bodyHtml,string $preheader='',bool $staffCopy=false): string
 {
  $logo=mail_public_url('/images/paradise-logo.png');
  $pre=$preheader!==''?'<span style="display:none;visibility:hidden;opacity:0;height:0;width:0;overflow:hidden">'.e($preheader).'</span>':'';
@@ -151,7 +151,9 @@ function mail_html(string $title,string $bodyHtml,string $preheader=''): string
   .'<a href="https://'.e(MAIL_HOTEL_SITE).'" style="color:#7b8798;text-decoration:none">'.e(MAIL_HOTEL_SITE).'</a>'
   .'</div></td></tr>'
   .'</table>'
-  .'<div style="font-family:Arial,Helvetica,sans-serif;color:#9aa6b6;font-size:11px;padding:14px 10px 0;text-align:center">This message was sent because a payment was recorded for you at Hotel Paradise on the Nile.</div>'
+  .'<div style="font-family:Arial,Helvetica,sans-serif;color:#9aa6b6;font-size:11px;padding:14px 10px 0;text-align:center">'
+   .($staffCopy?'This is the hotel copy of a receipt, sent to the department that took the payment and to the director.':'This message was sent because a payment was recorded for you at Hotel Paradise on the Nile.')
+   .'</div>'
   .'</td></tr></table></body></html>';
 }
 

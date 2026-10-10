@@ -51,7 +51,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $sentNote=($receipt['email_sent']??false)
     ?' The receipt was emailed to '.$receipt['email_to'].'.'
     :(($receipt!==null&&($receipt['email_to']??'')==='')?' No email address was on file, so nothing was emailed.':'');
-   flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.'.$sentNote);
+   flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.'.$sentNote.receipts_copy_note($receipt));
    go('fnb',['view'=>$oid,'printed'=>1]);
    break;
   case 'status':

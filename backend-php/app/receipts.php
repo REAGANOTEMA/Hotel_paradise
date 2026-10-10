@@ -71,7 +71,7 @@ function receipts_ready(): bool
      hotel_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
      source VARCHAR(20) NOT NULL DEFAULT '',
      reference VARCHAR(120) NOT NULL DEFAULT '',
-     channel ENUM('email','print') NOT NULL DEFAULT 'email',
+     channel ENUM('email','print','staff') NOT NULL DEFAULT 'email',
      recipient VARCHAR(190) NOT NULL DEFAULT '',
      status ENUM('sent','failed') NOT NULL DEFAULT 'failed',
      attempts INT UNSIGNED NOT NULL DEFAULT 0,
@@ -80,10 +80,11 @@ function receipts_ready(): bool
      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      PRIMARY KEY (id),
-     UNIQUE KEY uq_receipt_payment_channel (payment_id, channel),
+     UNIQUE KEY uq_receipt_payment_channel (payment_id, channel, recipient(160)),
      KEY idx_receipt_source (source)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
   }
+  receipt_upgrade_schema();
   return $ready=true;
  }catch(\Throwable $e){
   error_log('[hotel receipts] delivery log unavailable: '.$e->getMessage());
@@ -91,12 +92,72 @@ function receipts_ready(): bool
  }
 }
 
-/** Whether this payment has already had a receipt sent to the guest. */
-function receipt_email_already_sent(int $paymentId): bool
+/**
+ * Brings an older delivery log up to the shape a department copy needs.
+ *
+ * The first version of this table could hold one row per payment and channel,
+ * which was enough for the guest's single email. A copy for the department that
+ * took the money - and for the director who oversees every one of them - means
+ * several rows per payment on the same channel, so the rule becomes one row per
+ * payment, channel and recipient, and the channel gains a "staff" value. Both
+ * changes are made once, and only if the log is still in its old shape; an
+ * install that already has them is left untouched. Every step is guarded, so a
+ * database the site cannot alter costs a line in the log and nothing more.
+ */
+function receipt_upgrade_schema(): void
+{
+ static $done=false;
+ if($done) return;
+ $done=true;
+
+ try{
+  $col=row("SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='receipt_deliveries' AND COLUMN_NAME='channel'");
+  $type=strtolower((string)($col['COLUMN_TYPE']??''));
+  if($type!==''&&strpos($type,"'staff'")===false){
+   q("ALTER TABLE receipt_deliveries MODIFY channel ENUM('email','print','staff') NOT NULL DEFAULT 'email'");
+  }
+ }catch(\Throwable $e){
+  error_log('[hotel receipts] channel upgrade skipped: '.$e->getMessage());
+ }
+
+ try{
+  $cols=rows("SELECT COLUMN_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='receipt_deliveries' AND INDEX_NAME='uq_receipt_payment_channel' ORDER BY SEQ_IN_INDEX");
+  $names=array_map(fn($r)=>strtolower((string)$r['COLUMN_NAME']),$cols);
+  if($names===[]){
+   q("ALTER TABLE receipt_deliveries ADD UNIQUE KEY uq_receipt_payment_channel (payment_id, channel, recipient(160))");
+  }elseif($names!==['payment_id','channel','recipient']){
+   q("ALTER TABLE receipt_deliveries DROP INDEX uq_receipt_payment_channel");
+   q("ALTER TABLE receipt_deliveries ADD UNIQUE KEY uq_receipt_payment_channel (payment_id, channel, recipient(160))");
+  }
+ }catch(\Throwable $e){
+  error_log('[hotel receipts] delivery key upgrade skipped: '.$e->getMessage());
+ }
+}
+
+/**
+ * Whether this payment has already had a receipt sent to the guest.
+ *
+ * When the guest's address is known the check is made against that address, so
+ * a later send to a department can never look like the guest's copy has already
+ * gone. Called without one, it answers the older, blanket question.
+ */
+function receipt_email_already_sent(int $paymentId, string $recipient=''): bool
 {
  if(!receipts_ready()) return false;
  try{
+  if($recipient!==''){
+   return (int)val("SELECT COUNT(*) FROM receipt_deliveries WHERE payment_id=? AND channel='email' AND recipient=? AND status='sent'",[$paymentId,$recipient])>0;
+  }
   return (int)val("SELECT COUNT(*) FROM receipt_deliveries WHERE payment_id=? AND channel='email' AND status='sent'",[$paymentId])>0;
+ }catch(\Throwable $e){ return false; }
+}
+
+/** Whether a department or the director has already had this payment's copy. */
+function receipt_staff_already_sent(int $paymentId, string $recipient): bool
+{
+ if(!receipts_ready()) return false;
+ try{
+  return (int)val("SELECT COUNT(*) FROM receipt_deliveries WHERE payment_id=? AND channel='staff' AND recipient=? AND status='sent'",[$paymentId,$recipient])>0;
  }catch(\Throwable $e){ return false; }
 }
 
@@ -262,7 +323,7 @@ function receipts_send_email(array $ctx): array
  $pid=(int)$ctx['payment_id'];
  $to=(string)($ctx['guest']['email']??'');
 
- if(receipt_email_already_sent($pid)){ $out['skipped']=true; return $out; }
+ if(receipt_email_already_sent($pid,$to)){ $out['skipped']=true; return $out; }
  if($to===''){
   // Nothing to send to is not a failure worth a receipt entry: the sheet still
   // prints, and a later payment on the same booking can carry the address.
@@ -283,26 +344,108 @@ function receipts_send_email(array $ctx): array
 }
 
 /** Records the attempt, so a second attempt is refused and the books can see it. */
-function receipt_log(int $paymentId,array $ctx,string $recipient,bool $ok,?string $error): void
+function receipt_log(int $paymentId,array $ctx,string $recipient,bool $ok,?string $error,string $channel='email'): void
 {
  if(!receipts_ready()) return;
+ $channel=in_array($channel,['email','staff','print'],true)?$channel:'email';
  try{
   q('INSERT INTO receipt_deliveries(payment_id,hotel_id,source,reference,channel,recipient,status,attempts,last_error,created_at)'
-    ." VALUES(?,1,?,?,'email',?,?,1,?,NOW())"
+    .' VALUES(?,1,?,?,?,?,?,1,?,NOW())'
     .' ON DUPLICATE KEY UPDATE status=VALUES(status),attempts=attempts+1,last_error=VALUES(last_error),recipient=VALUES(recipient),updated_at=NOW()',
-   [$paymentId,(string)$ctx['kind'],(string)$ctx['ref'],$recipient,$ok?'sent':'failed',$error]);
+   [$paymentId,(string)$ctx['kind'],(string)$ctx['ref'],$channel,$recipient,$ok?'sent':'failed',$error]);
  }catch(\Throwable $e){
   error_log('[hotel receipts] could not log delivery for payment '.$paymentId.': '.$e->getMessage());
  }
 }
 
 /**
+ * The departments a settled payment belongs to, and the director who oversees
+ * them. The request that took the money decides the department: a restaurant or
+ * bar order belongs to the cashier and the kitchen, a room payment to the front
+ * desk and the accounts office. The director is on every copy, so every receipt
+ * the hotel issues is visible at the top.
+ */
+function receipt_staff_roles(string $kind): array
+{
+ $map=[
+  'order'=>['cashier','kitchen'],
+  'booking'=>['receptionist','accountant'],
+ ];
+ $roles=$map[$kind]??['cashier','accountant'];
+ if(!in_array('director',$roles,true)) $roles[]='director';
+ return $roles;
+}
+
+/** The live addresses behind those roles, each one only once. */
+function receipt_staff_recipients(array $roles): array
+{
+ if($roles===[]) return [];
+ require_once __DIR__.'/notify.php';
+ if(!function_exists('notify_recipients')) return [];
+ $out=[];
+ try{
+  foreach(notify_recipients($roles) as $u){
+   $email=receipt_valid_email((string)($u['email']??''));
+   if($email==='') continue;
+   $out[strtolower($email)]=['name'=>(string)($u['name']??''),'email'=>$email];
+  }
+ }catch(\Throwable $e){
+  error_log('[hotel receipts] could not resolve staff recipients: '.$e->getMessage());
+ }
+ return array_values($out);
+}
+
+/**
+ * Sends the department and the director their own copy of a settled receipt.
+ *
+ * The same itemised sheet the guest receives goes out again, headed as the
+ * hotel's copy, to every active member of the responsible roles and to the
+ * director. A member who has already been sent this payment's copy is skipped,
+ * and the guest is never sent the staff version - so one payment produces, at
+ * most, one guest email and one copy per person behind the roles.
+ *
+ * @return array{sent:int,failed:int,skipped:int,to:array<int,string>,roles:array<int,string>,errors:array<int,string>}
+ */
+function receipts_send_staff_copies(array $ctx): array
+{
+ $res=['sent'=>0,'failed'=>0,'skipped'=>0,'to'=>[],'roles'=>[],'errors'=>[]];
+ $pid=(int)$ctx['payment_id'];
+ $roles=receipt_staff_roles((string)$ctx['kind']);
+ $res['roles']=array_values(array_map('role_label',$roles));
+ $ctx['staff_roles']=$res['roles'];
+ $guest=strtolower(receipt_valid_email((string)($ctx['guest']['email']??'')));
+
+ foreach(receipt_staff_recipients($roles) as $r){
+  $to=(string)$r['email'];
+  if($to===''||strtolower($to)===$guest) continue;
+  if(receipt_staff_already_sent($pid,$to)){ $res['skipped']++; continue; }
+  $subject='Receipt '.$ctx['ref'].' (hotel copy)';
+  $send=mail_send($to,$subject,receipts_email_html($ctx,'staff'),receipts_email_text($ctx,'staff'));
+  $error=$send['ok']?null:($send['error']??'The message could not be sent.');
+  receipt_log($pid,$ctx,$to,(bool)$send['ok'],$error,'staff');
+  if($send['ok']){ $res['sent']++; $res['to'][]=$to; }
+  else{ $res['failed']++; $res['errors'][]=$to.': '.(string)$error; }
+ }
+ return $res;
+}
+
+/** A short sentence naming the department and director who were copied. */
+function receipts_copy_note(?array $ctx): string
+{
+ if(!is_array($ctx)) return '';
+ if((int)($ctx['staff_sent']??0)<=0) return '';
+ $roles=array_values(array_filter(array_map('role_label',(array)($ctx['staff_roles']??[]))));
+ return $roles===[]?'':' A copy went to '.implode(', ',$roles).'.';
+}
+
+/**
  * The one call a module makes after recording a payment.
  *
  * It confirms the money is really in before doing anything, sends the guest
- * their copy once, and hands back the context so the caller can print the hotel
- * copy on the same screen. On any other kind of payment it returns null and
- * nothing at all happens.
+ * their copy once, sends the responsible department and the director their
+ * copies, and hands back the context so the caller can print the hotel copy on
+ * the same screen. On any other kind of payment it returns null and nothing at
+ * all happens.
  */
 function receipts_after_payment(int $paymentId): ?array
 {
@@ -314,6 +457,15 @@ function receipts_after_payment(int $paymentId): ?array
   $ctx['email_to']=$send['to']!==''?$send['to']:(string)($ctx['guest']['email']??'');
   $ctx['email_error']=$send['error'];
   $ctx['email_skipped']=$send['skipped'];
+  // The guest's own copy has gone; now the department that took the money and
+  // the director who oversees it each get theirs. A copy that cannot leave is
+  // recorded, never silent, and never blocks the guest's.
+  $staff=receipts_send_staff_copies($ctx);
+  $ctx['staff_sent']=$staff['sent'];
+  $ctx['staff_skipped']=$staff['skipped'];
+  $ctx['staff_failed']=$staff['failed'];
+  $ctx['staff_to']=$staff['to'];
+  $ctx['staff_roles']=$staff['roles'];
   return $ctx;
  }catch(\Throwable $e){
   error_log('[hotel receipts] payment '.$paymentId.' receipt skipped: '.$e->getMessage());
@@ -382,12 +534,17 @@ function receipts_hotel_template(int $paymentId,bool $fresh=true): void
 }
 
 /* ==================================================================
-   THE GUEST'S EMAIL
+   THE EMAIL
+
+   One receipt, two readers. The guest is sent their own official copy;
+   the department that took the money and the director are sent the same
+   sheet headed as the hotel's copy, so the record follows the money.
    ================================================================== */
 
-/** The itemised HTML the guest receives, built from the same context. */
-function receipts_email_html(array $ctx): string
+/** The itemised HTML a reader receives, built from the same context. */
+function receipts_email_html(array $ctx, string $audience='guest'): string
 {
+ $staff=$audience==='staff';
  $g=$ctx['guest'];
  $greeting=trim((string)$g['name'])!==''?trim((string)$g['name']):'Guest';
  $first=preg_split('/\s+/',trim($greeting))[0]?:'Guest';
@@ -438,29 +595,47 @@ function receipts_email_html(array $ctx): string
    .'<td style="padding:6px 0 0;text-align:right;color:#b26a00;font-size:13.5px;font-weight:bold">'.e(money($balance)).'</td></tr>'
   :'<tr><td colspan="2" style="padding:8px 0 0;color:#2e7d32;font-size:13.5px;font-weight:bold">Paid in full. Thank you.</td></tr>';
 
- $body='<p style="margin:0 0 8px;font-size:17px;color:#071A33"><b>Thank you, '.e($first).'.</b></p>'
-  .'<p style="margin:0 0 18px;color:#5b6878">Your payment has been received and this is your official receipt.'
-  .' We are delighted to have you with us.</p>'
+ $team=trim(implode(' and ',(array)($ctx['staff_roles']??[])));
+ $guestName=trim((string)$g['name'])!==''?trim((string)$g['name']):'the guest';
+ $intro=$staff
+  ?'<p style="margin:0 0 8px;font-size:17px;color:#071A33"><b>Payment received</b></p>'
+   .'<p style="margin:0 0 18px;color:#5b6878">Hotel copy of the official receipt issued to <b>'.e($guestName).'</b>'
+   .' for '.e((string)$ctx['ref']).'. This copy is kept for the record of the '.e($team!==''?$team:'responsible department').' and the director.</p>'
+  :'<p style="margin:0 0 8px;font-size:17px;color:#071A33"><b>Thank you, '.e($first).'.</b></p>'
+   .'<p style="margin:0 0 18px;color:#5b6878">Your payment has been received and this is your official receipt.'
+   .' We are delighted to have you with us.</p>';
+ $signoff=$staff
+  ?'<p style="margin:22px 0 0;color:#5b6878;font-size:13px;line-height:1.6">Hotel copy &middot; filed for the department and the director.<br>'
+   .'<b style="color:#071A33">The Front Desk</b><br>'.e(MAIL_HOTEL_NAME).'</p>'
+  :'<p style="margin:22px 0 0;color:#5b6878;font-size:13px;line-height:1.6">With every good wish,<br>'
+   .'<b style="color:#071A33">The Front Desk</b><br>'.e(MAIL_HOTEL_NAME).'</p>';
+
+ $body=$intro
   .'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px">'.$meta.'</table>'
   .($rows!==''?'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 6px">'.$rows.'</table>':'')
   .'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 0">'.$totals.'</table>'
   .'<table role="presentation" width="100%" cellpadding="0" cellspacing="0">'.$paidRow.'</table>'
   .'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 0">'.$balanceLine.'</table>'
-  .'<p style="margin:22px 0 0;color:#5b6878;font-size:13px;line-height:1.6">With every good wish,<br>'
-  .'<b style="color:#071A33">The Front Desk</b><br>'.e(MAIL_HOTEL_NAME).'</p>';
+  .$signoff;
 
- return mail_html('Receipt '.$ctx['ref'].' · '.MAIL_HOTEL_NAME,$body,'Your receipt for '.$ctx['ref'].' from '.MAIL_HOTEL_NAME.'.');
+ $title=($staff?'Receipt '.$ctx['ref'].' (hotel copy)':'Receipt '.$ctx['ref']).' · '.MAIL_HOTEL_NAME;
+ $pre=$staff
+  ?'Hotel copy of receipt '.$ctx['ref'].' from '.MAIL_HOTEL_NAME.'.'
+  :'Your receipt for '.$ctx['ref'].' from '.MAIL_HOTEL_NAME.'.';
+ return mail_html($title,$body,$pre,$staff);
 }
 
 /** The plain-text twin of the receipt, for a client that shows no HTML. */
-function receipts_email_text(array $ctx): string
+function receipts_email_text(array $ctx, string $audience='guest'): string
 {
+ $staff=$audience==='staff';
  $L=[];
  $L[]=MAIL_HOTEL_NAME;
  $L[]=MAIL_HOTEL_CITY.' · '.MAIL_HOTEL_PHONE;
  $L[]=str_repeat('=',42);
- $L[]='OFFICIAL RECEIPT';
+ $L[]=$staff?'RECEIPT (HOTEL COPY)':'OFFICIAL RECEIPT';
  $L[]='Receipt number: '.$ctx['ref'];
+ if($staff){ $L[]='Copy for: '.trim(implode(' and ',(array)($ctx['staff_roles']??[]))).' and the director.'; }
  $L[]='Guest: '.($ctx['guest']['name']!==''?$ctx['guest']['name']:'Guest');
  foreach($ctx['meta'] as $k=>$v){ if($v!==''&&$v!==null) $L[]=$k.': '.$v; }
  $L[]='';
@@ -488,7 +663,12 @@ function receipts_email_text(array $ctx): string
   $L[]='Paid in full. Thank you.';
  }
  $L[]='';
- $L[]='Thank you for choosing '.MAIL_HOTEL_NAME.'.';
- $L[]='This is your official receipt.';
+ if($staff){
+  $L[]='Hotel copy of the official receipt issued to the guest.';
+  $L[]='Filed for the department and the director of '.MAIL_HOTEL_NAME.'.';
+ }else{
+  $L[]='Thank you for choosing '.MAIL_HOTEL_NAME.'.';
+  $L[]='This is your official receipt.';
+ }
  return implode("\n",$L);
 }
