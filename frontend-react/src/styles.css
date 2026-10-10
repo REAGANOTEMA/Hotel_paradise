@@ -1503,6 +1503,50 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 
 
 
+/* ==================================================================
+   THE RECEIPT A GUEST SEES AFTER PAYING
+
+   Shown on the page (never as a popup window, which phones block) and
+   put on paper or saved as a PDF through the phone's own print dialog.
+   The Print / Save as PDF button simply calls window.print(); while
+   printing, only the receipt is visible and the rest of the site is
+   hidden, so the guest gets one clean sheet.
+   ================================================================== */
+.payReceipt{
+  margin:18px auto 0;max-width:430px;background:#fff;color:#171717;
+  border:1px solid #d8d2c4;border-radius:12px;padding:22px 20px;
+  font-family:'Courier New',Courier,monospace;text-align:left;
+  box-shadow:0 12px 30px #071A3315;
+}
+.payReceipt img{max-width:64px;height:auto;margin:0 auto 8px;display:block}
+.prHead{border-bottom:2px solid #171717;padding-bottom:12px;margin-bottom:12px;text-align:center}
+.prHead h3{font-size:17px;margin:0;letter-spacing:.4px;font-weight:700;font-family:'Playfair Display',Georgia,serif}
+.prHead p{margin:2px 0 0;font-size:11px;color:#4a5666}
+.prInfo,.prTotals{margin-bottom:12px}
+.prRow{display:flex;justify-content:space-between;gap:12px;margin:3px 0;font-size:12px}
+.prRow span{color:#4a5666}
+.prRow b{font-weight:700;text-align:right;overflow-wrap:anywhere}
+.prSec{border-top:1px dashed #a39b8a;border-bottom:1px dashed #a39b8a;padding:10px 0;margin-bottom:12px}
+.prSec h4{font-size:12px;text-align:center;margin:0 0 8px;letter-spacing:1px}
+.prItemName{font-weight:700;margin:0;font-size:13px}
+.prNote{margin:2px 0;font-size:10.5px;color:#4a5666}
+.prItem{display:flex;justify-content:space-between;gap:10px;margin:6px 0;font-size:11.5px}
+.prItem b{flex:1}
+.prItem span{white-space:nowrap}
+.prItem em{display:block;flex-basis:100%;font-style:italic;font-size:10px;color:#4a5666;margin-top:2px}
+.prItem{flex-wrap:wrap}
+.prTotal{display:flex;justify-content:space-between;font-size:14px;font-weight:700;border-top:2px solid #171717;padding-top:8px;margin-top:6px}
+.prFoot{margin:14px 0 0;text-align:center;font-size:10.5px;color:#4a5666;border-top:1px dashed #a39b8a;padding-top:10px}
+
+/* only the receipt on paper */
+@media print{
+  .payPage *{visibility:hidden}
+  .payPage .payReceipt,.payPage .payReceipt *{visibility:visible}
+  .payPage .payReceipt{position:absolute;left:0;top:0;width:100%;max-width:none;box-shadow:none;border:none;margin:0;border-radius:0}
+}
+
+
+
 
 
 

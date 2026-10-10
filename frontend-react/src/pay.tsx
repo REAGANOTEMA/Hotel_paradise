@@ -133,6 +133,109 @@ const validExp = (v: string) => {
  return yy >= (new Date().getFullYear() % 100);
 };
 
+/**
+ * The official receipt, shown on the page and printed through the phone's own
+ * print dialog - opened by the guest, never by script, and never as a popup.
+ * It reads the settled reference from the checkout detail when that has been
+ * fetched, and falls back to what the url carried if the hotel is slow to
+ * answer.
+ */
+function PayReceipt({src, ref, charged, amt, form, detail, item, qty, unit, methodLabel}: {
+ src: string; ref: string; charged: number; amt: number;
+ form: {name: string; phone: string; email: string};
+ detail: PayDetail | null;
+ item: string; qty: string; unit: string; methodLabel: string;
+}) {
+ const now = new Date();
+ const dateStr = now.toLocaleDateString('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric'});
+ const timeStr = now.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
+ const total = detail ? Math.round(detail.total) : (charged || amt);
+ const g = form;
+ const Row = ({k, v}: {k: string; v: React.ReactNode}) => <div className="prRow"><span>{k}</span><b>{v}</b></div>;
+
+ return (
+  <div className="payReceipt">
+   <div className="prHead">
+    <img src="./images/paradise-logo.png" alt="Hotel Paradise logo" onError={e => {e.currentTarget.style.display = 'none';}}/>
+    <h3>HOTEL PARADISE ON THE NILE</h3>
+    <p>Jinja, Uganda</p>
+    <p>Tel: {HOTEL.phones[0] || CALL} &middot; Email: {HOTEL.email}</p>
+   </div>
+   <div className="prInfo">
+    <Row k="Receipt No:" v={ref}/>
+    <Row k="Date:" v={dateStr}/>
+    <Row k="Time:" v={timeStr}/>
+    <Row k="Customer:" v={g.name.trim() || '-'}/>
+    <Row k="Phone:" v={normPhone(g.phone) || '-'}/>
+    {g.email.trim() && <Row k="Email:" v={g.email.trim()}/>}
+   </div>
+
+   {detail?.booking ? (() => {
+    const b = detail.booking;
+    const bed = bedOf(b.room_type);
+    return (
+     <div className="prSec">
+      <h4>ROOM BOOKING</h4>
+      <p className="prItemName">{b.room_type}</p>
+      {bed && <p className="prNote">Bed: {bed.beds} | Sleeps: {bed.guests}</p>}
+      <p className="prNote">Check In: {whenText(b.check_in, b.check_in_time)}</p>
+      <p className="prNote">Check Out: {whenText(b.check_out, b.check_out_time)}</p>
+      <p className="prNote">Nights: {b.nights} | Guests: {b.adults} {b.adults === 1 ? 'adult' : 'adults'}{b.children ? ' + ' + b.children + ' ' + (b.children === 1 ? 'child' : 'children') : ''}</p>
+     </div>
+    );
+   })() : detail?.order ? (() => {
+    const o = detail.order;
+    return (
+     <div className="prSec">
+      <h4>FOOD ORDER</h4>
+      <p className="prNote">
+       Outlet: {o.outlet === 'room_service' ? 'Room Service' : o.outlet === 'bar' ? 'Bar' : 'Restaurant'}{o.kind ? ' | ' + o.kind.replace(/_/g, ' ') : ''}
+       <br/>Placed: {o.placed}
+      </p>
+      {o.items.map((it, i) => (
+       <div className="prItem" key={i}>
+        <b>{it.name}</b>
+        <span>{it.qty} x {fmt(it.unit)} = {fmt(it.total)}</span>
+        {it.note && <em>{it.note}</em>}
+       </div>
+      ))}
+     </div>
+    );
+   })() : (
+    <div className="prSec">
+     <h4>{src === 'booking' ? 'ROOM BOOKING' : 'FOOD ORDER'}</h4>
+     <div className="prItem"><b>{item || '-'}</b></div>
+     {qty && <p className="prNote">Quantity: {qty}{unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''}</p>}
+    </div>
+   )}
+
+   <div className="prTotals">
+    {detail?.booking ? (() => {
+     const b = detail.booking;
+     return (<>
+      <Row k="Room Subtotal:" v={fmt(b.subtotal)}/>
+      {b.tax > 0 && <Row k="Service Charge (3.5%):" v={fmt(b.tax)}/>}
+      {b.withdrawal_fee ? <Row k={(b.fee_label || 'Fee') + ':'} v={fmt(b.withdrawal_fee)}/> : null}
+      <div className="prTotal"><span>TOTAL:</span><b>{fmt(detail.total)}</b></div>
+      {detail.paid > 0 && <Row k="Already Paid:" v={'-' + fmt(detail.paid)}/>}
+     </>);
+    })() : detail?.order ? (() => {
+     const o = detail.order;
+     return (<>
+      <Row k="Subtotal:" v={fmt(o.subtotal)}/>
+      {o.tax > 0 && <Row k="Service Charge (3.5%):" v={fmt(o.tax)}/>}
+      <div className="prTotal"><span>TOTAL:</span><b>{fmt(detail.total)}</b></div>
+      {detail.paid > 0 && <Row k="Already Paid:" v={'-' + fmt(detail.paid)}/>}
+     </>);
+    })() : (
+     <div className="prTotal"><span>TOTAL:</span><b>{fmt(total)}</b></div>
+    )}
+   </div>
+   <p className="prFoot">Thank you for choosing Hotel Paradise on the Nile.<br/>This is your official receipt. {methodLabel ? methodLabel + ' · ' : ''}{HOTEL.website}</p>
+  </div>
+ );
+}
+
 function PayPage() {
  const q = new URLSearchParams(window.location.search);
  const src = q.get('src') === 'order' ? 'order' : q.get('src') === 'booking' ? 'booking' : '';
@@ -332,162 +435,14 @@ function PayPage() {
    * as the way that cannot be refused. This runs once, for food orders and for
    * room bookings alike.
    */
-  const forwarded = React.useRef(false);
-  const printed = React.useRef(false);
-  
-  const printReceipt = () => {
-    const printWindow = window.open('', '_blank', 'width=400,height=600');
-    if (!printWindow) return;
-    
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-    
-    let receiptHtml = `
-      <html>
-        <head>
-          <title>Receipt - ${done?.reference || ref}</title>
-          <style>
-            body { font-family: 'Courier New', monospace; margin: 0; padding: 20px; max-width: 400px; }
-            .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-            .title { font-size: 20px; font-weight: bold; margin: 0; }
-            .subtitle { font-size: 12px; margin: 5px 0 0; }
-            .info { margin-bottom: 15px; font-size: 12px; }
-            .info-row { display: flex; justify-content: space-between; margin: 3px 0; }
-            .section { margin: 15px 0; border-bottom: 1px dashed #000; padding-bottom: 10px; }
-            .section-title { font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center; }
-            .item { margin: 5px 0; font-size: 11px; }
-            .item-name { font-weight: bold; }
-            .item-details { display: flex; justify-content: space-between; margin-top: 2px; }
-            .totals { margin-top: 15px; font-size: 13px; }
-            .total-row { display: flex; justify-content: space-between; margin: 5px 0; }
-            .grand-total { font-size: 16px; font-weight: bold; border-top: 2px solid #000; padding-top: 8px; margin-top: 8px; }
-            .footer { text-align: center; margin-top: 20px; font-size: 11px; }
-            @page { size: 80mm auto; margin: 0; }
-          </style>
-        </head>
-        <body>
-            <div class="header">
-              <img src="./images/paradise-logo.png" alt="Hotel Paradise Logo" style="max-width:60px;height:auto;margin-bottom:6px" onerror="this.style.display='none'"/>
-              <h1 class="title">HOTEL PARADISE ON THE NILE</h1>
-              <p class="subtitle">Jinja, Uganda</p>
-              <p class="subtitle">Tel: ${HOTEL.phones[0] || CALL}</p>
-              <p class="subtitle">Email: ${HOTEL.email}</p>
-            </div>
-          <div class="info">
-            <div class="info-row"><span>Receipt No:</span><span>${done?.reference || ref}</span></div>
-            <div class="info-row"><span>Date:</span><span>${dateStr}</span></div>
-            <div class="info-row"><span>Time:</span><span>${timeStr}</span></div>
-            <div class="info-row"><span>Customer:</span><span>${form.name.trim() || '-'}</span></div>
-            <div class="info-row"><span>Phone:</span><span>${normPhone(form.phone) || '-'}</span></div>
-            ${form.email.trim() ? `<div class="info-row"><span>Email:</span><span>${form.email.trim()}</span></div>` : ''}
-          </div>`;
-    
-    if (detail?.booking) {
-      const b = detail.booking;
-      const bed = bedOf(b.room_type);
-      receiptHtml += `
-          <div class="section">
-            <div class="section-title">ROOM BOOKING</div>
-            <div class="item">
-              <div class="item-name">${b.room_type}</div>
-              ${bed ? `<div style="font-size:10px;">Bed: ${bed.beds} | Sleeps: ${bed.guests}</div>` : ''}
-              <div style="font-size:10px; margin-top:3px;">Check In: ${whenText(b.check_in, b.check_in_time)}</div>
-              <div style="font-size:10px;">Check Out: ${whenText(b.check_out, b.check_out_time)}</div>
-              <div style="font-size:10px;">Nights: ${b.nights} | Guests: ${b.adults} ${b.adults === 1 ? 'adult' : 'adults'}${b.children ? ' + ' + b.children + ' ' + (b.children === 1 ? 'child' : 'children') : ''}</div>
-            </div>
-          </div>`;
-    }
-    
-    if (detail?.order) {
-      const o = detail.order;
-      receiptHtml += `
-          <div class="section">
-            <div class="section-title">FOOD ORDER</div>
-            <div style="font-size:10px; margin-bottom:8px;">
-              Outlet: ${o.outlet === 'room_service' ? 'Room Service' : o.outlet === 'bar' ? 'Bar' : 'Restaurant'}
-              ${o.kind ? ' | ' + o.kind.replace(/_/g, ' ') : ''}
-              <br/>Placed: ${o.placed}
-            </div>`;
-      o.items.forEach((it) => {
-        receiptHtml += `
-            <div class="item">
-              <div class="item-name">${it.name}</div>
-              <div class="item-details">
-                <span>${it.qty} x UGX ${it.unit.toLocaleString()}</span>
-                <span>UGX ${it.total.toLocaleString()}</span>
-              </div>
-              ${it.note ? `<div style="font-size:9px; margin-top:2px; font-style:italic;">${it.note}</div>` : ''}
-            </div>`;
-      });
-      receiptHtml += `</div>`;
-    }
-    
-    if (!detail) {
-      receiptHtml += `
-          <div class="section">
-            <div class="section-title">${src === 'booking' ? 'ROOM BOOKING' : 'FOOD ORDER'}</div>
-            <div class="item">
-              <div class="item-name">${item || '-'}</div>
-              ${qty ? `<div style="font-size:10px;">Quantity: ${qty}${unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''}</div>` : ''}
-            </div>
-          </div>`;
-    }
-    
-    receiptHtml += `
-          <div class="totals">`;
-    if (detail?.booking) {
-      const b = detail.booking;
-      receiptHtml += `
-            <div class="total-row"><span>Room Subtotal:</span><span>UGX ${b.subtotal.toLocaleString()}</span></div>
-            ${b.tax > 0 ? `<div class="total-row"><span>Service Charge (3.5%):</span><span>UGX ${b.tax.toLocaleString()}</span></div>` : ''}
-            ${b.withdrawal_fee ? `<div class="total-row"><span>${b.fee_label}:</span><span>UGX ${b.withdrawal_fee.toLocaleString()}</span></div>` : ''}
-            <div class="total-row grand-total"><span>TOTAL:</span><span>UGX ${detail.total.toLocaleString()}</span></div>`;
-      if (detail.paid > 0) {
-        receiptHtml += `<div class="total-row"><span>Already Paid:</span><span>-UGX ${detail.paid.toLocaleString()}</span></div>`;
-      }
-    } else if (detail?.order) {
-      const o = detail.order;
-      receiptHtml += `
-            <div class="total-row"><span>Subtotal:</span><span>UGX ${o.subtotal.toLocaleString()}</span></div>
-            ${o.tax > 0 ? `<div class="total-row"><span>Service Charge (3.5%):</span><span>UGX ${o.tax.toLocaleString()}</span></div>` : ''}
-            <div class="total-row grand-total"><span>TOTAL:</span><span>UGX ${detail.total.toLocaleString()}</span></div>`;
-      if (detail.paid > 0) {
-        receiptHtml += `<div class="total-row"><span>Already Paid:</span><span>-UGX ${detail.paid.toLocaleString()}</span></div>`;
-      }
-    } else {
-      receiptHtml += `<div class="total-row grand-total"><span>TOTAL:</span><span>UGX ${(charged || amt).toLocaleString()}</span></div>`;
-    }
-    receiptHtml += `
-          </div>
-          <div class="footer">
-            <p>Thank you for choosing Hotel Paradise on the Nile</p>
-            <p>This is your official receipt</p>
-            <p>${HOTEL.website}</p>
-          </div>
-        </body>
-      </html>`;
-    
-    printWindow.document.write(receiptHtml);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 500);
-  };
-  
-  React.useEffect(() => {
-    if (!done || forwarded.current) return;
-    forwarded.current = true;
-    try { window.open(waHref, '_blank', 'noopener'); } catch { /* the button below still does it */ }
-    // The receipt waits for the payment. A pending request is not a payment, so
-    // nothing prints until the gateway confirms the money is actually in.
-    if (done.paid && !printed.current) {
-      printed.current = true;
-      setTimeout(() => printReceipt(), 800);
-    }
-  }, [done, waHref]);
+/**
+   * No popups here. A window that opens itself mid-payment is blocked by
+   * phones, so nothing tries: the moment the money is in, app/receipts.php
+   * emails the guest their receipt, this page shows the same receipt below,
+   * and the Print / Save as PDF button hands it to the phone's own print
+   * dialog. The WhatsApp button underneath is the manual way to forward every
+   * detail to the front desk.
+   */
 
   if (!token) {
    return <div>
@@ -504,8 +459,8 @@ function PayPage() {
    </div>;
   }
 
-  if (done) {
-  return <div>
+if (done) {
+  return <div className="payPage">
    <TopBar/>
    <PageNav/>
    <section className="payWrap">
@@ -516,29 +471,37 @@ function PayPage() {
      <p className="payDoneLine">Your <b>{src === 'booking' ? 'room booking ' : 'food order '}</b>for <b>{fmt(charged || amt)}</b> is with the hotel.</p>
      <div className="doneRef"><span>Your reference</span><b>{done.reference}</b></div>
      <p className="payDoneNote">{done.message}</p>
-     <p className="payDoneNote2">Online payment with Pesapal is being switched on. Until it is live, no money is charged on this page and you are welcome to pay at the front desk, or call <a className="footLink" href={telHref(CALL)}>{CALL}</a>.</p>
-      <div className="payDoneActions">
-        {done.paid ? (
-          <button className="btn" onClick={printReceipt} style={{marginBottom:8}}>
-            🖨️ Print Receipt
-          </button>
-        ) : (
-          <p className="payDoneNote2" style={{marginBottom:8}}>Your official receipt becomes available here, and prints itself, the moment the hotel confirms your payment.</p>
-        )}
-        <a className="btn waBtn" href={waHref} target="_blank" rel="noopener noreferrer">
-         <WhatsAppIcon size={16}/> Send every detail to the hotel on WhatsApp
-        </a>
-        <a className="btn ghost2" href="./index.html">Back to the hotel</a>
-        <a className="btn ghost2" href={telHref(CALL)}>Call the front desk</a>
-      </div>
-      <p className="payDoneNote2">WhatsApp carries your name, your reference, the amount, and the whole booking or order, dish by dish and room by room, to the front desk on {HOTEL.phones[0]}.</p>
+     {done.paid ? (
+      <>
+       <PayReceipt
+        src={src} ref={done.reference || ref} charged={charged} amt={amt} form={form}
+        detail={detail} item={item} qty={qty} unit={unit} methodLabel={METHOD_TEXT[method] || method}
+       />
+       <p className="payDoneNote2">This receipt has been emailed to {form.email.trim() || 'the address we have on file'} as well as shown here. To keep a copy, use the <b>Print / Save as PDF</b> button below and your phone will save it as a file.</p>
+      </>
+     ) : (
+      <p className="payDoneNote2">Online payment with Pesapal is being switched on. Until it is live, the front desk confirms your payment, and your official receipt is emailed to you and appears here the moment it is confirmed.</p>
+     )}
+     <div className="payDoneActions">
+       {done.paid && (
+         <button className="btn" onClick={() => window.print()} style={{marginBottom:8}}>
+           🖨️ Print / Save as PDF
+         </button>
+       )}
+       <a className="btn waBtn" href={waHref} target="_blank" rel="noopener noreferrer">
+        <WhatsAppIcon size={16}/> Send every detail to the hotel on WhatsApp
+       </a>
+       <a className="btn ghost2" href="./index.html">Back to the hotel</a>
+       <a className="btn ghost2" href={telHref(CALL)}>Call the front desk</a>
+     </div>
+     <p className="payDoneNote2">WhatsApp carries your name, your reference, the amount, and the whole booking or order, dish by dish and room by room, to the front desk on {HOTEL.phones[0]}.</p>
     </div>
    </section>
    <Footer/>
   </div>;
  }
 
- return <div>
+ return <div className="payPage">
   <TopBar/>
   <PageNav onDark/>
 
@@ -624,11 +587,15 @@ function PayPage() {
        <b className={settled ? 'clear' : ''}>{settled ? 'Paid in full' : fmt(payable)}</b>
       </div>
 
-      {settled && <div className="paySettled">
+{settled && <div className="paySettled">
        <p style={{margin: 0}}>This reference is settled in full, so there is nothing left to pay on it. Your booking or order stays exactly as it is.</p>
-       <p className="payDoneNote2" style={{margin: '8px 0 0'}}>Still want the hotel to have it on WhatsApp? It carries the reference, the amount, and every detail.</p>
+       <p className="payDoneNote2" style={{margin: '8px 0 0'}}>Your official receipt is below, and a copy has been emailed to {form.email.trim() || 'the address we have on file'}.</p>
+       <PayReceipt
+        src={src} ref={ref} charged={charged} amt={amt} form={form}
+        detail={detail} item={item} qty={qty} unit={unit} methodLabel={METHOD_TEXT[method] || method}
+       />
         <div style={{display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center',marginTop:10}}>
-          <button className="btn" onClick={printReceipt}>🖨️ Print Receipt</button>
+          <button className="btn" onClick={() => window.print()}>🖨️ Print / Save as PDF</button>
           <a className="btn waBtn" href={waHref} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={16}/> Send the details to the hotel on WhatsApp</a>
         </div>
       </div>}

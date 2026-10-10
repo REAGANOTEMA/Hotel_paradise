@@ -241,72 +241,9 @@ function RoomsPage() {
     room_type: sel.type, adults: parseInt(form.adults) || 1
    })});
     const d = await res.json();
-    if (d.ok) {
-      // Auto-print receipt for booking
-      try {
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-        const printWindow = window.open('', '_blank', 'width=400,height=600');
-        if (printWindow) {
-          let receiptHtml = `
-            <html>
-              <head><title>Receipt - ${d.booking_number}</title>
-              <style>
-                body{font-family:'Courier New',monospace;margin:0;padding:15px;max-width:400px}
-                .h{text-align:center;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:12px}
-                .t{font-size:18px;font-weight:bold;margin:0}
-                .s{font-size:11px;margin:3px 0 0}
-                .i{font-size:11px;margin-bottom:10px}
-                .r{display:flex;justify-content:space-between;margin:2px 0}
-                .sec{margin:10px 0;border-bottom:1px dashed #000;padding-bottom:8px}
-                .st{font-weight:bold;font-size:12px;text-align:center;margin-bottom:6px}
-                .it{margin:4px 0;font-size:10px}
-                .tot{margin-top:12px;font-size:12px}
-                .tr{display:flex;justify-content:space-between;margin:3px 0}
-                .gt{font-size:14px;font-weight:bold;border-top:2px solid #000;padding-top:6px;margin-top:6px}
-                .f{text-align:center;margin-top:15px;font-size:10px}
-              </style>
-              </head>
-              <body>
-                  <div class="h">
-                    <img src="./images/paradise-logo.png" alt="Hotel Paradise Logo" style="max-width:60px;height:auto;margin-bottom:6px" onerror="this.style.display='none'"/>
-                    <h1 class="t">HOTEL PARADISE ON THE NILE</h1>
-                    <p class="s">Jinja, Uganda</p>
-                    <p class="s">Tel: +256 759 504 928</p>
-                  </div>
-                <div class="i">
-                  <div class="r"><span>Booking No:</span><span>${d.booking_number}</span></div>
-                  <div class="r"><span>Date:</span><span>${dateStr}</span></div>
-                  <div class="r"><span>Time:</span><span>${timeStr}</span></div>
-                  <div class="r"><span>Customer:</span><span>${form.name}</span></div>
-                  <div class="r"><span>Phone:</span><span>${form.phone}</span></div>
-                  ${form.email ? `<div class="r"><span>Email:</span><span>${form.email}</span></div>` : ''}
-                </div>
-                <div class="sec">
-                  <div class="st">ROOM BOOKING</div>
-                  <div class="it">
-                    <b>${sel.type}</b><br/>
-                    <span style="font-size:9px">Check In: ${form.check_in} 14:00</span><br/>
-                    <span style="font-size:9px">Check Out: ${form.check_out} 11:00</span><br/>
-                    <span style="font-size:9px">Nights: ${nights} | Adults: ${form.adults}</span>
-                  </div>
-                </div>
-                <div class="tot">
-                  <div class="tr gt"><span>TOTAL:</span><span>UGX ${Math.round(Number(d.total)||0).toLocaleString()}</span></div>
-                </div>
-                <div class="f">
-                  <p>Thank you for choosing Hotel Paradise on the Nile</p>
-                  <p>Booking request received</p>
-                </div>
-              </body></html>`;
-          printWindow.document.write(receiptHtml);
-          printWindow.document.close();
-          printWindow.focus();
-          setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
-        }
-      } catch {}
-      // The booking exists on the server. Hand the guest to the checkout page,
+if (d.ok) {
+      // No receipt prints here: the guest pays first, and the receipt follows
+      // by email and on the checkout page. Hand the guest to the checkout page,
       // which carries the reference, the total and their details so the payment
       // and the docket can never disagree with the booking.
       const p = new URLSearchParams({

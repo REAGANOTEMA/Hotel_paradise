@@ -219,14 +219,14 @@ if($act==='menu'){
   $catOrder=in_array('sort_order',$catCols,true)?'c.sort_order,c.id':'c.id';
   $mcOrder=in_array('sort_order',$catCols,true)?'mc.sort_order,mc.id':'mc.id';
 
-  // "Published" is the question the website asks. "Active" is a different
-  // question that the till asks, and the answer is not always the same: a dish
-  // can be on the website, sold in the restaurant, or neither, and the two must
-  // not be forced to agree. A database from before the split has no published
-  // column, so it falls back to selling whatever is active.
+  // The website shows the whole menu: every dish the kitchen sells and every
+  // dish filed for the website. "Active" is the till's question, "published"
+  // is the website's, and either one is enough for a guest to see the plate,
+  // so no dish disappears because the other flag happens to be off. A database
+  // from before the split has no published column and sells what is active.
   $published=existing_columns('menu_items',['published']);
-  $itemWhere=$published?'mi.published=1':'mi.active=1';
-  $catWhere=$published?'c.published=1':'1=1';
+  $itemWhere=$published?'(mi.published=1 OR mi.active=1)':'mi.active=1';
+  $catWhere='1=1';
 
   $cats=rows('SELECT '.implode(',',array_map(fn($c)=>nullable_column('menu_categories',$c,$c),$catCols))
     .' FROM menu_categories c WHERE '.$catWhere.' ORDER BY '.$catOrder);
@@ -266,7 +266,7 @@ if($act==='order'){
     // A guest may only order a dish the website is currently offering. The
     // check is on the database row, never on what the browser sent, so a price
     // or a dish that has since been withdrawn cannot be forced through.
-    $orderable=existing_columns('menu_items',['published'])?'active=1 AND published=1':'active=1';
+    $orderable=existing_columns('menu_items',['published'])?'(active=1 OR published=1)':'active=1';
     $mi=row('SELECT id,name,price FROM menu_items WHERE id=? AND '.$orderable,[(int)($ln['id']??0)]);
     if(!$mi){ $out(['ok'=>false,'error'=>'One of the dishes is no longer available. Please refresh the menu.'],422); }
     if($mi['price']===null){ $out(['ok'=>false,'error'=>'That dish is priced on request. Please call +256 759 504 928 and the team will price it for you.'],422); }

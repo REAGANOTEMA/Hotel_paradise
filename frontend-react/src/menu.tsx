@@ -614,85 +614,11 @@ function MenuPage() {
         }))
       })});
       const d = await res.json();
-      if (d.ok) {
-        // Auto-print receipt for the order
-        try {
-          const now = new Date();
-          const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
-          const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-          const printWindow = window.open('', '_blank', 'width=400,height=600');
-          if (printWindow) {
-            let receiptHtml = `
-              <html>
-                <head><title>Receipt - ${d.order_number}</title>
-                <style>
-                  body{font-family:'Courier New',monospace;margin:0;padding:15px;max-width:400px}
-                  .h{text-align:center;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:12px}
-                  .t{font-size:18px;font-weight:bold;margin:0}
-                  .s{font-size:11px;margin:3px 0 0}
-                  .i{font-size:11px;margin-bottom:10px}
-                  .r{display:flex;justify-content:space-between;margin:2px 0}
-                  .sec{margin:10px 0;border-bottom:1px dashed #000;padding-bottom:8px}
-                  .st{font-weight:bold;font-size:12px;text-align:center;margin-bottom:6px}
-                  .it{margin:4px 0;font-size:10px}
-                  .id{display:flex;justify-content:space-between;margin-top:2px}
-                  .tot{margin-top:12px;font-size:12px}
-                  .tr{display:flex;justify-content:space-between;margin:3px 0}
-                  .gt{font-size:14px;font-weight:bold;border-top:2px solid #000;padding-top:6px;margin-top:6px}
-                  .f{text-align:center;margin-top:15px;font-size:10px}
-                </style>
-                </head>
-                <body>
-                    <div class="h">
-                      <img src="./images/paradise-logo.png" alt="Hotel Paradise Logo" style="max-width:60px;height:auto;margin-bottom:6px" onerror="this.style.display='none'"/>
-                      <h1 class="t">HOTEL PARADISE ON THE NILE</h1>
-                      <p class="s">Jinja, Uganda</p>
-                      <p class="s">Tel: +256 759 504 928</p>
-                    </div>
-                  <div class="i">
-                    <div class="r"><span>Order No:</span><span>${d.order_number}</span></div>
-                    <div class="r"><span>Date:</span><span>${dateStr}</span></div>
-                    <div class="r"><span>Time:</span><span>${timeStr}</span></div>
-                     <div class="r"><span>Customer:</span><span>${name.trim()}</span></div>
-                     <div class="r"><span>Phone:</span><span>${phone.trim()}</span></div>
-                     ${email.trim() ? `<div class="r"><span>Email:</span><span>${email.trim()}</span></div>` : ''}
-                     ${address.trim() ? `<div class="r"><span>Deliver to:</span><span>${address.trim()}</span></div>` : ''}
-                     ${notes.trim() ? `<div class="r"><span>Note:</span><span>${notes.trim()}</span></div>` : ''}
-                   </div>
-                  <div class="sec">
-                    <div class="st">FOOD ORDER</div>`;
-            tray.forEach((x) => {
-              const unit = linePrice(x.dish, x.companion, x.salads);
-              receiptHtml += `
-                    <div class="it">
-                      <b>${x.dish.name}</b>
-                      <div class="id">
-                        <span>${x.qty} x UGX ${unit.toLocaleString()}</span>
-                        <span>UGX ${(unit*x.qty).toLocaleString()}</span>
-                      </div>
-                      ${(x.companion || x.salads.length) ? `<div style="font-size:9px;margin-top:1px;font-style:italic;">${[x.companion?('with '+x.companion.name.toLowerCase()):'', x.salads.length?x.salads.map(s=>s.name.toLowerCase()).join(', '):''].filter(Boolean).join(' · ')}</div>` : ''}
-                    </div>`;
-            });
-            receiptHtml += `
-                  </div>
-                  <div class="tot">
-                    <div class="tr"><span>Subtotal:</span><span>UGX ${Math.round(Number(d.subtotal) || subtotal).toLocaleString()}</span></div>
-                    <div class="tr"><span>Service charge (3.5%):</span><span>UGX ${Math.round(Number(d.service_charge) || (Number(d.subtotal) || subtotal) * 0.035).toLocaleString()}</span></div>
-                    <div class="tr gt"><span>TOTAL:</span><span>UGX ${Math.round(Number(d.total)||subtotal).toLocaleString()}</span></div>
-                  </div>
-                  <div class="f">
-                    <p>Thank you for choosing Hotel Paradise on the Nile</p>
-                    <p>Order placed successfully</p>
-                  </div>
-                </body></html>`;
-            printWindow.document.write(receiptHtml);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
-          }
-        } catch {}
+if (d.ok) {
         // The order is with the kitchen and its total is fixed on the server.
-        // Hand the guest to checkout so the payment follows the order number.
+        // No receipt prints here: the guest pays first, and the receipt follows
+        // by email and on the checkout page. Hand the guest to checkout so the
+        // payment follows the order number.
         try {
           window.localStorage.setItem('hpn_name', name.trim());
           window.localStorage.setItem('hpn_phone', phone.trim());
