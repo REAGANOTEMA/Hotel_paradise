@@ -9413,14 +9413,26 @@
       "dir": "./images/hero/",
       "file": "pork-bbq-on-fire.webp",
       "ext": "webp",
-      "w": 612,
-      "h": 344,
+      "w": 1280,
+      "h": 719,
       "variants": [
         {
           "file": "pork-bbq-on-fire-480.webp",
           "ext": "webp",
           "w": 480,
           "h": 270
+        },
+        {
+          "file": "pork-bbq-on-fire-640.webp",
+          "ext": "webp",
+          "w": 640,
+          "h": 360
+        },
+        {
+          "file": "pork-bbq-on-fire-1024.webp",
+          "ext": "webp",
+          "w": 1024,
+          "h": 575
         }
       ],
       "kind": "image"

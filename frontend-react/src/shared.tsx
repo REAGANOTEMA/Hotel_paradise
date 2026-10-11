@@ -444,12 +444,12 @@ const EXPLORE_ICONS: Record<string, React.ReactNode> = {
 };
 
 const EXPLORE = [
-  ['./rooms.html', 'Rooms and beds', 'Eight room types, each one photographed, with honest rates in shillings and dollars.', 'rooms'],
-  ['./menu.html', 'Menu and dining', 'Every dish, with takeaway and delivery, and a tray you build yourself.', 'dining'],
-  ['./events.html', 'Plan an event', 'Weddings, conferences and functions in our halls and riverside gardens.', 'events'],
-  ['./facilities.html', 'Facilities', 'The pool, the health club, the bar and the grounds.', 'facilities'],
-  ['./news.html', 'News & Careers', 'Announcements, opportunities and the roles we are hiring for.', 'news'],
-  ['./account.html', 'Your account', 'Track your bookings and orders, or sign in to book faster.', 'account'],
+  ['./rooms.html', 'Rooms and beds', 'Eight room types, each one photographed, with honest rates in shillings and dollars.', 'rooms', 'See rooms and beds'],
+  ['./menu.html', 'Menu and dining', 'Every dish, with takeaway and delivery, and a tray you build yourself.', 'dining', 'See the menu and order'],
+  ['./events.html', 'Plan an event', 'Weddings, conferences and functions in our halls and riverside gardens.', 'events', 'Plan your event'],
+  ['./facilities.html', 'Facilities', 'The pool, the health club, the bar and the grounds.', 'facilities', 'Explore the facilities'],
+  ['./news.html', 'News & Careers', 'Announcements, opportunities and the roles we are hiring for.', 'news', 'Read news and careers'],
+  ['./account.html', 'Your account', 'Track your bookings and orders, or sign in to book faster.', 'account', 'Open your account'],
 ] as const;
 
 export function ExploreMore({current = ''}: {current?: string}) {
@@ -463,12 +463,12 @@ export function ExploreMore({current = ''}: {current?: string}) {
     <p className="intro">Whichever page you are reading, the rest of the hotel is a tap away.</p>
    </div>
    <div className="exploreGrid">
-    {items.map(([href, title, text, icon]) => (
+    {items.map(([href, title, text, icon, cta]) => (
      <a className="exploreCard reveal" href={href} key={href}>
       <span className="exploreIcon" aria-hidden="true"><svg viewBox="0 0 24 24">{EXPLORE_ICONS[icon]}</svg></span>
       <b>{title}</b>
       <span className="exploreText">{text}</span>
-      <span className="exploreGo">Open<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <span className="exploreGo">{cta}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
      </a>
     ))}
    </div>

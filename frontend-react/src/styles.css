@@ -76,11 +76,36 @@ b,strong{font-variant-numeric:tabular-nums}
 .btn:hover{background:var(--gold-deep);transform:translateY(-1px);box-shadow:0 12px 26px rgba(201,162,39,.32)}
 .btn:active{transform:translateY(0);box-shadow:inset 0 1px 3px rgba(7,26,51,.25)}
 .btn[disabled],.btn:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
-/* Outline white for a photograph, outline gold for the ivory pages. */
-.btn.ghost{background:transparent;border-color:rgba(255,255,255,.65);color:#fff;box-shadow:none}
-.btn.ghost:hover{background:rgba(255,255,255,.14);border-color:#fff;color:#fff}
-.btn.ghost2{background:transparent;border-color:var(--gold);color:var(--navy);box-shadow:none}
-.btn.ghost2:hover{background:var(--gold-soft);border-color:var(--gold-deep);color:var(--navy)}
+/* Outline white for a photograph, outline gold for the ivory pages. Both are
+   frosted glass: a faint panel, a top sheen, a bright hairline rim and a soft
+   blur of whatever sits behind, so they read as a pane over the picture rather
+   than an empty outline. */
+.btn.ghost{
+  background-color:transparent;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.06) 55%,rgba(255,255,255,0));
+  border-color:rgba(255,255,255,.65);color:#fff;
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+  text-shadow:0 1px 2px rgba(0,10,25,.4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 6px 18px rgba(0,0,0,.22);
+}
+.btn.ghost:hover{
+  background-color:transparent;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,.14) 55%,rgba(255,255,255,.04));
+  border-color:#fff;color:#fff;transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 12px 28px rgba(0,0,0,.3);
+}
+.btn.ghost2{
+  background-color:transparent;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,.35) 55%,rgba(255,255,255,.05));
+  border-color:var(--gold);color:var(--navy);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 2px rgba(201,162,39,.18),0 6px 16px rgba(201,162,39,.18);
+}
+.btn.ghost2:hover{
+  background-color:transparent;
+  background-image:linear-gradient(180deg,#fff,rgba(255,255,255,.5) 55%,rgba(255,255,255,.2));
+  border-color:var(--gold-deep);color:var(--navy);transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,1),0 12px 26px rgba(201,162,39,.28);
+}
 .btn.navy{background:var(--navy2);color:#fff;box-shadow:0 8px 20px rgba(7,26,51,.22)}
 .btn.navy:hover{background:var(--nebula);color:#fff}
 .btn.danger{background:var(--bad);color:#fff;box-shadow:none}
@@ -216,9 +241,20 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
 .heroText{font-size:17.5px;max-width:58ch;color:#eaf1f7;margin:0;line-height:1.65;text-wrap:pretty}
 .heroBtns{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
 .heroBtns .btn{min-height:46px;padding:14px 26px}
-/* Over a photograph the outlined button needs light lettering, not navy. */
-.heroBtns .btn.ghost2{color:#fff;border-color:rgba(255,255,255,.75)}
-.heroBtns .btn.ghost2:hover{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+/* Over a photograph the outlined button becomes a frosted pane with light
+   lettering, and the hover pours gold into the glass. */
+.heroBtns .btn.ghost2{
+  color:#fff;border-color:rgba(255,255,255,.75);
+  background-image:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,.06) 60%,rgba(255,255,255,0));
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  text-shadow:0 1px 2px rgba(0,10,25,.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 6px 18px rgba(0,0,0,.2);
+}
+.heroBtns .btn.ghost2:hover{
+  background-image:linear-gradient(180deg,var(--gold2),var(--gold));border-color:transparent;color:var(--navy);
+  text-shadow:none;transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 12px 28px rgba(201,162,39,.35);
+}
 
 /* The availability strip: one clean bar of fields under the hero, opened by a
    gold hairline so it reads as part of the header rather than a floating box. */
@@ -1250,7 +1286,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 ::selection{background:#C9A2274d;color:var(--navy)}
 .btn{box-shadow:0 6px 18px #C9A22733;transition:background .2s ease,box-shadow .2s ease,color .2s ease,transform .2s ease,border-color .2s ease}
 .btn:hover{box-shadow:0 12px 26px #C9A22750}
-.btn.ghost,.btn.ghost2{box-shadow:none}
+/* The ghost keys keep the frosted-glass shadows set on the buttons themselves. */
 .btn.navy{box-shadow:0 8px 20px rgba(7,26,51,.22)}
 .btn.navy:hover{box-shadow:0 12px 26px rgba(7,26,51,.3)}
 .btn:focus-visible{outline:3px solid #fff;outline-offset:2px;box-shadow:0 0 0 5px var(--gold)}
@@ -1463,72 +1499,102 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
    and the press reads naturally on a touchscreen because :active is
    the ground truth, not a hover guess.
    --------------------------------------------------------------- */
+/* A glassy, edged button: a bright specular sheen across the top third, a
+   saturated body that darkens towards the base, a crisp hairline rim and a
+   soft cast shadow. The bead of light along the top edge is what makes it
+   read as a solid, glossy object rather than a flat rectangle of colour. */
 .btn:not(.ghost):not(.ghost2):not(.navy):not(.danger){
-  background-image:linear-gradient(180deg,#e6c65e 0%,#d3ab2c 42%,#c19a20 78%,#ab8616 100%);
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.46) 15%,rgba(255,255,255,0) 47%),
+    radial-gradient(120% 90% at 50% -30%,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),
+    linear-gradient(180deg,#eed070 0%,#ddb536 42%,#c69d20 76%,#a67f18 100%);
+  border:1px solid rgba(150,116,20,.55);
+  text-shadow:0 1px 0 rgba(255,255,255,.4);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.62),
-    inset 0 -2px 1px rgba(120,90,10,.28),
-    0 1px 1px rgba(7,26,51,.14),
-    0 5px 12px rgba(7,26,51,.16),
-    0 12px 26px rgba(201,162,39,.24);
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 2px 6px rgba(255,255,255,.35),
+    inset 0 -3px 3px rgba(120,90,10,.34),
+    0 1px 1px rgba(7,26,51,.16),
+    0 6px 14px rgba(7,26,51,.16),
+    0 14px 30px rgba(201,162,39,.32);
   transition:transform .16s cubic-bezier(.3,.7,.4,1),box-shadow .16s ease,background-color .16s ease,color .16s ease,border-color .16s ease;
 }
 .btn:not(.ghost):not(.ghost2):not(.navy):not(.danger):hover{
-  background-image:linear-gradient(180deg,#eecd68 0%,#dab435 42%,#c8a124 78%,#b28c19 100%);
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.5) 16%,rgba(255,255,255,0) 48%),
+    radial-gradient(120% 90% at 50% -30%,rgba(255,255,255,.7),rgba(255,255,255,0) 60%),
+    linear-gradient(180deg,#f5db82 0%,#e3bd40 42%,#cea626 76%,#b28c19 100%);
   transform:translateY(-2px);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.72),
-    inset 0 -2px 1px rgba(120,90,10,.3),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 2px 8px rgba(255,255,255,.45),
+    inset 0 -3px 3px rgba(120,90,10,.34),
     0 2px 2px rgba(7,26,51,.16),
-    0 9px 18px rgba(7,26,51,.2),
-    0 18px 38px rgba(201,162,39,.32);
+    0 10px 20px rgba(7,26,51,.2),
+    0 20px 42px rgba(201,162,39,.38);
 }
 .btn:not(.ghost):not(.ghost2):not(.navy):not(.danger):active{
   transform:translateY(1px);
   box-shadow:
-    inset 0 2px 5px rgba(90,66,8,.44),
-    inset 0 -1px 0 rgba(255,255,255,.18),
+    inset 0 3px 7px rgba(90,66,8,.5),
+    inset 0 -1px 0 rgba(255,255,255,.22),
     0 1px 2px rgba(7,26,51,.16);
 }
 /* The navy key: a deep operational surface for confirmations, printing,
    checkout and the dashboard's own actions. Never competes with gold. */
 .btn.navy:not(.ghost):not(.ghost2){
-  background-image:linear-gradient(180deg,#1b3a63 0%,#123056 46%,#0d2444 82%,#081a30 100%);
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,.16) 15%,rgba(255,255,255,0) 48%),
+    radial-gradient(120% 90% at 50% -30%,rgba(150,190,240,.5),rgba(255,255,255,0) 62%),
+    linear-gradient(180deg,#1d3f6b 0%,#123056 46%,#0d2444 82%,#071a30 100%);
   color:#fff;
+  border:1px solid rgba(6,20,40,.6);
+  text-shadow:0 1px 1px rgba(0,10,25,.5);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.24),
-    inset 0 -2px 1px rgba(0,0,0,.32),
-    0 1px 1px rgba(7,26,51,.2),
-    0 5px 12px rgba(7,26,51,.22),
-    0 14px 30px rgba(7,26,51,.3);
+    inset 0 1px 0 rgba(255,255,255,.34),
+    inset 0 2px 7px rgba(120,170,235,.22),
+    inset 0 -3px 4px rgba(0,0,0,.4),
+    0 1px 1px rgba(7,26,51,.22),
+    0 6px 14px rgba(7,26,51,.24),
+    0 16px 34px rgba(7,26,51,.34);
 }
 .btn.navy:not(.ghost):not(.ghost2):hover{
-  background-image:linear-gradient(180deg,#22456f 0%,#173964 46%,#102b4e 82%,#0a1f38 100%);
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,.2) 16%,rgba(255,255,255,0) 49%),
+    radial-gradient(120% 90% at 50% -30%,rgba(160,200,250,.6),rgba(255,255,255,0) 62%),
+    linear-gradient(180deg,#254b7a 0%,#173964 46%,#102b4e 82%,#0a1f38 100%);
   transform:translateY(-2px);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.3),
-    inset 0 -2px 1px rgba(0,0,0,.34),
-    0 2px 2px rgba(7,26,51,.22),
-    0 10px 22px rgba(7,26,51,.28),
-    0 20px 42px rgba(7,26,51,.36);
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 2px 9px rgba(140,185,245,.28),
+    inset 0 -3px 4px rgba(0,0,0,.42),
+    0 2px 2px rgba(7,26,51,.24),
+    0 11px 24px rgba(7,26,51,.3),
+    0 22px 46px rgba(7,26,51,.4);
 }
 .btn.navy:not(.ghost):not(.ghost2):active{
   transform:translateY(1px);
-  box-shadow:inset 0 2px 6px rgba(0,0,0,.45),0 1px 2px rgba(7,26,51,.2);
+  box-shadow:inset 0 3px 8px rgba(0,0,0,.55),0 1px 2px rgba(7,26,51,.22);
 }
 /* A destructive or cancelling action reads red, and red alone. */
 .btn.danger:not(.ghost):not(.ghost2){
-  background-image:linear-gradient(180deg,#dc4b4b,#c62828 55%,#a81f1f);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 1px rgba(80,0,0,.3),0 2px 4px rgba(150,20,20,.24),0 10px 22px rgba(198,40,40,.26);
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.2) 15%,rgba(255,255,255,0) 48%),
+    linear-gradient(180deg,#e35656,#c62828 55%,#a51d1d);
+  border:1px solid rgba(120,10,10,.55);
+  text-shadow:0 1px 1px rgba(90,0,0,.4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 2px 7px rgba(255,180,180,.25),inset 0 -3px 4px rgba(80,0,0,.34),0 2px 4px rgba(150,20,20,.26),0 12px 26px rgba(198,40,40,.3);
 }
 .btn.danger:not(.ghost):not(.ghost2):hover{
-  background-image:linear-gradient(180deg,#e05454,#cb2d2d 55%,#ad2323);
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.65) 0%,rgba(255,255,255,.26) 16%,rgba(255,255,255,0) 49%),
+    linear-gradient(180deg,#ec6565,#cb2d2d 55%,#ad2323);
   transform:translateY(-2px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -2px 1px rgba(80,0,0,.32),0 4px 8px rgba(150,20,20,.26),0 16px 34px rgba(198,40,40,.34);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 2px 9px rgba(255,190,190,.3),inset 0 -3px 4px rgba(80,0,0,.36),0 4px 8px rgba(150,20,20,.28),0 18px 38px rgba(198,40,40,.4);
 }
 .btn.danger:not(.ghost):not(.ghost2):active{
   transform:translateY(1px);
-  box-shadow:inset 0 2px 5px rgba(70,0,0,.46),0 1px 2px rgba(150,20,20,.2);
+  box-shadow:inset 0 3px 8px rgba(70,0,0,.55),0 1px 2px rgba(150,20,20,.22);
 }
 /* A disabled key is unmistakably dead, and keeps none of the lift. */
 .btn:not(.ghost):not(.ghost2)[disabled],.btn:not(.ghost):not(.ghost2):disabled{

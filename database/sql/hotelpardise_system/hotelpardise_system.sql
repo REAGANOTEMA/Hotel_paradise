@@ -1435,6 +1435,7 @@ CREATE TABLE `news_posts` (
   `apply_url` varchar(300) DEFAULT NULL,
   `author_name` varchar(120) DEFAULT NULL,
   `author_role` varchar(120) DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
   `pinned` tinyint(1) NOT NULL DEFAULT 0,
   `status` varchar(20) NOT NULL DEFAULT 'published',
   `publish_at` datetime NOT NULL DEFAULT current_timestamp(),
