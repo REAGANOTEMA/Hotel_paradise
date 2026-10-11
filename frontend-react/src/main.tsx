@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, telHref, bgUrl, useReveal} from './shared';
+import {rooms, ExploreMore, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, telHref, bgUrl, useReveal} from './shared';
 import {heroShots, SmartImage, type HeroShot} from './SmartImage';
 
 /**
@@ -603,6 +603,31 @@ function Home() {
     </div>
    </section>
 
+  <section className="section hasTint" id="events" style={{'--bg': bgUrl('./images/hero/view-1920.webp')} as unknown as React.CSSProperties}>
+   <div className="center reveal">
+    <p className="eyebrow">CONFERENCES, WEDDINGS AND FUNCTIONS</p>
+    <h2>Gather by the Nile</h2>
+    <p className="intro">Four venues inside the hotel, a kitchen that plates for a room of two hundred, and one events manager who owns your day from the first call to the last dance. Tell us what you are planning and we will send a proposal the same day.</p>
+   </div>
+   <div className="promoStrip">
+    <a className="promo reveal" href="./events.html">
+     <SmartImage group="site" name="Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover" alt="Weddings and conferences at Hotel Paradise on the Nile" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 45%" zoom/>
+     <span><b>Weddings</b><small>Ceremony, reception and the party &rarr;</small></span>
+    </a>
+    <a className="promo reveal" href="./events.html">
+     <SmartImage group="halls" name="nile-hall-meeting-room2" alt="The Nile Hall set for a conference" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 45%" zoom/>
+     <span><b>Conferences</b><small>Halls, screens and full catering &rarr;</small></span>
+    </a>
+    <a className="promo reveal" href="./events.html">
+     <SmartImage group="site" name="paradise-banquet-hall-768x1024" alt="The banquet hall dressed for an evening function" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 50%" zoom/>
+     <span><b>Functions</b><small>Dinners, launches and galas &rarr;</small></span>
+    </a>
+   </div>
+   <div className="center reveal" style={{marginTop: 40}}>
+    <a className="btn" href="./events.html">Plan an event with us</a>
+   </div>
+  </section>
+
   <section className="section band contact hasBackdrop" id="contact" style={{'--bg': bgUrl('./images/hero/view-1920.webp')} as unknown as React.CSSProperties}>
    <div className="bandInner">
    <div className="center reveal">
@@ -628,6 +653,8 @@ function Home() {
     </div>
    </div>
   </section>
+
+  <ExploreMore current="index"/>
 
   <Footer/>
  </div>;

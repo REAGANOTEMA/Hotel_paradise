@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken, rooms as bedRooms, WhatsAppIcon, BackLink, bgUrl} from './shared';
+import {ExploreMore, TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken, rooms as bedRooms, WhatsAppIcon, BackLink, bgUrl} from './shared';
 import {SmartImage} from './SmartImage';
 
 /*
@@ -672,6 +672,8 @@ if (done) {
    </div>
    )}
   </section>
+
+  <ExploreMore current="pay"/>
 
   <Footer/>
  </div>;

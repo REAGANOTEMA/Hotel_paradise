@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms as baseRooms, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
+import {rooms as baseRooms, ExploreMore, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled, type ImageGroup} from './SmartImage';
 
 /** The photographs each room is still waiting for, shown on request only. */
@@ -358,6 +358,8 @@ if (d.ok) {
     <p className="plannerNote">You are in full control. Drop your choice and pick any other bed at any time before you book. You will never be charged here.</p>
    </div>
   </section>
+
+  <ExploreMore current="rooms"/>
 
   <Footer/>
  </div>;

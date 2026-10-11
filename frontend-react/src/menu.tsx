@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
+import {ExploreMore, TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {
   MENU_REVISION,
@@ -837,6 +837,8 @@ if (d.ok) {
         onClose={closeDish}
       />
     )}
+
+    <ExploreMore current="menu"/>
 
     <Footer/>
   </div>;

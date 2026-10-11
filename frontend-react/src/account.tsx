@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, setCustomer, forgetCustomer, LOGO, BackLink, bgUrl} from './shared';
+import {ExploreMore, TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, setCustomer, forgetCustomer, LOGO, BackLink, bgUrl} from './shared';
 
 /*
  * The guest's own account.
@@ -482,8 +482,10 @@ function AccountPage() {
     </div>
    </section>
 
+   <ExploreMore current="account"/>
+
    <Footer/>
   </div>;
-}
+ }
 
 createRoot(document.getElementById('root')!).render(<AccountPage/>);

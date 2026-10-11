@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
+import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
 import {heroShots} from './SmartImage';
 
 /*
@@ -336,6 +336,8 @@ function NewsPage() {
         </>
       )}
     </section>
+
+    <ExploreMore current="news"/>
 
     <Footer/>
   </div>;

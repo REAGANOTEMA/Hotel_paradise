@@ -30,6 +30,13 @@ Patches
     channel and widens the one-row-per-payment rule to one row per payment,
     channel and recipient.
 
+2026-10-11_news_careers.sql
+    News & Careers. Makes sure the news_posts table and its indexes are present
+    and that the human_resource role exists, so Human Resource can publish
+    vacancies and the employee of the month, and so the website newsroom
+    (news.html, read through the API) has something to read. Also seeds a few
+    opening posts with INSERT IGNORE, so an edit is never overwritten.
+
 How to run one
 --------------
 phpMyAdmin: open the system database, "Import", choose the .sql file, then Go.

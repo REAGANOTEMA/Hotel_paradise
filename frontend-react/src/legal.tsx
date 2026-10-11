@@ -1,5 +1,5 @@
 import React from 'react';
-import {TopBar, PageNav, Footer, BackLink, bgUrl, HOTEL, CALL, telHref, useReveal} from './shared';
+import {ExploreMore, TopBar, PageNav, Footer, BackLink, bgUrl, HOTEL, CALL, telHref, useReveal} from './shared';
 
 /**
  * The shared shell every legal document is set in.
@@ -78,6 +78,8 @@ export function LegalPage({eyebrow, title, updated, intro, heroBg, clauses}: Leg
     </div>
    </div>
   </section>
+
+  <ExploreMore/>
 
   <Footer/>
  </div>;

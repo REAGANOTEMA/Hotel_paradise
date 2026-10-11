@@ -423,6 +423,59 @@ export function Footer() {
   );
  }
 
+/* ------------------------------------------------------------------
+   MORE OF THE HOTEL
+
+   One band, drawn the same way on every page, that offers the rest of the
+   site as a row of cards. A guest who lands deep in a room, a single dish
+   or a legal document should never reach a dead end: from any page the way
+   on is a tap away. The page it is already on is left out, so the row is
+   always somewhere new to go, and the whole thing is written here once so
+   the header, the footer and this band can never disagree about a link.
+   ------------------------------------------------------------------ */
+
+const EXPLORE_ICONS: Record<string, React.ReactNode> = {
+  rooms: <><rect x="3" y="10" width="18" height="10" rx="2"/><path d="M5 10V7a2 2 0 0 1 2-2h2.5a2 2 0 0 1 2 2v3M11.5 10V8a2 2 0 0 1 2-2H16a2 2 0 0 1 2 2v2M7 20v-2M17 20v-2"/></>,
+  dining: <><path d="M5 3v6M8 3v6M6.5 9V21M6.5 3v6M17 3c1.6 0 2.5 1.5 2.5 3.1S18.6 9.3 17 9.3V21M17 3v6.3"/></>,
+  events: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18M8 15h4"/></>,
+  facilities: <><path d="M3 12a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 1 3 0"/><path d="M3 18a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 1 3 0"/></>,
+  news: <><rect x="3" y="5" width="13" height="15" rx="2"/><path d="M16 8h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5M7 9h5M7 13h5M7 17h4"/></>,
+  account: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>
+};
+
+const EXPLORE = [
+  ['./rooms.html', 'Rooms and beds', 'Eight room types, each one photographed, with honest rates in shillings and dollars.', 'rooms'],
+  ['./menu.html', 'Menu and dining', 'Every dish, with takeaway and delivery, and a tray you build yourself.', 'dining'],
+  ['./events.html', 'Plan an event', 'Weddings, conferences and functions in our halls and riverside gardens.', 'events'],
+  ['./facilities.html', 'Facilities', 'The pool, the health club, the bar and the grounds.', 'facilities'],
+  ['./news.html', 'News & Careers', 'Announcements, opportunities and the roles we are hiring for.', 'news'],
+  ['./account.html', 'Your account', 'Track your bookings and orders, or sign in to book faster.', 'account'],
+] as const;
+
+export function ExploreMore({current = ''}: {current?: string}) {
+ const here = './' + current.replace(/^\.?\//, '');
+ const items = EXPLORE.filter(i => i[0] !== here);
+ return (
+  <section className="section explore" aria-label="More of the hotel">
+   <div className="center reveal">
+    <p className="eyebrow">MORE OF THE HOTEL</p>
+    <h2>Where would you like to go next?</h2>
+    <p className="intro">Whichever page you are reading, the rest of the hotel is a tap away.</p>
+   </div>
+   <div className="exploreGrid">
+    {items.map(([href, title, text, icon]) => (
+     <a className="exploreCard reveal" href={href} key={href}>
+      <span className="exploreIcon" aria-hidden="true"><svg viewBox="0 0 24 24">{EXPLORE_ICONS[icon]}</svg></span>
+      <b>{title}</b>
+      <span className="exploreText">{text}</span>
+      <span className="exploreGo">Open<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+     </a>
+    ))}
+   </div>
+  </section>
+ );
+}
+
 /**
  * The photograph that fills the header of a subpage, and the sequence of
  * frames it turns over in.

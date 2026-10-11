@@ -1944,8 +1944,31 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
  .newsEotm{flex-direction:column;align-items:flex-start;gap:14px}
  .newsMeta span+span::before{display:none}
  .newsApply dl{grid-template-columns:1fr}
- .newsApply{padding:22px 20px}
 }
+
+/* ==================================================================
+   MORE OF THE HOTEL
+
+   The band that closes every page. Six quiet cards on ivory, each
+   one a door to another part of the site, with the page you are on
+   left out. Only transform and box-shadow move, so it stays smooth
+   on a phone, and the whole row collapses to a single column when
+   the screen is small.
+   ================================================================== */
+.explore{background:var(--ivory)}
+.exploreGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:36px}
+.exploreCard{display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:#fff;border:1px solid var(--line2);border-radius:calc(var(--r) + 6px);padding:26px 24px;box-shadow:var(--shadow);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.exploreCard:hover{transform:translateY(-4px);box-shadow:0 20px 46px rgba(7,26,51,.14);border-color:#C9A22755}
+.exploreIcon{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:13px;background:var(--gold-soft);color:var(--gold-ink);margin-bottom:8px}
+.exploreIcon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.exploreCard b{font-family:'Playfair Display',serif;font-size:1.18rem;color:var(--navy);line-height:1.25}
+.exploreText{color:var(--muted);font-size:14px;line-height:1.6;flex:1}
+.exploreGo{display:inline-flex;align-items:center;gap:6px;color:var(--nile);font-weight:700;font-size:12.5px;margin-top:2px}
+.exploreGo svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}
+.exploreCard:hover .exploreGo svg{transform:translateX(3px)}
+
+@media (max-width:560px){.exploreGrid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.exploreCard{transition:none}.exploreCard:hover{transform:none}.exploreCard:hover .exploreGo svg{transform:none}}
 @media (prefers-reduced-motion:reduce){
  .newsCard,.newsFeature,.newsMini,.newsEotm{transition:none}
  .newsCard:hover,.newsMini:hover,.newsEotm:hover{transform:none}

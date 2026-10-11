@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
+import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
 import {SmartImage, type ImageGroup} from './SmartImage';
 
 /**
@@ -143,6 +143,8 @@ function FacilitiesPage() {
     <p className="evFormNote">Or call <a className="footLink nileLine" href={telHref(CALL)}>{CALL}</a> / email <a className="footLink nileLine" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a>. The front desk is open 24 hours.</p>
    </div>
   </section>
+
+  <ExploreMore current="facilities"/>
 
   <Footer/>
  </div>;

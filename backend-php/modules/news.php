@@ -285,7 +285,7 @@ if($act==='list'){
   echo '</div>';
 
   echo '<div class="panel">';
-  echo '<div class="tbHead" style="justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">'
+  echo '<div class="tbHead" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">'
     .'<h2 style="margin:0">All posts</h2>'
     .'<a class="btn" href="'.BASE.'/index.php?page=news&act=new">New post</a></div>';
 
@@ -388,7 +388,7 @@ if($act==='edit'||$act==='new'){
     echo '<label class="check" style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px"><input type="checkbox" name="image_remove" value="1"/> Remove the current photograph</label>';
   }
   echo '</div></div></div>';
-  field('Or photograph URL','image',$image,'url','Optional: a picture hosted elsewhere, used when nothing is uploaded above');
+  field('Or photograph URL','image',$image,'text','Leave as it is to keep the current picture. Paste a full web address to use an image hosted elsewhere.');
 
   /* ---- the vacancy detail ---- */
   echo '<div class="panel" style="background:#fafbfd;margin:6px 0 0;box-shadow:none">';

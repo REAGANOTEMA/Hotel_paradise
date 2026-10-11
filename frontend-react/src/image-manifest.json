@@ -8066,6 +8066,12 @@
       "h": 300,
       "variants": []
     },
+    "coctail-juice": {
+      "ext": "jpg",
+      "w": 554,
+      "h": 554,
+      "variants": []
+    },
     "dinning-space": {
       "ext": "jpg",
       "w": 678,
@@ -8335,6 +8341,12 @@
       "ext": "webp",
       "w": 768,
       "h": 512,
+      "variants": []
+    },
+    "spirit-alcholic-drink-poured-in-the-glass": {
+      "ext": "jpg",
+      "w": 739,
+      "h": 415,
       "variants": []
     },
     "standard-double": {
