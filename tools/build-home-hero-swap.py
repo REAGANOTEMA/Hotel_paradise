@@ -95,24 +95,29 @@ def build_coctail_juice() -> None:
         raise SystemExit("missing " + src)
     with Image.open(src) as im:
         im = ImageOps.exif_transpose(im).convert("RGB")
-    im = upscale_to(im, 1440)
+    # The hotel wants the 1024 copy to stand as the cocktail plate, so this one
+    # is not blown up to a 1440 base that only softens it. The 1024 file is the
+    # widest, and the build takes it as the source when no plain copy exists.
+    im = upscale_to(im, 1024)
     im = polish(im, sharpen=1.05)
-    base = os.path.join(HERO, "coctail-juice.webp")
+    base = os.path.join(HERO, "coctail-juice-1024.webp")
     im.save(base, "WEBP", quality=QUALITY, method=6)
     print("  %-62s %dx%d  %.0fkB"
           % (os.path.relpath(base, ROOT), im.width, im.height, os.path.getsize(base) / 1024))
-    for w in (1024, 640):
+    for w in (640, 480):
         write_webp(im, os.path.join(HERO, "coctail-juice-%d.webp" % w), w)
-    stale = os.path.join(HERO, "coctail-juice-480.webp")
+    # Retire the oversized base so the 1024 copy becomes the widest file and the
+    # manifest serves it directly.
+    stale = os.path.join(HERO, "coctail-juice.webp")
     if os.path.exists(stale):
         os.remove(stale)
-        print("  removed stale  coctail-juice-480.webp")
+        print("  removed over-scaled  coctail-juice.webp")
 
 
 if __name__ == "__main__":
     print("pork-bbq:")
     build_pork_bbq()
-    print("coctail juice (hero #4):")
+    print("coctail juice (hero #4, 1024 stands in):")
     build_coctail_juice()
     print("jinja main bridge at night (kept on disk only):")
     build_jinja_bridge()
