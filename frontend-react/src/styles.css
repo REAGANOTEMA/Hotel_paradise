@@ -1409,7 +1409,7 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 .bedSlide.on{opacity:1;visibility:visible;transition:opacity .65s ease,visibility 0s}
 /* The slide's own box is told 100% tall, so the stage aspect win is kept. */
 .bedSlide .photoBox{width:100%;height:100%;aspect-ratio:auto}
-.bedSliderBar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+.bedSliderBar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;position:relative;z-index:2}
 .bedArrow{flex:none;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;border:1px solid var(--line2);color:var(--navy);cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease;box-shadow:0 4px 12px rgba(7,26,51,.08)}
 .bedArrow:hover{background:var(--gold);border-color:var(--gold);transform:translateY(-1px)}
 .bedArrow svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -2096,3 +2096,8 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
 
 
 
+
+/* Bed card clickable overlay */
+.bedOpen{position:absolute;inset:0;z-index:1;background:none;border:0;padding:0;border-radius:var(--r);cursor:pointer;}
+.bedOpen:focus-visible{outline:3px solid var(--gold);outline-offset:-3px;}
+.bedSliderBar{position:relative;z-index:2;}

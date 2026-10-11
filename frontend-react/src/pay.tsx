@@ -304,6 +304,29 @@ function PayPage() {
    return () => { alive = false; };
   }, [src, ref]);
 
+  /**
+   * A signed in guest should never retype what the hotel already knows. Any
+   * field the url did not carry is filled from their own account, so the name,
+   * phone and email on the receipt are the ones they registered with, and they
+   * can still change any of them here.
+   */
+  React.useEffect(() => {
+   const t = customerToken();
+   if (!t) return;
+   let alive = true;
+   (async () => {
+    try {
+     const res = await fetch(await apiUrl('account'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'me', token: t})});
+     const d = await res.json();
+     if (!alive || !d || !d.ok || !d.customer) return;
+     setForm(f => ({...f, name: f.name || String(d.customer.name || ''), phone: f.phone || String(d.customer.phone || ''), email: f.email || String(d.customer.email || '')}));
+    } catch {
+     /* the url and the browser's own memory stand */
+    }
+   })();
+   return () => { alive = false; };
+  }, []);
+
   const owed = detail ? Math.max(0, Math.round(detail.due)) : amt;
   const settled = Boolean(detail) && owed <= 0;
   const payable = settled ? 0 : owed;

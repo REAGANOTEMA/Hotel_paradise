@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms as baseRooms, EndLinks, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
+import {rooms as baseRooms, EndLinks, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, customerToken, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled, type ImageGroup} from './SmartImage';
 
 /** The photographs each room is still waiting for, shown on request only. */
@@ -182,20 +182,67 @@ function useQuery() {
   room: p.get('room') || '',
   check_in: p.get('check_in') || '',
   check_out: p.get('check_out') || '',
-  adults: p.get('adults') || '2'
+  adults: p.get('adults') || '2',
+  // Set when the guest has just come back from creating their account, so the
+  // page knows to greet them and carry their chosen bed straight to the form.
+  resume: p.get('resume') === '1'
  };
 }
+
+/** Reads the signed in guest back from the hotel, or null when there is none. */
+const whoIsSignedIn = async (): Promise<{name: string; email: string; phone: string} | null> => {
+ const token = customerToken();
+ if (!token) return null;
+ try {
+  const res = await fetch(await apiUrl('account'), {
+   method: 'POST',
+   headers: {'Content-Type': 'application/json'},
+   body: JSON.stringify({action: 'me', token})
+  });
+  const d = await res.json();
+  if (d && d.ok && d.customer) return {name: String(d.customer.name || ''), email: String(d.customer.email || ''), phone: String(d.customer.phone || '')};
+ } catch {
+  /* a hotel that cannot answer is treated as nobody signed in */
+ }
+ return null;
+};
 
 function RoomsPage() {
  const q = useQuery();
  const [live, setLive] = React.useState<Record<string, number>>({});
  const [chosen, setChosen] = React.useState<string>(q.room || '');
  const [form, setForm] = React.useState({name: '', phone: '', email: '', check_in: q.check_in, check_out: q.check_out, adults: q.adults || '2'});
-  const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
-  const [busy, setBusy] = React.useState(false);
-  // The fee is read from the server, never guessed here, so what the guest is
-  // shown is what the server will actually charge.
-  const [fee, setFee] = React.useState<{label: string; amount: number}>({label: 'Withdrawal fee', amount: 0});
+ const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
+ const [busy, setBusy] = React.useState(false);
+ // Nobody books without an account: it is what carries their name, phone and
+ // email into the booking and onto the receipt, so the page waits for one
+ // rather than asking the guest to type it all again. The account comes before
+ // the details, and comes straight back here with the chosen bed kept.
+ const [signedIn, setSignedIn] = React.useState<boolean>(Boolean(customerToken()));
+ // The fee is read from the server, never guessed here, so what the guest is
+ // shown is what the server will actually charge.
+ const [fee, setFee] = React.useState<{label: string; amount: number}>({label: 'Withdrawal fee', amount: 0});
+
+ React.useEffect(() => {
+  let live = true;
+  whoIsSignedIn().then(c => {
+   if (!live) return;
+   if (!c) { setSignedIn(false); return; }
+   setSignedIn(true);
+   setForm(f => ({...f, name: f.name || c.name, phone: f.phone || c.phone, email: f.email || c.email}));
+  });
+  return () => { live = false; };
+ }, []);
+
+ // A room chosen on the home page arrives as ?room=Type. Land the guest on that
+ // bed itself, so "View this bed" opens the very bed it promised.
+ React.useEffect(() => {
+  if (!q.room) return;
+  const el = document.getElementById('bed-' + (baseRooms.find(r => r.type === q.room)?.id ?? ''));
+  if (el) setTimeout(() => el.scrollIntoView({behavior: 'smooth', block: 'center'}), 120);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, []);
+
 
   React.useEffect(() => {
    apiUrl('rooms').then(url => fetch(url)).then(r => r.json()).then(d => {
@@ -232,8 +279,21 @@ function RoomsPage() {
 
  const f = (k: keyof typeof form) => ((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({...form, [k]: e.target.value}));
 
+ // Where a guest is sent to sign in or sign up, carrying the bed and dates so
+ // the account page can hand them straight back to this exact booking.
+ const continueUrl = (mode: 'signup' | 'signin') => {
+  const p = new URLSearchParams();
+  if (sel) p.set('room', sel.type);
+  if (form.check_in) p.set('check_in', form.check_in);
+  if (form.check_out) p.set('check_out', form.check_out);
+  if (form.adults) p.set('adults', form.adults);
+  p.set('resume', '1');
+  return './account.html?mode=' + mode + '&next=' + encodeURIComponent('./rooms.html?' + p.toString());
+ };
+
  const book = async () => {
   if (!sel) return;
+  if (!signedIn) { window.location.assign(continueUrl('signup')); return; }
   setBusy(true); setMsg(null);
   try {
    const res = await fetch(await apiUrl('booking'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
@@ -303,9 +363,10 @@ if (d.ok) {
           {active
            ? <button className="btn ghost2" onClick={() => setChosen('')}>Change or drop</button>
            : <button className="btn" onClick={() => pick(r.type)}>Choose this bed</button>}
+          </div>
          </div>
-        </div>
-        {active && <span className="selBadge">Your choice</span>}
+         {!active && <button className="bedOpen" onClick={() => pick(r.type)} aria-label={'Choose this bed: ' + r.type}/>}
+         {active && <span className="selBadge">Your choice</span>}
        </article>
       );
      })}
@@ -333,11 +394,22 @@ if (d.ok) {
        <p className="bedsLine">{sel.beds} &middot; {sel.guests}</p>
 
        <div className="stepHead"><span className="stepNum">2</span><b>Your details</b></div>
-       <div className="planGrid">
-        <div className="planField"><label>Your name</label><input value={form.name} onChange={f('name')} placeholder="Full name"/></div>
-        <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>
-        <div className="planField"><label>Email (optional)</label><input value={form.email} onChange={f('email')} type="email" placeholder="you@email.com"/></div>
-       </div>
+       {signedIn ? (
+        <>
+         {q.resume && <p className="bookMsg ok" style={{marginTop: 0}}>Welcome back. Your name, phone and email are already here.</p>}
+         <div className="planGrid">
+          <div className="planField"><label>Your name</label><input value={form.name} onChange={f('name')} placeholder="Full name"/></div>
+          <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>
+          <div className="planField"><label>Email (optional)</label><input value={form.email} onChange={f('email')} type="email" placeholder="you@email.com"/></div>
+         </div>
+        </>
+       ) : (
+        <div className="acctGate">
+         <p>One quick account and your name, phone and email come back with you, so the booking and its receipt never ask for them twice. It takes a moment, and you come straight back to this exact bed.</p>
+         <a className="btn planBook" href={continueUrl('signup')}>Create your account and continue</a>
+         <a className="linkBtn" href={continueUrl('signin')}>I already have an account</a>
+        </div>
+       )}
 
        <div className="stepHead"><span className="stepNum">3</span><b>Dates</b></div>
        <div className="planGrid">
@@ -350,7 +422,7 @@ if (d.ok) {
        <div className="spotTotal"><span>{sel.rate} per night</span><b>{nights ? fmt(total) : 'Pick your dates'}</b><small>{nights ? 'For ' + nights + ' night' + (nights > 1 ? 's' : '') + ', breakfast and hotel tax included. Also US$ ' + sel.usd + ' per night' : 'Choose check in and check out to see your total, quoted in Uganda Shillings'}</small>
         {nights && fee.amount > 0 ? <small className="feeLine">{fmtPrice(subtotal)} for the room, plus a {fmt(fee.amount)} {fee.label.toLowerCase()}</small> : null}</div>
 
-      <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={book} disabled={busy}>{busy ? 'Sending your request...' : 'Book this room'}</button>
+      {signedIn && <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={book} disabled={busy}>{busy ? 'Sending your request...' : 'Book this room'}</button>}
       <button className="linkBtn" onClick={() => setChosen('')}>Choose another room instead</button>
      </div>
     )}

@@ -412,7 +412,7 @@ function AccountPage() {
         <p className="plannerNote">No bookings or orders yet. When you book a room or order food with this email or number, they will appear here.</p>
        )}
 
-       {next && <button className="btn planBook" style={{marginTop: 16}} onClick={() => window.location.replace(next)}>Continue to payment</button>}
+       {next && <button className="btn planBook" style={{marginTop: 16}} onClick={() => window.location.replace(next)}>Continue</button>}
        <div className="payDoneActions" style={{marginTop: 16}}>
         <a className="btn ghost2" href="./rooms.html">Book a room</a>
         <a className="btn ghost2" href="./menu.html">Order food</a>
@@ -475,7 +475,7 @@ function AccountPage() {
         {mode === 'signup'
           ? <>Already have an account? <a className="footLink" href="./account.html">Sign in</a>.</>
           : <>New here? <a className="footLink" href="./account.html?mode=signup">Create an account</a>.</>}
-        <br/>{next ? 'You will come straight back to your payment when this is done.' : <>For help, call <a className="footLink" href={telHref(CALL)}>{CALL}</a>.</>}
+        <br/>{next ? 'You will come straight back to finish where you left off.' : <>For help, call <a className="footLink" href={telHref(CALL)}>{CALL}</a>.</>}
        </p>
       </>
      )}

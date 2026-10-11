@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {EndLinks, TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
+import {EndLinks, TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, customerToken, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {
   MENU_REVISION,
@@ -466,16 +466,29 @@ function DishDetail({
 function MenuPage() {
   const [sections, setSections] = React.useState<MenuSection[]>(FALLBACK);
   const [live, setLive] = React.useState(false);
-  const [tray, setTray] = React.useState<Line[]>([]);
+  // The order survives a trip to sign in and back. A guest builds their tray,
+  // is asked for an account, and returns to exactly the order they left, items
+  // and quantities intact, rather than to an empty list.
+  const [tray, setTray] = React.useState<Line[]>(() => {
+    try {
+      const raw = window.localStorage.getItem('hpn_tray');
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? (parsed.filter((x: any) => x && x.dish && typeof x.qty === 'number') as Line[]) : [];
+    } catch { return []; }
+  });
   const [open, setOpen] = React.useState(false);
+  // Nobody orders without an account, and nobody types twice: the account
+  // carries the name, phone and email onto the order and its receipt.
+  const [signedIn, setSignedIn] = React.useState<boolean>(Boolean(customerToken()));
   // The category the guest has picked. null means the whole menu, so the
   // page still opens as one printed list until a category is chosen.
   const [cat, setCat] = React.useState<string | null>(null);
   const [name, setName] = React.useState(() => { try { return window.localStorage.getItem('hpn_name') || ''; } catch { return ''; } });
   const [phone, setPhone] = React.useState(() => { try { return window.localStorage.getItem('hpn_phone') || ''; } catch { return ''; } });
   const [email, setEmail] = React.useState(() => { try { return window.localStorage.getItem('hpn_email') || ''; } catch { return ''; } });
-  const [address, setAddress] = React.useState('');
-  const [notes, setNotes] = React.useState('');
+  const [address, setAddress] = React.useState(() => { try { return window.localStorage.getItem('hpn_address') || ''; } catch { return ''; } });
+  const [notes, setNotes] = React.useState(() => { try { return window.localStorage.getItem('hpn_notes') || ''; } catch { return ''; } });
   const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
   const [busy, setBusy] = React.useState(false);
   const [picked, setPicked] = React.useState<{dish: MenuItem; section: MenuSection | null; group: string} | null>(null);
@@ -496,6 +509,43 @@ function MenuPage() {
         }
       })
       .catch(() => {});
+  }, []);
+
+  // Keep the order and the delivery details on this device, so a trip to sign
+  // in - or an accidental refresh - never loses what the guest has built.
+  React.useEffect(() => {
+    try { window.localStorage.setItem('hpn_tray', JSON.stringify(tray)); } catch {}
+  }, [tray]);
+  React.useEffect(() => {
+    try {
+      window.localStorage.setItem('hpn_name', name);
+      window.localStorage.setItem('hpn_phone', phone);
+      window.localStorage.setItem('hpn_email', email);
+      window.localStorage.setItem('hpn_address', address);
+      window.localStorage.setItem('hpn_notes', notes);
+    } catch {}
+  }, [name, phone, email, address, notes]);
+
+  // Fill the details the hotel already knows from the guest's own account, so
+  // ordering is a review, not a form. Anything they change here still wins.
+  React.useEffect(() => {
+    let live = true;
+    (async () => {
+      const t = customerToken();
+      if (!t) { setSignedIn(false); return; }
+      setSignedIn(true);
+      try {
+        const res = await fetch(await apiUrl('account'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'me', token: t})});
+        const d = await res.json();
+        if (!live || !d || !d.ok || !d.customer) return;
+        setName(n => n || String(d.customer.name || ''));
+        setPhone(p => p || String(d.customer.phone || ''));
+        setEmail(e => e || String(d.customer.email || ''));
+      } catch {
+        /* the browser's own memory stands */
+      }
+    })();
+    return () => { live = false; };
   }, []);
 
   // Deep link: menu.html?dish=mushroom-soup opens that plate straight away.
@@ -599,7 +649,12 @@ function MenuPage() {
     document.getElementById('order')?.scrollIntoView({behavior: 'smooth', block: 'start'});
   };
 
+  // Where a guest is sent to sign in or sign up. The order is kept on this
+  // device, so the account page hands them straight back to it, whole.
+  const accountUrl = (mode: 'signup' | 'signin') => './account.html?mode=' + mode + '&next=' + encodeURIComponent('./menu.html#order');
+
   const send = async () => {
+    if (!signedIn) { window.location.assign(accountUrl('signup')); return; }
     if (!tray.length) { setMsg({ok: false, text: 'Add at least one dish to your order first.'}); return; }
     if (!name.trim() || !phone.trim()) { setMsg({ok: false, text: 'Please add your name and phone number so we can confirm your order.'}); return; }
     if (!address.trim()) { setMsg({ok: false, text: 'Please add the address we should deliver your order to, so the kitchen knows where it is going.'}); return; }
@@ -624,6 +679,7 @@ if (d.ok) {
           window.localStorage.setItem('hpn_name', name.trim());
           window.localStorage.setItem('hpn_phone', phone.trim());
           if (email.trim()) window.localStorage.setItem('hpn_email', email.trim());
+          window.localStorage.removeItem('hpn_tray');
         } catch {}
         const p = new URLSearchParams({
          src: 'order', ref: String(d.order_number || ''),
@@ -797,6 +853,16 @@ if (d.ok) {
           )}
 
           {live ? (
+            !signedIn ? (
+              <div className="trayForm">
+                <div className="acctGate">
+                  <p>One quick account and your order stays exactly as you built it. Your name, phone and email come back with you, so the kitchen and the receipt have everything they need. You come straight back here to send it.</p>
+                  <a className="btn planBook" href={accountUrl('signup')}>Create your account and continue</a>
+                  <a className="linkBtn" href={accountUrl('signin')}>I already have an account</a>
+                </div>
+                {tray.length > 0 && <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>}
+              </div>
+            ) : (
             <div className="trayForm">
               <div className="planField"><label>Your name</label><input value={name} onChange={e => setName(e.target.value)} placeholder="Full name" autoComplete="name"/></div>
               <div className="planField"><label>Phone</label><input value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="e.g. 0759504928" autoComplete="tel"/></div>
@@ -806,6 +872,7 @@ if (d.ok) {
               <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={send} disabled={busy || tray.length === 0}>{busy ? 'Sending...' : 'Send my order'}</button>
               {tray.length > 0 && <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>}
             </div>
+            )
           ) : (
             <div className="trayForm">
               <div className="bookMsg">Online ordering is briefly unavailable. Your list is still here — call <a href={telHref(CALL)}>{CALL}</a> to place it.</div>
