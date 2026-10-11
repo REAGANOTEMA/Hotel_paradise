@@ -24,14 +24,35 @@ type Post = {
 type State = {posts: Post[]; cats: Record<string, string>} | null;
 
 /**
- * The one story, with the Jinja bridge over the Nile behind it. Read from the
- * finished hero copies like every other page cover, so it never depends on the
- * home carousel and stays the same on news whether or not the same photograph
- * turns in the slides up top.
+ * The one story, with a chilled cocktail and fresh juice from the bar behind
+ * it. Read from the finished hero copies like every other page cover, so it
+ * never depends on the home carousel and stays the same on news whether or not
+ * the same photograph turns in the slides up top.
  */
 const NEWS_COVER: HeroCoverFrame[] = [
-  {base: './images/hero/jinja-main-bridge-view-from-hotel-at-night', ext: 'webp', widths: [640, 1024]}
+  {base: './images/hero/coctail-juice', ext: 'webp', widths: [640, 1024]}
 ];
+
+/**
+ * The photograph a story wears when the console has not attached one.
+ *
+ * Every post has been given a picture to open with, but a colleague writing in
+ * a hurry can still publish without uploading one. Rather than leave a bare
+ * block of colour, each category falls back to a photograph of the hotel that
+ * suits it, so the newsroom is never a wall of grey type however quickly the
+ * story was filed.
+ */
+const CATEGORY_IMAGE: Record<string, string> = {
+  news: './images/hero/hotel-960.webp',
+  update: './images/hero/wine-and-fried-chiken-960.webp',
+  opportunity: './images/hero/food-spread-960.webp',
+  recruitment: './images/hero/dinning-space.webp',
+  employee: './images/hero/view-960.webp'
+};
+const FALLBACK_IMAGE = './images/hero/hotel-960.webp';
+
+/** The picture a story is shown with: its own, or its category's stand-in. */
+const storyImage = (p: Post): string => p.image || CATEGORY_IMAGE[p.category] || FALLBACK_IMAGE;
 
 function HeroCover() {
   const f = NEWS_COVER[0];
@@ -218,11 +239,9 @@ function NewsPage() {
                 {open.location && <span>{open.location}</span>}
               </p>
             </header>
-            {open.image && (
-              <figure className="newsArticleFig">
-                <img src={open.image} alt={open.title} loading="eager" decoding="async"/>
-              </figure>
-            )}
+            <figure className="newsArticleFig">
+              <img src={storyImage(open)} alt={open.title} loading="eager" decoding="async"/>
+            </figure>
             <div className="newsArticleBody">
               {paragraphs(open.body || open.excerpt).map((p, i) => <p key={i}>{p}</p>)}
             </div>
@@ -254,7 +273,7 @@ function NewsPage() {
                 <div className="newsMoreGrid">
                   {posts.filter(p => p.slug !== open.slug).slice(0, 3).map(p => (
                     <button type="button" className="newsMini" key={p.slug} onClick={() => show(p)}>
-                      {p.image && <img src={p.image} alt="" loading="lazy"/>}
+                      <img src={storyImage(p)} alt="" loading="lazy"/>
                       <span className="newsMiniBody"><Tag>{p.category_label}</Tag><b>{p.title}</b></span>
                     </button>
                   ))}
@@ -271,7 +290,7 @@ function NewsPage() {
             <div className="newsFeatured">
               {featured.slice(0, 2).map((p, i) => (
                 <button type="button" key={p.slug} className={'newsFeature reveal' + (i === 0 ? ' lead' : '')} onClick={() => show(p)}>
-                  {p.image && <span className="newsFeatureImg" style={{backgroundImage: `url('${p.image}')`}}/>}
+                  <span className="newsFeatureImg" style={{backgroundImage: `url('${storyImage(p)}')`}}/>
                   <span className="newsFeatureBody">
                     <Tag>{p.category_label}</Tag>
                     <b>{p.title}</b>
@@ -285,8 +304,11 @@ function NewsPage() {
 
           {eotm && cat === '' && !needle && (
             <button type="button" className="newsEotm reveal" onClick={() => show(eotm)}>
-              <span className="newsEotmBadge">Employee of the month</span>
+              <span className="newsEotmImg" aria-hidden="true">
+                <img src={storyImage(eotm)} alt="" loading="lazy"/>
+              </span>
               <span className="newsEotmBody">
+                <span className="newsEotmBadge">Employee of the month</span>
                 <b>{eotm.title}</b>
                 <span>{eotm.excerpt}</span>
               </span>
@@ -307,9 +329,7 @@ function NewsPage() {
               {rest.map(p => (
                 <button type="button" className="newsCard reveal" key={p.slug} onClick={() => show(p)}>
                   <span className="newsCardImg">
-                    {p.image
-                      ? <img src={p.image} alt={p.title} loading="lazy" decoding="async"/>
-                      : <span className="newsCardGlyph" aria-hidden="true"/>}
+                    <img src={storyImage(p)} alt={p.title} loading="lazy" decoding="async"/>
                   </span>
                   <span className="newsCardBody">
                     <Tag>{p.category_label}</Tag>

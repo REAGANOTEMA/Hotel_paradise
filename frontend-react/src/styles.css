@@ -1930,10 +1930,12 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
 /* the colleague the month belongs to */
 .newsEotm{display:flex;align-items:center;gap:22px;width:100%;text-align:left;background:linear-gradient(120deg,var(--navy),var(--nebula));color:#fff;border:0;border-radius:calc(var(--r) + 8px);padding:26px 30px;margin-bottom:34px;cursor:pointer;box-shadow:0 18px 44px rgba(7,26,51,.26);transition:transform .2s ease,box-shadow .2s ease}
 .newsEotm:hover{transform:translateY(-2px);box-shadow:0 24px 56px rgba(7,26,51,.32)}
-.newsEotmBadge{flex:none;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--navy);background:linear-gradient(160deg,#eccd68,#c9a227);border-radius:999px;padding:8px 16px}
-.newsEotmBody{flex:1;display:flex;flex-direction:column;gap:5px}
+.newsEotmImg{flex:none;width:104px;height:104px;border-radius:18px;overflow:hidden;border:2px solid rgba(243,214,122,.5);box-shadow:0 12px 28px rgba(0,0,0,.32)}
+.newsEotmImg img{display:block;width:100%;height:100%;object-fit:cover}
+.newsEotmBadge{align-self:flex-start;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--navy);background:linear-gradient(160deg,#eccd68,#c9a227);border-radius:999px;padding:8px 16px}
+.newsEotmBody{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:7px}
 .newsEotmBody b{font-family:'Playfair Display',serif;font-size:1.3rem;line-height:1.25}
-.newsEotmBody span{color:#cdd8e4;font-size:14px;line-height:1.6}
+.newsEotmBody span:not(.newsEotmBadge){color:#cdd8e4;font-size:14px;line-height:1.6}
 .newsEotmGo{flex:none;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--gold)}
 .newsEotmGo svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .newsEotm:hover .newsEotmGo svg{transform:translateX(3px);transition:transform .2s ease}
@@ -1945,7 +1947,6 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
 .newsCardImg{position:relative;display:block;aspect-ratio:16 / 10;background:#f1ede2;overflow:hidden}
 .newsCardImg img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.22,.7,.3,1)}
 .newsCard:hover .newsCardImg img{transform:scale(1.05)}
-.newsCardGlyph{position:absolute;inset:0;background:linear-gradient(150deg,#16293f,#0B5D78)}
 .newsCardBody{display:flex;flex-direction:column;gap:10px;padding:22px 24px 26px;flex:1}
 .newsCardTitle{font-family:'Playfair Display',serif;font-size:1.2rem;line-height:1.25;color:var(--navy);font-weight:600}
 .newsCardText{color:var(--muted);font-size:14.5px;line-height:1.65;flex:1}
