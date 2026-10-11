@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+declare(strict_types=1);
 require __DIR__.'/app/bootstrap.php';
 header('Content-Type: application/json; charset=utf-8');
 
@@ -114,13 +115,50 @@ function booking_withdrawal_fee(): array{
 
 $act=$_GET['act']??'';
 $method=$_SERVER['REQUEST_METHOD'];
-$read=['rooms','menu','health','checkout'];
+// 'avatar' is a read of the signed-in guest's own photograph. It is listed with
+// the other GET requests so an <img> can point straight at it, and it still
+// requires the guest's session token, so one guest can never read another's.
+$read=['rooms','menu','health','checkout','avatar','news'];
 if($method!=='GET'&&$method!=='POST'){ $out(['ok'=>false,'error'=>'Method not allowed'],405); }
 if($method==='GET'){
  if(!in_array($act,$read)){ $out(['ok'=>false,'error'=>'Method not allowed for this request'],405); }
  $body=$_GET;
 }else{
  $body=json_decode(file_get_contents('php://input'),true)?:$_POST;
+}
+
+/**
+ * The signed-in guest's profile photograph.
+ *
+ * The account page shows the photograph the guest uploaded to their own
+ * profile. It is addressed with the guest's session token rather than with a
+ * customer id, so the picture is only ever served to the browser that owns the
+ * account, and the response is marked private so no shared cache keeps a copy.
+ */
+if($act==='avatar'){
+ $tok=trim((string)($_GET['token']??''));
+ $c=null;
+ if($tok!==''){
+  try{
+   if(table_columns('customers')!==[]&&table_columns('customer_tokens')!==[]){
+    $ct=row('SELECT customer_id,expires_at FROM customer_tokens WHERE token_hash=? AND purpose=\'session\'',[hash('sha256',$tok)]);
+    if($ct&&strtotime((string)$ct['expires_at'])>=time()){
+     $c=row('SELECT profile_image FROM customers WHERE id=?',[(int)$ct['customer_id']]);
+    }
+   }
+  }catch(Throwable $e){ $c=null; }
+ }
+ $name=basename((string)($c['profile_image']??''));
+ $file=__DIR__.'/storage/customer/'.$name;
+ if(!$c||$name===''||!is_file($file)){ http_response_code(404); exit; }
+ $ext=strtolower(pathinfo($file,PATHINFO_EXTENSION));
+ $mime=['jpg'=>'image/jpeg','jpeg'=>'image/jpeg','png'=>'image/png','gif'=>'image/gif','webp'=>'image/webp'][$ext]??'application/octet-stream';
+ header('Content-Type: '.$mime);
+ header('Content-Length: '.(string)filesize($file));
+ header('X-Content-Type-Options: nosniff');
+ header('Cache-Control: private, max-age=300');
+ readfile($file);
+ exit;
 }
 
 if($act==='health'){
@@ -220,7 +258,7 @@ if($act==='menu'){
   $mcOrder=in_array('sort_order',$catCols,true)?'mc.sort_order,mc.id':'mc.id';
 
   // The website shows the whole menu: every dish the kitchen sells and every
-  // dish filed for the website. "Active" is the till's question, "published"
+  // dish filed for the website. "Active" is the till's question, 'published'
   // is the website's, and either one is enough for a guest to see the plate,
   // so no dish disappears because the other flag happens to be off. A database
   // from before the split has no published column and sells what is active.
@@ -304,7 +342,7 @@ if($act==='order'){
     $notes=[];
     if($comp){ $notes[]='Companion: '.$comp['name']; }
     if($sides){ $notes[]='Also: '.implode(', ',array_column($sides,'name')); }
-    $note='Web takeaway order from '.$name.', '.$phone.($notes?' — '.implode('. ',$notes).'.':'');
+    $note='Web takeaway order from '.$name.', '.$phone.($notes?' Ã¢â‚¬â€ '.implode('. ',$notes).'.':'');
 
     $rows[]=['id'=>(int)$mi['id'],'qty'=>$qty,'price'=>$unit,'base'=>(float)$mi['price'],'note'=>$note];
   }
@@ -497,7 +535,7 @@ if($act==='checkout'){
     // A family room booked twice reads as one line, not as the same words
     // repeated down the receipt.
     $roomType=implode(' + ',array_map(fn($x)=>(int)$x['qty']>1
-      ? trim((string)$x['name']).' × '.(int)$x['qty']
+      ? trim((string)$x['name']).' Ãƒâ€” '.(int)$x['qty']
       : trim((string)$x['name']),$rooms));
     $haveFee=existing_columns('reservations',['withdrawal_fee']);
     $out(['ok'=>true,'source'=>'booking','reference'=>(string)$r['booking_number'],'status'=>(string)$r['status'],
@@ -596,6 +634,23 @@ if($act==='account'){
   $public=function(array $c): array{
     return ['id'=>(int)$c['id'],'name'=>(string)$c['full_name'],'email'=>(string)$c['email'],
       'phone'=>(string)$c['phone'],'google'=>(bool)($c['google_sub']??false)];
+  };
+
+  /**
+   * The profile fields a hotel keeps on a returning guest, in the order the
+   * account page prints them. A database that predates the profile patch has
+   * none of these columns, so every one is read with a blank fallback and only
+   * the columns that really exist are ever written back.
+   */
+  $profileCols=['date_of_birth','gender','nationality','national_id','address','city','country',
+    'postcode','company','job_title','preferred_language','dietary_preferences','room_preferences',
+    'emergency_contact_name','emergency_contact_phone','notes'];
+  $profileOf=function(array $c) use($profileCols): array{
+    $p=[];
+    foreach($profileCols as $k){ $p[$k]=(string)($c[$k]??''); }
+    $p['marketing_opt_in']=(int)($c['marketing_opt_in']??0);
+    $p['has_avatar']=trim((string)($c['profile_image']??''))!=='';
+    return $p;
   };
 
   $issue=function(int $cid,string $purpose='session',int $days=30): string{
@@ -761,11 +816,134 @@ if($act==='account'){
     $out(['ok'=>true,'token'=>$issue($cid),'customer'=>$public($c)]);
   }
 
+  /**
+   * The guest saves their own profile, photograph included.
+   *
+   * The photograph arrives as a data URL because the browser has already shown
+   * the guest the picture they chose; only a real image of a sensible size is
+   * accepted, it is stored under a name the guest cannot choose, and the file
+   * it replaces is removed. Every other value is allowlisted here and written
+   * only onto the columns this database actually has.
+   */
+  if($action==='update'){
+    $c=$fromToken(trim((string)($body['token']??'')),'session');
+    if(!$c){ $out(['ok'=>false,'error'=>'Please sign in again to update your profile.'],401); }
+    $cid=(int)$c['id'];
+
+    $fields=[];
+    $name=trim((string)($body['name']??''));
+    if($name!==''){
+      if(mb_strlen($name)<2){ $out(['ok'=>false,'error'=>'Please enter your full name.'],422); }
+      $fields['full_name']=$name;
+    }
+    $phone=trim((string)($body['phone']??''));
+    if($phone!==''){
+      if(!$validPhone($phone)){ $out(['ok'=>false,'error'=>'Please enter a Ugandan mobile number, for example 0759 504 928.'],422); }
+      $fields['phone']=$normPhone($phone);
+    }
+
+    $text=[];
+    foreach($profileCols as $k){
+      if(array_key_exists($k,$body)){ $text[$k]=mb_substr(trim((string)$body[$k]),0,250); }
+    }
+    if(array_key_exists('date_of_birth',$body)){
+      $dob=trim((string)$body['date_of_birth']);
+      $text['date_of_birth']=preg_match('/^\d{4}-\d{2}-\d{2}$/',$dob)===1?$dob:'';
+    }
+    if(array_key_exists('gender',$body)){
+      $g=strtolower(trim((string)$body['gender']));
+      $text['gender']=in_array($g,['male','female','other','prefer_not_to_say'],true)?$g:'';
+    }
+    if(array_key_exists('marketing_opt_in',$body)){
+      $text['marketing_opt_in']=(int)((bool)$body['marketing_opt_in']);
+    }
+
+    $photo=trim((string)($body['photo']??''));
+    if($photo!==''){
+      if(!preg_match('#^data:image/(?:png|jpe?g|gif|webp);base64,([A-Za-z0-9+/=\s]+)$#',$photo,$m)){
+        $out(['ok'=>false,'error'=>'That picture could not be read. Please choose a JPG, PNG, GIF or WebP image.'],422);
+      }
+      $bin=base64_decode(preg_replace('/\s+/','',$m[1]),true);
+      if($bin===false){ $out(['ok'=>false,'error'=>'That picture could not be read. Please choose a different one.'],422); }
+      if(strlen($bin)>3*1024*1024){ $out(['ok'=>false,'error'=>'That picture is larger than 3MB. Please choose a smaller one.'],422); }
+      $info=@getimagesizefromstring($bin);
+      if(!$info||empty($info['mime'])||strpos((string)$info['mime'],'image/')!==0){
+        $out(['ok'=>false,'error'=>'That file is not a picture. Please choose a JPG, PNG, GIF or WebP image.'],422);
+      }
+      $ext=['image/jpeg'=>'jpg','image/png'=>'png','image/gif'=>'gif','image/webp'=>'webp'][$info['mime']]??'jpg';
+      $dir=__DIR__.'/storage/customer';
+      if(!is_dir($dir)){ @mkdir($dir,0775,true); }
+      $fname='cust_'.$cid.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$ext;
+      if(@file_put_contents($dir.'/'.$fname,$bin)===false){
+        $out(['ok'=>false,'error'=>'The picture could not be saved. Please try again.'],500);
+      }
+      $old=basename((string)($c['profile_image']??''));
+      $fields['profile_image']=$fname;
+      if($old!==''&&$old!==$fname&&is_file($dir.'/'.$old)){ @unlink($dir.'/'.$old); }
+    }
+
+    $set=existing_columns('customers',array_values(array_unique(array_merge(array_keys($fields),array_keys($text)))));
+    if($set!==[]){
+      $assign=[]; $vals=[];
+      foreach($set as $col){
+        $assign[]=$col.'=?';
+        $vals[]=array_key_exists($col,$fields)?$fields[$col]:$text[$col];
+      }
+      $vals[]=$cid;
+      q('UPDATE customers SET '.implode(',',$assign).',updated_at=NOW() WHERE id=?',$vals);
+    }
+    $fresh=row('SELECT * FROM customers WHERE id=?',[$cid]);
+    audit('customer_profile_update','customers',$cid,['id'=>$cid,'fields'=>array_keys($set)]);
+    $out(['ok'=>true,'customer'=>$public($fresh),'profile'=>$profileOf($fresh),
+      'message'=>'Your profile has been saved.']);
+  }
+
+  // ---- what this guest has with the hotel: bookings, orders and payments
+  if($action==='activity'){
+    $c=$fromToken(trim((string)($body['token']??'')),'session');
+    if(!$c){ $out(['ok'=>false,'error'=>'Not signed in.'],401); }
+    $email=strtolower(trim((string)$c['email']));
+    $phone=trim((string)$c['phone']);
+    $bookings=[]; $orders=[]; $payments=[];
+    try{
+      if($email!==''||$phone!==''){
+        $bookings=rows('SELECT r.booking_number,r.status,r.check_in,r.check_out,r.nights,r.total,'
+          .nullable_column('reservations','paid','paid','r')
+          .' FROM reservations r LEFT JOIN guests g ON g.id=r.guest_id'
+          .' WHERE (g.email=? AND g.email IS NOT NULL AND g.email<>\'\')'
+          .' OR (g.phone=? AND g.phone IS NOT NULL AND g.phone<>\'\')'
+          .' ORDER BY r.id DESC LIMIT 20',[$email,$phone]);
+      }
+    }catch(Throwable $e){ $bookings=[]; }
+    try{
+      if($email!==''||$phone!==''){
+        $orders=rows('SELECT order_number,outlet,order_type,status,total,created_at FROM orders'
+          .' WHERE (customer_email=? AND customer_email IS NOT NULL AND customer_email<>\'\')'
+          .' OR (customer_phone=? AND customer_phone IS NOT NULL AND customer_phone<>\'\')'
+          .' ORDER BY id DESC LIMIT 20',[$email,$phone]);
+      }
+    }catch(Throwable $e){ $orders=[]; }
+    try{
+      $payments=rows('SELECT provider_reference,amount,method,status,created_at FROM payments'
+        .' WHERE customer_id=? ORDER BY id DESC LIMIT 20',[(int)$c['id']]);
+    }catch(Throwable $e){ $payments=[]; }
+    $out(['ok'=>true,
+      'bookings'=>array_map(fn($b)=>['reference'=>(string)$b['booking_number'],'status'=>(string)$b['status'],
+        'check_in'=>substr((string)$b['check_in'],0,10),'check_out'=>substr((string)$b['check_out'],0,10),
+        'nights'=>(int)$b['nights'],'total'=>(float)$b['total'],'paid'=>(float)($b['paid']??0)],$bookings),
+      'orders'=>array_map(fn($o)=>['reference'=>(string)$o['order_number'],'outlet'=>(string)$o['outlet'],
+        'kind'=>(string)$o['order_type'],'status'=>(string)$o['status'],'total'=>(float)$o['total'],
+        'when'=>substr((string)($o['created_at']??''),0,16)],$orders),
+      'payments'=>array_map(fn($p)=>['reference'=>(string)($p['provider_reference']??''),
+        'amount'=>(float)($p['amount']??0),'method'=>(string)($p['method']??''),
+        'status'=>(string)($p['status']??''),'when'=>substr((string)($p['created_at']??''),0,16)],$payments)]);
+  }
+
   // ---- who am I
   if($action==='me'){
     $c=$fromToken(trim((string)($body['token']??'')),'session');
     if(!$c){ $out(['ok'=>false,'error'=>'Not signed in.'],401); }
-    $out(['ok'=>true,'customer'=>$public($c)]);
+    $out(['ok'=>true,'customer'=>$public($c),'profile'=>$profileOf($c)]);
   }
 
   // ---- sign out
@@ -887,4 +1065,6 @@ if($act==='facility'){
     'message'=>'Thank you, '.$name.'. The front desk will call '.$phone.' to confirm your visit.']);
 }
 
-$out(['ok'=>false,'error'=>'Unknown request'],404);
+$out(["ok"=>false,"error"=>"Unknown request"],404);
+
+$out(array("ok"=>false,"error"=>"Unknown request"),404);

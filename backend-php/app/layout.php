@@ -12,22 +12,26 @@ require_once __DIR__.'/notify.php';
  *  whole-house view leads its own group rather than sitting under Front desk,
  *  and each operational area keeps its own tools together. */
 function nav_groups(): array{
- return [
-  ['label'=>'Overview','items'=>[
-    'dashboard'=>'Dashboard','overview'=>'CEO / Director','integrity'=>'Integrity & Control']],
-  ['label'=>'Front desk','items'=>[
-    'reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
-  ['label'=>'Events','items'=>[
-    'events'=>'Events & Enquiries']],
-  ['label'=>'Food and beverage','items'=>[
-    'pos'=>'POS and Orders','fnb'=>'Food and Beverage','kitchen'=>'Kitchen']],
-  ['label'=>'Operations','items'=>[
-    'shifts'=>'Shifts','inventory'=>'Inventory','suppliers'=>'Suppliers','purchases'=>'Purchases','expenses'=>'Expenses']],
-  ['label'=>'Finance and control','items'=>[
-    'finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
-  ['label'=>'Administration','items'=>[
-    'users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile']],
- ];
+  return [
+   ['label'=>'Overview','items'=>[
+     'dashboard'=>'Dashboard','overview'=>'CEO / Director','integrity'=>'Integrity & Control']],
+   ['label'=>'Front desk','items'=>[
+     'reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
+   ['label'=>'Events & Marketing','items'=>[
+     'events'=>'Events & Enquiries','news'=>'News & Careers']],
+   ['label'=>'Front of House','items'=>[
+     'pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
+   ['label'=>'Kitchen','items'=>[
+     'kitchen'=>'Kitchen']],
+   ['label'=>'Housekeeping & Maintenance','items'=>[
+     'rooms'=>'Rooms','shifts'=>'Shifts','purchases'=>'Purchases']],
+   ['label'=>'Procurement & Stores','items'=>[
+     'inventory'=>'Inventory','suppliers'=>'Suppliers','purchases'=>'Purchases']],
+   ['label'=>'Finance & Control','items'=>[
+     'guests'=>'Guests','expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
+   ['label'=>'Administration','items'=>[
+     'overview'=>'CEO / Director','integrity'=>'Integrity & Control','users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile']],
+  ];
 }
 
 /** One 24px stroke icon per module. Kept in a single place so the rail,

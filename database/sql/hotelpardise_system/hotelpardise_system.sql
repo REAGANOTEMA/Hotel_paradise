@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 10, 2026 at 10:51 PM
+-- Generation Time: Oct 11, 2026 at 07:49 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -106,7 +106,14 @@ INSERT INTO `audit_logs` (`id`, `hotel_id`, `user_id`, `action`, `entity_type`, 
 (23, 1, NULL, 'web_order', 'order', 2, '{\"order_number\":\"ORD-20261010-001\",\"subtotal\":15000,\"service_charge\":525,\"total\":15525,\"customer\":\"Okot Denis\",\"phone\":\"+256779562514\",\"address\":\"walukuba\"}', NULL, '102.86.6.39', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 16:44:59'),
 (24, 1, NULL, 'web_order', 'order', 3, '{\"order_number\":\"ORD-20261010-002\",\"subtotal\":45000,\"service_charge\":1575,\"total\":46575,\"customer\":\"Okot Denis\",\"phone\":\"+256779562514\",\"address\":\"Jinja town\"}', NULL, '102.86.6.39', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 16:48:28'),
 (25, 1, NULL, 'web_payment', 'payments', 11, '{\"provider_reference\":\"PAY-20261010-001\",\"source\":\"order\",\"reference\":\"ORD-20261010-002\",\"method\":\"mtn_momo\",\"amount\":46575,\"status\":\"pending\"}', NULL, '102.86.6.39', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 16:49:03'),
-(26, 1, NULL, 'web_payment_settled', 'payments', 11, '{\"provider_reference\":\"PAY-20261010-001\",\"source\":\"order\",\"reference\":\"ORD-20261010-002\",\"method\":\"mtn_momo\",\"amount\":46575,\"status\":\"successful\"}', NULL, '102.86.6.39', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 16:49:04');
+(26, 1, NULL, 'web_payment_settled', 'payments', 11, '{\"provider_reference\":\"PAY-20261010-001\",\"source\":\"order\",\"reference\":\"ORD-20261010-002\",\"method\":\"mtn_momo\",\"amount\":46575,\"status\":\"successful\"}', NULL, '102.86.6.39', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 16:49:04'),
+(27, 1, 1, 'login', 'user', 1, NULL, NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 20:51:13'),
+(28, 1, 1, 'logout', 'user', 1, NULL, NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 20:51:23'),
+(29, 1, 1, 'login', 'user', 1, NULL, NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 20:51:31'),
+(30, 1, 1, 'logout', 'user', 1, NULL, NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 20:52:19'),
+(31, 1, NULL, 'web_payment', 'payments', 12, '{\"provider_reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"reference\":\"HPN-20261010-001\",\"method\":\"mtn_momo\",\"amount\":264960,\"status\":\"pending\"}', NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 20:54:40'),
+(32, 1, NULL, 'web_payment_settled', 'payments', 12, '{\"provider_reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"reference\":\"HPN-20261010-001\",\"method\":\"mtn_momo\",\"amount\":264960,\"status\":\"successful\"}', NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 20:54:41'),
+(33, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-11 03:12:11');
 
 -- --------------------------------------------------------
 
@@ -216,17 +223,73 @@ CREATE TABLE `customers` (
   `status` varchar(24) NOT NULL DEFAULT 'active',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `last_login_at` datetime DEFAULT NULL
+  `last_login_at` datetime DEFAULT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  `gender` varchar(20) DEFAULT NULL,
+  `nationality` varchar(80) DEFAULT NULL,
+  `national_id` varchar(60) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `city` varchar(120) DEFAULT NULL,
+  `country` varchar(120) DEFAULT NULL,
+  `postcode` varchar(20) DEFAULT NULL,
+  `company` varchar(160) DEFAULT NULL,
+  `job_title` varchar(120) DEFAULT NULL,
+  `preferred_language` varchar(20) DEFAULT NULL,
+  `dietary_preferences` varchar(255) DEFAULT NULL,
+  `room_preferences` varchar(255) DEFAULT NULL,
+  `marketing_opt_in` tinyint(1) NOT NULL DEFAULT 0,
+  `emergency_contact_name` varchar(160) DEFAULT NULL,
+  `emergency_contact_phone` varchar(40) DEFAULT NULL,
+  `notes` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`id`, `hotel_id`, `full_name`, `email`, `phone`, `password_hash`, `google_sub`, `status`, `created_at`, `updated_at`, `last_login_at`) VALUES
-(1, 1, 'Otema Reagan', 'reaganotema2022@gmail.com', '0772514889', '$2y$10$Tki76GP1jf405y9UUUI1Ret6Xw9sdaPrHVODp.fYu0P7ib/JOSl9.', NULL, 'active', '2026-10-09 12:25:49', '2026-10-09 15:18:33', '2026-10-09 15:18:33'),
-(2, 1, 'Andrew wakabi', 'andrew@gmail.com', '0772514889', '$2y$10$Mi0P4grIsraJuxS5bIgnXuPHhGnH4DMnDGOK3N.UWlY06xPHcfzyC', NULL, 'active', '2026-10-09 16:54:56', '2026-10-09 16:55:09', '2026-10-09 16:55:09'),
-(3, 1, 'Okot Denis', 'denisokot47@gmail.com', '0705761090', '$2y$10$0x18s2lSk1oUg7pNubR1TuGeBY.CUHBzCAt6tvD7PomQzOzr/ExTW', NULL, 'active', '2026-10-10 19:46:56', '2026-10-10 19:47:13', '2026-10-10 19:47:13');
+INSERT INTO `customers` (`id`, `hotel_id`, `full_name`, `email`, `phone`, `password_hash`, `google_sub`, `status`, `created_at`, `updated_at`, `last_login_at`, `profile_image`, `date_of_birth`, `gender`, `nationality`, `national_id`, `address`, `city`, `country`, `postcode`, `company`, `job_title`, `preferred_language`, `dietary_preferences`, `room_preferences`, `marketing_opt_in`, `emergency_contact_name`, `emergency_contact_phone`, `notes`) VALUES
+(1, 1, 'Otema Reagan', 'reaganotema2022@gmail.com', '0772514889', '$2y$10$Tki76GP1jf405y9UUUI1Ret6Xw9sdaPrHVODp.fYu0P7ib/JOSl9.', NULL, 'active', '2026-10-09 12:25:49', '2026-10-09 15:18:33', '2026-10-09 15:18:33', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL),
+(2, 1, 'Andrew wakabi', 'andrew@gmail.com', '0772514889', '$2y$10$Mi0P4grIsraJuxS5bIgnXuPHhGnH4DMnDGOK3N.UWlY06xPHcfzyC', NULL, 'active', '2026-10-09 16:54:56', '2026-10-09 16:55:09', '2026-10-09 16:55:09', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL),
+(3, 1, 'Okot Denis', 'denisokot47@gmail.com', '0705761090', '$2y$10$0x18s2lSk1oUg7pNubR1TuGeBY.CUHBzCAt6tvD7PomQzOzr/ExTW', NULL, 'active', '2026-10-10 19:46:56', '2026-10-10 19:47:13', '2026-10-10 19:47:13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_addresses`
+--
+
+CREATE TABLE `customer_addresses` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `customer_id` bigint(20) UNSIGNED NOT NULL,
+  `label` varchar(40) NOT NULL DEFAULT 'home',
+  `address_line` varchar(255) NOT NULL DEFAULT '',
+  `city` varchar(120) DEFAULT NULL,
+  `country` varchar(120) DEFAULT NULL,
+  `postcode` varchar(20) DEFAULT NULL,
+  `is_default` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_documents`
+--
+
+CREATE TABLE `customer_documents` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `customer_id` bigint(20) UNSIGNED NOT NULL,
+  `doc_type` varchar(40) NOT NULL DEFAULT 'id',
+  `title` varchar(160) NOT NULL DEFAULT '',
+  `file_name` varchar(255) NOT NULL,
+  `mime_type` varchar(100) DEFAULT NULL,
+  `file_size` int(10) UNSIGNED DEFAULT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'active',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1351,6 +1414,49 @@ CREATE TABLE `message_reads` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `news_posts`
+--
+
+CREATE TABLE `news_posts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `slug` varchar(180) NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `category` varchar(20) NOT NULL DEFAULT 'news',
+  `excerpt` varchar(320) NOT NULL DEFAULT '',
+  `body` mediumtext DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `department` varchar(120) DEFAULT NULL,
+  `location` varchar(120) DEFAULT NULL,
+  `employment_type` varchar(60) DEFAULT NULL,
+  `salary` varchar(120) DEFAULT NULL,
+  `deadline` date DEFAULT NULL,
+  `apply_email` varchar(160) DEFAULT NULL,
+  `apply_url` varchar(300) DEFAULT NULL,
+  `author_name` varchar(120) DEFAULT NULL,
+  `author_role` varchar(120) DEFAULT NULL,
+  `pinned` tinyint(1) NOT NULL DEFAULT 0,
+  `status` varchar(20) NOT NULL DEFAULT 'published',
+  `publish_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `views` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `news_posts`
+--
+
+INSERT INTO `news_posts` (`id`, `hotel_id`, `slug`, `title`, `category`, `excerpt`, `body`, `image`, `department`, `location`, `employment_type`, `salary`, `deadline`, `apply_email`, `apply_url`, `author_name`, `author_role`, `pinned`, `status`, `publish_at`, `views`, `created_at`, `updated_at`) VALUES
+(1, 1, 'employee-of-the-month', 'Employee of the Month: the team that keeps the Nile calm', 'employee', 'Every month the hotel honours the colleague whose care for our guests stood out above all.', 'Every month the management team reads the guest letters, the front desk log and the kitchen pass, and chooses the colleague whose care for our guests stood out above all.\n\nThis month the honour goes to a member of our housekeeping family whose attention to detail and warm greetings made a difference to every guest they met. From the first folded towel to the last quiet turndown, their work carried the whole hotel.\n\nCongratulations. Thank you for setting the standard the rest of us follow - and for showing, every single day, what Paradise hospitality means.', NULL, 'Housekeeping', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Management Team', 'Hotel Paradise on the Nile', 1, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL),
+(2, 1, 'restaurant-manager-vacancy', 'We are hiring: Restaurant & Bar Manager', 'recruitment', 'The hotel is looking for an experienced food and beverage leader to run our riverside restaurant and bar.', 'Hotel Paradise on the Nile is looking for an experienced food and beverage leader to run our riverside restaurant and bar.\n\nYou will own the floor: the daily service, the team rota, the guest experience and the numbers behind it. If you have run a busy restaurant before, care about the small details and can lead a team with warmth, we would like to hear from you.\n\nWhat we offer: a competitive package, duty meals, a supportive team and a working home on the banks of the Nile.', NULL, 'Food and Beverage', 'Hotel Paradise, Jinja', 'Full-time', 'Competitive, negotiable', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Human Resource', 'Hotel Paradise on the Nile', 1, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL),
+(3, 1, 'student-internship-opportunities', 'Opportunities: internships and graduate placements', 'opportunity', 'Applications are open for hospitality, culinary and front office internships with the hotel.', 'Applications are open for hospitality, culinary and front office internships with the hotel.\n\nThis is an invitation to students and fresh graduates who want to learn the trade in a working five star standard hotel: hands-on shifts, real guest work and mentoring from a team that has done it for years.\n\nTell us who you are and what you would like to learn. Send your application to the front desk and mark it \"Internship\".', NULL, 'Human Resource', 'Hotel Paradise, Jinja', 'Internship', 'Allowance provided', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Human Resource', 'Hotel Paradise on the Nile', 1, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL),
+(4, 1, 'new-riverside-tasting-menu', 'New: the riverside tasting menu is here', 'update', 'Our kitchen has written a new tasting menu, served every evening with a view over the Nile.', 'Our kitchen has written a new tasting menu, served every evening with a view over the Nile.\n\nSmall plates, Nile tilapia, and a dessert the pastry section has been refining for weeks. Every course is prepared to order, and the front of house will talk you through the pairing behind each one.\n\nTables are limited each evening. Book ahead, and let the river do the rest.', NULL, 'Kitchen', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Kitchen Team', 'Hotel Paradise on the Nile', 0, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL),
+(5, 1, 'welcome-to-our-newsroom', 'Welcome to the Hotel Paradise newsroom', 'news', 'A single place for hotel news, updates, opportunities and the people behind Paradise.', 'This is the hotel telling its own story: announcements, service updates, the opportunities we open to our community, and the people who make Paradise what it is.\n\nKeep this page close. When there is something worth knowing - a new menu, a role we are hiring for, an opportunity for a student, or a colleague worth celebrating - it will be posted here first.', NULL, 'Management', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Management Team', 'Hotel Paradise on the Nile', 0, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `notifications`
 --
 
@@ -1409,7 +1515,16 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `body`, `data`, `
 (37, 3, 'payment', 'Payment request PAY-20261010-001', 'Okot Denis started a MTN_MOMO payment of UGX 46,575 for the order ORD-20261010-002.', '{\"reference\":\"PAY-20261010-001\",\"source\":\"order\",\"amount\":46575,\"method\":\"mtn_momo\",\"guest\":\"Okot Denis\",\"phone\":\"+256779562514\"}', NULL, '2026-10-10 16:49:03'),
 (38, 4, 'payment', 'Payment request PAY-20261010-001', 'Okot Denis started a MTN_MOMO payment of UGX 46,575 for the order ORD-20261010-002.', '{\"reference\":\"PAY-20261010-001\",\"source\":\"order\",\"amount\":46575,\"method\":\"mtn_momo\",\"guest\":\"Okot Denis\",\"phone\":\"+256779562514\"}', NULL, '2026-10-10 16:49:03'),
 (39, 5, 'payment', 'Payment request PAY-20261010-001', 'Okot Denis started a MTN_MOMO payment of UGX 46,575 for the order ORD-20261010-002.', '{\"reference\":\"PAY-20261010-001\",\"source\":\"order\",\"amount\":46575,\"method\":\"mtn_momo\",\"guest\":\"Okot Denis\",\"phone\":\"+256779562514\"}', NULL, '2026-10-10 16:49:03'),
-(40, 66, 'payment', 'Payment request PAY-20261010-001', 'Okot Denis started a MTN_MOMO payment of UGX 46,575 for the order ORD-20261010-002.', '{\"reference\":\"PAY-20261010-001\",\"source\":\"order\",\"amount\":46575,\"method\":\"mtn_momo\",\"guest\":\"Okot Denis\",\"phone\":\"+256779562514\"}', NULL, '2026-10-10 16:49:03');
+(40, 66, 'payment', 'Payment request PAY-20261010-001', 'Okot Denis started a MTN_MOMO payment of UGX 46,575 for the order ORD-20261010-002.', '{\"reference\":\"PAY-20261010-001\",\"source\":\"order\",\"amount\":46575,\"method\":\"mtn_momo\",\"guest\":\"Okot Denis\",\"phone\":\"+256779562514\"}', NULL, '2026-10-10 16:49:03'),
+(41, 2, 'booking', 'New website booking HPN-20261010-001', 'Otema Reagan asked for Standard Single for 2 nights, 2026-10-11 to 2026-10-13. Total UGX 264,960.', '{\"booking_number\":\"HPN-20261010-001\",\"room_type\":\"Standard Single\",\"nights\":2,\"check_in\":\"2026-10-11\",\"check_out\":\"2026-10-13\",\"total\":264960,\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:14'),
+(42, 3, 'booking', 'New website booking HPN-20261010-001', 'Otema Reagan asked for Standard Single for 2 nights, 2026-10-11 to 2026-10-13. Total UGX 264,960.', '{\"booking_number\":\"HPN-20261010-001\",\"room_type\":\"Standard Single\",\"nights\":2,\"check_in\":\"2026-10-11\",\"check_out\":\"2026-10-13\",\"total\":264960,\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:14'),
+(43, 6, 'booking', 'New website booking HPN-20261010-001', 'Otema Reagan asked for Standard Single for 2 nights, 2026-10-11 to 2026-10-13. Total UGX 264,960.', '{\"booking_number\":\"HPN-20261010-001\",\"room_type\":\"Standard Single\",\"nights\":2,\"check_in\":\"2026-10-11\",\"check_out\":\"2026-10-13\",\"total\":264960,\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:14'),
+(44, 66, 'booking', 'New website booking HPN-20261010-001', 'Otema Reagan asked for Standard Single for 2 nights, 2026-10-11 to 2026-10-13. Total UGX 264,960.', '{\"booking_number\":\"HPN-20261010-001\",\"room_type\":\"Standard Single\",\"nights\":2,\"check_in\":\"2026-10-11\",\"check_out\":\"2026-10-13\",\"total\":264960,\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:14'),
+(45, 2, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40'),
+(46, 3, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40'),
+(47, 4, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40'),
+(48, 5, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40'),
+(49, 66, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40');
 
 -- --------------------------------------------------------
 
@@ -1436,9 +1551,11 @@ CREATE TABLE `notification_deliveries` (
 --
 
 INSERT INTO `notification_deliveries` (`id`, `notification_id`, `user_id`, `device_id`, `channel`, `status`, `provider_message_id`, `attempts`, `last_error`, `created_at`, `updated_at`) VALUES
-(1, 26, 2, 1, 'web_push', 'queued', NULL, 0, NULL, '2026-10-10 16:44:59', '2026-10-10 16:44:59'),
-(2, 31, 2, 1, 'web_push', 'queued', NULL, 0, NULL, '2026-10-10 16:48:28', '2026-10-10 16:48:28'),
-(3, 36, 2, 1, 'web_push', 'queued', NULL, 0, NULL, '2026-10-10 16:49:03', '2026-10-10 16:49:03');
+(1, 26, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 16:44:59', '2026-10-10 20:51:53'),
+(2, 31, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 16:48:28', '2026-10-10 20:51:53'),
+(3, 36, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 16:49:03', '2026-10-10 20:51:53'),
+(4, 41, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 20:54:14', '2026-10-11 03:12:55'),
+(5, 45, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 20:54:40', '2026-10-11 03:12:55');
 
 -- --------------------------------------------------------
 
@@ -1494,7 +1611,9 @@ INSERT INTO `notification_events` (`id`, `event_key`, `event_type`, `entity_type
 (6, 'event:EVT-20261010-001', 'communication', NULL, NULL, '2026-10-10 12:29:44'),
 (7, 'order:ORD-20261010-001', 'order', NULL, NULL, '2026-10-10 16:44:59'),
 (8, 'order:ORD-20261010-002', 'order', NULL, NULL, '2026-10-10 16:48:28'),
-(9, 'payment:PAY-20261010-001', 'payment', NULL, NULL, '2026-10-10 16:49:03');
+(9, 'payment:PAY-20261010-001', 'payment', NULL, NULL, '2026-10-10 16:49:03'),
+(10, 'booking:HPN-20261010-001', 'booking', NULL, NULL, '2026-10-10 20:54:14'),
+(11, 'payment:PAY-20261010-002', 'payment', NULL, NULL, '2026-10-10 20:54:40');
 
 -- --------------------------------------------------------
 
@@ -1645,7 +1764,8 @@ INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `customer_id`, `invoice_id`
 (8, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
 (9, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
 (10, 1, NULL, 1, NULL, 1, NULL, 13455.00, 'card', 'pesapal', 'PAY-20261009-001', 'pending', '2026-10-09 12:19:08'),
-(11, 1, NULL, 3, NULL, 3, NULL, 46575.00, 'mtn_momo', 'pesapal', 'PAY-20261010-001', 'successful', '2026-10-10 16:49:03');
+(11, 1, NULL, 3, NULL, 3, NULL, 46575.00, 'mtn_momo', 'pesapal', 'PAY-20261010-001', 'successful', '2026-10-10 16:49:03'),
+(12, 1, NULL, 1, NULL, NULL, 37, 264960.00, 'mtn_momo', 'pesapal', 'PAY-20261010-002', 'successful', '2026-10-10 20:54:40');
 
 -- --------------------------------------------------------
 
@@ -1900,7 +2020,12 @@ INSERT INTO `receipt_deliveries` (`id`, `payment_id`, `hotel_id`, `source`, `ref
 (2, 11, 1, 'order', 'ORD-20261010-002', 'staff', 'director@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 19:49:03', '2026-10-10 19:49:03'),
 (3, 11, 1, 'order', 'ORD-20261010-002', 'staff', 'cashier@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 19:49:04', '2026-10-10 19:49:04'),
 (4, 11, 1, 'order', 'ORD-20261010-002', 'staff', 'kitchen@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 19:49:04', '2026-10-10 19:49:04'),
-(5, 11, 1, 'order', 'ORD-20261010-002', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 19:49:04', '2026-10-10 19:49:04');
+(5, 11, 1, 'order', 'ORD-20261010-002', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 19:49:04', '2026-10-10 19:49:04'),
+(6, 12, 1, 'booking', 'HPN-20261010-001', 'email', 'reaganotema2022@gmail.com', 'sent', 1, NULL, NULL, '2026-10-10 23:54:40', '2026-10-10 23:54:40'),
+(7, 12, 1, 'booking', 'HPN-20261010-001', 'staff', 'director@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 23:54:40', '2026-10-10 23:54:40'),
+(8, 12, 1, 'booking', 'HPN-20261010-001', 'staff', 'accounts@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 23:54:40', '2026-10-10 23:54:40'),
+(9, 12, 1, 'booking', 'HPN-20261010-001', 'staff', 'frontdesk@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 23:54:41', '2026-10-10 23:54:41'),
+(10, 12, 1, 'booking', 'HPN-20261010-001', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 23:54:41', '2026-10-10 23:54:41');
 
 -- --------------------------------------------------------
 
@@ -1982,7 +2107,8 @@ INSERT INTO `reservations` (`id`, `hotel_id`, `guest_id`, `booking_number`, `sou
 (4, 1, 4, 'HPN-20260925-004', 'agent', '2026-09-20 14:00:00', '2026-09-23 11:00:00', 2, 0, 'checked_out', 314000.00, 3, 942000.00, 0.00, 942000.00, 942000.00, 'Family holiday', '2026-10-05 05:33:34', NULL),
 (34, 1, 46, 'HPN-20261009-001', 'website', '2026-10-10 14:00:00', '2026-10-23 11:00:00', 1, 0, 'confirmed', 248000.00, 13, 3224000.00, 112840.00, 3336840.00, 0.00, NULL, '2026-10-09 09:26:27', '2026-10-09 11:39:55'),
 (35, 1, 46, 'HPN-20261009-002', 'website', '2026-10-10 14:00:00', '2026-10-15 11:00:00', 1, 0, 'pending', 314000.00, 5, 1570000.00, 54950.00, 1624950.00, 0.00, NULL, '2026-10-09 13:53:21', NULL),
-(36, 1, 46, 'HPN-20261009-003', 'website', '2026-10-10 14:00:00', '2026-10-15 11:00:00', 1, 0, 'pending', 314000.00, 5, 1570000.00, 54950.00, 1624950.00, 0.00, NULL, '2026-10-09 13:57:56', NULL);
+(36, 1, 46, 'HPN-20261009-003', 'website', '2026-10-10 14:00:00', '2026-10-15 11:00:00', 1, 0, 'pending', 314000.00, 5, 1570000.00, 54950.00, 1624950.00, 0.00, NULL, '2026-10-09 13:57:56', NULL),
+(37, 1, 46, 'HPN-20261010-001', 'website', '2026-10-11 14:00:00', '2026-10-13 11:00:00', 2, 0, 'pending', 128000.00, 2, 256000.00, 8960.00, 264960.00, 0.00, NULL, '2026-10-10 20:54:14', NULL);
 
 -- --------------------------------------------------------
 
@@ -2042,7 +2168,8 @@ INSERT INTO `reservation_rooms` (`id`, `reservation_id`, `room_type_id`, `room_i
 (36, 4, 58, 8, 1, 314000.00),
 (37, 34, 1, NULL, 1, 248000.00),
 (38, 35, 2, NULL, 1, 314000.00),
-(39, 36, 2, NULL, 1, 314000.00);
+(39, 36, 2, NULL, 1, 314000.00),
+(40, 37, 7, NULL, 1, 128000.00);
 
 -- --------------------------------------------------------
 
@@ -2891,7 +3018,8 @@ ALTER TABLE `audit_logs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_audit_entity` (`entity_type`,`entity_id`),
   ADD KEY `idx_audit_action_created` (`action`,`created_at`),
-  ADD KEY `idx_audit_created` (`created_at`);
+  ADD KEY `idx_audit_created` (`created_at`),
+  ADD KEY `idx_audit_day` (`created_at`);
 
 --
 -- Indexes for table `beds`
@@ -2944,6 +3072,20 @@ ALTER TABLE `customers`
   ADD UNIQUE KEY `uniq_customers_email` (`email`),
   ADD UNIQUE KEY `uniq_customers_google` (`google_sub`),
   ADD KEY `idx_customers_phone` (`phone`);
+
+--
+-- Indexes for table `customer_addresses`
+--
+ALTER TABLE `customer_addresses`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_customer_addr` (`customer_id`);
+
+--
+-- Indexes for table `customer_documents`
+--
+ALTER TABLE `customer_documents`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_customer_docs` (`customer_id`);
 
 --
 -- Indexes for table `customer_signin_attempts`
@@ -3045,7 +3187,8 @@ ALTER TABLE `expenses`
   ADD UNIQUE KEY `number` (`number`),
   ADD KEY `department_id` (`department_id`),
   ADD KEY `requested_by` (`requested_by`),
-  ADD KEY `idx_exp_status` (`status`);
+  ADD KEY `idx_exp_status` (`status`),
+  ADD KEY `idx_expenses_status` (`status`);
 
 --
 -- Indexes for table `facility_enquiries`
@@ -3106,7 +3249,9 @@ ALTER TABLE `guests`
   ADD KEY `user_id` (`user_id`),
   ADD KEY `hotel_id` (`hotel_id`),
   ADD KEY `idx_guest_email` (`email`),
-  ADD KEY `idx_guest_phone` (`phone`);
+  ADD KEY `idx_guest_phone` (`phone`),
+  ADD KEY `idx_guests_email` (`email`),
+  ADD KEY `idx_guests_phone` (`phone`);
 
 --
 -- Indexes for table `guest_accounts`
@@ -3176,7 +3321,8 @@ ALTER TABLE `inventory_items`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `code` (`code`),
   ADD KEY `category_id` (`category_id`),
-  ADD KEY `idx_inv_active` (`active`);
+  ADD KEY `idx_inv_active` (`active`),
+  ADD KEY `idx_inventory_active` (`active`);
 
 --
 -- Indexes for table `inventory_movements`
@@ -3318,6 +3464,16 @@ ALTER TABLE `message_reads`
   ADD KEY `fk_mr_user` (`user_id`);
 
 --
+-- Indexes for table `news_posts`
+--
+ALTER TABLE `news_posts`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_news_slug` (`slug`),
+  ADD KEY `idx_news_cat` (`category`),
+  ADD KEY `idx_news_status` (`status`,`publish_at`),
+  ADD KEY `idx_news_pinned` (`pinned`,`publish_at`);
+
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -3365,7 +3521,10 @@ ALTER TABLE `orders`
   ADD KEY `room_id` (`room_id`),
   ADD KEY `idx_ord_created` (`created_at`),
   ADD KEY `idx_ord_status` (`status`),
-  ADD KEY `idx_ord_outlet` (`outlet`);
+  ADD KEY `idx_ord_outlet` (`outlet`),
+  ADD KEY `idx_orders_status` (`status`),
+  ADD KEY `idx_orders_outlet` (`outlet`),
+  ADD KEY `idx_orders_day` (`created_at`);
 
 --
 -- Indexes for table `order_items`
@@ -3401,7 +3560,10 @@ ALTER TABLE `payments`
   ADD KEY `idx_pay_res` (`reservation_id`),
   ADD KEY `idx_pay_cust` (`customer_id`),
   ADD KEY `idx_pay_status_created` (`status`,`created_at`),
-  ADD KEY `idx_pay_provider_ref` (`provider_reference`);
+  ADD KEY `idx_pay_provider_ref` (`provider_reference`),
+  ADD KEY `idx_payments_order` (`order_id`),
+  ADD KEY `idx_payments_reservation` (`reservation_id`),
+  ADD KEY `idx_payments_customer` (`customer_id`);
 
 --
 -- Indexes for table `permissions`
@@ -3498,7 +3660,8 @@ ALTER TABLE `purchase_requisitions`
   ADD UNIQUE KEY `number` (`number`),
   ADD KEY `department_id` (`department_id`),
   ADD KEY `requested_by` (`requested_by`),
-  ADD KEY `idx_pr_status` (`status`);
+  ADD KEY `idx_pr_status` (`status`),
+  ADD KEY `idx_requisitions_status` (`status`);
 
 --
 -- Indexes for table `purchase_requisition_items`
@@ -3548,7 +3711,9 @@ ALTER TABLE `reservations`
   ADD KEY `idx_res_status` (`status`),
   ADD KEY `idx_res_checkin` (`check_in`),
   ADD KEY `idx_res_checkout` (`check_out`),
-  ADD KEY `idx_res_created` (`created_at`);
+  ADD KEY `idx_res_created` (`created_at`),
+  ADD KEY `idx_reservations_status` (`status`),
+  ADD KEY `idx_reservations_dates` (`check_in`,`check_out`);
 
 --
 -- Indexes for table `reservation_rooms`
@@ -3814,7 +3979,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `beds`
@@ -3851,6 +4016,18 @@ ALTER TABLE `communication_calls`
 --
 ALTER TABLE `customers`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `customer_addresses`
+--
+ALTER TABLE `customer_addresses`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `customer_documents`
+--
+ALTER TABLE `customer_documents`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `customer_signin_attempts`
@@ -4123,16 +4300,22 @@ ALTER TABLE `menu_items`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2353;
 
 --
+-- AUTO_INCREMENT for table `news_posts`
+--
+ALTER TABLE `news_posts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `notification_deliveries`
 --
 ALTER TABLE `notification_deliveries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `notification_devices`
@@ -4144,7 +4327,7 @@ ALTER TABLE `notification_devices`
 -- AUTO_INCREMENT for table `notification_events`
 --
 ALTER TABLE `notification_events`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `orders`
@@ -4174,7 +4357,7 @@ ALTER TABLE `password_reset_tokens`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `permissions`
@@ -4252,7 +4435,7 @@ ALTER TABLE `purchase_requisition_items`
 -- AUTO_INCREMENT for table `receipt_deliveries`
 --
 ALTER TABLE `receipt_deliveries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `reception_activity_log`
@@ -4270,13 +4453,13 @@ ALTER TABLE `reception_records`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `reservation_rooms`
 --
 ALTER TABLE `reservation_rooms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `roles`

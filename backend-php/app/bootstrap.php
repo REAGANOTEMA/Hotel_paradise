@@ -311,44 +311,33 @@ function page_allowed(string $page): bool{
  $u=current_user(); if(!$u) return false;
  $r=roles_of();
  if(in_array('super_admin',$r)) return true;
- $map=[
-  'dashboard'=>[],
-  // The bell is every signed-in member's own: they see only their notifications.
-  'notifications'=>[],
-  // The director's own page: the money, every order, every customer, and the
-  // detail behind either of them. Deliberately not opened to accountants or
-  // auditors - it is the view of the house, not of the ledger.
-  'overview'=>['director','general_manager'],
-  // The integrity desk: the director's own reading of what the front desk did
-  // against what the books prove. Kept to the oversight roles, never the desk
-  // it watches.
-  'integrity'=>['director','general_manager','auditor'],
-  'reservations'=>['receptionist','general_manager','director','accountant','events_manager'],
-  // Events and enquiries arrive from the website (Plan an event, Facilities)
-  // and land here: the events team owns the follow up, marketing helps warm a
-  // lead, and the front desk runs facility enquiries the way it runs bookings.
-  'events'=>['events_manager','marketing','receptionist','general_manager','director'],
-  'rooms'=>['receptionist','housekeeping','general_manager','director','maintenance'],
-  'guests'=>['receptionist','general_manager','director','accountant'],
-  'pos'=>['waiter','bar_staff','cashier','kitchen','general_manager','director'],
-  // Food and beverage runs the floor: the outlets, the bills, the payments.
-  'fnb'=>['waiter','bar_staff','cashier','general_manager','director'],
-  // The kitchen sees food only - no prices, no payments, no guests.
-  'kitchen'=>['kitchen','general_manager','director'],
-  'shifts'=>['cashier','general_manager','director','accountant'],
-  'inventory'=>['storekeeper','general_manager','director','accountant'],
-  'suppliers'=>['procurement','storekeeper','general_manager','director','accountant'],
-  // Every department raises requisitions against the store, so the purchases
-  // module is open to the whole floor: the kitchen asks for food, housekeeping
-  // for linen, maintenance for parts, the events team for function supplies.
-  'purchases'=>['procurement','storekeeper','general_manager','director','accountant','receptionist','housekeeping','kitchen','maintenance','waiter','bar_staff','events_manager','marketing'],
-  'expenses'=>['accountant','general_manager','director','receptionist','housekeeping','kitchen'],
-  'finance'=>['accountant','general_manager','director','cashier'],
-  'approvals'=>['general_manager','director','accountant'],
-  'audit'=>['auditor','general_manager','director','accountant'],
-  'reports'=>['general_manager','director','accountant','auditor'],
-  'users'=>['general_manager','director']
- ];
+  $map=[
+   'dashboard'=>[], // own view
+   // The bell is every signed-in member's own: they see only their notifications.
+   'notifications'=>[], // own
+   // Director's full view
+   'overview'=>['director'],
+   'integrity'=>['director','auditor'],
+   'reservations'=>['director','general_manager','receptionist','events_manager'],
+   'events'=>['director','events_manager','marketing'],
+   'news'=>['director','events_manager','marketing','general_manager'],
+   'rooms'=>['director','general_manager','receptionist','housekeeping','maintenance'],
+   'guests'=>['director','general_manager','receptionist','accountant'],
+   'pos'=>['director','general_manager','cashier','waiter','bar_staff'],
+   'fnb'=>['director','general_manager','cashier','waiter','bar_staff'],
+   'kitchen'=>['director','general_manager','kitchen'],
+   'shifts'=>['director','general_manager','cashier','housekeeping'],
+   'inventory'=>['director','general_manager','storekeeper'],
+   'suppliers'=>['director','general_manager','procurement','storekeeper'],
+   'purchases'=>['director','general_manager','procurement','storekeeper','housekeeping','kitchen','maintenance'],
+   'expenses'=>['director','general_manager','accountant'],
+   'finance'=>['director','general_manager','accountant','cashier'],
+   'approvals'=>['director','general_manager','accountant'],
+   'audit'=>['director','auditor'],
+   'reports'=>['director','general_manager','accountant','auditor'],
+   'users'=>['director','general_manager'],
+   'profile'=>[]
+  ];
  $allowed=$map[$page]??[];
  if($allowed===[]) return true;
  return (bool)array_intersect($r,$allowed);

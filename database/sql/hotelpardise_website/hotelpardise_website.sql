@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 09, 2026 at 11:32 AM
+-- Generation Time: Oct 11, 2026 at 07:00 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -73,7 +73,63 @@ CREATE TABLE `customers` (
   `status` varchar(24) NOT NULL DEFAULT 'active',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `last_login_at` datetime DEFAULT NULL
+  `last_login_at` datetime DEFAULT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  `gender` varchar(20) DEFAULT NULL,
+  `nationality` varchar(80) DEFAULT NULL,
+  `national_id` varchar(60) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `city` varchar(120) DEFAULT NULL,
+  `country` varchar(120) DEFAULT NULL,
+  `postcode` varchar(20) DEFAULT NULL,
+  `company` varchar(160) DEFAULT NULL,
+  `job_title` varchar(120) DEFAULT NULL,
+  `preferred_language` varchar(20) DEFAULT NULL,
+  `dietary_preferences` varchar(255) DEFAULT NULL,
+  `room_preferences` varchar(255) DEFAULT NULL,
+  `marketing_opt_in` tinyint(1) NOT NULL DEFAULT 0,
+  `emergency_contact_name` varchar(160) DEFAULT NULL,
+  `emergency_contact_phone` varchar(40) DEFAULT NULL,
+  `notes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_addresses`
+--
+
+CREATE TABLE `customer_addresses` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `customer_id` bigint(20) UNSIGNED NOT NULL,
+  `label` varchar(40) NOT NULL DEFAULT 'home',
+  `address_line` varchar(255) NOT NULL DEFAULT '',
+  `city` varchar(120) DEFAULT NULL,
+  `country` varchar(120) DEFAULT NULL,
+  `postcode` varchar(20) DEFAULT NULL,
+  `is_default` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_documents`
+--
+
+CREATE TABLE `customer_documents` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `customer_id` bigint(20) UNSIGNED NOT NULL,
+  `doc_type` varchar(40) NOT NULL DEFAULT 'id',
+  `title` varchar(160) NOT NULL DEFAULT '',
+  `file_name` varchar(255) NOT NULL,
+  `mime_type` varchar(100) DEFAULT NULL,
+  `file_size` int(10) UNSIGNED DEFAULT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'active',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -1334,6 +1390,20 @@ ALTER TABLE `customers`
   ADD KEY `idx_customers_phone` (`phone`);
 
 --
+-- Indexes for table `customer_addresses`
+--
+ALTER TABLE `customer_addresses`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_customer_addr` (`customer_id`);
+
+--
+-- Indexes for table `customer_documents`
+--
+ALTER TABLE `customer_documents`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_customer_docs` (`customer_id`);
+
+--
 -- Indexes for table `customer_signin_attempts`
 --
 ALTER TABLE `customer_signin_attempts`
@@ -1656,6 +1726,18 @@ ALTER TABLE `beds`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `customer_addresses`
+--
+ALTER TABLE `customer_addresses`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `customer_documents`
+--
+ALTER TABLE `customer_documents`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
