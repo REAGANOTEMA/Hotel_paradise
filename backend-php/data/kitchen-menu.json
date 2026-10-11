@@ -1,0 +1,2010 @@
+{
+  "revision": "A la carte restaurant menu",
+  "source": "frontend-react/src/menuData.ts",
+  "sections": [
+    {
+      "name": "Starters & Salads",
+      "eyebrow": "To begin",
+      "blurb": "Fresh greens, tossed to order and dressed at the table.",
+      "image": "caesar-salad.jpg",
+      "groups": [
+        {
+          "name": "Starters & Salads",
+          "items": [
+            {
+              "name": "Mixed Garden Salad",
+              "desc": "Mixed lettuce, cucumber, tomatoes, onions and avocado.",
+              "price": 12000,
+              "image": "",
+              "group": "Starters & Salads"
+            },
+            {
+              "name": "Greek Salad",
+              "desc": "Tomatoes, red onions, cucumber, lettuce, feta cheese, black olives and red cabbage.",
+              "price": 15000,
+              "image": "",
+              "group": "Starters & Salads"
+            },
+            {
+              "name": "Avocado & Lettuce Salad",
+              "desc": "A well designed platter of lettuce, avocado, onions, cherry tomatoes and carrot shavings, finished with 1,000 Island dressing.",
+              "price": 15000,
+              "image": "",
+              "group": "Starters & Salads"
+            },
+            {
+              "name": "Tuna Salad",
+              "desc": "Tuna fish, red onion and tomatoes infused in fresh mayonnaise, layered on a base of lettuce with avocado slices.",
+              "price": 20000,
+              "image": "",
+              "group": "Starters & Salads"
+            },
+            {
+              "name": "Chicken Oriental Salad",
+              "desc": "Chicken with mayo, cucumber, pineapple, celery and tomatoes.",
+              "price": 20000,
+              "image": "",
+              "group": "Starters & Salads"
+            },
+            {
+              "name": "Caesar Salad",
+              "desc": "Grilled chicken cubes, avocado, carrot, lettuce, tomato, croutons and Parmesan cheese shavings.",
+              "price": 22000,
+              "image": "",
+              "group": "Starters & Salads"
+            },
+            {
+              "name": "Chef Salad",
+              "desc": "Crunchy lettuce, chicken flakes, beef strips, tomatoes, onions and bell peppers, topped with boiled Irish potatoes and a hard boiled egg.",
+              "price": 22000,
+              "image": "",
+              "group": "Starters & Salads"
+            },
+            {
+              "name": "Grilled Vegetables Salad",
+              "desc": "Assorted seasoned grilled vegetables with bell pepper, carrots, zucchini and onions, laced with cashew nut flakes and dates.",
+              "price": 18000,
+              "image": "",
+              "group": "Starters & Salads"
+            },
+            {
+              "name": "Grilled Chicken Salad",
+              "desc": "Grilled boneless chicken strips with onions, carrots, cucumber and tomatoes, garnished with black olives on a bed of lettuce.",
+              "price": 20000,
+              "image": "",
+              "group": "Starters & Salads"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Soups",
+      "eyebrow": "Warmed through",
+      "blurb": "Made fresh every morning and served with bread.",
+      "image": "mushroom-soup.jpg",
+      "groups": [
+        {
+          "name": "Soups",
+          "items": [
+            {
+              "name": "Mushroom Soup",
+              "desc": "Creamy or clear freshly made forest mushroom, homemade style. Served with a bread roll.",
+              "price": 12000,
+              "image": "",
+              "group": "Soups"
+            },
+            {
+              "name": "Clear Vegetable Broth",
+              "desc": "Fresh homemade vegetable soup, served with a garlic bread roll.",
+              "price": 12000,
+              "image": "",
+              "group": "Soups"
+            },
+            {
+              "name": "Cream of Tomato Soup",
+              "desc": "A puree of tomatoes finished with dairy cream, accompanied with croutons.",
+              "price": 12000,
+              "image": "",
+              "group": "Soups"
+            },
+            {
+              "name": "Ginger Carrot Soup",
+              "desc": "A creamy soup with a hint of ginger and dairy cream, accompanied with toast.",
+              "price": 12000,
+              "image": "",
+              "group": "Soups"
+            },
+            {
+              "name": "Clear Beef Noodle Soup",
+              "desc": "Fresh aromatic clear soup comprising julienne of beef, zucchini, carrots, onions and fresh noodles.",
+              "price": 15000,
+              "image": "",
+              "group": "Soups"
+            },
+            {
+              "name": "Clear Chicken Noodle Soup",
+              "desc": "Fresh aromatic clear soup comprising julienne of chicken, zucchini, carrots, onions and fresh noodles.",
+              "price": 15000,
+              "image": "",
+              "group": "Soups"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Omelets & Snacks",
+      "eyebrow": "From the pan",
+      "blurb": "All omelets are served with chips.",
+      "image": "spanish-omelet.jpg",
+      "groups": [
+        {
+          "name": "Omelets & Snacks",
+          "items": [
+            {
+              "name": "French Cinnamon Toast",
+              "desc": "Garnished with mini fruit.",
+              "price": 12000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Eggs and Toast",
+              "desc": "Two eggs cooked to your style with home fries.",
+              "price": 12000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Mushroom and Cheese Omelet",
+              "desc": "Savory mushroom and cheddar, topped with a grilled tomato.",
+              "price": 15000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Mexican Omelet",
+              "desc": "Mushroom, green pepper, cheese, tomato and green chili.",
+              "price": 15000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Spanish Omelet",
+              "desc": "Traditional egg with red onion, mushroom, green pepper and tomatoes.",
+              "price": 15000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Bacon Cheese Omelet",
+              "desc": "Crunchy bacon in three eggs, infused with cheese and a touch of pepper spice.",
+              "price": 18000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Avocado with an Egg",
+              "desc": "Avocado with an egg and toasted bread, with a garnish.",
+              "price": 15000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Yummy Chicken Omelet",
+              "desc": "Diced chicken with a hint of cheese, infused with onions and tomatoes.",
+              "price": 17000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Chicken Gizzards",
+              "desc": "Boiled, fried and finished in homemade tomato sauce. Served with chips.",
+              "price": 18000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Fish Fingers",
+              "desc": "Tender breaded fish, served with tartar sauce.",
+              "price": 25000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Chicken Wings with Chips",
+              "desc": "Eight fried winglets tossed in tomato sauce, served with chips.",
+              "price": 28000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Chicken Lollipops with Chips",
+              "desc": "Crispy fried chicken lollipops, served with chips.",
+              "price": 30000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Mushroom Fries",
+              "desc": "Crispy chips tossed in brown mushroom sauce.",
+              "price": 12000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Plain Chips with Garnish",
+              "desc": "Plain chips with a garnish.",
+              "price": 10000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Masala Chips",
+              "desc": "Chips tossed in hot or mild Indian spices, tomato sauce and coriander leaves.",
+              "price": 15000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Bacon Cheese Fries",
+              "desc": "Diced bacon, spring onions and tomato sauce, tossed with chips and finished with cheese.",
+              "price": 22000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Chapatti Plain",
+              "desc": "A plain hand rolled chapatti.",
+              "price": 6000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Vegetable Spring Rolls",
+              "desc": "Vegetable spring rolls.",
+              "price": 5000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Pair of Chicken Spring Rolls",
+              "desc": "Two chicken spring rolls.",
+              "price": 6000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Trio of Samosas (Beef)",
+              "desc": "Three pieces of beef samosas.",
+              "price": 5000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Trio of Samosas (Vegetable)",
+              "desc": "Three pieces of vegetable samosas.",
+              "price": 5000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            },
+            {
+              "name": "Chicken Samosas (Pair)",
+              "desc": "",
+              "price": 5000,
+              "image": "",
+              "group": "Omelets & Snacks"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sandwiches",
+      "eyebrow": "The sandwich corner",
+      "blurb": "All sandwiches come with chips or salad.",
+      "image": "classic-blt-sandwich.jpg",
+      "groups": [
+        {
+          "name": "Sandwiches",
+          "items": [
+            {
+              "name": "Tomato, Cheese & Avocado Sandwich",
+              "desc": "Grated cheddar cheese, tomatoes, lettuce and avocado on whole wheat, white bread or French loaf.",
+              "price": 18000,
+              "image": "",
+              "group": "Sandwiches"
+            },
+            {
+              "name": "Pulled Pork Sandwich",
+              "desc": "Pork flakes in mayo or sweet chili sauce, lettuce, brown onions, tomatoes and cucumber pickles.",
+              "price": 24000,
+              "image": "",
+              "group": "Sandwiches"
+            },
+            {
+              "name": "Chicken Salad Sandwich",
+              "desc": "Chicken with mayo, lettuce, onions, celery and tomatoes on a three decker toast.",
+              "price": 24000,
+              "image": "",
+              "group": "Sandwiches"
+            },
+            {
+              "name": "Classic BLT Sandwich",
+              "desc": "A three decker bacon, lettuce and tomato sandwich.",
+              "price": 25000,
+              "image": "",
+              "group": "Sandwiches"
+            },
+            {
+              "name": "Steak Cheese Sandwich",
+              "desc": "Tender steak with cheese, tomato and lettuce.",
+              "price": 25000,
+              "image": "",
+              "group": "Sandwiches"
+            },
+            {
+              "name": "BBQ Beef Sandwich",
+              "desc": "Beef strips sautéed with vegetables, onions, bell pepper and mushroom in tangy BBQ sauce.",
+              "price": 25000,
+              "image": "",
+              "group": "Sandwiches"
+            },
+            {
+              "name": "Tuna Melt Sandwich",
+              "desc": "Tuna chunks with mayo, red onions, tomatoes and lettuce.",
+              "price": 25000,
+              "image": "",
+              "group": "Sandwiches"
+            },
+            {
+              "name": "Paradise Club Sandwich",
+              "desc": "A triple decker sandwich with sliced grilled beef, chicken breast, bacon, cheese, onions and mayo.",
+              "price": 30000,
+              "image": "",
+              "group": "Sandwiches"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Burgers",
+      "eyebrow": "The grill",
+      "blurb": "Burgers can be served with chips and salad.",
+      "image": "king-burger.jpg",
+      "groups": [
+        {
+          "name": "Burgers",
+          "items": [
+            {
+              "name": "BBQ Burger",
+              "desc": "A grilled beef or chicken patty finished in a tangy BBQ sauce.",
+              "price": 27000,
+              "image": "",
+              "group": "Burgers"
+            },
+            {
+              "name": "Chicken Burger",
+              "desc": "A grilled regular or Cajun chicken patty with lettuce, onions, tomatoes and chili mayo.",
+              "price": 25000,
+              "image": "",
+              "group": "Burgers"
+            },
+            {
+              "name": "Beef Burger",
+              "desc": "A grilled regular or Cajun beef patty with lettuce, onions, tomatoes and chili mayo.",
+              "price": 25000,
+              "image": "",
+              "group": "Burgers"
+            },
+            {
+              "name": "Vegetable Burger",
+              "desc": "A crumbed fried vegetable patty with tomatoes, lettuce, onions and chili mayo.",
+              "price": 20000,
+              "image": "",
+              "group": "Burgers"
+            },
+            {
+              "name": "Mushroom & Cheese Burger",
+              "desc": "A grilled beef patty topped with melted cheese and a creamy mushroom sauce.",
+              "price": 22000,
+              "image": "",
+              "group": "Burgers"
+            },
+            {
+              "name": "King Burger",
+              "desc": "A double patty with bacon, cheese, caramelized onions, lettuce, pickles and tomato.",
+              "price": 35000,
+              "image": "",
+              "group": "Burgers"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rolex Wraps & Burritos",
+      "eyebrow": "Rolled to order",
+      "blurb": "Warm tortillas, filled as you like them.",
+      "image": "beef-rolex.jpg",
+      "groups": [
+        {
+          "name": "Rolex Wraps & Burritos",
+          "items": [
+            {
+              "name": "Crunchy Vegetable Wrap",
+              "desc": "Sautéed vegetables and lettuce with cheddar cheese, wrapped in a plain tortilla.",
+              "price": 14000,
+              "image": "",
+              "group": "Rolex Wraps & Burritos"
+            },
+            {
+              "name": "Beef Rolex",
+              "desc": "A combination of eggs, beef, red onions, tomatoes and green pepper.",
+              "price": 15000,
+              "image": "",
+              "group": "Rolex Wraps & Burritos"
+            },
+            {
+              "name": "Chicken Rolex",
+              "desc": "A combination of three eggs, grilled chicken cubes, red onions, tomatoes and green pepper.",
+              "price": 15000,
+              "image": "",
+              "group": "Rolex Wraps & Burritos"
+            },
+            {
+              "name": "Chicken Wrap",
+              "desc": "Crispy lettuce, shredded chicken, onions, tomatoes and avocado, in mayo or sweet chili, wrapped in a tortilla.",
+              "price": 20000,
+              "image": "",
+              "group": "Rolex Wraps & Burritos"
+            },
+            {
+              "name": "Classic BLT Wrap",
+              "desc": "Crispy bacon, lettuce and tomatoes in a tortilla.",
+              "price": 17000,
+              "image": "",
+              "group": "Rolex Wraps & Burritos"
+            },
+            {
+              "name": "Chicken / Beef Burrito",
+              "desc": "Grilled tender strips with white onions wrapped in a tortilla, topped with cheese and served with guacamole.",
+              "price": 27000,
+              "image": "",
+              "group": "Rolex Wraps & Burritos"
+            },
+            {
+              "name": "Fajita Chicken / Beef",
+              "desc": "Sautéed with coriander, onions and oyster sauce. Your choice of tortilla or sizzler plate, served with rice.",
+              "price": 30000,
+              "image": "",
+              "group": "Rolex Wraps & Burritos"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Fisherman's Offer",
+      "eyebrow": "Fresh from the Nile",
+      "blurb": "Tilapia and Nile perch, grilled, poached, crumbed or steamed.",
+      "image": "grilled-king-fish.jpg",
+      "groups": [
+        {
+          "name": "Fisherman's Offer",
+          "items": [
+            {
+              "name": "Fish Florentine",
+              "desc": "Grilled tilapia fillet with creamy spinach and cheese.",
+              "price": 32000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Poached Fish",
+              "desc": "Tilapia fillet gently cooked in rich fish stock with fresh mushrooms and potatoes.",
+              "price": 30000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Mombasa Fish",
+              "desc": "A tilapia fillet crumbed with coconut and fried to perfection.",
+              "price": 32000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Catch of the Day (Nile Perch)",
+              "desc": "Pan grilled Nile perch fillet.",
+              "price": 32000,
+              "image": "nile-parch-catch-for-a-day.jpg",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Deep Fried Fish Fillet",
+              "desc": "A coated tilapia fish fillet.",
+              "price": 32000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Pan Grilled Fish Fillet",
+              "desc": "A coated tilapia fish fillet.",
+              "price": 32000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Fish Fingers with Chips",
+              "desc": "Fish fingers served with chips.",
+              "price": 30000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Paradise Rustica Fish",
+              "desc": "Grilled tilapia fillet layered on guacamole and salsa with hot chili, rustica sauce and black olives.",
+              "price": 32000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Medium Fried Tilapia",
+              "desc": "Medium fried tilapia served with chips.",
+              "price": 38000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Medium Steamed Tilapia",
+              "desc": "Medium steamed tilapia served with chips.",
+              "price": 38000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Premium Wet Fried Tilapia",
+              "desc": "Premium wet fried tilapia.",
+              "price": 40000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Premium Whole Fish",
+              "desc": "Steamed or fried whole fish.",
+              "price": 37000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Grilled Premium Fish",
+              "desc": "Whole oven grilled oil free premium tilapia.",
+              "price": 43000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Large Fried Tilapia",
+              "desc": "Large fried tilapia served with chips.",
+              "price": 43000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Large Steamed Tilapia",
+              "desc": "Large steamed tilapia served with chips.",
+              "price": 43000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "King Wet Fried Tilapia",
+              "desc": "King wet fried tilapia.",
+              "price": 45000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "King Size Whole Fish",
+              "desc": "A fish fillet, English, grilled or crumbed, on spinach drizzled with mushroom sauce.",
+              "price": 42000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Grilled King Fish",
+              "desc": "Whole oven grilled oil free king tilapia.",
+              "price": 48000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Fried King Prawns",
+              "desc": "King prawns prepared in a seasoned butter sauce.",
+              "price": 45000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            },
+            {
+              "name": "Golden Grilled Salmon",
+              "desc": "Grilled salmon on a bed of spinach, laced with white mushroom sauce.",
+              "price": 45000,
+              "image": "",
+              "group": "Fisherman's Offer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "House Specials & Platters",
+      "eyebrow": "For the table",
+      "blurb": "Platters built for sharing, with a side of your choice.",
+      "image": "mixed-grill-platter.jpg",
+      "groups": [
+        {
+          "name": "House Specials & Platters",
+          "items": [
+            {
+              "name": "Mixed Grill Platter",
+              "desc": "A platter for two with grilled chicken, beef muchomo, roasted goat, a pair of sausages and a choice of side.",
+              "price": 80000,
+              "image": "",
+              "group": "House Specials & Platters"
+            },
+            {
+              "name": "Paradise Lusaniya",
+              "desc": "A family platter for three to four: grilled chicken, beef steak, goat muchomo, brown pilau, matooke or wedges.",
+              "price": 100000,
+              "image": "",
+              "group": "House Specials & Platters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chicken Dishes",
+      "eyebrow": "Poultry",
+      "blurb": "Marinated overnight, then grilled, pan fried or tossed in sauce.",
+      "image": "bbq-chicken-drumstick.jpg",
+      "groups": [
+        {
+          "name": "Chicken Dishes",
+          "items": [
+            {
+              "name": "Chicken Sauté",
+              "desc": "Sautéed chicken with brown mushroom and spring onions, served with mushroom sauce.",
+              "price": 30000,
+              "image": "",
+              "group": "Chicken Dishes"
+            },
+            {
+              "name": "BBQ Chicken Drumstick",
+              "desc": "Three well marinated chicken drumsticks, fried and tossed in BBQ sauce with fresh Dania.",
+              "price": 30000,
+              "image": "",
+              "group": "Chicken Dishes"
+            },
+            {
+              "name": "Grilled Quarter Chicken (Breast)",
+              "desc": "Well marinated charcoal or oven roasted tender chicken breast.",
+              "price": 30000,
+              "image": "",
+              "group": "Chicken Dishes"
+            },
+            {
+              "name": "Grilled Quarter Chicken (Thigh)",
+              "desc": "Well marinated charcoal or oven roasted tender chicken thigh.",
+              "price": 30000,
+              "image": "",
+              "group": "Chicken Dishes"
+            },
+            {
+              "name": "Mushroom Chicken",
+              "desc": "Pan fried chicken cubes infused in a creamy white mushroom sauce and spring onions.",
+              "price": 32000,
+              "image": "",
+              "group": "Chicken Dishes"
+            },
+            {
+              "name": "Supreme Chicken",
+              "desc": "Fresh pan fried boneless chicken breast in mushroom sauce.",
+              "price": 32000,
+              "image": "",
+              "group": "Chicken Dishes"
+            },
+            {
+              "name": "Paradise Grilled Farm Chicken",
+              "desc": "A well marinated chicken grilled to perfection with aromatic seasonings.",
+              "price": 45000,
+              "image": "",
+              "group": "Chicken Dishes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Beef & Goat Main Courses",
+      "eyebrow": "Steaks and grills",
+      "blurb": "Prime beef fillet, tender goat and the hunter’s favourites.",
+      "image": "king-steak.jpg",
+      "groups": [
+        {
+          "name": "Beef & Goat Main Courses",
+          "items": [
+            {
+              "name": "Goat Sizzler",
+              "desc": "Stir fried dry goat flakes with vegetables and rosemary.",
+              "price": 27000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Goat Muchomo",
+              "desc": "Well marinated chunks of goat roasted and tossed in fresh vegetables, tomato and BBQ sauce.",
+              "price": 30000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Beef Stir Fry",
+              "desc": "Tender beef strips grilled with vegetables and a hint of tomato sauce.",
+              "price": 35000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Beef Wet Fry",
+              "desc": "Tender well seasoned beef fillet infused in a black peppercorn sauce.",
+              "price": 35000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Honey Glazed Hawaiian Beef Skewers",
+              "desc": "Three beef skewers with pineapple, vegetables, natural honey and organic herbs.",
+              "price": 35000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Beef Stroganoff",
+              "desc": "Slow cooked beef in a mushroom and red wine sauce, finished with fresh cream.",
+              "price": 35000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Beef in Guinness",
+              "desc": "Steak simmered in Guinness beer and a creamy sauce.",
+              "price": 30000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Goat Rack Tender",
+              "desc": "Pan fried rib rack.",
+              "price": 32000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Liver Princess",
+              "desc": "Flakes of liver toasted with shredded vegetables.",
+              "price": 30000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Beef Fillet Steak (Pepper Sauce)",
+              "desc": "Beef fillet steak in a black peppercorn sauce.",
+              "price": 35000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Beef Fillet Steak (Mushroom Sauce)",
+              "desc": "Beef fillet steak in a creamy brown mushroom sauce.",
+              "price": 35000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Beef Fillet Steak (Dry Onion)",
+              "desc": "Beef fillet steak with dry onion.",
+              "price": 35000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "King Steak",
+              "desc": "Apportioned beef fillet pan fried to preference, topped with a fried egg.",
+              "price": 40000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            },
+            {
+              "name": "Paradise Mixed Grill",
+              "desc": "A mixture of grills: chicken, steak and fish fillet, topped with a fried egg.",
+              "price": 47000,
+              "image": "",
+              "group": "Beef & Goat Main Courses"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pork Courses",
+      "eyebrow": "Pork",
+      "blurb": "Slow roasted, glazed and grilled to your liking.",
+      "image": "honey-mustard-glazed-pork-ribs.jpg",
+      "groups": [
+        {
+          "name": "Pork Courses",
+          "items": [
+            {
+              "name": "Pork Muchomo",
+              "desc": "Boneless pork chunks roasted and tossed in aromatic vegetables.",
+              "price": 30000,
+              "image": "",
+              "group": "Pork Courses"
+            },
+            {
+              "name": "Paradise Grilled Pork Chops",
+              "desc": "Perfectly marinated tender pork chops, grilled to satisfaction.",
+              "price": 35000,
+              "image": "",
+              "group": "Pork Courses"
+            },
+            {
+              "name": "Honey Mustard Glazed Pork Ribs",
+              "desc": "Tender and juicy pork ribs tossed in onion rings and honey.",
+              "price": 35000,
+              "image": "",
+              "group": "Pork Courses"
+            },
+            {
+              "name": "Sweet and Sour Pork",
+              "desc": "Well seasoned pork chunks glazed in a tangy sweet and sour sauce with spring onions.",
+              "price": 38000,
+              "image": "",
+              "group": "Pork Courses"
+            },
+            {
+              "name": "Trio of Pork",
+              "desc": "A combination of pork ribs, pork muchomo and pork chops on a single platter.",
+              "price": 45000,
+              "image": "",
+              "group": "Pork Courses"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pizzeria",
+      "eyebrow": "Pizza",
+      "blurb": "Baked to order on a stone base. A whole meal on its own, add garlic bread or a salad.",
+      "image": "section-pizza.jpg",
+      "groups": [
+        {
+          "name": "Pizzeria",
+          "items": [
+            {
+              "name": "Classico e Margherita",
+              "desc": "Tomato, fresh basil, oregano and mozzarella.",
+              "price": 24000,
+              "image": "classic-margherita.jpg",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Sweet Vegetarian",
+              "desc": "Red, yellow and green bell pepper, sweet corn and mozzarella.",
+              "price": 24000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Pugliese",
+              "desc": "Tomato, black olives, oregano and cheese.",
+              "price": 24000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Pata",
+              "desc": "Chips, tomato and cheese.",
+              "price": 26000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Diavola",
+              "desc": "Tomato, chili, salami and mozzarella.",
+              "price": 26000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Salami",
+              "desc": "Tomato, cheese and salami.",
+              "price": 26000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Quattro Stagioni",
+              "desc": "Ham, olives, mushroom, artichokes and mozzarella.",
+              "price": 26000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Prosciutto Funghi",
+              "desc": "Ham, mushroom and cheese.",
+              "price": 26000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Prosciutto",
+              "desc": "Cooked ham, tomato and mozzarella.",
+              "price": 27000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Bolognaise",
+              "desc": "Spicy minced meat, mozzarella and tomato.",
+              "price": 27000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Capricciosa",
+              "desc": "Black olives, artichokes, capers, mushroom and salad.",
+              "price": 27000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Pepperoni",
+              "desc": "Tomato, green pepper, onions, pepperoni and mozzarella.",
+              "price": 27000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Hawaiian",
+              "desc": "Ham or bacon, pineapple and mozzarella.",
+              "price": 27000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Pollo Pizza",
+              "desc": "Italian chicken pizza with green pepper, onions and mushroom.",
+              "price": 27000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Tuna",
+              "desc": "Tuna, tomato, onions, green pepper and mozzarella, topped with a boiled egg.",
+              "price": 28000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Calzone Pizza",
+              "desc": "Minced meat, carrots and green pepper, folded into a semi circular bread shape.",
+              "price": 30000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Farmer's Pizza",
+              "desc": "Chicken and mushroom.",
+              "price": 30000,
+              "image": "",
+              "group": "Pizzeria"
+            },
+            {
+              "name": "Paradise Special Pizza",
+              "desc": "Minced meat, salami, ham, mushroom, green pepper and onions.",
+              "price": 35000,
+              "image": "",
+              "group": "Pizzeria"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Italian Pastas",
+      "eyebrow": "From Napoli",
+      "blurb": "Pasta choices: spaghetti, penne, fettuccine, farfalle or spirulina.",
+      "image": "pasta-a-la-carbonara.jpg",
+      "groups": [
+        {
+          "name": "Italian Pastas",
+          "items": [
+            {
+              "name": "Pasta Arabiata",
+              "desc": "Pasta in a tomato and fresh chili sauce, topped with cheese.",
+              "price": 20000,
+              "image": "",
+              "group": "Italian Pastas"
+            },
+            {
+              "name": "Pasta a la Napolitana",
+              "desc": "Pasta in herby tomato and cheese sauce.",
+              "price": 18000,
+              "image": "",
+              "group": "Italian Pastas"
+            },
+            {
+              "name": "Pasta Genovese",
+              "desc": "Pasta in pesto sauce.",
+              "price": 22000,
+              "image": "",
+              "group": "Italian Pastas"
+            },
+            {
+              "name": "Pasta a la Carbonara",
+              "desc": "Pasta with egg and bacon in a creamy sauce, topped with cheese.",
+              "price": 25000,
+              "image": "",
+              "group": "Italian Pastas"
+            },
+            {
+              "name": "Pasta Classic Bolognaise",
+              "desc": "Pasta in a minced meat, garlic, tomato and red wine sauce, topped with cheese.",
+              "price": 25000,
+              "image": "",
+              "group": "Italian Pastas"
+            },
+            {
+              "name": "Pasta ala Cavolfiore e Salsiccia",
+              "desc": "Pasta with cauliflower and sausage in an egg and bacon creamy sauce.",
+              "price": 22000,
+              "image": "",
+              "group": "Italian Pastas"
+            },
+            {
+              "name": "Pasta a la Contadina",
+              "desc": "Pasta in chicken, garlic, coriander, white wine and a creamy coconut sauce.",
+              "price": 25000,
+              "image": "",
+              "group": "Italian Pastas"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Asian & Indian Curries",
+      "eyebrow": "Far East and sub continent",
+      "blurb": "Non veg curries are served with a choice of 1 or 2 accompaniments.",
+      "image": "chicken-coconut-curry.jpg",
+      "groups": [
+        {
+          "name": "Asian & Indian Curries",
+          "items": [
+            {
+              "name": "Aloo Mutter",
+              "desc": "Diced potatoes and cowpeas prepared in a creamy sauce.",
+              "price": 18000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Mixed Vegetable Curry",
+              "desc": "Assorted vegetables in a creamy sauce, served with white rice or mash.",
+              "price": 20000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Veggie Biryani",
+              "desc": "Diced mixed vegetables in a creamy curry sauce, mixed with rice.",
+              "price": 25000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Vegetable Chow Mein",
+              "desc": "Noodles with oyster and soy sauce, tossed with fresh vegetables.",
+              "price": 20000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Vegetable Korma",
+              "desc": "Mixed vegetables in a mild creamy almond and cashew nut sauce.",
+              "price": 25000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Chicken Tikka",
+              "desc": "",
+              "price": 28000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Chili Chicken",
+              "desc": "",
+              "price": 28000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Chicken Biryani",
+              "desc": "Cubes of chicken cooked in a creamy sauce, mixed with rice.",
+              "price": 32000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Fish Biryani",
+              "desc": "Cubes of fish cooked in a creamy sauce, mixed with rice.",
+              "price": 32000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Goat Biryani",
+              "desc": "Cubes of goat cooked in a creamy sauce, mixed with rice.",
+              "price": 32000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Chicken Coconut Curry",
+              "desc": "Grilled and cubed boneless chicken in a golden sauce infused with coconut.",
+              "price": 32000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Chicken Tikka Masala",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Chicken Makhani",
+              "desc": "Boneless tandoori marinated chicken cooked in butter and tomato gravy.",
+              "price": 30000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Fish Curry Diamond",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Fish Tikka",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Fish Tikka Masala",
+              "desc": "",
+              "price": 32000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Half Tandoori Chicken",
+              "desc": "Chicken marinated with yogurt, ginger, garlic and spices, roasted in a clay oven.",
+              "price": 37000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            },
+            {
+              "name": "Full Tandoori Chicken",
+              "desc": "A full chicken marinated with yogurt, ginger, garlic and spices, roasted in a clay oven.",
+              "price": 47000,
+              "image": "",
+              "group": "Asian & Indian Curries"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chinese Corner",
+      "eyebrow": "Wok and steam",
+      "blurb": "Sizzling plates, deep fried bites and the full sweet and sour house.",
+      "image": "sweet-and-sour-chicken.jpg",
+      "groups": [
+        {
+          "name": "Chinese Corner",
+          "items": [
+            {
+              "name": "Vegetable Spring Roll (1pc)",
+              "desc": "",
+              "price": 1000,
+              "image": "vegetable-spring-rolls.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Chicken Spring Roll (1pc)",
+              "desc": "",
+              "price": 2500,
+              "image": "chicken-spring-rolls.webp",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Pork Spring Roll (1pc)",
+              "desc": "",
+              "price": 2500,
+              "image": "pork-spring-roll.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Vegetable Wanton",
+              "desc": "",
+              "price": 5000,
+              "image": "vegetable-wonton.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Special Chicken Wings (1pc)",
+              "desc": "",
+              "price": 7000,
+              "image": "special-chicken-wings.webp",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Wanton (Chicken or Beef)",
+              "desc": "",
+              "price": 8000,
+              "image": "fried-wonton-chicken.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Golden Fried Cauliflower",
+              "desc": "",
+              "price": 10000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Chips Plain",
+              "desc": "",
+              "price": 10000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Special Beef Simsim",
+              "desc": "",
+              "price": 15000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Smoked Fish",
+              "desc": "",
+              "price": 15000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Salty Chicken / Beef",
+              "desc": "",
+              "price": 15000,
+              "image": "salty-chicken.webp",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Foil Wrapped Chicken",
+              "desc": "",
+              "price": 15000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "French Fries with Garlic Sauce",
+              "desc": "",
+              "price": 15000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Egg Rolled Chicken (Pair)",
+              "desc": "",
+              "price": 18000,
+              "image": "fried-eggs-rolled-chicken.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Chicken Wings",
+              "desc": "",
+              "price": 20000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Crispy Chicken Legs",
+              "desc": "",
+              "price": 20000,
+              "image": "cripcy-chicken-legs.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Golden Fried Prawns",
+              "desc": "",
+              "price": 20000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Baby Corn with Cashew Nuts",
+              "desc": "",
+              "price": 20000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Summary Chicken",
+              "desc": "",
+              "price": 25000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sauté Chicken Sichuan Style",
+              "desc": "",
+              "price": 25000,
+              "image": "saute-chicken-sichuan-style.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Chicken Curry",
+              "desc": "",
+              "price": 25000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried French Beans with Garlic Sauce",
+              "desc": "",
+              "price": 25000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Chinese Cabbage Sichuan Style (Hot)",
+              "desc": "",
+              "price": 25000,
+              "image": "chinese-cabbage-sichuan-style.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Mixed Vegetables (Onions, Cabbage, Carrots, Pepper, Mushroom)",
+              "desc": "",
+              "price": 25000,
+              "image": "mixed-vegetable-onions-cabbage-carrots-pepper-mushroom.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Stir-Fried Chicken with Cashew Nuts",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Spicy Half Chicken with Vegetables",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Chicken with Chinese Black Bean Sauce",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sweet and Sour Chicken",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sliced Chicken with Garlic Sauce",
+              "desc": "",
+              "price": 30000,
+              "image": "chicken-saute.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sliced Beef with Chinese Cabbage",
+              "desc": "",
+              "price": 30000,
+              "image": "beef-stir-fry.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Shredded Beef with Onions",
+              "desc": "",
+              "price": 30000,
+              "image": "shredded-beef-with-vegetables.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sweet and Sour Beef",
+              "desc": "",
+              "price": 30000,
+              "image": "sweet-and-sour-pork.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sliced Beef in Oyster Sauce",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Shredded Beef with Vegetables",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sliced Beef with Pineapple Sauce",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Beef Curry",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sweet and Sour Pork (Chinese)",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Shredded Pork with Green Pepper",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sauté Pork Sichuan Style (Hot)",
+              "desc": "",
+              "price": 30000,
+              "image": "saute-pork-sichuan-style.webp",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Spicy Pork with Garlic Sauce",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sweet and Sour Fish Finger",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Spicy Fish with Ginger & Garlic Sauce",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sliced Fish with Vegetables",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sliced Fish in Special Hot Sweet & Sour Sauce",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Special Mixed Vegetables & Sprouts",
+              "desc": "",
+              "price": 30000,
+              "image": "special-mixed-vegetables-and-sprout.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Mixed Chicken, Beef & Goat Meat",
+              "desc": "",
+              "price": 35000,
+              "image": "fried-mixed-chicken-beef-and-goat-meet.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Shredded Chicken with Bamboo Shoots",
+              "desc": "",
+              "price": 35000,
+              "image": "fried-shredded-chicken-with-baboo-shoots.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sliced Pork with Mushroom and Bamboo Shoots",
+              "desc": "",
+              "price": 35000,
+              "image": "sliced-pork-and-mushroom-with-bamboo-shoots.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Beijing Duck with Vegetables",
+              "desc": "",
+              "price": 35000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Duck with Bamboo Shoots",
+              "desc": "",
+              "price": 35000,
+              "image": "",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Prawns with Cashew Nuts",
+              "desc": "",
+              "price": 45000,
+              "image": "fried-prawns-cashew-nuts.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Sauté Prawns with Black Bean Sauce",
+              "desc": "",
+              "price": 45000,
+              "image": "saute-prawns-with-black-bean-sauce.webp",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Fried Prawns with Chinese Black Beans",
+              "desc": "",
+              "price": 50000,
+              "image": "fried-prawns-with-chinese-black-bean.jpg",
+              "group": "Chinese Corner"
+            },
+            {
+              "name": "Beijing Roasted Duck (Whole)",
+              "desc": "",
+              "price": 100000,
+              "image": "",
+              "group": "Chinese Corner"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sizzler Hot Plates",
+      "eyebrow": "On a hot plate",
+      "blurb": "Brought to the table on a sizzling iron, with rice.",
+      "image": "sizzler-beef-plate.jpg",
+      "groups": [
+        {
+          "name": "Sizzler Hot Plates",
+          "items": [
+            {
+              "name": "Sizzler Vegetables Plate",
+              "desc": "",
+              "price": 30000,
+              "image": "",
+              "group": "Sizzler Hot Plates"
+            },
+            {
+              "name": "Sizzler Pork Plate",
+              "desc": "",
+              "price": 35000,
+              "image": "",
+              "group": "Sizzler Hot Plates"
+            },
+            {
+              "name": "Sizzler Beef Plate",
+              "desc": "",
+              "price": 35000,
+              "image": "",
+              "group": "Sizzler Hot Plates"
+            },
+            {
+              "name": "Sizzler Chicken Plate",
+              "desc": "",
+              "price": 35000,
+              "image": "",
+              "group": "Sizzler Hot Plates"
+            },
+            {
+              "name": "Sizzler Shrimps / Prawns Plate",
+              "desc": "",
+              "price": 50000,
+              "image": "sizzler-shrimp-or-prawns-plate.jpg",
+              "group": "Sizzler Hot Plates"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rice & Noodles",
+      "eyebrow": "Side options",
+      "blurb": "Everything to round off a main course.",
+      "image": "chicken-fried-rice.jpg",
+      "groups": [
+        {
+          "name": "Rice & Noodles",
+          "items": [
+            {
+              "name": "Steamed Rice",
+              "desc": "",
+              "price": 8000,
+              "image": "",
+              "group": "Rice & Noodles"
+            },
+            {
+              "name": "Fried Rice",
+              "desc": "",
+              "price": 8000,
+              "image": "",
+              "group": "Rice & Noodles"
+            },
+            {
+              "name": "Ginger Fried Rice",
+              "desc": "",
+              "price": 8000,
+              "image": "",
+              "group": "Rice & Noodles"
+            },
+            {
+              "name": "Vegetable Fried Rice",
+              "desc": "",
+              "price": 10000,
+              "image": "",
+              "group": "Rice & Noodles"
+            },
+            {
+              "name": "Vegetable Fried Noodles",
+              "desc": "",
+              "price": 12000,
+              "image": "",
+              "group": "Rice & Noodles"
+            },
+            {
+              "name": "Egg Fried Rice",
+              "desc": "",
+              "price": 15000,
+              "image": "eggs-fried-rice.webp",
+              "group": "Rice & Noodles"
+            },
+            {
+              "name": "Chicken Fried Rice",
+              "desc": "",
+              "price": 25000,
+              "image": "",
+              "group": "Rice & Noodles"
+            },
+            {
+              "name": "Chicken / Beef / Pork Fried Noodles",
+              "desc": "",
+              "price": 25000,
+              "image": "",
+              "group": "Rice & Noodles"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Accompaniments & Extras",
+      "eyebrow": "Side add ons",
+      "blurb": "Added to any main course, priced per portion.",
+      "image": "masala-chips.jpg",
+      "groups": [
+        {
+          "name": "Accompaniments & Extras",
+          "items": [
+            {
+              "name": "Extra Mushroom",
+              "desc": "",
+              "price": 4000,
+              "image": "",
+              "group": "Accompaniments & Extras"
+            },
+            {
+              "name": "Extra Avocado",
+              "desc": "",
+              "price": 4000,
+              "image": "",
+              "group": "Accompaniments & Extras"
+            },
+            {
+              "name": "Extra Fried Egg",
+              "desc": "",
+              "price": 4000,
+              "image": "extra-fried-eggs.jpg",
+              "group": "Accompaniments & Extras"
+            },
+            {
+              "name": "Extra Bacon",
+              "desc": "",
+              "price": 7000,
+              "image": "",
+              "group": "Accompaniments & Extras"
+            },
+            {
+              "name": "Extra Cheese",
+              "desc": "",
+              "price": 7000,
+              "image": "",
+              "group": "Accompaniments & Extras"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Desserts & Bakery",
+      "eyebrow": "Sweet finish",
+      "blurb": "Cakes, pastries and fruit from our own bakery.",
+      "image": "chocolate-cake-slice.jpg",
+      "groups": [
+        {
+          "name": "Desserts & Bakery",
+          "items": [
+            {
+              "name": "Cookies",
+              "desc": "",
+              "price": 1000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Croissant",
+              "desc": "",
+              "price": 2000,
+              "image": "croissants.jpg",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Beef / Chicken Pie",
+              "desc": "",
+              "price": 5000,
+              "image": "beef-or-chicken-pie.jpg",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Sausage Roll",
+              "desc": "",
+              "price": 5000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Bread Loaf",
+              "desc": "",
+              "price": 6000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Marble Cake Slice",
+              "desc": "",
+              "price": 7000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Chocolate Cake Slice",
+              "desc": "",
+              "price": 7000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Strawberry Cake Slice",
+              "desc": "",
+              "price": 7000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Lemon Cake Slice",
+              "desc": "",
+              "price": 7000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Vanilla Cake Slice",
+              "desc": "",
+              "price": 7000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Butter Bread",
+              "desc": "",
+              "price": 7000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "French Bread",
+              "desc": "",
+              "price": 7000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Cinnamon Roll",
+              "desc": "",
+              "price": 8000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Ice Cream (3 Scoops)",
+              "desc": "A bowl of three scoops, with a choice of chocolate, vanilla or strawberry.",
+              "price": 9000,
+              "image": "ice-cream-3-scoop.jpg",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Golden Fried Banana",
+              "desc": "",
+              "price": 10000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Banana Crepe",
+              "desc": "A thin pancake filled with sliced bananas and chocolate syrup, garnished with orange slices.",
+              "price": 15000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Affogato / Espresso Ice Cream",
+              "desc": "Two scoops of ice cream of choice served with 60ml of espresso coffee.",
+              "price": 15000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Special Banana with Honey Sauce",
+              "desc": "",
+              "price": 12000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Pineapple Upside-Down Cake",
+              "desc": "",
+              "price": 14000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Tropical Fruit Platter",
+              "desc": "A presentation of fresh seasonal fruit: mango, pineapple, melon, orange, grapes and passion fruit.",
+              "price": 15000,
+              "image": "tropical-fruits-platter.jpg",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Fruit Salad",
+              "desc": "A combination of cubed fresh fruit sprinkled with passion fruit syrup.",
+              "price": 15000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Lemon Tart",
+              "desc": "",
+              "price": 15000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Banana Split",
+              "desc": "Banana and ice cream garnished with chocolate sauce, whipped cream, flaked almonds and cherries.",
+              "price": 15000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Mango Tart",
+              "desc": "",
+              "price": 16000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "White Forest Cake",
+              "desc": "",
+              "price": 16000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Profiteroles",
+              "desc": "",
+              "price": 16000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Chocolate Fudge Slice",
+              "desc": "",
+              "price": 17000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Black Forest Cake (pc)",
+              "desc": "",
+              "price": 17000,
+              "image": "black-forest-cake.jpg",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Classic Carrot Cake",
+              "desc": "",
+              "price": 19000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            },
+            {
+              "name": "Chocolate Mousse",
+              "desc": "",
+              "price": 20000,
+              "image": "",
+              "group": "Desserts & Bakery"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

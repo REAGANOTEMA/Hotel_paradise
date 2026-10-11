@@ -73,6 +73,21 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   case 'print':
    go('fnb',['view'=>(int)($_POST['oid']??0),'printed'=>1]);
    break;
+  case 'repair-menu':
+   // Puts every dish the website ships back into the database, so a hosting
+   // install that imported only part of the menu shows the whole of it and can
+   // take an order for any dish on the page. It is the same repair the public
+   // menu runs by itself; this is the button for doing it on purpose.
+   require_once __DIR__.'/../app/menu_sync.php';
+   $rep=menu_sync_complete(db(),true);
+   if(($rep['ok']??false)===false){
+    flash('The website menu could not be repaired: '.($rep['error']??'unknown reason').'.','bad');
+   }else{
+    flash('The website menu was checked against the kitchen list. '.$rep['added'].' dish'.($rep['added']===1?'':'es').' added, '
+     .$rep['updated'].' refreshed, '.$rep['shown'].' switched back on, '.$rep['categories'].' section'.($rep['categories']===1?'':'s').' added.');
+   }
+   go('fnb');
+   break;
  }
 }
 
@@ -168,7 +183,11 @@ echo '<a class="'.($only===''?'btn sm':'btnGhost sm').'" href="'.BASE.'/index.ph
 foreach(['restaurant','bar','room_service','front_desk'] as $o){
  echo '<a class="'.($only===$o?'btn sm':'btnGhost sm').'" href="'.BASE.'/index.php?page=fnb&amp;outlet='.e($o).'">'.e(ucfirst(str_replace('_',' ',$o))).'</a>';
 }
-echo '</div><button class="btn sm" type="button" onclick="location.reload()">Refresh</button></div>';
+echo '</div><button class="btn sm" type="button" onclick="location.reload()">Refresh</button>';
+form_open('fnb','repair-menu');
+echo '<button class="btnGhost sm" type="submit" title="Put every dish the website ships back into the database">Repair the website menu</button>';
+form_close();
+echo '</div>';
 
 if($view){
  echo '<div class="panel"><div class="toolbar" style="margin-bottom:14px">';

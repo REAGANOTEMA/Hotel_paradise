@@ -242,6 +242,18 @@ are in a database the application never connects to.
 into the database `config.php` actually names, and that the health page reports
 `"menu_items"` above zero.
 
+**The menu is short — it shows some dishes, not all of them.** A partial import
+is the usual cause: the dump stopped before it had written every dish, so the
+database holds a fraction of the menu. The site repairs this by itself. It ships
+the whole menu as `backend-php/data/kitchen-menu.json`, and the first time a
+guest opens the menu it puts every missing dish back into the database, so the
+page shows the whole menu and every dish on it can be ordered. Nothing is ever
+deleted. To run the repair on purpose instead of waiting for a guest, open
+**Food and Beverage** in the management system and press **Repair the website
+menu**: it adds what is missing and says how many dishes it wrote. The menu file
+is generated from `frontend-react/src/menuData.ts`; after the menu is changed,
+run `node database/tools/export-menu-json.mjs` to write it out again.
+
 **`#1227 Access denied; you need (at least one of) the CREATE USER privilege(s)`.**
 The account being used cannot create MySQL accounts. This is not a problem with
 the hotel: it is the account. MySQL gives out `GRANT ALL` on a *single* database

@@ -228,6 +228,22 @@ if($act==='menu'){
   $itemWhere=$published?'(mi.published=1 OR mi.active=1)':'mi.active=1';
   $catWhere='1=1';
 
+  // A hosting install that imported only part of the menu used to show that
+  // fraction and nothing else, because the live menu replaced the whole one the
+  // website ships. The shipped menu is carried beside the API, so when the
+  // database is short of it the missing dishes are put back here, once, before
+  // the page is served. It only ever adds, it is wrapped so a database that
+  // refuses the write still answers with the menu it has, and it is skipped
+  // outright once the database is whole.
+  try{
+   require_once __DIR__.'/app/menu_sync.php';
+   $have=(int)val('SELECT COUNT(*) FROM menu_items mi JOIN menu_categories mc ON mc.id=mi.category_id'
+     .' WHERE mc.outlet=\'restaurant\' AND '.$itemWhere);
+   if($have<menu_canonical_count()) menu_sync_complete(db(),false);
+  }catch(Throwable $e){
+   error_log('[hotel api] menu repair skipped: '.$e->getMessage());
+  }
+
   $cats=rows('SELECT '.implode(',',array_map(fn($c)=>nullable_column('menu_categories',$c,$c),$catCols))
     .' FROM menu_categories c WHERE '.$catWhere.' ORDER BY '.$catOrder);
   $itemCols=existing_columns('menu_items',['image','group_name','sort_order']);
