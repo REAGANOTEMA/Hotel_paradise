@@ -797,9 +797,11 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
    blocks are always the ones that win, and a device only ever picks up
    the rules that actually apply to it.
 
+     1400  the header is slimmed down before it ever squeezes
+     1280  smaller laptops: the header folds into the drawer
      1200  small laptops and large tablets in landscape
      1050  tablet portrait, the two column to one column step
-     1000  the header folds into the drawer, the booking bar appears
+     1000  even smaller screens: the booking bar appears
       900  the remaining multi column layouts give way
       760  the order tray reflows, the agreement page reflows
       640  the menu becomes a list of thumbnails
@@ -808,6 +810,35 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
    plus two rules that are not about width at all: short landscape
    screens, and pointers that are actually fingers.
    =================================================================== */
+
+/* --- 1400: slim the header down before it ever gets tight ----------- */
+@media(max-width:1400px){
+  .nav{padding:0 3vw}
+  .nav nav{gap:4px}
+  .nav nav a{font-size:12.5px;padding:7px 10px;gap:6px}
+  .brandL{gap:10px}
+  .brandLogo{width:64px;height:64px}
+  .brandWord span{font-size:18.5px;letter-spacing:2.4px}
+  .brandWord small{font-size:8.5px;letter-spacing:3.2px}
+  .nav .btn{padding:11px 16px;font-size:12.5px}
+  .navRight{gap:10px}
+  .navSignIn{font-size:13px}
+}
+
+/* --- 1280: the drawer takes over on smaller laptops ----------------- */
+@media(max-width:1280px){
+  :root{--navh:64px}
+  .nav{padding:0 4vw;gap:12px}
+  .nav nav{display:none}
+  .burger{display:block}
+  .brandL{gap:10px}
+  .brandLogo{width:56px;height:56px}
+  .brandWord span{font-size:17px;letter-spacing:2.2px;line-height:1.05}
+  .brandWord small{font-size:8px;letter-spacing:3px}
+  .nav .btn{padding:10px 15px;min-height:38px;font-size:12.5px}
+  .navRight{gap:8px}
+  .navSignIn{font-size:13px}
+}
 
 /* --- 1200: keep the header comfortable before it gets tight --------- */
 @media(max-width:1200px){
