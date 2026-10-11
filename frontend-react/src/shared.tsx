@@ -228,7 +228,7 @@ export function TopBar() {
  );
 }
 
-export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./events.html', 'Plan an event'], ['./facilities.html', 'Facilities'], ['./system/', 'Staffs Logins']] as const;
+export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./events.html', 'Plan an event'], ['./facilities.html', 'Facilities'], ['./news.html', 'News & Careers'], ['./system/', 'Staffs Logins']] as const;
 
 /** The padlock that marks the staff entrance, so the last button reads as a
  *  door into the management system rather than one more page of the site. */
@@ -384,10 +384,9 @@ export function Footer() {
       <div className="footerTagMore">
        <span>Sixty nine rooms and suites, riverside dining, a swimming pool and gardens for every occasion, all within one calm address.</span>
        <span>From a restful night to a wedding for two hundred guests, our team carries the details so you can simply arrive.</span>
-       <span>Open your door to the Nile, and let Jinja&rsquo;s warmest welcome do the rest.</span>
       </div>
      </div>
-     <div className="footerCol"><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>
+     <div className="footerCol"><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p><a className="footLink" href="./news.html">News &amp; Careers</a></p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>
      <div className="footerCol"><h4>STAY</h4><p>Check in from 12 noon</p><p>Check out by 10 am</p><p>Breakfast included</p></div>
      <div className="footerCol"><h4>CONTACT</h4>
       <p className="footerPhones">{HOTEL.phones.map((p, i) => (

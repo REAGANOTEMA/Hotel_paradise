@@ -8036,6 +8036,12 @@
       "h": 941,
       "variants": []
     },
+    "burger-chips-and-beer": {
+      "ext": "jpg",
+      "w": 959,
+      "h": 653,
+      "variants": []
+    },
     "burger-hero": {
       "ext": "jpg",
       "w": 739,
@@ -8046,6 +8052,12 @@
       "ext": "png",
       "w": 767,
       "h": 628,
+      "variants": []
+    },
+    "chicken-whole-roasted": {
+      "ext": "jpg",
+      "w": 740,
+      "h": 555,
       "variants": []
     },
     "classicop-e-margherita": {
@@ -8076,6 +8088,12 @@
       "ext": "webp",
       "w": 768,
       "h": 512,
+      "variants": []
+    },
+    "fish-and-chips": {
+      "ext": "jpg",
+      "w": 780,
+      "h": 438,
       "variants": []
     },
     "food-buffe-ready-for-serving-inoutside-cathering": {
@@ -8211,9 +8229,9 @@
       "variants": []
     },
     "jinja-main-bridge-view-from-hotel-at-night": {
-      "ext": "jpg",
-      "w": 738,
-      "h": 416,
+      "ext": "jpeg",
+      "w": 768,
+      "h": 512,
       "variants": []
     },
     "juice-hero-with-bread": {
@@ -8226,6 +8244,12 @@
       "ext": "jpg",
       "w": 500,
       "h": 375,
+      "variants": []
+    },
+    "juice-hero1": {
+      "ext": "jpg",
+      "w": 547,
+      "h": 365,
       "variants": []
     },
     "logo": {
@@ -8343,6 +8367,12 @@
       "h": 1280,
       "variants": []
     },
+    "steak-on-plate": {
+      "ext": "jpg",
+      "w": 940,
+      "h": 625,
+      "variants": []
+    },
     "steak-with-wedges": {
       "ext": "jpg",
       "w": 1440,
@@ -8411,6 +8441,12 @@
       "ext": "webp",
       "w": 768,
       "h": 512,
+      "variants": []
+    },
+    "wine-and-fried-chiken": {
+      "ext": "jpg",
+      "w": 1024,
+      "h": 683,
       "variants": []
     },
     "wine-hero": {
@@ -9395,33 +9431,53 @@
       "kind": "image"
     },
     {
-      "slug": "break-fast-hero",
+      "slug": "juice-hero1",
       "dir": "./images/hero/",
-      "file": "break-fast-hero.webp",
+      "file": "juice-hero1.webp",
       "ext": "webp",
-      "w": 596,
-      "h": 335,
+      "w": 547,
+      "h": 365,
       "variants": [],
       "kind": "image"
     },
     {
-      "slug": "breakfast2-hero",
+      "slug": "steak-on-plate",
       "dir": "./images/hero/",
-      "file": "breakfast2-hero.webp",
+      "file": "steak-on-plate.webp",
       "ext": "webp",
-      "w": 500,
-      "h": 265,
-      "variants": [],
+      "w": 940,
+      "h": 625,
+      "variants": [
+        {
+          "file": "steak-on-plate-640.webp",
+          "ext": "webp",
+          "w": 640,
+          "h": 426
+        }
+      ],
       "kind": "image"
     },
     {
-      "slug": "juice-hero-with-bread",
+      "slug": "wine-and-fried-chiken",
       "dir": "./images/hero/",
-      "file": "juice-hero-with-bread.webp",
+      "file": "wine-and-fried-chiken.webp",
       "ext": "webp",
-      "w": 597,
-      "h": 335,
-      "variants": [],
+      "w": 1024,
+      "h": 683,
+      "variants": [
+        {
+          "file": "wine-and-fried-chiken-640.webp",
+          "ext": "webp",
+          "w": 640,
+          "h": 427
+        },
+        {
+          "file": "wine-and-fried-chiken-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        }
+      ],
       "kind": "image"
     },
     {
@@ -9456,11 +9512,18 @@
     {
       "slug": "jinja-main-bridge-view-from-hotel-at-night",
       "dir": "./images/hero/",
-      "file": "jinja-main-bridge-view-from-hotel-at-night-738.webp",
+      "file": "jinja-main-bridge-view-from-hotel-at-night.webp",
       "ext": "webp",
-      "w": 738,
-      "h": 416,
-      "variants": [],
+      "w": 768,
+      "h": 512,
+      "variants": [
+        {
+          "file": "jinja-main-bridge-view-from-hotel-at-night-640.webp",
+          "ext": "webp",
+          "w": 640,
+          "h": 427
+        }
+      ],
       "kind": "image"
     },
     {
@@ -9510,64 +9573,52 @@
       "kind": "image"
     },
     {
-      "slug": "food-fish",
+      "slug": "fish-and-chips",
       "dir": "./images/hero/",
-      "file": "food-fish-1688.webp",
+      "file": "fish-and-chips.webp",
       "ext": "webp",
-      "w": 1688,
-      "h": 1100,
+      "w": 780,
+      "h": 438,
       "variants": [
         {
-          "file": "food-fish-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 626
-        },
-        {
-          "file": "food-fish-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 834
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "chicken-hero",
-      "dir": "./images/hero/",
-      "file": "chicken-hero.webp",
-      "ext": "webp",
-      "w": 767,
-      "h": 628,
-      "variants": [
-        {
-          "file": "chicken-hero-640.webp",
+          "file": "fish-and-chips-640.webp",
           "ext": "webp",
           "w": 640,
-          "h": 524
+          "h": 359
         }
       ],
       "kind": "image"
     },
     {
-      "slug": "buffet",
+      "slug": "chicken-whole-roasted",
       "dir": "./images/hero/",
-      "file": "buffet-1600.webp",
+      "file": "chicken-whole-roasted.webp",
       "ext": "webp",
-      "w": 1600,
-      "h": 941,
+      "w": 740,
+      "h": 555,
       "variants": [
         {
-          "file": "buffet-960.webp",
+          "file": "chicken-whole-roasted-640.webp",
           "ext": "webp",
-          "w": 960,
-          "h": 565
-        },
+          "w": 640,
+          "h": 480
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "burger-chips-and-beer",
+      "dir": "./images/hero/",
+      "file": "burger-chips-and-beer.webp",
+      "ext": "webp",
+      "w": 959,
+      "h": 653,
+      "variants": [
         {
-          "file": "buffet-1280.webp",
+          "file": "burger-chips-and-beer-640.webp",
           "ext": "webp",
-          "w": 1280,
-          "h": 753
+          "w": 640,
+          "h": 436
         }
       ],
       "kind": "image"

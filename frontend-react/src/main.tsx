@@ -173,23 +173,23 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'BREAKFAST INCLUDED',
-    title: 'Every morning starts well.',
-    text: 'A full breakfast is included in every room rate, served each morning with fresh bread, fruit, eggs and hot coffee. The calmest way to open a day in Jinja.',
-    primary: {label: 'See the rooms', href: './rooms.html'},
-    secondary: {label: 'Open the menu', href: './menu.html'}
-  },
-  {
-    eyebrow: 'FROM THE BREAKFAST TABLE',
-    title: 'Freshly made, every morning.',
-    text: 'Omelets, pastries, fruit and freshly baked bread, laid out each morning for our guests and served with a smile as the day begins.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'See the rooms', href: './rooms.html'}
-  },
-  {
     eyebrow: 'FRESHLY PRESSED',
     title: 'A splash of tropical sunshine.',
     text: 'Bright, refreshing and full of flavour, our juices are pressed to order from ripe local fruit. The freshest way to begin or end your day.',
+    primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'Send an order', href: './menu.html#order'}
+  },
+  {
+    eyebrow: 'FROM THE GRILL',
+    title: 'A steak, cooked just right.',
+    text: 'Char-grilled to your liking and rested until tender, our steaks come to the table hot and sizzling with the sides you choose.',
+    primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'Send an order', href: './menu.html#order'}
+  },
+  {
+    eyebrow: 'CRISP AND GOLDEN',
+    title: 'Fried chicken, and a glass of wine.',
+    text: 'Our signature fried chicken arrives crisp and golden, served with a chilled glass of wine for a pairing that feels every bit as special as it tastes.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
@@ -202,8 +202,8 @@ const HERO_COPY: HeroCopy[] = [
   },
   {
     eyebrow: 'THE NILE VIEW',
-    title: 'Sunsets from the river.',
-    text: 'Golden light over the Nile, from the rooms, the terrace and the lawns that run down to the water. A stay in Jinja does not get calmer than this.',
+    title: 'Sunsets, and the bridge by night.',
+    text: 'Golden light over the Nile and the glow of Jinja\'s bridge after dark, seen from the rooms, the terrace and the lawns that run down to the water.',
     primary: {label: 'See the rooms', href: './rooms.html'},
     secondary: {label: 'See the facilities', href: './facilities.html'}
   },
@@ -222,25 +222,25 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'GRILLED TO PERFECTION',
-    title: 'Whole fish, straight from the grill.',
-    text: 'Seasoned whole tilapia and fillets cooked over the flame and served sizzling, a house favourite with chips or a fresh salad.',
+    eyebrow: 'FRESH FROM THE WATER',
+    title: 'Golden fish and chunky chips.',
+    text: 'Fresh tilapia, lightly battered and fried to a crisp, with a generous portion of hot chips. A hearty classic served straight from our kitchen.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'CHICKEN DISHES',
-    title: 'Golden, tender and full of flavour.',
-    text: 'Grilled, fried or slow roasted, our chicken plates are cooked to order and served hot with the sides you choose.',
+    eyebrow: 'ROASTED TO PERFECTION',
+    title: 'A whole chicken, slow roasted.',
+    text: 'Marinated in our house spices and roasted until the skin is golden and the meat is tender, our whole chicken is made to be shared.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'EVENTS AND BUFFETS',
-    title: 'A feast for every occasion.',
-    text: 'From conferences to weddings, our kitchen lays a full buffet in the halls and the gardens. Tell us what you are planning and we will cater it.',
-    primary: {label: 'Plan an event', href: './events.html'},
-    secondary: {label: 'Open the menu', href: './menu.html'}
+    eyebrow: 'FROM THE GRILL AND BAR',
+    title: 'A burger, chips and a cold beer.',
+    text: 'A juicy grilled burger stacked high, a basket of hot chips and an ice cold beer. The easy, satisfying combination our guests keep coming back for.',
+    primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'Send an order', href: './menu.html#order'}
   }
 ];
 

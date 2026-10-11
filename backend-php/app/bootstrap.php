@@ -320,7 +320,7 @@ function page_allowed(string $page): bool{
    'integrity'=>['director','auditor'],
    'reservations'=>['director','general_manager','receptionist','events_manager'],
    'events'=>['director','events_manager','marketing'],
-   'news'=>['director','events_manager','marketing','general_manager'],
+   'news'=>['director','events_manager','marketing','general_manager','human_resource'],
    'rooms'=>['director','general_manager','receptionist','housekeeping','maintenance'],
    'guests'=>['director','general_manager','receptionist','accountant'],
    'pos'=>['director','general_manager','cashier','waiter','bar_staff'],
@@ -380,6 +380,6 @@ function badge(string $text,string $tone='grey'): string{
 function payment_methods(): array{ return ['cash'=>'Cash','mtn_momo'=>'Mobile Money','airtel_money'=>'Airtel Money','card'=>'Card','bank'=>'Bank Transfer','other'=>'Other']; }
 
 function role_label(string $r): string{
- $map=['super_admin'=>'Administrator','director'=>'Director','general_manager'=>'General Manager','accountant'=>'Finance','cashier'=>'Cashier','receptionist'=>'Front Desk','waiter'=>'Waiter','bar_staff'=>'Bar Staff','kitchen'=>'Kitchen','storekeeper'=>'Storekeeper','procurement'=>'Procurement','housekeeping'=>'Housekeeping','auditor'=>'Auditor','events_manager'=>'Events Manager','marketing'=>'Marketing','maintenance'=>'Maintenance'];
+ $map=['super_admin'=>'Administrator','director'=>'Director','general_manager'=>'General Manager','accountant'=>'Finance','cashier'=>'Cashier','receptionist'=>'Front Desk','waiter'=>'Waiter','bar_staff'=>'Bar Staff','kitchen'=>'Kitchen','storekeeper'=>'Storekeeper','procurement'=>'Procurement','housekeeping'=>'Housekeeping','auditor'=>'Auditor','events_manager'=>'Events Manager','marketing'=>'Marketing','maintenance'=>'Maintenance','human_resource'=>'Human Resource'];
  return $map[$r]??str_replace('_',' ',$r);
 }

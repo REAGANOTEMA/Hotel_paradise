@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 11, 2026 at 07:49 AM
+-- Generation Time: Oct 11, 2026 at 08:47 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -2196,6 +2196,7 @@ INSERT INTO `roles` (`id`, `name`) VALUES
 (3, 'general_manager'),
 (98, 'guest'),
 (12, 'housekeeping'),
+(161, 'human_resource'),
 (97, 'inventory_manager'),
 (9, 'kitchen'),
 (13, 'maintenance'),
@@ -4303,7 +4304,7 @@ ALTER TABLE `menu_items`
 -- AUTO_INCREMENT for table `news_posts`
 --
 ALTER TABLE `news_posts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -4465,7 +4466,7 @@ ALTER TABLE `reservation_rooms`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=162;
 
 --
 -- AUTO_INCREMENT for table `rooms`

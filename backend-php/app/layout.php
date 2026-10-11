@@ -392,11 +392,37 @@ function status_badge(string $status, bool $neutral=false): string{
 function checked(string $v,string $c): string{ return $v===$c?' checked':''; }
 function sel(array $opts,string $v): string{ return isset($opts[$v]); }
 
-function form_open(string $page,string $action='',array $extra=[]): void{
+function form_open(string $page,string $action='',array $extra=[],array $attrs=[]): void{
  $qs=array_merge(['page'=>$page,'act'=>$action?:''],$extra);
- echo '<form method="post" action="'.BASE.'/index.php?'.http_build_query($qs).'">';
+ $attr='';
+ foreach($attrs as $k=>$v){ $attr.=' '.e((string)$k).'="'.e((string)$v).'"'; }
+ echo '<form method="post"'.$attr.' action="'.BASE.'/index.php?'.http_build_query($qs).'">';
 }
 function form_close(): void{ echo '</form>'; }
+
+/**
+ * One labelled input on a console form.
+ *
+ * Every module that writes a record draws its fields through here so the
+ * console keeps one shape: the label, the control, and an optional hint the
+ * reader can act on. The value is always escaped, and the field is never the
+ * only thing that validates it - the module checks it again on save.
+ */
+function field(string $label,string $name,string $value,string $type='text',string $hint='',bool $required=false,bool $readonly=false): void{
+ echo '<div class="field"><label for="f_'.e($name).'">'.e($label).($required?' <span class="req">*</span>':'').'</label>';
+ echo '<input id="f_'.e($name).'" type="'.e($type).'" name="'.e($name).'" value="'.e($value).'"'
+  .($required?' required':'').($readonly?' readonly':'').'/>';
+ if($hint!=='') echo '<small class="hint">'.e($hint).'</small>';
+ echo '</div>';
+}
+
+/** One labelled textarea on a console form, paired with field(). */
+function area(string $label,string $name,string $value,string $hint='',string $extra='',int $rows=5): void{
+ echo '<div class="field"><label for="f_'.e($name).'">'.e($label).'</label>';
+ echo '<textarea id="f_'.e($name).'" name="'.e($name).'" rows="'.$rows.'"'.($extra!==''?' '.$extra:'').'>'.e($value).'</textarea>';
+ if($hint!=='') echo '<small class="hint">'.e($hint).'</small>';
+ echo '</div>';
+}
 
 function back_button(string $label='Back'): void{
  echo '<a class="btnGhost sm" href="javascript:history.back()">'.e($label).'</a>';

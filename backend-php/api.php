@@ -302,6 +302,76 @@ if($act==='menu'){
   $out(['ok'=>true,'categories'=>array_values(array_filter($by,fn($c)=>$c['items']!==[]))]);
 }
 
+/**
+ * The hotel's news, updates, opportunities and careers, read only.
+ *
+ * Everything here was written in the console and is only ever served once it is
+ * published and its moment has arrived, so a scheduled story stays hidden and a
+ * draft never leaks. One address - ?slug=... - returns a single story with its
+ * full text and counts the read; without it the list is returned for the news
+ * page to draw. The categories carry their own labels so the console and the
+ * website can never drift apart about what a category is called.
+ */
+if($act==='news'){
+ $catLabels=['news'=>'News & announcements','update'=>'Updates & notices','opportunity'=>'Opportunities',
+  'recruitment'=>'Recruitment','employee'=>'Employee of the month'];
+ if(table_columns('news_posts')===[]){ $out(['ok'=>true,'posts'=>[],'categories'=>$catLabels,'count'=>0]); }
+
+ // A stored photograph may be one of ours (a path) or a full address elsewhere,
+ // so it is handed back as something a browser can load from any page.
+ $photo=function(?string $image): string{
+  $image=trim((string)$image);
+  if($image==='') return '';
+  if(preg_match('#^https?://#i',$image)) return $image;
+  return rtrim(SITE_URL,'/').'/'.ltrim(preg_replace('#^\.?/#','',$image),'/');
+ };
+ $shape=function(array $p) use($catLabels,$photo): array{
+  return [
+   'id'=>(int)$p['id'],
+   'slug'=>(string)$p['slug'],
+   'title'=>(string)$p['title'],
+   'category'=>(string)$p['category'],
+   'category_label'=>$catLabels[(string)$p['category']]??ucfirst((string)$p['category']),
+   'excerpt'=>(string)($p['excerpt']??''),
+   'body'=>(string)($p['body']??''),
+   'image'=>$photo($p['image']??null),
+   'department'=>(string)($p['department']??''),
+   'location'=>(string)($p['location']??''),
+   'employment_type'=>(string)($p['employment_type']??''),
+   'salary'=>(string)($p['salary']??''),
+   'deadline'=>(string)($p['deadline']??''),
+   'apply_email'=>(string)($p['apply_email']??''),
+   'apply_url'=>(string)($p['apply_url']??''),
+   'author_name'=>(string)($p['author_name']??''),
+   'author_role'=>(string)($p['author_role']??''),
+   'pinned'=>(bool)$p['pinned'],
+   'views'=>(int)($p['views']??0),
+   'published'=>substr((string)($p['publish_at']??''),0,16),
+   'updated'=>substr((string)($p['updated_at']??''),0,16),
+  ];
+ };
+
+ $slug=trim((string)($body['slug']??''));
+ if($slug!==''){
+  $p=row("SELECT * FROM news_posts WHERE slug=? AND status='published' AND publish_at<=NOW()",[$slug]);
+  if(!$p){ $out(['ok'=>false,'error'=>'That story could not be found. It may have been removed or not published yet.'],404); }
+  q('UPDATE news_posts SET views=views+1 WHERE id=?',[(int)$p['id']]);
+  $p['views']=(int)$p['views']+1;
+  $out(['ok'=>true,'post'=>$shape($p),'categories'=>$catLabels]);
+ }
+
+ $fcat=trim((string)($body['category']??''));
+ if($fcat!==''&&!isset($catLabels[$fcat])) $fcat='';
+ $fq=trim((string)($body['q']??''));
+ $limit=max(1,min(100,(int)($body['limit']??60)));
+ $where=["status='published' AND publish_at<=NOW()"]; $args=[];
+ if($fcat!==''){ $where[]='category=?'; $args[]=$fcat; }
+ if($fq!==''){ $where[]='(title LIKE ? OR excerpt LIKE ? OR body LIKE ?)'; $like='%'.$fq.'%'; array_push($args,$like,$like,$like); }
+ $rows=rows('SELECT * FROM news_posts WHERE '.implode(' AND ',$where)
+  .' ORDER BY pinned DESC, publish_at DESC, id DESC LIMIT '.$limit,$args);
+ $out(['ok'=>true,'posts'=>array_map($shape,$rows),'categories'=>$catLabels,'count'=>count($rows)]);
+}
+
 if($act==='order'){
   require_once __DIR__.'/app/menu_extras.php';
   $name=trim((string)($body['name']??''));
