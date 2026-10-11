@@ -159,9 +159,9 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'STRAIGHT OFF THE COALS',
-    title: 'Barbecue, slow-turned over the fire.',
-    text: 'Pork and tender cuts, marinated overnight and turned slowly over open coals until they are smoky, sticky and glazed. The grill our guests ask about before they ask for the menu.',
+    eyebrow: 'STRAIGHT FROM THE GRILL',
+    title: 'Pork barbecue, glazed and sticky.',
+    text: 'Marinated overnight, grilled low and slow and finished with a glossy glaze. The dish our guests ask about before they even ask for the menu.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },

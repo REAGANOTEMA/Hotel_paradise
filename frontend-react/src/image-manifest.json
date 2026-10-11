@@ -9409,30 +9409,24 @@
       "kind": "image"
     },
     {
-      "slug": "pork-bbq-on-fire",
+      "slug": "pork-bbq",
       "dir": "./images/hero/",
-      "file": "pork-bbq-on-fire.webp",
+      "file": "pork-bbq.webp",
       "ext": "webp",
       "w": 1280,
-      "h": 719,
+      "h": 853,
       "variants": [
         {
-          "file": "pork-bbq-on-fire-480.webp",
-          "ext": "webp",
-          "w": 480,
-          "h": 270
-        },
-        {
-          "file": "pork-bbq-on-fire-640.webp",
+          "file": "pork-bbq-640.webp",
           "ext": "webp",
           "w": 640,
-          "h": 360
+          "h": 426
         },
         {
-          "file": "pork-bbq-on-fire-1024.webp",
+          "file": "pork-bbq-1024.webp",
           "ext": "webp",
           "w": 1024,
-          "h": 575
+          "h": 682
         }
       ],
       "kind": "image"
@@ -9465,14 +9459,20 @@
       "dir": "./images/hero/",
       "file": "coctail-juice.webp",
       "ext": "webp",
-      "w": 800,
-      "h": 450,
+      "w": 1440,
+      "h": 810,
       "variants": [
         {
-          "file": "coctail-juice-480.webp",
+          "file": "coctail-juice-640.webp",
           "ext": "webp",
-          "w": 480,
-          "h": 270
+          "w": 640,
+          "h": 360
+        },
+        {
+          "file": "coctail-juice-1024.webp",
+          "ext": "webp",
+          "w": 1024,
+          "h": 576
         }
       ],
       "kind": "image"

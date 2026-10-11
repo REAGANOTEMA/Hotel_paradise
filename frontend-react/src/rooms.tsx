@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms as baseRooms, ExploreMore, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
+import {rooms as baseRooms, EndLinks, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled, type ImageGroup} from './SmartImage';
 
 /** The photographs each room is still waiting for, shown on request only. */
@@ -359,7 +359,10 @@ if (d.ok) {
    </div>
   </section>
 
-  <ExploreMore current="rooms"/>
+  <EndLinks links={[
+    {label: 'Book a room', href: '#planner', primary: true},
+    {label: 'Go back home', href: './index.html'}
+  ]}/>
 
   <Footer/>
  </div>;

@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {ExploreMore, TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
+import {EndLinks, TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {
   MENU_REVISION,
@@ -839,7 +839,10 @@ if (d.ok) {
       />
     )}
 
-    <ExploreMore current="menu"/>
+    <EndLinks links={[
+      {label: 'Add to your order', href: '#order', primary: true},
+      {label: 'Go back home', href: './index.html'}
+    ]}/>
 
     <Footer/>
   </div>;

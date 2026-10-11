@@ -2033,6 +2033,16 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
 .exploreGo svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}
 .exploreCard:hover .exploreGo svg{transform:translateX(3px)}
 
+/* ==================================================================
+   END OF A ROOM OR MENU PAGE
+   The quiet goodnight: one way forward, one way home. Rendered only
+   where the hotel asked for it - no card grid, no dead ends, just a
+   booking or an order and the door back to the start.
+   ================================================================== */
+.endLinks{background:var(--ivory)}
+.endLinks .center{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;padding-top:0;padding-bottom:8px}
+.endLinks .btn{min-width:200px}
+
 @media (max-width:560px){.exploreGrid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.exploreCard{transition:none}.exploreCard:hover{transform:none}.exploreCard:hover .exploreGo svg{transform:none}}
 @media (prefers-reduced-motion:reduce){

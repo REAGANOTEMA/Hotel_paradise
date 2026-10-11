@@ -1,8 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
-import {heroShots} from './SmartImage';
+import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal, type HeroCoverFrame} from './shared';
 
 /*
  * The hotel's newsroom.
@@ -24,15 +23,20 @@ type Post = {
 
 type State = {posts: Post[]; cats: Record<string, string>} | null;
 
-/** The one story, with the widest photograph the build found behind it. */
-function HeroCover({slug}: {slug: string}) {
-  const shot = heroShots.find(s => s.slug === slug);
-  if (!shot) return <div className="pageHeroBg" aria-hidden="true"/>;
-  const fallback = shot.dir + shot.file;
-  const srcset = [
-    `${fallback} ${shot.w}w`,
-    ...shot.variants.map(v => `${shot.dir}${shot.slug}-${v.w}.${v.ext} ${v.w}w`)
-  ].join(', ');
+/**
+ * The one story, with the Jinja bridge over the Nile behind it. Read from the
+ * finished hero copies like every other page cover, so it never depends on the
+ * home carousel and stays the same on news whether or not the same photograph
+ * turns in the slides up top.
+ */
+const NEWS_COVER: HeroCoverFrame[] = [
+  {base: './images/hero/jinja-main-bridge-view-from-hotel-at-night', ext: 'webp', widths: [640, 1024]}
+];
+
+function HeroCover() {
+  const f = NEWS_COVER[0];
+  const fallback = f.base + '-' + f.widths[f.widths.length - 1] + '.' + f.ext;
+  const srcset = f.widths.map(w => f.base + '-' + w + '.' + f.ext + ' ' + w + 'w').join(', ');
   return (
     <div className="pageHeroBg" aria-hidden="true">
       <img className="pageHeroBgImg on" src={fallback} srcSet={srcset} sizes="100vw" alt=""
@@ -157,7 +161,7 @@ function NewsPage() {
     <PageNav onDark/>
 
     <section className="pageHero hasCover" id="main">
-      <HeroCover slug="jinja-main-bridge-view-from-hotel-at-night"/>
+      <HeroCover/>
       <div className="pageHeroInner">
         <BackLink label="Back" fallback="./index.html"/>
         <p className="eyebrow">NEWS, UPDATES, OPPORTUNITIES &amp; CAREERS</p>

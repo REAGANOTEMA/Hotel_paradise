@@ -256,26 +256,21 @@ export const WhatsAppIcon = ({size = 15}: {size?: number}) => (
   </svg>
 );
 
-/** The browser's install prompt. It is not part of the standard DOM types. */
-type InstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{outcome: 'accepted' | 'dismissed'}>;
-};
-
 const INSTALL_KEY = 'hpn_install_dismissed';
 
 /**
  * Offers the site as an app, once, and quietly.
  *
- * Where the browser can install it directly (Chrome and Edge on Android,
- * Windows and macOS) it asks with the browser's own prompt. On iOS Safari,
- * which has no such prompt, it explains the two taps to the Home Screen
- * instead. A guest already using the installed app never sees it, a guest
- * who dismisses it is remembered, and it only appears after the page has
- * been read for a while rather than the moment it opens.
+ * The browsers that can install a page directly - Chrome and Edge on
+ * Android, Windows and macOS - run their own install banner, and the site
+ * lets them: intercepting it would only produce the browser's "Banner not
+ * shown" note and nothing to show for it. The only step-in is on iOS Safari,
+ * which has no install prompt on the web, where the two taps to the Home
+ * Screen are explained instead. A guest already using the installed app
+ * never sees it, a guest who dismisses it is remembered, and it only appears
+ * after the page has been read for a while rather than the moment it opens.
  */
 export function InstallApp() {
-  const [evt, setEvt] = React.useState<InstallPromptEvent | null>(null);
   const [ios, setIos] = React.useState(false);
   const [show, setShow] = React.useState(false);
   const [sheet, setSheet] = React.useState(false);
@@ -292,18 +287,11 @@ export function InstallApp() {
       if (timer.current) window.clearTimeout(timer.current);
       timer.current = window.setTimeout(() => setShow(true), 9000);
     };
-
-    const onPrompt = (e: Event) => {
-      e.preventDefault();
-      setEvt(e as InstallPromptEvent);
-      reveal();
-    };
     const onInstalled = () => {
       setShow(false); setSheet(false);
       try { window.localStorage.setItem(INSTALL_KEY, '1'); } catch {}
     };
 
-    window.addEventListener('beforeinstallprompt', onPrompt);
     window.addEventListener('appinstalled', onInstalled);
 
     const ua = navigator.userAgent || '';
@@ -312,7 +300,6 @@ export function InstallApp() {
     if (isIos && isSafari) { setIos(true); reveal(); }
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', onPrompt);
       window.removeEventListener('appinstalled', onInstalled);
       if (timer.current) window.clearTimeout(timer.current);
     };
@@ -323,14 +310,7 @@ export function InstallApp() {
     try { window.localStorage.setItem(INSTALL_KEY, '1'); } catch {}
   };
 
-  const install = async () => {
-    if (evt) {
-      try { await evt.prompt(); await evt.userChoice; } catch {}
-      setEvt(null); dismiss();
-    } else {
-      setSheet(true);
-    }
-  };
+  const install = () => setSheet(true);
 
   if (!show && !sheet) return null;
 
@@ -470,6 +450,19 @@ export function ExploreMore({current = ''}: {current?: string}) {
       <span className="exploreText">{text}</span>
       <span className="exploreGo">{cta}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
      </a>
+    ))}
+   </div>
+  </section>
+ );
+}
+
+/** The calm end of a page: only the way on and the way home. */
+export function EndLinks({links}: {links: {label: string; href: string; primary?: boolean}[]}) {
+ return (
+  <section className="endLinks" aria-label="Continue">
+   <div className="center">
+    {links.map(l => (
+     <a key={l.label} className={l.primary ? 'btn' : 'btn ghost2'} href={l.href}>{l.label}</a>
     ))}
    </div>
   </section>
