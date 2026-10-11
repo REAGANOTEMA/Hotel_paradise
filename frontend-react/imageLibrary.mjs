@@ -148,21 +148,21 @@ function scanFolder(dir) {
  * the page is built from, so the carousel never falls back to a multi megabyte
  * camera original, and no two slides are the same photograph under two names.
  * The order is matched, one for one, to HERO_COPY on the home page. The
- * headline shots the hotel asked for come first - the pool and the main
- * building, the dining table, the freshly pressed juice, the wine and fried
- * chicken, the grilled steak, the view from the hotel over the Jinja bridge at
- * night, the beds and the signature dishes - and the remaining classic hero
- * photographs follow behind them.
+ * headline shots the hotel asked for come first - the pool, the pork barbecue
+ * over the coals, the dining table, the pressed juice and the cocktail, the
+ * grilled steak, the wine and fried chicken, the seafood, the spirit poured at
+ * the bar, the pizza, the beds and the signature dishes - and the remaining
+ * classic hero photographs follow behind them.
  */
 const HERO_SEQUENCE = [
   'hero/pool',
-  'hero/hotel',
+  'hero/pork-bbq-on-fire',
   'hero/pizza-and-drinks-and-souce',
-  'hero/juice-hero1',
+  'hero/coctail-juice',
   'hero/steak-on-plate',
   'hero/wine-and-fried-chiken',
   'hero/sea-food-hero',
-  'hero/jinja-main-bridge-view-from-hotel-at-night',
+  'hero/spirit-alcholic-drink-poured-in-the-glass',
   'hero/food-pizza-two',
   'hero/bed-suite',
   'hero/fish-and-chips',

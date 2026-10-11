@@ -159,11 +159,11 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'WELCOME TO THE HOTEL',
-    title: 'Paradise sits right on the Nile.',
-    text: 'Sixty nine rooms across three floors, dining on the riverbank, a pool and grounds for functions - all of Jinja\'s best address in one calm corner of town.',
-    primary: {label: 'See the facilities', href: './facilities.html'},
-    secondary: {label: 'Book a room', href: './rooms.html'}
+    eyebrow: 'STRAIGHT OFF THE COALS',
+    title: 'Barbecue, slow-turned over the fire.',
+    text: 'Pork and tender cuts, marinated overnight and turned slowly over open coals until they are smoky, sticky and glazed. The grill our guests ask about before they ask for the menu.',
+    primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'DINING IN PARADISE',
@@ -173,9 +173,9 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'FRESHLY PRESSED',
-    title: 'A splash of tropical sunshine.',
-    text: 'Bright, refreshing and full of flavour, our juices are pressed to order from ripe local fruit. The freshest way to begin or end your day.',
+    eyebrow: 'PRESSED AND POURED',
+    title: 'Juices and cocktails, made fresh.',
+    text: 'Bright juices pressed to order from ripe local fruit, and the same care shaken into every cocktail at the bar. The freshest way to begin or end your day.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
@@ -201,11 +201,11 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'THE NILE VIEW',
-    title: 'Sunsets, and the bridge by night.',
-    text: 'Golden light over the Nile and the glow of Jinja\'s bridge after dark, seen from the rooms, the terrace and the lawns that run down to the water.',
-    primary: {label: 'See the rooms', href: './rooms.html'},
-    secondary: {label: 'See the facilities', href: './facilities.html'}
+    eyebrow: 'FROM THE BAR',
+    title: 'A spirit, poured with a steady hand.',
+    text: 'Whisky, gin and our own local pours, measured and served the way they should be. Settle in at the bar and let the evening find its own pace.',
+    primary: {label: 'Open the menu', href: './menu.html'},
+    secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'FROM THE PIZZA OVEN',

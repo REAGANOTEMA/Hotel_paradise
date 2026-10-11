@@ -8315,6 +8315,18 @@
       "h": 1000,
       "variants": []
     },
+    "pork-bbq-on-fire": {
+      "ext": "jpg",
+      "w": 818,
+      "h": 375,
+      "variants": []
+    },
+    "pork-bbq": {
+      "ext": "jpg",
+      "w": 678,
+      "h": 452,
+      "variants": []
+    },
     "sea-food-hero": {
       "ext": "jpg",
       "w": 1800,
@@ -9397,24 +9409,18 @@
       "kind": "image"
     },
     {
-      "slug": "hotel",
+      "slug": "pork-bbq-on-fire",
       "dir": "./images/hero/",
-      "file": "hotel-1920.webp",
+      "file": "pork-bbq-on-fire.webp",
       "ext": "webp",
-      "w": 1920,
-      "h": 1280,
+      "w": 818,
+      "h": 375,
       "variants": [
         {
-          "file": "hotel-960.webp",
+          "file": "pork-bbq-on-fire-640.webp",
           "ext": "webp",
-          "w": 960,
-          "h": 640
-        },
-        {
-          "file": "hotel-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 853
+          "w": 640,
+          "h": 293
         }
       ],
       "kind": "image"
@@ -9443,13 +9449,20 @@
       "kind": "image"
     },
     {
-      "slug": "juice-hero1",
+      "slug": "coctail-juice",
       "dir": "./images/hero/",
-      "file": "juice-hero1.webp",
+      "file": "coctail-juice.webp",
       "ext": "webp",
-      "w": 547,
-      "h": 365,
-      "variants": [],
+      "w": 554,
+      "h": 554,
+      "variants": [
+        {
+          "file": "coctail-juice-480.webp",
+          "ext": "webp",
+          "w": 480,
+          "h": 480
+        }
+      ],
       "kind": "image"
     },
     {
@@ -9522,18 +9535,18 @@
       "kind": "image"
     },
     {
-      "slug": "jinja-main-bridge-view-from-hotel-at-night",
+      "slug": "spirit-alcholic-drink-poured-in-the-glass",
       "dir": "./images/hero/",
-      "file": "jinja-main-bridge-view-from-hotel-at-night.webp",
+      "file": "spirit-alcholic-drink-poured-in-the-glass.webp",
       "ext": "webp",
-      "w": 768,
-      "h": 512,
+      "w": 739,
+      "h": 415,
       "variants": [
         {
-          "file": "jinja-main-bridge-view-from-hotel-at-night-640.webp",
+          "file": "spirit-alcholic-drink-poured-in-the-glass-640.webp",
           "ext": "webp",
           "w": 640,
-          "h": 427
+          "h": 359
         }
       ],
       "kind": "image"

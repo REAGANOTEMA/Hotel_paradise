@@ -40,7 +40,8 @@ const MENU_HERO_FRAMES: HeroCoverFrame[] = [
  {base: './images/hero/food-breakfast', ext: 'webp', widths: [960, 1280, 1920]},
  {base: './images/hero/food-pizza-two', ext: 'webp', widths: [960, 1280, 1920]},
  {base: './images/hero/food-fish', ext: 'webp', widths: [960, 1280, 1688]},
- {base: './images/hero/food-sandwich', ext: 'webp', widths: [960, 1280, 1707]}
+ {base: './images/hero/food-sandwich', ext: 'webp', widths: [960, 1280, 1707]},
+ {base: './images/hero/pork-bbq', ext: 'webp', widths: [640, 1280]}
 ];
 
 /** Reads the live kitchen menu and folds it into the same shape as the fallback. */
