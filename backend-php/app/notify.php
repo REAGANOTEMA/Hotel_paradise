@@ -36,13 +36,15 @@ const NOTIFY_CATEGORIES = [
  'incident'      => 'incident_alerts',
 ];
 
-/** The roles each category rings by default, so callers need not repeat it. */
+/** The roles each category rings by default, so callers need not repeat it.
+ *  Every list carries the Administrator, so the systems desk always holds the
+ *  full picture; everyone else hears only what their job needs. */
 const NOTIFY_DEFAULT_ROLES = [
- 'booking'       => ['director','general_manager','receptionist'],
- 'order'         => ['director','general_manager','cashier','kitchen'],
- 'payment'       => ['director','general_manager','accountant','cashier'],
- 'communication' => ['director','general_manager'],
- 'incident'      => ['director','general_manager'],
+ 'booking'       => ['director','general_manager','super_admin','receptionist'],
+ 'order'         => ['director','general_manager','super_admin','cashier','kitchen'],
+ 'payment'       => ['director','general_manager','super_admin','accountant','cashier'],
+ 'communication' => ['director','general_manager','super_admin'],
+ 'incident'      => ['director','general_manager','super_admin'],
 ];
 
 function notify_table(string $t): bool

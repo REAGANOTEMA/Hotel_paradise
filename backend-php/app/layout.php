@@ -17,8 +17,8 @@ function nav_groups(): array{
      'dashboard'=>'Dashboard','overview'=>'CEO / Director','integrity'=>'Integrity & Control']],
    ['label'=>'Front desk','items'=>[
      'reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
-   ['label'=>'Events & Marketing','items'=>[
-     'events'=>'Events & Enquiries','news'=>'News & Careers']],
+   ['label'=>'News & Events','items'=>[
+     'news'=>'News & Careers','events'=>'Events & Enquiries']],
    ['label'=>'Front of House','items'=>[
      'pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
    ['label'=>'Kitchen','items'=>[

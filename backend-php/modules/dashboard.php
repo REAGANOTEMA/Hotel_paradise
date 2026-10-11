@@ -55,4 +55,54 @@ if(!count($pend)){ echo '<p class="emptyLine">Everything is up to date.</p>'; }
 else{ echo '<div class="miniList">'; foreach($pend as $p){ echo '<div class="li"><span>'.e($p['ref']).'<br><small>'.e(ucfirst($p['kind'])).'</small></span>'.($p['amount']>0?'<b>'.money($p['amount']).'</b>':'').'</div>'; } echo '</div><a class="btn sm" style="margin-top:12px" href="'.BASE.'/index.php?page=approvals">Review approvals</a>'; }
 echo '</div></div></div>';
 
+// The newsroom, as much of it as this member holds. A department writes its own
+// small stories here; an editor and the management team see their whole desk.
+$cap=news_capability();
+if($cap!==null){
+  $me=current_user();
+  $canAll=$cap['can_all'];
+  $isContrib=$cap['tier']==='contributor';
+  $labels=['news'=>'News & announcements','update'=>'Updates & notices','opportunity'=>'Opportunities','recruitment'=>'Recruitment','employee'=>'Employee of the month'];
+  $quick=$canAll?['news','update','opportunity']:array_values(array_intersect($cap['categories']??[],['news','update','opportunity']));
+  if($quick===[]) $quick=['news'];
+  $w=[]; $a=[];
+  if($isContrib){ $w[]='created_by=?'; $a[]=(int)($me['id']??0); }
+  elseif(!$canAll){ $w[]='category IN('.implode(',',array_fill(0,count($cap['categories']),'?')).')'; $a=array_merge($a,$cap['categories']); }
+  $recent=rows('SELECT id,title,category,status,views FROM news_posts'.($w?' WHERE '.implode(' AND ',$w):'').' ORDER BY id DESC LIMIT 5',$a);
+
+  echo '<div class="dashGrid" style="margin-top:18px"><div class="panel">';
+  echo '<h2>'.($isContrib?'Your newsroom':'Newsroom').'</h2>';
+  echo '<p class="hint">'.($isContrib
+    ? 'A short news item or update for '.e($cap['department']?:'your department').'. It goes on the website signed with your department.'
+    : 'Write a news item or a service update. For a vacancy, or a full story with a photograph, open the newsroom.').'</p>';
+  form_open('news','save');
+  echo '<input type="hidden" name="return" value="dashboard"/>';
+  field('Headline','title','','text','The title shown on the website',true);
+  echo '<div class="twoCol"><div class="col">';
+  echo '<div class="field"><label>Category</label><select name="category">';
+  foreach($quick as $qk){ echo '<option value="'.e($qk).'">'.e($labels[$qk]??$qk).'</option>'; }
+  echo '</select></div>';
+  echo '</div><div class="col">';
+  echo '<div class="field"><label>When</label><select name="status"><option value="published">Publish now</option><option value="draft">Save as draft</option></select></div>';
+  echo '</div></div>';
+  area('The story','body','','A sentence or two. Leave a blank line between paragraphs.','',4);
+  echo '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Publish</button>'
+    .'<a class="btn ghost" href="'.BASE.'/index.php?page=news">Open the newsroom</a></div>';
+  form_close();
+  echo '</div>';
+
+  echo '<div class="panel"><h2>'.($isContrib?'Your latest posts':'Latest posts').'</h2>';
+  if(!$recent){ echo '<p class="emptyLine">Nothing written yet.</p>'; }
+  else{
+    echo '<table class="tbl"><thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Views</th><th></th></tr></thead><tbody>';
+    foreach($recent as $rp){
+      echo '<tr><td><b>'.e($rp['title']).'</b></td><td>'.e($labels[$rp['category']]??$rp['category']).'</td>'
+        .'<td>'.e(ucfirst((string)$rp['status'])).'</td><td>'.(int)$rp['views'].'</td>'
+        .'<td><a class="btn sm" href="'.BASE.'/index.php?page=news&act=edit&id='.(int)$rp['id'].'">Open</a></td></tr>';
+    }
+    echo '</tbody></table>';
+  }
+  echo '</div></div>';
+}
+
 page_foot();

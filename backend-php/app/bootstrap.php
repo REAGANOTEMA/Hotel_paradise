@@ -307,6 +307,71 @@ function has_role(string $role): bool{
  return in_array($role,roles_of());
 }
 
+/**
+ * Who may write in the newsroom, and how much of it.
+ *
+ * The newsroom is not for everybody, and it is not the same for everybody
+ * either. Four roles run it outright: the director, the general manager, the
+ * human resource office (which owns vacancies and the employee of the month)
+ * and the system administrator - the "computer" desk that keeps the website
+ * and the consoles running. Marketing and events write the guest-facing news,
+ * updates and opportunities. Every other department carries its own notices:
+ * they may publish news and service updates filed under their own department,
+ * and nothing more, so a busy house still tells its own small stories without
+ * anyone handing over the whole front page.
+ *
+ * tiers: owner       - every category, every post, pin, schedule and delete
+ *        editor      - the named categories, pins, schedules and deletes them
+ *        contributor - their own news and updates, filed under their dept
+ */
+function news_roles(): array{
+ return [
+  'super_admin'    => ['tier'=>'owner'],
+  'director'       => ['tier'=>'owner'],
+  'general_manager'=> ['tier'=>'owner'],
+  'human_resource' => ['tier'=>'owner'],
+  'marketing'      => ['tier'=>'editor','categories'=>['news','update','opportunity']],
+  'events_manager' => ['tier'=>'editor','categories'=>['news','update','opportunity']],
+  'receptionist'   => ['tier'=>'contributor','department'=>'Front Office','categories'=>['news','update']],
+  'housekeeping'   => ['tier'=>'contributor','department'=>'Housekeeping','categories'=>['news','update']],
+  'kitchen'        => ['tier'=>'contributor','department'=>'Kitchen','categories'=>['news','update']],
+  'waiter'         => ['tier'=>'contributor','department'=>'Food and Beverage','categories'=>['news','update']],
+  'bar_staff'      => ['tier'=>'contributor','department'=>'Bar','categories'=>['news','update']],
+  'storekeeper'    => ['tier'=>'contributor','department'=>'Stores','categories'=>['news','update']],
+  'procurement'    => ['tier'=>'contributor','department'=>'Procurement','categories'=>['news','update']],
+  'maintenance'    => ['tier'=>'contributor','department'=>'Maintenance','categories'=>['news','update']],
+  'accountant'     => ['tier'=>'contributor','department'=>'Finance','categories'=>['news','update']],
+  'cashier'        => ['tier'=>'contributor','department'=>'Finance','categories'=>['news','update']],
+ ];
+}
+
+/**
+ * What the signed-in member may do in the newsroom, or null when the newsroom
+ * is not theirs at all. The strongest role a person holds decides the tier, so
+ * a director who also carries a shop-floor role is never held back by it.
+ *
+ * The returned array carries: tier, role, can_all, the categories they may
+ * publish (null means every category), the department their posts are filed
+ * under, and a label to sign a post with.
+ */
+function news_capability(): ?array{
+ if(!current_user()) return null;
+ $map=news_roles();
+ $rank=['contributor'=>1,'editor'=>2,'owner'=>3];
+ $best=null;
+ foreach(roles_of() as $role){
+  $p=$map[$role]??null;
+  if($p===null) continue;
+  if($best===null || ($rank[$p['tier']]??0)>($rank[$best['tier']]??0)) $best=$p+['role'=>$role];
+ }
+ if($best===null) return null;
+ $best['can_all']=$best['tier']==='owner';
+ $best['categories']=$best['can_all']?null:($best['categories']??[]);
+ $best['department']=$best['department']??null;
+ $best['label']=role_label($best['role']);
+ return $best;
+}
+
 function page_allowed(string $page): bool{
  $u=current_user(); if(!$u) return false;
  $r=roles_of();
@@ -320,7 +385,7 @@ function page_allowed(string $page): bool{
    'integrity'=>['director','auditor'],
    'reservations'=>['director','general_manager','receptionist','events_manager'],
    'events'=>['director','events_manager','marketing'],
-   'news'=>['director','events_manager','marketing','general_manager','human_resource'],
+   'news'=>array_keys(news_roles()),
    'rooms'=>['director','general_manager','receptionist','housekeeping','maintenance'],
    'guests'=>['director','general_manager','receptionist','accountant'],
    'pos'=>['director','general_manager','cashier','waiter','bar_staff'],

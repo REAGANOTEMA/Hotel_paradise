@@ -8068,8 +8068,8 @@
     },
     "coctail-juice": {
       "ext": "jpg",
-      "w": 554,
-      "h": 554,
+      "w": 800,
+      "h": 450,
       "variants": []
     },
     "dinning-space": {
@@ -8317,8 +8317,8 @@
     },
     "pork-bbq-on-fire": {
       "ext": "jpg",
-      "w": 818,
-      "h": 375,
+      "w": 612,
+      "h": 344,
       "variants": []
     },
     "pork-bbq": {
@@ -9413,14 +9413,14 @@
       "dir": "./images/hero/",
       "file": "pork-bbq-on-fire.webp",
       "ext": "webp",
-      "w": 818,
-      "h": 375,
+      "w": 612,
+      "h": 344,
       "variants": [
         {
-          "file": "pork-bbq-on-fire-640.webp",
+          "file": "pork-bbq-on-fire-480.webp",
           "ext": "webp",
-          "w": 640,
-          "h": 293
+          "w": 480,
+          "h": 270
         }
       ],
       "kind": "image"
@@ -9453,14 +9453,14 @@
       "dir": "./images/hero/",
       "file": "coctail-juice.webp",
       "ext": "webp",
-      "w": 554,
-      "h": 554,
+      "w": 800,
+      "h": 450,
       "variants": [
         {
           "file": "coctail-juice-480.webp",
           "ext": "webp",
           "w": 480,
-          "h": 480
+          "h": 270
         }
       ],
       "kind": "image"

@@ -141,9 +141,22 @@ if(!function_exists('news_delete_upload')){
   }
 }
 
+/**
+ * Remembers who wrote a post, so a department can find and manage its own
+ * stories and not anyone else's. Added on first use to a database that predates
+ * the column; an existing column makes MySQL say so, which is ignored.
+ */
+if(!function_exists('ensure_news_created_by')){
+  function ensure_news_created_by(): void{
+    try{ q('ALTER TABLE news_posts ADD COLUMN created_by BIGINT UNSIGNED NULL AFTER author_role'); }
+    catch(Throwable $e){ /* the column is already there */ }
+  }
+}
+
 $u=current_user();
 ensure_news_table();
 ensure_news_roles();
+ensure_news_created_by();
 
 $CATS=[
   'news'=>['label'=>'News & announcements','tone'=>'navy'],
@@ -154,6 +167,31 @@ $CATS=[
 ];
 $STATS=['published'=>['label'=>'Published','tone'=>'ok'],'draft'=>['label'=>'Draft','tone'=>'grey']];
 
+/* What this member may do here. The console gates the module itself, but the
+   category, the department and whose post may be edited are decided here, on
+   the record, so a crafted request cannot step outside the role. */
+$cap=news_capability();
+if($cap===null){
+  page_head('Not permitted','news');
+  echo '<div class="panel"><h2>Access restricted</h2><p class="hint">Your role does not write for the newsroom. Contact the administrator if you believe this is a mistake.</p><a class="btn" href="'.BASE.'/index.php?page=dashboard">Back to dashboard</a></div>';
+  page_foot(); exit;
+}
+$canAll=$cap['can_all'];
+$isContrib=$cap['tier']==='contributor';
+$allowedCats=$canAll?array_keys($CATS):$cap['categories'];
+if($allowedCats===[]) $allowedCats=['news'];
+$homeCats=$isContrib?['news','update']:$allowedCats;
+$capLabel=$cap['label'];
+$capDept=(string)($cap['department']??'');
+
+/** Whose posts this member may open or remove. */
+$inScope=static function(?array $r) use($canAll,$isContrib,$allowedCats,$u): bool{
+  if($r===null) return false;
+  if($canAll) return true;
+  if($isContrib) return (int)($r['created_by']??0)===(int)($u['id']??0);
+  return in_array((string)$r['category'],$allowedCats,true);
+};
+
 $act=$_GET['act']??'list';
 
 if($_SERVER['REQUEST_METHOD']==='POST'){
@@ -161,13 +199,15 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   if($a==='delete'){
     $id=(int)($_GET['id']??$_POST['id']??0);
     $r=row('SELECT * FROM news_posts WHERE id=?',[$id]);
-    if($r){
+    if(!$r){
+      flash('Post not found.','bad');
+    }elseif(!$inScope($r)){
+      flash('That post does not belong to you. Ask an editor to change it.','bad');
+    }else{
       q('DELETE FROM news_posts WHERE id=?',[$id]);
       news_delete_upload($r['image']??'');
       audit('news_delete','news_posts',$id,['slug'=>$r['slug'],'title'=>$r['title']]);
       flash('Post deleted.');
-    }else{
-      flash('Post not found.','bad');
     }
     go('news');
   }
@@ -184,7 +224,8 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     $slug=substr($slug,0,180);
     if($slug==='') $slug='post-'.date('Ymd-His');
     $category=(string)($_POST['category']??'news');
-    if(!isset($CATS[$category])) $category='news';
+    if(!isset($CATS[$category])) $category=$allowedCats[0];
+    if(!$canAll&&!in_array($category,$allowedCats,true)) $category=$allowedCats[0];
     $excerpt=mb_substr(trim((string)($_POST['excerpt']??'')),0,320);
     $body=trim((string)($_POST['body']??''));
     $image=trim((string)($_POST['image']??''));
@@ -197,7 +238,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     $apply_url=trim((string)($_POST['apply_url']??''));
     $author_name=mb_substr(trim((string)($_POST['author_name']??($u['name']??''))),0,120);
     $author_role=mb_substr(trim((string)($_POST['author_role']??'')),0,120);
-    $pinned=(int)((bool)($_POST['pinned']??0));
+    if($author_role==='') $author_role=mb_substr($capLabel,0,120);
+    // A department writes under its own name, and only a full editor or an
+    // owner may feature a post; a contributor rings no front page.
+    if($isContrib&&$capDept!=='') $department=mb_substr($capDept,0,120);
+    $pinned=$isContrib?0:(int)((bool)($_POST['pinned']??0));
     $status=(string)($_POST['status']??'published');
     if(!isset($STATS[$status])) $status='published';
     $publish_at=trim((string)($_POST['publish_at']??''));
@@ -220,7 +265,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     $fields=[$slug,$title,$category,$excerpt,$body,$image,$department,$location,$employment_type,$salary,
       $deadline!==''?$deadline:null,$apply_email,$apply_url,$author_name,$author_role,$pinned,$status,$publish_at];
 
+    $dest=((string)($_POST['return']??''))==='dashboard'?'dashboard':'news';
+
     if($id>0){
+      $old=row('SELECT * FROM news_posts WHERE id=?',[$id]);
+      if($old===null){ flash('Post not found.','bad'); go('news'); }
+      if(!$inScope($old)){ flash('That post does not belong to you. Ask an editor to change it.','bad'); go('news'); }
       $exists=row('SELECT id FROM news_posts WHERE slug=? AND id!=?',[$slug,$id]);
       if($exists){ flash('That slug is already in use. Choose another.','bad'); go('news',['act'=>'edit','id'=>$id]); }
       try{
@@ -237,10 +287,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
       $exists=row('SELECT id FROM news_posts WHERE slug=?',[$slug]);
       if($exists){ flash('That slug is already in use. Choose another.','bad'); go('news',['act'=>'new']); }
       try{
-        q('INSERT INTO news_posts(hotel_id,slug,title,category,excerpt,body,image,department,location,employment_type,salary,deadline,apply_email,apply_url,author_name,author_role,pinned,status,publish_at,created_at) VALUES(1,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())',
-          $fields);
-        $nid=(int)db()->lastInsertId();
-        audit('news_create','news_posts',$nid,['slug'=>$slug]);
+        $ins=array_merge([$slug,$title,$category,$excerpt,$body,$image,$department,$location,$employment_type,$salary,
+          $deadline!==''?$deadline:null,$apply_email,$apply_url,$author_name,$author_role,(int)($u['id']??0),$pinned,$status,$publish_at]);
+        q('INSERT INTO news_posts(hotel_id,slug,title,category,excerpt,body,image,department,location,employment_type,salary,deadline,apply_email,apply_url,author_name,author_role,created_by,pinned,status,publish_at,created_at) VALUES(1,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())',
+          $ins);
+        $id=(int)db()->lastInsertId();
+        audit('news_create','news_posts',$id,['slug'=>$slug]);
         flash('Post published.');
       }catch(Throwable $e){
         error_log('[hotel news] insert failed: '.$e->getMessage());
@@ -248,8 +300,23 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         go('news',['act'=>'new']);
       }
     }
+
+    // Tell the right consoles, and the right phones, that something went live.
+    // The author is never rung for their own post (notify_console sees to it).
+    if($status==='published'&&strtotime($publish_at)<=time()){
+      $aud=['director','general_manager','super_admin'];
+      if(in_array($category,['recruitment','employee'],true)) $aud[]='human_resource';
+      if(in_array($category,['news','update','opportunity'],true)){ $aud[]='marketing'; $aud[]='events_manager'; }
+      foreach(news_roles() as $rl=>$rp){ if($rp['tier']==='contributor'&&($rp['department']??'')===$department) $aud[]=$rl; }
+      $aud=array_values(array_unique($aud));
+      $catLabel=$CATS[$category]['label']??'News';
+      notify_console('news:publish:'.$id.':'.substr(md5($title.'|'.$body.'|'.$publish_at),0,10),
+        'communication','Newsroom: '.$title,
+        mb_substr($excerpt!==''?$excerpt:$catLabel.' published on the website.',0,200),
+        ['news_id'=>$id,'slug'=>$slug,'category'=>$category],$aud,'news_post',$id);
+    }
+    go($dest);
   }
-  go('news');
 }
 
 function news_badge(string $cat,array $CATS): string{
@@ -274,19 +341,34 @@ if($act==='list'){
   if($fcat!==''){ $where[]='category=?'; $args[]=$fcat; }
   if($fstatus!==''){ $where[]='status=?'; $args[]=$fstatus; }
   if($fpinned==='1'){ $where[]='pinned=1'; }
+  // Everything this member sees is already theirs: a department reads only its
+  // own posts, an editor only the kinds it may write, an owner the whole desk.
+  $scope=''; $sargs=[];
+  if($isContrib){ $where[]='created_by=?'; $args[]=(int)($u['id']??0); $scope=' AND created_by=?'; $sargs[]=(int)($u['id']??0); }
+  elseif(!$canAll){ $in=implode(',',array_fill(0,count($allowedCats),'?')); $where[]='category IN('.$in.')'; foreach($allowedCats as $ac) $args[]=$ac; $scope=' AND category IN('.$in.')'; $sargs=$allowedCats; }
   $sql='SELECT * FROM news_posts'.($where?' WHERE '.implode(' AND ',$where):'').' ORDER BY pinned DESC, publish_at DESC, id DESC LIMIT 300';
 
-  page_head('News & Careers','news','Hotel news, updates, opportunities and recruitment');
+  $sub=$canAll
+    ? 'Hotel news, updates, opportunities and recruitment'
+    : ($isContrib
+      ? 'Write news and updates for '.($capDept!==''?$capDept:'your department').'. An editor reviews recruitment and the front page.'
+      : 'The news, updates and opportunities your team publishes');
+  page_head('News & Careers','news',$sub);
   echo '<div class="kpis">';
-  kpi_card('Published posts',(string)val("SELECT COUNT(*) FROM news_posts WHERE status='published'"),'Visible on the website','ok');
-  kpi_card('Pinned',(string)val("SELECT COUNT(*) FROM news_posts WHERE pinned=1 AND status='published'"),'Featured on the website','gold');
-  kpi_card('Recruitment',(string)val("SELECT COUNT(*) FROM news_posts WHERE category='recruitment' AND status='published'"),'Open vacancies','warn');
-  kpi_card('Employee of the month',(string)val("SELECT COUNT(*) FROM news_posts WHERE category='employee' AND status='published'"),'Celebrated colleagues','blue');
+  kpi_card('Published posts',(string)val("SELECT COUNT(*) FROM news_posts WHERE status='published'".$scope,$sargs),'Visible on the website','ok');
+  kpi_card('Pinned',(string)val("SELECT COUNT(*) FROM news_posts WHERE pinned=1 AND status='published'".$scope,$sargs),'Featured on the website','gold');
+  if($canAll){
+    kpi_card('Recruitment',(string)val("SELECT COUNT(*) FROM news_posts WHERE category='recruitment' AND status='published'",[]),'Open vacancies','warn');
+    kpi_card('Employee of the month',(string)val("SELECT COUNT(*) FROM news_posts WHERE category='employee' AND status='published'",[]),'Celebrated colleagues','blue');
+  }else{
+    kpi_card('Drafts',(string)val("SELECT COUNT(*) FROM news_posts WHERE status='draft'".$scope,$sargs),'Not on the website yet','grey');
+    kpi_card('Reach',(string)val("SELECT COALESCE(SUM(views),0) FROM news_posts WHERE status='published'".$scope,$sargs),'Reads on the website','blue');
+  }
   echo '</div>';
 
   echo '<div class="panel">';
   echo '<div class="tbHead" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">'
-    .'<h2 style="margin:0">All posts</h2>'
+    .'<h2 style="margin:0">'.($isContrib?'Your posts':'All posts').'</h2>'
     .'<a class="btn" href="'.BASE.'/index.php?page=news&act=new">New post</a></div>';
 
   // The same search and filters the website offers, so the console can find a
@@ -296,7 +378,7 @@ if($act==='list'){
   echo '<div class="field" style="margin:0;min-width:230px;flex:1"><label>Search</label>'
     .'<input type="search" name="q" value="'.e($fq).'" placeholder="Title, excerpt, body or department"/></div>';
   echo '<div class="field" style="margin:0"><label>Category</label><select name="cat"><option value="">All categories</option>';
-  foreach($CATS as $k=>$c){ echo '<option value="'.e($k).'"'.($fcat===$k?' selected':'').'>'.e($c['label']).'</option>'; }
+  foreach(($canAll?$CATS:array_intersect_key($CATS,array_flip($allowedCats))) as $k=>$c){ echo '<option value="'.e($k).'"'.($fcat===$k?' selected':'').'>'.e($c['label']).'</option>'; }
   echo '</select></div>';
   echo '<div class="field" style="margin:0"><label>Status</label><select name="status"><option value="">Any status</option>';
   foreach($STATS as $k=>$c){ echo '<option value="'.e($k).'"'.($fstatus===$k?' selected':'').'>'.e($c['label']).'</option>'; }
@@ -339,10 +421,11 @@ if($act==='edit'||$act==='new'){
   $id=$act==='edit'?(int)($_GET['id']??0):0;
   $r=$id>0?row('SELECT * FROM news_posts WHERE id=?',[$id]):null;
   if($act==='edit'&&!$r){ flash('Post not found.','bad'); go('news'); }
+  if($act==='edit'&&!$inScope($r)){ flash('That post does not belong to you. Ask an editor to change it.','bad'); go('news'); }
 
   $val=static function(string $k,string $d='') use($r): string{ return (string)($r[$k]??$d); };
-  $cat=$val('category','news');
-  if(!isset($CATS[$cat])) $cat='news';
+  $cat=$val('category',$allowedCats[0]);
+  if(!isset($CATS[$cat])||(!$canAll&&!in_array($cat,$allowedCats,true))) $cat=$allowedCats[0];
   $status=$val('status','published');
   if(!isset($STATS[$status])) $status='published';
   $publish=$val('publish_at',date('Y-m-d H:i'));
@@ -351,8 +434,12 @@ if($act==='edit'||$act==='new'){
   $imageSrc=news_image_src($image);
   $slug=$val('slug');
   $preview=$slug!==''&&$status==='published'?SITE_URL.'/news.html#'.rawurlencode($slug):'';
+  $showVacancy=array_intersect(['recruitment','opportunity'],$allowedCats)!==[];
 
-  page_head($id?'Edit post':'New post','news','Write news, updates, opportunities or a vacancy');
+  $formSub=$canAll
+    ? 'Write news, updates, opportunities or a vacancy'
+    : ($isContrib ? 'Write a news item or a service update for '.($capDept!==''?$capDept:'your department') : 'Write a news item, a service update or an opportunity');
+  page_head($id?'Edit post':'New post','news',$formSub);
   // The form carries a photograph, so it must be sent as multipart data.
   form_open('news','save',[],['enctype'=>'multipart/form-data']);
   echo '<input type="hidden" name="id" value="'.$id.'"/>';
@@ -370,13 +457,15 @@ if($act==='edit'||$act==='new'){
   /* ---- the controls ---- */
   echo '<div class="col">';
   echo '<div class="field"><label for="f_category">Category</label><select id="f_category" name="category">';
-  foreach($CATS as $k=>$c){ echo '<option value="'.e($k).'"'.($cat===$k?' selected':'').'>'.e($c['label']).'</option>'; }
-  echo '</select><small class="hint">Recruitment is for vacancies, Employee of the month for the colleague being honoured.</small></div>';
+  foreach(($canAll?$CATS:array_intersect_key($CATS,array_flip($allowedCats))) as $k=>$c){ echo '<option value="'.e($k).'"'.($cat===$k?' selected':'').'>'.e($c['label']).'</option>'; }
+  echo '</select><small class="hint">'.($isContrib?'A general news item or a service update.':($canAll?'Recruitment is for vacancies, Employee of the month for the colleague being honoured.':'News, a service update, or an opportunity for the community.')).'</small></div>';
   echo '<div class="field"><label for="f_status">Status</label><select id="f_status" name="status">';
   foreach($STATS as $k=>$c){ echo '<option value="'.e($k).'"'.($status===$k?' selected':'').'>'.e($c['label']).'</option>'; }
   echo '</select></div>';
   field('Publish at','publish_at',$publish,'datetime-local','Leave blank to publish immediately');
-  echo '<label class="check" style="display:flex;align-items:center;gap:8px;margin:4px 0 14px"><input type="checkbox" name="pinned" value="1"'.((int)$val('pinned')===1?' checked':'').'/> Pin to the top (featured)</label>';
+  if(!$isContrib){
+    echo '<label class="check" style="display:flex;align-items:center;gap:8px;margin:4px 0 14px"><input type="checkbox" name="pinned" value="1"'.((int)$val('pinned')===1?' checked':'').'/> Pin to the top (featured)</label>';
+  }
 
   /* ---- the photograph ---- */
   echo '<div class="field"><label for="f_image_file">Main photograph</label>';
@@ -390,21 +479,25 @@ if($act==='edit'||$act==='new'){
   echo '</div></div></div>';
   field('Or photograph URL','image',$image,'text','Leave as it is to keep the current picture. Paste a full web address to use an image hosted elsewhere.');
 
-  /* ---- the vacancy detail ---- */
-  echo '<div class="panel" style="background:#fafbfd;margin:6px 0 0;box-shadow:none">';
-  echo '<h3 style="margin:0 0 4px">Vacancy &amp; opportunity details</h3>';
-  echo '<p class="hint" style="margin:0 0 12px">Fill these for a recruitment or opportunity post. They are shown in the apply panel on the website.</p>';
-  field('Department','department',$val('department'),'text','e.g. Housekeeping, Food and Beverage, Human Resource');
-  field('Location','location',$val('location'),'text','e.g. Hotel Paradise, Jinja');
-  field('Employment type','employment_type',$val('employment_type'),'text','e.g. Full-time, Part-time, Internship');
-  field('Salary','salary',$val('salary'),'text','e.g. Competitive, negotiable, UGX 2,000,000');
-  field('Application deadline','deadline',substr($val('deadline'),0,10),'date');
-  field('Apply by email','apply_email',$val('apply_email'),'email');
-  field('Apply by URL','apply_url',$val('apply_url'),'url');
-  echo '</div>';
+  /* ---- the vacancy detail, only where the role may write one ---- */
+  if($showVacancy){
+    echo '<div class="panel" id="vacancyPanel" style="background:#fafbfd;margin:6px 0 0;box-shadow:none">';
+    echo '<h3 style="margin:0 0 4px">Vacancy &amp; opportunity details</h3>';
+    echo '<p class="hint" style="margin:0 0 12px">Fill these for a recruitment or opportunity post. They are shown in the apply panel on the website.</p>';
+    field('Department','department',$val('department'),'text','e.g. Housekeeping, Food and Beverage, Human Resource');
+    field('Location','location',$val('location'),'text','e.g. Hotel Paradise, Jinja');
+    field('Employment type','employment_type',$val('employment_type'),'text','e.g. Full-time, Part-time, Internship');
+    field('Salary','salary',$val('salary'),'text','e.g. Competitive, negotiable, UGX 2,000,000');
+    field('Application deadline','deadline',substr($val('deadline'),0,10),'date');
+    field('Apply by email','apply_email',$val('apply_email'),'email');
+    field('Apply by URL','apply_url',$val('apply_url'),'url');
+    echo '</div>';
+  }elseif($capDept!==''){
+    field('Department','department_note',$capDept,'text','Your posts are filed under '.$capDept.'.',false,true);
+  }
 
   field('Author name','author_name',$val('author_name',$u['name']??''),'text','Who signs the post on the website');
-  field('Author role','author_role',$val('author_role'),'text','e.g. Human Resource, Management Team');
+  field('Author role','author_role',$val('author_role',$capLabel),'text','e.g. Human Resource, Management Team');
   echo '</div>';
   echo '</div>';
 
@@ -416,10 +509,15 @@ if($act==='edit'||$act==='new'){
   form_close();
   echo '</div>';
 
-  // Live preview of the chosen photograph, before it is saved.
-  echo '<script>(function(){var i=document.getElementById("f_image_file"),p=document.getElementById("newsPrev");'
+  // Live preview of the chosen photograph, and the vacancy panel appears only
+  // for a category that carries vacancy detail.
+  echo '<script>(function(){'
+    .'var i=document.getElementById("f_image_file"),p=document.getElementById("newsPrev");'
     .'if(i&&p){i.addEventListener("change",function(e){var f=e.target.files&&e.target.files[0];if(!f)return;'
-    .'var rd=new FileReader();rd.onload=function(ev){p.src=ev.target.result};rd.readAsDataURL(f);});}})();</script>';
+    .'var rd=new FileReader();rd.onload=function(ev){p.src=ev.target.result};rd.readAsDataURL(f);});}'
+    .'var s=document.getElementById("f_category"),v=document.getElementById("vacancyPanel");'
+    .'if(s&&v){var t=function(){v.style.display=(s.value==="recruitment"||s.value==="opportunity")?"":"none"};s.addEventListener("change",t);t();}'
+    .'})();</script>';
   page_foot(); exit;
 }
 
