@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {EndLinks, TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, customerToken, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
+import {MenuConcierge} from './concierge';
 import {
   MENU_REVISION,
   addOnPrice,
@@ -969,6 +970,8 @@ if (d.ok) {
       {label: 'Add to your order', href: '#order', primary: true},
       {label: 'Go back home', href: './index.html'}
     ]}/>
+
+    <MenuConcierge sections={sections}/>
 
     <Footer/>
   </div>;
