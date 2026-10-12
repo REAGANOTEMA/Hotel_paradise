@@ -506,6 +506,7 @@ function page_foot(): void{
  echo '<button class="toTop" id="toTop" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 11l6-6 6 6"/></svg><span>Top</span></button>';
  echo '</div>';
  page_scripts();
+ echo '<script src="'.BASE.'/assets/attn.js"></script>';
  echo '</body></html>';
 }
 

@@ -472,10 +472,12 @@ function AccountPage() {
        </>}
 
        <p className="plannerNote">
-        {mode === 'signup'
-          ? <>Already have an account? <a className="footLink" href="./account.html">Sign in</a>.</>
-          : <>New here? <a className="footLink" href="./account.html?mode=signup">Create an account</a>.</>}
-        <br/>{next ? 'You will come straight back to finish where you left off.' : <>For help, call <a className="footLink" href={telHref(CALL)}>{CALL}</a>.</>}
+        <span className="acctPrompt">
+         {mode === 'signup'
+           ? <>Already have an account? <a className="footLink" href="./account.html">Sign in</a>.</>
+           : <>New here? <a className="footLink" href="./account.html?mode=signup">Create an account</a>.</>}
+        </span>
+        {next ? 'You will come straight back to finish where you left off.' : <>For help, call <a className="footLink" href={telHref(CALL)}>{CALL}</a>.</>}
        </p>
       </>
      )}

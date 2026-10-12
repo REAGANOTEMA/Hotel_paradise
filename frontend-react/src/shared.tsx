@@ -1,4 +1,5 @@
 import React from 'react';
+import './buttonShake';
 
 /**
  * Where the PHP API actually is.

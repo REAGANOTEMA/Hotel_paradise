@@ -145,6 +145,7 @@ function pagelogin(): void{
   });
   particlesJS('particles-js',{particles:{number:{value:34,density:{enable:true,value_area:900}},color:{value:'#e0b53a'},shape:{type:'circle'},opacity:{value:0.45,random:true},size:{value:1.8,random:true},line_linked:{enable:true,distance:160,color:'#e0b53a',opacity:0.22,width:1},move:{enable:true,speed:1.1,direction:'none',random:false,straight:false,out_mode:'out',bounce:false}},interactivity:{detect_on:'canvas',events:{onhover:{enable:false},onclick:{enable:false}}},retina_detect:true});
 </script>
+<script src="%%BASE%%/assets/attn.js"></script>
 </body>
 </html>
 HTML;

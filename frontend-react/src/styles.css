@@ -526,6 +526,11 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .linkBtn{background:none;border:0;color:var(--nile);font-size:13px;text-decoration:underline;margin-top:12px;display:block;width:100%;text-align:center}
 .linkBtn:hover{color:var(--gold-ink)}
 .plannerNote{color:var(--faint);font-size:12px;line-height:1.7;margin:16px 0 0;border-top:1px solid var(--line2);padding-top:14px}
+/* The account switch is the easiest line to miss and the one that matters
+   most, so it is lifted into its own bold, gold-edged call. */
+.plannerNote .acctPrompt{display:block;margin:0 0 12px;padding:11px 14px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;background:var(--ivory);color:var(--navy);font-size:14px;font-weight:700;line-height:1.55}
+.plannerNote .acctPrompt a{color:var(--gold-ink);font-weight:800;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px;white-space:nowrap}
+.plannerNote .acctPrompt a:hover{color:var(--navy)}
 
 /* menu page */
 .menuMeta{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 18px;color:#8a95a5;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:30px}
@@ -2143,3 +2148,34 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
   .heroDots .dot{height:44px}
   .heroDots .dot::before,.heroDots .dot::after{top:20px}
 }
+
+/* ---------------------------------------------------------------
+   A SHARED, STAGGERED BUTTON SHAKE
+
+   Every action control wears the same gentle three second ripple, but
+   never at the same moment: buttonShake.ts hands each one its own point
+   in the cycle, so a screen of buttons breathes in a slow wave instead
+   of pulsing in unison. The shake only ever moves `translate` and
+   `rotate` - compositor properties kept apart from the `transform`
+   a hover or press already uses - so no button's size, place, colour,
+   shadow or behaviour changes. It pauses the instant a control is
+   pointed at, focused, pressed, disabled, submitting or loading, and
+   it never runs at all for anyone who asked for less motion.
+   --------------------------------------------------------------- */
+@keyframes btnShake{
+  0%{translate:0 0;rotate:0deg}
+  2%{translate:-2.5px 0;rotate:-.7deg}
+  4%{translate:2.5px 0;rotate:.7deg}
+  6%{translate:-2px 0;rotate:-.5deg}
+  8%{translate:2px 0;rotate:.5deg}
+  10%{translate:-1px 0;rotate:-.25deg}
+  12%{translate:1px 0;rotate:.25deg}
+  14%,100%{translate:0 0;rotate:0deg}
+}
+.shakeBtn{
+  animation:btnShake 3s ease-in-out infinite;
+  animation-delay:var(--btn-shake-delay,0s);
+}
+.shakeBtn:hover,.shakeBtn:focus,.shakeBtn:focus-visible,.shakeBtn:active,
+.shakeBtn:disabled,.shakeBtn.loading,.shakeBtn[aria-busy="true"]{animation:none}
+@media(prefers-reduced-motion:reduce){.shakeBtn{animation:none}}
