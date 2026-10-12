@@ -182,7 +182,7 @@ echo '</tbody></table></div>';
 
 echo '<div class="panel"><h2>Purchase orders</h2><p class="hint">Orders sent to suppliers and their receiving status.</p>';
 echo '<table class="tbl"><thead><tr><th>Number</th><th>Supplier</th><th>Created</th><th>Status</th><th></th></tr></thead><tbody>';
-foreach($pos as $p){ echo '<tr><td><b>'.e($p['number']).'</b></td><td>'.e($p['supplier']).'</td><td>'.fmtdt($p['created_at']).'</td><td>'.status_badge($p['status']).'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=purchases&view='.(int)$p['id'].'">Open</a></td></tr>'; }
+foreach($pos as $p){ echo '<tr><td><b>'.e($p['number']).'</b></td><td>'.e($p['supplier']).'</td><td>'.fmtdt($p['created_at']).'</td><td>'.status_badge($p['status']).'</td><td style="white-space:nowrap"><a class="btn sm" href="'.BASE.'/index.php?page=purchases&view='.(int)$p['id'].'">Open</a> '.(in_array($p['status'],['draft','pending','sent'],true)?trash_button('purchase_orders',(int)$p['id'],'purchases'):'').'</td></tr>'; }
 echo '</tbody></table></div></div>';
 
 echo '<div>';
