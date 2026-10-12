@@ -179,5 +179,11 @@ if(!page_allowed($page)){
  page_foot(); exit;
 }
 
+/* Moving a record to the Trash, bringing it back, or removing it for good is
+   handled here, once, for every module. The button each module prints carries
+   only the table, the row and the page to return to, and trash.php checks all
+   three before it touches anything. */
+trash_handle();
+
 $mod=__DIR__.'/modules/'.$page.'.php';
 if(is_file($mod)){ require $mod; }else{ page_head('Page not found'); echo '<div class="panel"><p>Module not found.</p></div>'; page_foot(); }

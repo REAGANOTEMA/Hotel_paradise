@@ -154,8 +154,8 @@ if($view){
  page_foot(); exit;
 }
 
-$reqs=rows('SELECT pr.*,d.name dept,u.name reqby FROM purchase_requisitions pr JOIN departments d ON d.id=pr.department_id JOIN users u ON u.id=pr.requested_by ORDER BY pr.id DESC LIMIT 30');
-$pos=rows('SELECT po.*,s.name supplier FROM purchase_orders po JOIN suppliers s ON s.id=po.supplier_id ORDER BY po.id DESC LIMIT 30');
+$reqs=rows('SELECT pr.*,d.name dept,u.name reqby FROM purchase_requisitions pr JOIN departments d ON d.id=pr.department_id JOIN users u ON u.id=pr.requested_by WHERE pr.deleted_at IS NULL ORDER BY pr.id DESC LIMIT 30');
+$pos=rows('SELECT po.*,s.name supplier FROM purchase_orders po JOIN suppliers s ON s.id=po.supplier_id WHERE po.deleted_at IS NULL ORDER BY po.id DESC LIMIT 30');
 $depts=rows('SELECT * FROM departments ORDER BY name');
 $items=rows('SELECT * FROM inventory_items ORDER BY name');
 $suppliers=rows('SELECT * FROM suppliers WHERE active=1 ORDER BY name');
@@ -174,8 +174,9 @@ $line=(int)val('SELECT COALESCE(SUM(ri.requested_qty),0) FROM purchase_requisiti
   form_open('purchases','reqtopo'); echo '<input type="hidden" name="id" value="'.(int)$r['id'].'">';
   echo '<div class="field"><label>Supplier</label><select name="supplier_id">'; foreach($suppliers as $s) echo '<option value="'.(int)$s['id'].'">'.e($s['name']).'</option>'; echo '</select></div>';
   echo '<div class="field"><label>Notes</label><input name="notes"></div><button class="btn sm">Create from requisition</button>'; form_close(); echo '</div>';
- }
- echo '</td></tr>';
+  }
+  if(!in_array($r['status'],['approved','cancelled'],true)) echo ' '.trash_button('purchase_requisitions',(int)$r['id'],'purchases');
+  echo '</td></tr>';
 }
 echo '</tbody></table></div>';
 

@@ -67,9 +67,10 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 }
 
 $cats=rows('SELECT * FROM inventory_categories ORDER BY name');
-$items=rows("SELECT i.*,c.name cat,(SELECT COALESCE(SUM(quantity),0) FROM stock_levels sl WHERE sl.item_id=i.id) total_at, i.reorder_level reorder FROM inventory_items i LEFT JOIN inventory_categories c ON c.id=i.category_id ORDER BY i.name");
-$levels=rows('SELECT sl.*,i.name,i.code,i.unit,i.reorder_level FROM stock_levels sl JOIN inventory_items i ON i.id=sl.item_id ORDER BY i.name,sl.location');
-$movs=rows('SELECT m.*,i.name FROM stock_movements m JOIN inventory_items i ON i.id=m.item_id ORDER BY m.id DESC LIMIT 25');
+$items=rows("SELECT i.*,c.name cat,(SELECT COALESCE(SUM(quantity),0) FROM stock_levels sl WHERE sl.item_id=i.id) total_at, i.reorder_level reorder FROM inventory_items i LEFT JOIN inventory_categories c ON c.id=i.category_id WHERE i.deleted_at IS NULL ORDER BY i.name");
+$levels=rows('SELECT sl.*,i.name,i.code,i.unit,i.reorder_level FROM stock_levels sl JOIN inventory_items i ON i.id=sl.item_id WHERE i.deleted_at IS NULL ORDER BY i.name,sl.location');
+$movs=rows('SELECT m.*,i.name FROM stock_movements m JOIN inventory_items i ON i.id=m.item_id WHERE i.deleted_at IS NULL ORDER BY m.id DESC LIMIT 25');
+$editItem=(int)($_GET['edit']??0); $ei=$editItem?row('SELECT * FROM inventory_items WHERE id=?',[$editItem]):null;
 
 page_head('Inventory','inventory','Stores, stock levels and movements');
 
@@ -81,6 +82,13 @@ kpi_card('Locations',(string)val('SELECT COUNT(DISTINCT location) FROM stock_lev
 echo '</div>';
 
 echo '<div class="twoCol"><div>';
+echo '<div class="panel"><h2>Item catalogue</h2><p class="hint">Every stock item. Edit a detail, or move an item to the Trash.</p>';
+echo '<table class="tbl"><thead><tr><th>Item</th><th>Code</th><th>Category</th><th class="num">On hand</th><th></th></tr></thead><tbody>';
+foreach($items as $i){
+ echo '<tr><td><b>'.e($i['name']).'</b><br><small>'.e($i['unit']).'</small></td><td>'.e($i['code']).'</td><td>'.e($i['cat']??'-').'</td><td class="num">'.num($i['total_at']).'</td><td style="white-space:nowrap"><a class="btn sm" href="'.BASE.'/index.php?page=inventory&edit='.(int)$i['id'].'">Edit</a> '.trash_button('inventory_items',(int)$i['id'],'inventory').'</td></tr>';
+}
+if(!count($items)) echo '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No items yet.</td></tr>';
+echo '</tbody></table></div>';
 echo '<div class="panel"><h2>Stock levels</h2><p class="hint">Current quantities on hand by storage location.</p>';
 echo '<table class="tbl"><thead><tr><th>Item</th><th>Code</th><th>Location</th><th class="num">Qty</th><th class="num">Reorder</th><th></th></tr></thead><tbody>';
 foreach($levels as $s){
@@ -108,14 +116,16 @@ echo '<button class="btn">Record movement</button>'; form_close();
 echo '<script>var t=document.getElementById("mtype");t.addEventListener("change",function(){document.getElementById("dstWrap").hidden=t.value!=="transfer_in";});</script>';
 echo '</div>';
 
-echo '<div class="panel"><h2>Add item</h2><p class="hint">Register a new stock item.</p>';
+echo '<div class="panel"><h2>'.($ei?'Edit item':'Add item').'</h2><p class="hint">'.($ei?'Update this stock item.':'Register a new stock item.').'</p>';
 form_open('inventory','item');
-echo '<div class="field"><label>Name</label><input name="name" required></div>';
-echo '<div class="field"><label>Code</label><input name="code" placeholder="Auto if left blank"></div>';
-echo '<div class="field"><label>Category</label><select name="category_id">'; foreach($cats as $c) echo '<option value="'.(int)$c['id'].'">'.e($c['name']).'</option>'; echo '</select></div>';
-echo '<div class="field"><label>Unit</label><input name="unit" value="each"></div>';
-echo '<div class="field"><label>Reorder level</label><input type="number" name="reorder_level" value="0" min="0" step="0.5"></div>';
-echo '<div class="field"><label>Starting location</label><select name="location"><option>Main Store</option><option>Bar</option><option>Kitchen</option></select></div>';
-echo '<button class="btn">Add item</button>'; form_close();
+if($ei) echo '<input type="hidden" name="id" value="'.(int)$ei['id'].'">';
+echo '<div class="field"><label>Name</label><input name="name" value="'.e($ei['name']??'').'" required></div>';
+echo '<div class="field"><label>Code</label><input name="code" value="'.e($ei['code']??'').'" placeholder="Auto if left blank"></div>';
+echo '<div class="field"><label>Category</label><select name="category_id">'; foreach($cats as $c) echo '<option value="'.(int)$c['id'].'"'.($ei&&(int)$ei['category_id']===(int)$c['id']?' selected':'').'>'.e($c['name']).'</option>'; echo '</select></div>';
+echo '<div class="field"><label>Unit</label><input name="unit" value="'.e($ei['unit']??'each').'"></div>';
+echo '<div class="field"><label>Reorder level</label><input type="number" name="reorder_level" value="'.(float)($ei['reorder_level']??0).'" min="0" step="0.5"></div>';
+if(!$ei) echo '<div class="field"><label>Starting location</label><select name="location"><option>Main Store</option><option>Bar</option><option>Kitchen</option></select></div>';
+else echo '<p class="hint" style="margin-top:4px"><a href="'.BASE.'/index.php?page=inventory">Cancel edit</a></p>';
+echo '<button class="btn">'.($ei?'Save item':'Add item').'</button>'; form_close();
 echo '</div></div></div>';
 page_foot();

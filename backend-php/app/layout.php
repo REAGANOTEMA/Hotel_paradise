@@ -30,7 +30,7 @@ function nav_groups(): array{
    ['label'=>'Finance & Control','items'=>[
      'expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
    ['label'=>'Administration','items'=>[
-     'users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile']],
+     'users'=>'Team and Users','notifications'=>'Notifications','trash'=>'Trash','profile'=>'My Profile']],
   ];
 }
 
@@ -78,6 +78,7 @@ function svg_icon(string $name): string{
   'chev'=>'<polyline points="6 9 12 15 18 9"/>',
   'sound'=>'<path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.6a4.7 4.7 0 0 1 0 6.8"/><path d="M18.4 6a8.4 8.4 0 0 1 0 12"/>',
   'mute'=>'<path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M16 9.5l4 5M20 9.5l-4 5"/>',
+  'trash'=>'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14"/><path d="M10 11v6M14 11v6"/>',
   ];
  $d=$p[$name]??$p['grid'];
  return '<svg viewBox="0 0 24 24" aria-hidden="true">'.$d.'</svg>';
@@ -274,7 +275,7 @@ function nav_icon_key(string $page): string{
    $map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations'=>'calendar','rooms'=>'bed','guests'=>'users','events'=>'event',
   'pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
   'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
-  'reports'=>'bars','users'=>'users','notifications'=>'bell','profile'=>'user'];
+  'reports'=>'bars','users'=>'users','notifications'=>'bell','trash'=>'trash','profile'=>'user'];
  return $map[$page]??'grid';
 }
 

@@ -19,11 +19,10 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   }
   go('guests');
  }
- if($act==='delete'){ flash('Guests are kept on record for audit purposes.','warn'); go('guests'); }
 }
 
 $qtext=trim($_GET['q']??'');
-$list=rows("SELECT g.*, (SELECT COUNT(*) FROM reservations r WHERE r.guest_id=g.id) stays FROM guests g WHERE ?='' OR g.full_name LIKE ? OR g.phone LIKE ? OR g.email LIKE ? ORDER BY g.full_name",[$qtext,$qtext===''?'%x%':'%'.$qtext.'%',$qtext===''?'%x%':'%'.$qtext.'%',$qtext===''?'%x%':'%'.$qtext.'%']);
+$list=rows("SELECT g.*, (SELECT COUNT(*) FROM reservations r WHERE r.guest_id=g.id) stays FROM guests g WHERE g.deleted_at IS NULL AND (?='' OR g.full_name LIKE ? OR g.phone LIKE ? OR g.email LIKE ?) ORDER BY g.full_name",[$qtext,$qtext===''?'%x%':'%'.$qtext.'%',$qtext===''?'%x%':'%'.$qtext.'%',$qtext===''?'%x%':'%'.$qtext.'%']);
 
 $edit=$_GET['edit']??0; $eg=null;
 if($edit) $eg=row('SELECT * FROM guests WHERE id=?',[$edit]);
@@ -35,9 +34,9 @@ echo '<form method="get" style="display:flex;gap:6px;margin-left:auto"><input ty
 echo '<div class="twoCol"><div>';
 echo '<div class="panel"><h2>Guest registry</h2><p class="hint">Every guest who has stayed or booked.</p>';
 echo '<table class="tbl"><thead><tr><th>Name</th><th>Phone</th><th>Nationality</th><th class="num">Stays</th><th></th></tr></thead><tbody>';
-foreach($list as $g){
- echo '<tr><td><b>'.e($g['full_name']).'</b><br><small>'.e($g['email']??'').'</small></td><td>'.e($g['phone']??'-').'</td><td>'.e($g['nationality']??'-').'</td><td class="num">'.(int)$g['stays'].'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=guests&edit='.(int)$g['id'].'">Edit</a></td></tr>';
-}
+ foreach($list as $g){
+  echo '<tr><td><b>'.e($g['full_name']).'</b><br><small>'.e($g['email']??'').'</small></td><td>'.e($g['phone']??'-').'</td><td>'.e($g['nationality']??'-').'</td><td class="num">'.(int)$g['stays'].'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=guests&edit='.(int)$g['id'].'">Edit</a> '.trash_button('guests',(int)$g['id'],'guests').'</td></tr>';
+ }
 if(!count($list)) echo '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No guests found.</td></tr>';
 echo '</tbody></table></div></div>';
 

@@ -12,7 +12,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
  }
 }
 
-$list=rows('SELECT s.*,(SELECT COUNT(*) FROM purchase_orders po WHERE po.supplier_id=s.id) orders FROM suppliers s ORDER BY s.name');
+$list=rows('SELECT s.*,(SELECT COUNT(*) FROM purchase_orders po WHERE po.supplier_id=s.id) orders FROM suppliers s WHERE s.deleted_at IS NULL ORDER BY s.name');
 $edit=(int)($_GET['edit']??0); $es=null; if($edit) $es=row('SELECT * FROM suppliers WHERE id=?',[$edit]);
 
 page_head('Suppliers','suppliers','Approved vendors and purchasing partners');
@@ -20,7 +20,7 @@ echo '<div class="toolbar"><a class="btn" href="'.BASE.'/index.php?page=supplier
 echo '<div class="twoCol"><div>';
 echo '<div class="panel"><h2>Supplier registry</h2><p class="hint">Vendors the hotel procures from.</p>';
 echo '<table class="tbl"><thead><tr><th>Supplier</th><th>Contact</th><th>Phone</th><th class="num">Orders</th><th></th></tr></thead><tbody>';
-foreach($list as $s){ echo '<tr><td><b>'.e($s['name']).'</b><br><small>'.e($s['tax_id']??'').'</small></td><td>'.e($s['contact_person']??'-').'</td><td>'.e($s['phone']??'-').'</td><td class="num">'.(int)$s['orders'].'</td><td>'.($s['active']?badge('Active','ok'):badge('Inactive','grey')).' <a class="btn sm" href="'.BASE.'/index.php?page=suppliers&edit='.(int)$s['id'].'">Edit</a></td></tr>'; }
+foreach($list as $s){ echo '<tr><td><b>'.e($s['name']).'</b><br><small>'.e($s['tax_id']??'').'</small></td><td>'.e($s['contact_person']??'-').'</td><td>'.e($s['phone']??'-').'</td><td class="num">'.(int)$s['orders'].'</td><td>'.($s['active']?badge('Active','ok'):badge('Inactive','grey')).' <a class="btn sm" href="'.BASE.'/index.php?page=suppliers&edit='.(int)$s['id'].'">Edit</a> '.trash_button('suppliers',(int)$s['id'],'suppliers').'</td></tr>'; }
 if(!count($list)) echo '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No suppliers yet.</td></tr>';
 echo '</tbody></table></div></div>';
 

@@ -204,10 +204,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     }elseif(!$inScope($r)){
       flash('That post does not belong to you. Ask an editor to change it.','bad');
     }else{
-      q('DELETE FROM news_posts WHERE id=?',[$id]);
-      news_delete_upload($r['image']??'');
-      audit('news_delete','news_posts',$id,['slug'=>$r['slug'],'title'=>$r['title']]);
-      flash('Post deleted.');
+      q('UPDATE news_posts SET deleted_at=NOW(),deleted_by=? WHERE id=?',[(int)($u['id']??null),$id]);
+      audit('trash','news_posts',$id,['slug'=>$r['slug'],'title'=>$r['title']]);
+      flash('News post moved to Trash.');
     }
     go('news');
   }
@@ -341,11 +340,13 @@ if($act==='list'){
   if($fcat!==''){ $where[]='category=?'; $args[]=$fcat; }
   if($fstatus!==''){ $where[]='status=?'; $args[]=$fstatus; }
   if($fpinned==='1'){ $where[]='pinned=1'; }
+  $where[]='deleted_at IS NULL';
   // Everything this member sees is already theirs: a department reads only its
   // own posts, an editor only the kinds it may write, an owner the whole desk.
   $scope=''; $sargs=[];
   if($isContrib){ $where[]='created_by=?'; $args[]=(int)($u['id']??0); $scope=' AND created_by=?'; $sargs[]=(int)($u['id']??0); }
   elseif(!$canAll){ $in=implode(',',array_fill(0,count($allowedCats),'?')); $where[]='category IN('.$in.')'; foreach($allowedCats as $ac) $args[]=$ac; $scope=' AND category IN('.$in.')'; $sargs=$allowedCats; }
+  $scope.=' AND deleted_at IS NULL';
   $sql='SELECT * FROM news_posts'.($where?' WHERE '.implode(' AND ',$where):'').' ORDER BY pinned DESC, publish_at DESC, id DESC LIMIT 300';
 
   $sub=$canAll
@@ -358,8 +359,8 @@ if($act==='list'){
   kpi_card('Published posts',(string)val("SELECT COUNT(*) FROM news_posts WHERE status='published'".$scope,$sargs),'Visible on the website','ok');
   kpi_card('Pinned',(string)val("SELECT COUNT(*) FROM news_posts WHERE pinned=1 AND status='published'".$scope,$sargs),'Featured on the website','gold');
   if($canAll){
-    kpi_card('Recruitment',(string)val("SELECT COUNT(*) FROM news_posts WHERE category='recruitment' AND status='published'",[]),'Open vacancies','warn');
-    kpi_card('Employee of the month',(string)val("SELECT COUNT(*) FROM news_posts WHERE category='employee' AND status='published'",[]),'Celebrated colleagues','blue');
+    kpi_card('Recruitment',(string)val("SELECT COUNT(*) FROM news_posts WHERE category='recruitment' AND status='published' AND deleted_at IS NULL",[]),'Open vacancies','warn');
+    kpi_card('Employee of the month',(string)val("SELECT COUNT(*) FROM news_posts WHERE category='employee' AND status='published' AND deleted_at IS NULL",[]),'Celebrated colleagues','blue');
   }else{
     kpi_card('Drafts',(string)val("SELECT COUNT(*) FROM news_posts WHERE status='draft'".$scope,$sargs),'Not on the website yet','grey');
     kpi_card('Reach',(string)val("SELECT COALESCE(SUM(views),0) FROM news_posts WHERE status='published'".$scope,$sargs),'Reads on the website','blue');
@@ -406,7 +407,7 @@ if($act==='list'){
     echo '<td style="white-space:nowrap">';
     echo '<a class="btn sm blue" href="'.e($link).'" target="_blank" rel="noopener">View</a> ';
     echo '<a class="btn sm navy" href="'.BASE.'/index.php?page=news&act=edit&id='.(int)$r['id'].'">Edit</a> ';
-    form_open('news','delete',['id'=>$r['id']],['style'=>'display:inline','onsubmit'=>"return confirm('Delete this post? This cannot be undone.')"]);
+    form_open('news','delete',['id'=>$r['id']],['style'=>'display:inline','onsubmit'=>"return confirm('Move this post to the Trash? You can restore it from the Trash page.')"]);
     echo '<button class="btn sm danger" type="submit">Delete</button>';
     form_close();
     echo '</td>';

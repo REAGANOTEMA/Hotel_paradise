@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 11, 2026 at 08:55 AM
+-- Generation Time: Oct 12, 2026 at 07:48 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -113,7 +113,15 @@ INSERT INTO `audit_logs` (`id`, `hotel_id`, `user_id`, `action`, `entity_type`, 
 (30, 1, 1, 'logout', 'user', 1, NULL, NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 20:52:19'),
 (31, 1, NULL, 'web_payment', 'payments', 12, '{\"provider_reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"reference\":\"HPN-20261010-001\",\"method\":\"mtn_momo\",\"amount\":264960,\"status\":\"pending\"}', NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 20:54:40'),
 (32, 1, NULL, 'web_payment_settled', 'payments', 12, '{\"provider_reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"reference\":\"HPN-20261010-001\",\"method\":\"mtn_momo\",\"amount\":264960,\"status\":\"successful\"}', NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-10 20:54:41'),
-(33, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-11 03:12:11');
+(33, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.3.148', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-11 03:12:11'),
+(34, 1, 2, 'login', 'user', 2, NULL, NULL, '41.210.143.6', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-11 09:12:36'),
+(35, 1, NULL, 'web_payment', 'payments', 13, '{\"provider_reference\":\"PAY-20261011-001\",\"source\":\"booking\",\"reference\":\"HPN-20261011-002\",\"method\":\"mtn_momo\",\"amount\":324990,\"status\":\"pending\"}', NULL, '41.210.143.202', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-11 09:48:21'),
+(36, 1, NULL, 'web_payment_settled', 'payments', 13, '{\"provider_reference\":\"PAY-20261011-001\",\"source\":\"booking\",\"reference\":\"HPN-20261011-002\",\"method\":\"mtn_momo\",\"amount\":324990,\"status\":\"successful\"}', NULL, '41.210.143.202', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-11 09:48:22'),
+(37, 1, 1, 'login', 'user', 1, NULL, NULL, '41.75.179.202', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-11 13:24:15'),
+(38, 1, NULL, 'web_order', 'order', 4, '{\"order_number\":\"ORD-20261011-001\",\"subtotal\":15000,\"service_charge\":525,\"total\":15525,\"customer\":\"mama mafalda\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '41.210.147.80', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-11 14:46:23'),
+(39, 1, NULL, 'web_event', 'event_requests', 2, '{\"request_number\":\"EVT-20261011-001\",\"event_type\":\"Team retreat\",\"event_date\":\"2026-10-17\",\"guests\":100,\"venue\":\"The Nile Hall\",\"phone\":\"0772514889\"}', NULL, '41.210.147.80', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-11 14:49:03'),
+(40, 1, 2, 'login', 'user', 2, NULL, NULL, '41.210.147.80', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-11 14:49:59'),
+(41, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.23.138', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36', '2026-10-12 00:41:29');
 
 -- --------------------------------------------------------
 
@@ -251,7 +259,8 @@ CREATE TABLE `customers` (
 INSERT INTO `customers` (`id`, `hotel_id`, `full_name`, `email`, `phone`, `password_hash`, `google_sub`, `status`, `created_at`, `updated_at`, `last_login_at`, `profile_image`, `date_of_birth`, `gender`, `nationality`, `national_id`, `address`, `city`, `country`, `postcode`, `company`, `job_title`, `preferred_language`, `dietary_preferences`, `room_preferences`, `marketing_opt_in`, `emergency_contact_name`, `emergency_contact_phone`, `notes`) VALUES
 (1, 1, 'Otema Reagan', 'reaganotema2022@gmail.com', '0772514889', '$2y$10$Tki76GP1jf405y9UUUI1Ret6Xw9sdaPrHVODp.fYu0P7ib/JOSl9.', NULL, 'active', '2026-10-09 12:25:49', '2026-10-09 15:18:33', '2026-10-09 15:18:33', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL),
 (2, 1, 'Andrew wakabi', 'andrew@gmail.com', '0772514889', '$2y$10$Mi0P4grIsraJuxS5bIgnXuPHhGnH4DMnDGOK3N.UWlY06xPHcfzyC', NULL, 'active', '2026-10-09 16:54:56', '2026-10-09 16:55:09', '2026-10-09 16:55:09', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL),
-(3, 1, 'Okot Denis', 'denisokot47@gmail.com', '0705761090', '$2y$10$0x18s2lSk1oUg7pNubR1TuGeBY.CUHBzCAt6tvD7PomQzOzr/ExTW', NULL, 'active', '2026-10-10 19:46:56', '2026-10-10 19:47:13', '2026-10-10 19:47:13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL);
+(3, 1, 'Okot Denis', 'denisokot47@gmail.com', '0705761090', '$2y$10$0x18s2lSk1oUg7pNubR1TuGeBY.CUHBzCAt6tvD7PomQzOzr/ExTW', NULL, 'active', '2026-10-10 19:46:56', '2026-10-10 19:47:13', '2026-10-10 19:47:13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL),
+(4, 1, 'Reagan Otema', 'reaganotemas@gmail.com', '0772514889', '$2y$10$uu9Ag/WbheyjzMV18aVJyeSCZfe8nXn7B6ODG1nnowKMpSwjkak1i', NULL, 'active', '2026-10-11 12:45:41', '2026-10-11 12:45:51', '2026-10-11 12:45:51', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -310,7 +319,8 @@ CREATE TABLE `customer_signin_attempts` (
 --
 
 INSERT INTO `customer_signin_attempts` (`id`, `ip_address`, `email`, `attempts`, `window_at`) VALUES
-(1, '102.86.9.118', 'reaganotema2022@gmail.com', 2, '2026-10-09 12:25:33');
+(1, '102.86.9.118', 'reaganotema2022@gmail.com', 2, '2026-10-09 12:25:33'),
+(2, '41.210.143.202', 'reaganotemas@gmail.com', 2, '2026-10-11 12:45:21');
 
 -- --------------------------------------------------------
 
@@ -336,7 +346,8 @@ INSERT INTO `customer_tokens` (`id`, `customer_id`, `token_hash`, `purpose`, `ex
 (2, 1, 'affe6ada25f3e8f97db1b4686af3667b356f947f17a595e07a4fec879543f87c', 'session', '2026-11-08 12:25:58', '2026-10-09 12:25:58', '2026-10-09 20:29:34'),
 (3, 1, '1d0e1c469538fed09b8daadb8ba6350d585c5ad7d2ea4f85277663247f6745c0', 'session', '2026-11-08 15:18:33', '2026-10-09 15:18:33', NULL),
 (5, 2, 'bd029a38119fa03d18c1793b7ec37e63486786b19ff5882188e1d52cb729b470', 'session', '2026-11-08 16:55:09', '2026-10-09 16:55:09', NULL),
-(7, 3, 'f0a84ae1d463eea025b809a5c8cce8bcfb5e10858621fc93db1401b89788e08e', 'session', '2026-11-09 19:47:13', '2026-10-10 19:47:13', '2026-10-10 19:50:27');
+(7, 3, 'f0a84ae1d463eea025b809a5c8cce8bcfb5e10858621fc93db1401b89788e08e', 'session', '2026-11-09 19:47:13', '2026-10-10 19:47:13', '2026-10-10 19:50:27'),
+(9, 4, '848d0c4e9859f56f75e3c54fe906b7a720b06fbf575eb8f21089c39b52aff70b', 'session', '2026-11-10 12:45:51', '2026-10-11 12:45:51', '2026-10-11 12:45:51');
 
 -- --------------------------------------------------------
 
@@ -544,15 +555,18 @@ CREATE TABLE `event_requests` (
   `message` text DEFAULT NULL,
   `status` varchar(20) NOT NULL DEFAULT 'new',
   `created_at` datetime NOT NULL,
-  `updated_at` datetime DEFAULT NULL
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `event_requests`
 --
 
-INSERT INTO `event_requests` (`id`, `hotel_id`, `request_number`, `full_name`, `phone`, `email`, `event_type`, `event_date`, `guests`, `venue`, `message`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, 'EVT-20261010-001', 'Reagan Otema', '0772514889', 'reaganotemas@gmail.com', 'Conference / seminar', '2026-10-11', 36, 'The Nile Hall', 'confrence', 'new', '2026-10-10 15:29:44', NULL);
+INSERT INTO `event_requests` (`id`, `hotel_id`, `request_number`, `full_name`, `phone`, `email`, `event_type`, `event_date`, `guests`, `venue`, `message`, `status`, `created_at`, `updated_at`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 'EVT-20261010-001', 'Reagan Otema', '0772514889', 'reaganotemas@gmail.com', 'Conference / seminar', '2026-10-11', 36, 'The Nile Hall', 'confrence', 'new', '2026-10-10 15:29:44', NULL, NULL, NULL),
+(2, 1, 'EVT-20261011-001', 'Mafalda', '0772514889', 'reaganotemas@gmail.com', 'Team retreat', '2026-10-17', 100, 'The Nile Hall', 'fundraising', 'new', '2026-10-11 17:49:03', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -575,7 +589,9 @@ CREATE TABLE `expenses` (
   `paid_at` datetime DEFAULT NULL,
   `payment_method` varchar(50) DEFAULT NULL,
   `references_txt` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
@@ -597,7 +613,9 @@ CREATE TABLE `facility_enquiries` (
   `message` text DEFAULT NULL,
   `status` varchar(20) NOT NULL DEFAULT 'new',
   `created_at` datetime NOT NULL,
-  `updated_at` datetime DEFAULT NULL
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -707,60 +725,62 @@ CREATE TABLE `guests` (
   `id_type` varchar(50) DEFAULT NULL,
   `id_number` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `guests`
 --
 
-INSERT INTO `guests` (`id`, `user_id`, `hotel_id`, `full_name`, `phone`, `email`, `nationality`, `id_type`, `id_number`, `created_at`, `updated_at`) VALUES
-(1, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
-(2, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
-(3, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
-(4, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(5, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
-(6, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
-(7, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
-(8, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
-(9, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(10, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
-(11, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
-(12, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
-(13, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
-(14, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(15, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
-(16, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
-(17, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
-(18, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
-(19, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(20, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
-(21, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
-(22, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
-(23, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
-(24, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(25, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
-(26, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
-(27, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
-(28, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
-(29, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(30, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
-(31, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
-(32, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
-(33, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
-(34, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(35, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
-(36, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
-(37, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
-(38, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
-(39, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(40, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
-(41, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL),
-(42, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL),
-(43, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL),
-(44, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL),
-(45, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL),
-(46, NULL, 1, 'Otema Reagan', '0772514889', 'reaganotema2022@gmail.com', NULL, NULL, NULL, '2026-10-09 09:26:27', NULL);
+INSERT INTO `guests` (`id`, `user_id`, `hotel_id`, `full_name`, `phone`, `email`, `nationality`, `id_type`, `id_number`, `created_at`, `updated_at`, `deleted_at`, `deleted_by`) VALUES
+(1, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL, NULL, NULL),
+(2, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL, NULL, NULL),
+(3, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
+(4, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
+(5, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
+(6, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL, NULL, NULL),
+(7, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL, NULL, NULL),
+(8, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
+(9, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
+(10, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
+(11, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL, NULL, NULL),
+(12, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL, NULL, NULL),
+(13, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
+(14, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
+(15, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
+(16, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL, NULL, NULL),
+(17, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL, NULL, NULL),
+(18, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
+(19, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
+(20, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
+(21, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL, NULL, NULL),
+(22, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL, NULL, NULL),
+(23, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
+(24, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
+(25, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
+(26, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL, NULL, NULL),
+(27, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL, NULL, NULL),
+(28, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
+(29, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
+(30, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
+(31, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL, NULL, NULL),
+(32, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL, NULL, NULL),
+(33, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
+(34, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
+(35, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
+(36, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL, NULL, NULL),
+(37, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL, NULL, NULL),
+(38, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
+(39, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
+(40, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
+(41, NULL, 1, 'Grace Akello', '+256 770 111 001', 'grace.akello@example.com', 'Ugandan', 'National ID', 'CM11-8890', NULL, NULL, NULL, NULL),
+(42, NULL, 1, 'John Mukasa', '+256 770 111 002', 'john.mukasa@example.com', 'Ugandan', 'Passport', 'UG-P-4471', NULL, NULL, NULL, NULL),
+(43, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
+(44, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
+(45, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
+(46, NULL, 1, 'Otema Reagan', '0772514889', 'reaganotema2022@gmail.com', NULL, NULL, NULL, '2026-10-09 09:26:27', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -948,29 +968,31 @@ CREATE TABLE `inventory_items` (
   `name` varchar(190) NOT NULL,
   `unit` varchar(40) NOT NULL DEFAULT 'each',
   `reorder_level` decimal(14,2) DEFAULT 0.00,
-  `active` tinyint(1) DEFAULT 1
+  `active` tinyint(1) DEFAULT 1,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `inventory_items`
 --
 
-INSERT INTO `inventory_items` (`id`, `hotel_id`, `category_id`, `code`, `name`, `unit`, `reorder_level`, `active`) VALUES
-(1, 1, 1, 'NVG-BEV-001', 'Nile Special Beer', 'carton', 6.00, 1),
-(2, 1, 1, 'NVG-BEV-002', 'Coca Cola', 'crate', 4.00, 1),
-(3, 1, 1, 'NVG-BEV-003', 'Bottled Water 500ml', 'carton', 8.00, 1),
-(4, 1, 2, 'NVG-KIT-001', 'Cooking Oil 6L', 'jerry', 3.00, 1),
-(5, 1, 2, 'NVG-KIT-002', 'Fresh Tomatoes', 'kg', 10.00, 1),
-(6, 1, 2, 'NVG-KIT-003', 'Beef', 'kg', 12.00, 1),
-(7, 1, 2, 'NVG-KIT-004', 'Mixing Flour 50kg', 'bag', 2.00, 1),
-(8, 1, 2, 'NVG-KIT-005', 'Fresh Eggs', 'tray', 6.00, 1),
-(9, 1, 3, 'NVG-HSK-001', 'Laundry Bar Soap', 'bar', 20.00, 1),
-(10, 1, 3, 'NVG-HSK-002', 'Toilet Paper', 'roll', 60.00, 1),
-(11, 1, 3, 'NVG-HSK-003', 'All Purpose Cleaner', 'litre', 8.00, 1),
-(12, 1, 4, 'NVG-MNT-001', 'Electrical Tape', 'roll', 4.00, 1),
-(13, 1, 4, 'NVG-MNT-002', 'LED Bulb 9W', 'piece', 10.00, 1),
-(14, 1, 5, 'NVG-STN-001', 'A4 Printer Paper', 'ream', 5.00, 1),
-(15, 1, 5, 'NVG-STN-002', 'Receipt Roll 80mm', 'roll', 20.00, 1);
+INSERT INTO `inventory_items` (`id`, `hotel_id`, `category_id`, `code`, `name`, `unit`, `reorder_level`, `active`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 1, 'NVG-BEV-001', 'Nile Special Beer', 'carton', 6.00, 1, NULL, NULL),
+(2, 1, 1, 'NVG-BEV-002', 'Coca Cola', 'crate', 4.00, 1, NULL, NULL),
+(3, 1, 1, 'NVG-BEV-003', 'Bottled Water 500ml', 'carton', 8.00, 1, NULL, NULL),
+(4, 1, 2, 'NVG-KIT-001', 'Cooking Oil 6L', 'jerry', 3.00, 1, NULL, NULL),
+(5, 1, 2, 'NVG-KIT-002', 'Fresh Tomatoes', 'kg', 10.00, 1, NULL, NULL),
+(6, 1, 2, 'NVG-KIT-003', 'Beef', 'kg', 12.00, 1, NULL, NULL),
+(7, 1, 2, 'NVG-KIT-004', 'Mixing Flour 50kg', 'bag', 2.00, 1, NULL, NULL),
+(8, 1, 2, 'NVG-KIT-005', 'Fresh Eggs', 'tray', 6.00, 1, NULL, NULL),
+(9, 1, 3, 'NVG-HSK-001', 'Laundry Bar Soap', 'bar', 20.00, 1, NULL, NULL),
+(10, 1, 3, 'NVG-HSK-002', 'Toilet Paper', 'roll', 60.00, 1, NULL, NULL),
+(11, 1, 3, 'NVG-HSK-003', 'All Purpose Cleaner', 'litre', 8.00, 1, NULL, NULL),
+(12, 1, 4, 'NVG-MNT-001', 'Electrical Tape', 'roll', 4.00, 1, NULL, NULL),
+(13, 1, 4, 'NVG-MNT-002', 'LED Bulb 9W', 'piece', 10.00, 1, NULL, NULL),
+(14, 1, 5, 'NVG-STN-001', 'A4 Printer Paper', 'ream', 5.00, 1, NULL, NULL),
+(15, 1, 5, 'NVG-STN-002', 'Receipt Roll 80mm', 'roll', 20.00, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1266,7 +1288,24 @@ INSERT INTO `menu_categories` (`id`, `hotel_id`, `outlet`, `name`, `eyebrow`, `b
 (30, 1, 'restaurant', 'Desserts', 'SWEET FINISH', 'Fresh fruit, ice cream and a little sugar.', 'fruits-image.jpg', 140),
 (31, 1, 'restaurant', 'Pizzeria Section', 'PIZZA', 'Baked to order on a stone base, 12 inch.', 'section-pizza.jpg', 150),
 (129, 1, 'bar', 'Beers & Ciders', NULL, NULL, NULL, 0),
-(130, 1, 'bar', 'Wines & Spirits', NULL, NULL, NULL, 0);
+(130, 1, 'bar', 'Wines & Spirits', NULL, NULL, NULL, 0),
+(224, 1, 'restaurant', 'Starters & Salads', 'To begin', 'Fresh greens, tossed to order and dressed at the table.', 'caesar-salad.jpg', 10),
+(225, 1, 'restaurant', 'Soups', 'Warmed through', 'Made fresh every morning and served with bread.', 'mushroom-soup.jpg', 20),
+(226, 1, 'restaurant', 'Omelets & Snacks', 'From the pan', 'All omelets are served with chips.', 'spanish-omelet.jpg', 30),
+(227, 1, 'restaurant', 'Sandwiches', 'The sandwich corner', 'All sandwiches come with chips or salad.', 'classic-blt-sandwich.jpg', 40),
+(228, 1, 'restaurant', 'Rolex Wraps & Burritos', 'Rolled to order', 'Warm tortillas, filled as you like them.', 'beef-rolex.jpg', 60),
+(229, 1, 'restaurant', 'House Specials & Platters', 'For the table', 'Platters built for sharing, with a side of your choice.', 'mixed-grill-platter.jpg', 80),
+(230, 1, 'restaurant', 'Chicken Dishes', 'Poultry', 'Marinated overnight, then grilled, pan fried or tossed in sauce.', 'bbq-chicken-drumstick.jpg', 90),
+(231, 1, 'restaurant', 'Beef & Goat Main Courses', 'Steaks and grills', 'Prime beef fillet, tender goat and the hunter’s favourites.', 'king-steak.jpg', 100),
+(232, 1, 'restaurant', 'Pork Courses', 'Pork', 'Slow roasted, glazed and grilled to your liking.', 'honey-mustard-glazed-pork-ribs.jpg', 110),
+(233, 1, 'restaurant', 'Pizzeria', 'Pizza', 'Baked to order on a stone base. A whole meal on its own, add garlic bread or a salad.', 'section-pizza.jpg', 120),
+(234, 1, 'restaurant', 'Italian Pastas', 'From Napoli', 'Pasta choices: spaghetti, penne, fettuccine, farfalle or spirulina.', 'pasta-a-la-carbonara.jpg', 130),
+(235, 1, 'restaurant', 'Asian & Indian Curries', 'Far East and sub continent', 'Non veg curries are served with a choice of 1 or 2 accompaniments.', 'chicken-coconut-curry.jpg', 140),
+(236, 1, 'restaurant', 'Chinese Corner', 'Wok and steam', 'Sizzling plates, deep fried bites and the full sweet and sour house.', 'sweet-and-sour-chicken.jpg', 150),
+(237, 1, 'restaurant', 'Sizzler Hot Plates', 'On a hot plate', 'Brought to the table on a sizzling iron, with rice.', 'sizzler-beef-plate.jpg', 160),
+(238, 1, 'restaurant', 'Rice & Noodles', 'Side options', 'Everything to round off a main course.', 'chicken-fried-rice.jpg', 170),
+(239, 1, 'restaurant', 'Accompaniments & Extras', 'Side add ons', 'Added to any main course, priced per portion.', 'masala-chips.jpg', 180),
+(240, 1, 'restaurant', 'Desserts & Bakery', 'Sweet finish', 'Cakes, pastries and fruit from our own bakery.', 'chocolate-cake-slice.jpg', 190);
 
 -- --------------------------------------------------------
 
@@ -1397,7 +1436,212 @@ INSERT INTO `menu_items` (`id`, `hotel_id`, `category_id`, `name`, `description`
 (2349, 1, 31, 'Bolognese', 'Spicy minced meat, tomato and mozzarella.', NULL, 'bolognese.jpg', 'Pizza', 90, 1, 0),
 (2350, 1, 31, 'Capricciosa', 'Salami, black olives, artichokes, capers, mushroom and mozzarella.', 30000.00, 'capricciosa.jpg', 'Pizza', 100, 1, 0),
 (2351, 1, 31, 'Calzone', 'Minced meat, green pepper and capsicum rolled in a half moon of bread.', 30000.00, 'calzone-pizza.jpg', 'Calzone', 110, 1, 0),
-(2352, 1, 31, 'Assorted Meat and Salami', 'Assorted meat, salami, mushroom, green pepper, onion and mozzarella.', 35000.00, 'assorted-meat-and-salami.webp', 'Pizza', 120, 1, 0);
+(2352, 1, 31, 'Assorted Meat and Salami', 'Assorted meat, salami, mushroom, green pepper, onion and mozzarella.', 35000.00, 'assorted-meat-and-salami.webp', 'Pizza', 120, 1, 0),
+(2353, 1, 224, 'Mixed Garden Salad', 'Mixed lettuce, cucumber, tomatoes, onions and avocado.', 12000.00, '', 'Starters & Salads', 10, 1, 1),
+(2354, 1, 224, 'Greek Salad', 'Tomatoes, red onions, cucumber, lettuce, feta cheese, black olives and red cabbage.', 15000.00, '', 'Starters & Salads', 20, 1, 1),
+(2355, 1, 224, 'Avocado & Lettuce Salad', 'A well designed platter of lettuce, avocado, onions, cherry tomatoes and carrot shavings, finished with 1,000 Island dressing.', 15000.00, '', 'Starters & Salads', 30, 1, 1),
+(2356, 1, 224, 'Chicken Oriental Salad', 'Chicken with mayo, cucumber, pineapple, celery and tomatoes.', 20000.00, '', 'Starters & Salads', 50, 1, 1),
+(2357, 1, 224, 'Caesar Salad', 'Grilled chicken cubes, avocado, carrot, lettuce, tomato, croutons and Parmesan cheese shavings.', 22000.00, '', 'Starters & Salads', 60, 1, 1),
+(2358, 1, 224, 'Chef Salad', 'Crunchy lettuce, chicken flakes, beef strips, tomatoes, onions and bell peppers, topped with boiled Irish potatoes and a hard boiled egg.', 22000.00, '', 'Starters & Salads', 70, 1, 1),
+(2359, 1, 224, 'Grilled Vegetables Salad', 'Assorted seasoned grilled vegetables with bell pepper, carrots, zucchini and onions, laced with cashew nut flakes and dates.', 18000.00, '', 'Starters & Salads', 80, 1, 1),
+(2360, 1, 225, 'Clear Vegetable Broth', 'Fresh homemade vegetable soup, served with a garlic bread roll.', 12000.00, '', 'Soups', 20, 1, 1),
+(2361, 1, 225, 'Cream of Tomato Soup', 'A puree of tomatoes finished with dairy cream, accompanied with croutons.', 12000.00, '', 'Soups', 30, 1, 1),
+(2362, 1, 225, 'Ginger Carrot Soup', 'A creamy soup with a hint of ginger and dairy cream, accompanied with toast.', 12000.00, '', 'Soups', 40, 1, 1),
+(2363, 1, 225, 'Clear Beef Noodle Soup', 'Fresh aromatic clear soup comprising julienne of beef, zucchini, carrots, onions and fresh noodles.', 15000.00, '', 'Soups', 50, 1, 1),
+(2364, 1, 225, 'Clear Chicken Noodle Soup', 'Fresh aromatic clear soup comprising julienne of chicken, zucchini, carrots, onions and fresh noodles.', 15000.00, '', 'Soups', 60, 1, 1),
+(2365, 1, 226, 'French Cinnamon Toast', 'Garnished with mini fruit.', 12000.00, '', 'Omelets & Snacks', 10, 1, 1),
+(2366, 1, 226, 'Eggs and Toast', 'Two eggs cooked to your style with home fries.', 12000.00, '', 'Omelets & Snacks', 20, 1, 1),
+(2367, 1, 226, 'Mushroom and Cheese Omelet', 'Savory mushroom and cheddar, topped with a grilled tomato.', 15000.00, '', 'Omelets & Snacks', 30, 1, 1),
+(2368, 1, 226, 'Mexican Omelet', 'Mushroom, green pepper, cheese, tomato and green chili.', 15000.00, '', 'Omelets & Snacks', 40, 1, 1),
+(2369, 1, 226, 'Bacon Cheese Omelet', 'Crunchy bacon in three eggs, infused with cheese and a touch of pepper spice.', 18000.00, '', 'Omelets & Snacks', 60, 1, 1),
+(2370, 1, 226, 'Yummy Chicken Omelet', 'Diced chicken with a hint of cheese, infused with onions and tomatoes.', 17000.00, '', 'Omelets & Snacks', 80, 1, 1),
+(2371, 1, 226, 'Chicken Gizzards', 'Boiled, fried and finished in homemade tomato sauce. Served with chips.', 18000.00, '', 'Omelets & Snacks', 90, 1, 1),
+(2372, 1, 226, 'Fish Fingers', 'Tender breaded fish, served with tartar sauce.', 25000.00, '', 'Omelets & Snacks', 100, 1, 1),
+(2373, 1, 226, 'Mushroom Fries', 'Crispy chips tossed in brown mushroom sauce.', 12000.00, '', 'Omelets & Snacks', 130, 1, 1),
+(2374, 1, 226, 'Plain Chips with Garnish', 'Plain chips with a garnish.', 10000.00, '', 'Omelets & Snacks', 140, 1, 1),
+(2375, 1, 226, 'Masala Chips', 'Chips tossed in hot or mild Indian spices, tomato sauce and coriander leaves.', 15000.00, '', 'Omelets & Snacks', 150, 1, 1),
+(2376, 1, 226, 'Bacon Cheese Fries', 'Diced bacon, spring onions and tomato sauce, tossed with chips and finished with cheese.', 22000.00, '', 'Omelets & Snacks', 160, 1, 1),
+(2377, 1, 226, 'Chapatti Plain', 'A plain hand rolled chapatti.', 6000.00, '', 'Omelets & Snacks', 170, 1, 1),
+(2378, 1, 226, 'Vegetable Spring Rolls', 'Vegetable spring rolls.', 5000.00, '', 'Omelets & Snacks', 180, 1, 1),
+(2379, 1, 226, 'Pair of Chicken Spring Rolls', 'Two chicken spring rolls.', 6000.00, '', 'Omelets & Snacks', 190, 1, 1),
+(2380, 1, 226, 'Trio of Samosas (Beef)', 'Three pieces of beef samosas.', 5000.00, '', 'Omelets & Snacks', 200, 1, 1),
+(2381, 1, 226, 'Trio of Samosas (Vegetable)', 'Three pieces of vegetable samosas.', 5000.00, '', 'Omelets & Snacks', 210, 1, 1),
+(2382, 1, 226, 'Chicken Samosas (Pair)', '', 5000.00, '', 'Omelets & Snacks', 220, 1, 1),
+(2383, 1, 227, 'Tomato, Cheese & Avocado Sandwich', 'Grated cheddar cheese, tomatoes, lettuce and avocado on whole wheat, white bread or French loaf.', 18000.00, '', 'Sandwiches', 10, 1, 1),
+(2384, 1, 227, 'Pulled Pork Sandwich', 'Pork flakes in mayo or sweet chili sauce, lettuce, brown onions, tomatoes and cucumber pickles.', 24000.00, '', 'Sandwiches', 20, 1, 1),
+(2385, 1, 227, 'Chicken Salad Sandwich', 'Chicken with mayo, lettuce, onions, celery and tomatoes on a three decker toast.', 24000.00, '', 'Sandwiches', 30, 1, 1),
+(2386, 1, 227, 'Steak Cheese Sandwich', 'Tender steak with cheese, tomato and lettuce.', 25000.00, '', 'Sandwiches', 50, 1, 1),
+(2387, 1, 227, 'BBQ Beef Sandwich', 'Beef strips sautéed with vegetables, onions, bell pepper and mushroom in tangy BBQ sauce.', 25000.00, '', 'Sandwiches', 60, 1, 1),
+(2388, 1, 227, 'Tuna Melt Sandwich', 'Tuna chunks with mayo, red onions, tomatoes and lettuce.', 25000.00, '', 'Sandwiches', 70, 1, 1),
+(2389, 1, 19, 'BBQ Burger', 'A grilled beef or chicken patty finished in a tangy BBQ sauce.', 27000.00, '', 'Burgers', 10, 1, 1),
+(2390, 1, 19, 'Chicken Burger', 'A grilled regular or Cajun chicken patty with lettuce, onions, tomatoes and chili mayo.', 25000.00, '', 'Burgers', 20, 1, 1),
+(2391, 1, 19, 'Beef Burger', 'A grilled regular or Cajun beef patty with lettuce, onions, tomatoes and chili mayo.', 25000.00, '', 'Burgers', 30, 1, 1),
+(2392, 1, 19, 'Mushroom & Cheese Burger', 'A grilled beef patty topped with melted cheese and a creamy mushroom sauce.', 22000.00, '', 'Burgers', 50, 1, 1),
+(2393, 1, 19, 'King Burger', 'A double patty with bacon, cheese, caramelized onions, lettuce, pickles and tomato.', 35000.00, '', 'Burgers', 60, 1, 1),
+(2394, 1, 228, 'Beef Rolex', 'A combination of eggs, beef, red onions, tomatoes and green pepper.', 15000.00, '', 'Rolex Wraps & Burritos', 20, 1, 1),
+(2395, 1, 228, 'Chicken Rolex', 'A combination of three eggs, grilled chicken cubes, red onions, tomatoes and green pepper.', 15000.00, '', 'Rolex Wraps & Burritos', 30, 1, 1),
+(2396, 1, 228, 'Classic BLT Wrap', 'Crispy bacon, lettuce and tomatoes in a tortilla.', 17000.00, '', 'Rolex Wraps & Burritos', 50, 1, 1),
+(2397, 1, 228, 'Chicken / Beef Burrito', 'Grilled tender strips with white onions wrapped in a tortilla, topped with cheese and served with guacamole.', 27000.00, '', 'Rolex Wraps & Burritos', 60, 1, 1),
+(2398, 1, 228, 'Fajita Chicken / Beef', 'Sautéed with coriander, onions and oyster sauce. Your choice of tortilla or sizzler plate, served with rice.', 30000.00, '', 'Rolex Wraps & Burritos', 70, 1, 1),
+(2399, 1, 23, 'Fish Florentine', 'Grilled tilapia fillet with creamy spinach and cheese.', 32000.00, '', 'Fisherman\'s Offer', 10, 1, 1),
+(2400, 1, 23, 'Poached Fish', 'Tilapia fillet gently cooked in rich fish stock with fresh mushrooms and potatoes.', 30000.00, '', 'Fisherman\'s Offer', 20, 1, 1),
+(2401, 1, 23, 'Catch of the Day (Nile Perch)', 'Pan grilled Nile perch fillet.', 32000.00, 'nile-parch-catch-for-a-day.jpg', 'Fisherman\'s Offer', 40, 1, 1),
+(2402, 1, 23, 'Deep Fried Fish Fillet', 'A coated tilapia fish fillet.', 32000.00, '', 'Fisherman\'s Offer', 50, 1, 1),
+(2403, 1, 23, 'Pan Grilled Fish Fillet', 'A coated tilapia fish fillet.', 32000.00, '', 'Fisherman\'s Offer', 60, 1, 1),
+(2404, 1, 23, 'Medium Fried Tilapia', 'Medium fried tilapia served with chips.', 38000.00, '', 'Fisherman\'s Offer', 90, 1, 1),
+(2405, 1, 23, 'Medium Steamed Tilapia', 'Medium steamed tilapia served with chips.', 38000.00, '', 'Fisherman\'s Offer', 100, 1, 1),
+(2406, 1, 23, 'Premium Whole Fish', 'Steamed or fried whole fish.', 37000.00, '', 'Fisherman\'s Offer', 120, 1, 1),
+(2407, 1, 23, 'Grilled Premium Fish', 'Whole oven grilled oil free premium tilapia.', 43000.00, '', 'Fisherman\'s Offer', 130, 1, 1),
+(2408, 1, 23, 'Large Fried Tilapia', 'Large fried tilapia served with chips.', 43000.00, '', 'Fisherman\'s Offer', 140, 1, 1),
+(2409, 1, 23, 'Large Steamed Tilapia', 'Large steamed tilapia served with chips.', 43000.00, '', 'Fisherman\'s Offer', 150, 1, 1),
+(2410, 1, 23, 'King Wet Fried Tilapia', 'King wet fried tilapia.', 45000.00, '', 'Fisherman\'s Offer', 160, 1, 1),
+(2411, 1, 23, 'King Size Whole Fish', 'A fish fillet, English, grilled or crumbed, on spinach drizzled with mushroom sauce.', 42000.00, '', 'Fisherman\'s Offer', 170, 1, 1),
+(2412, 1, 23, 'Grilled King Fish', 'Whole oven grilled oil free king tilapia.', 48000.00, '', 'Fisherman\'s Offer', 180, 1, 1),
+(2413, 1, 23, 'Fried King Prawns', 'King prawns prepared in a seasoned butter sauce.', 45000.00, '', 'Fisherman\'s Offer', 190, 1, 1),
+(2414, 1, 23, 'Golden Grilled Salmon', 'Grilled salmon on a bed of spinach, laced with white mushroom sauce.', 45000.00, '', 'Fisherman\'s Offer', 200, 1, 1),
+(2415, 1, 230, 'Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, served with mushroom sauce.', 30000.00, '', 'Chicken Dishes', 10, 1, 1),
+(2416, 1, 230, 'Grilled Quarter Chicken (Breast)', 'Well marinated charcoal or oven roasted tender chicken breast.', 30000.00, '', 'Chicken Dishes', 30, 1, 1),
+(2417, 1, 230, 'Grilled Quarter Chicken (Thigh)', 'Well marinated charcoal or oven roasted tender chicken thigh.', 30000.00, '', 'Chicken Dishes', 40, 1, 1),
+(2418, 1, 230, 'Mushroom Chicken', 'Pan fried chicken cubes infused in a creamy white mushroom sauce and spring onions.', 32000.00, '', 'Chicken Dishes', 50, 1, 1),
+(2419, 1, 230, 'Supreme Chicken', 'Fresh pan fried boneless chicken breast in mushroom sauce.', 32000.00, '', 'Chicken Dishes', 60, 1, 1),
+(2420, 1, 231, 'Goat Sizzler', 'Stir fried dry goat flakes with vegetables and rosemary.', 27000.00, '', 'Beef & Goat Main Courses', 10, 1, 1),
+(2421, 1, 231, 'Beef in Guinness', 'Steak simmered in Guinness beer and a creamy sauce.', 30000.00, '', 'Beef & Goat Main Courses', 70, 1, 1),
+(2422, 1, 231, 'Goat Rack Tender', 'Pan fried rib rack.', 32000.00, '', 'Beef & Goat Main Courses', 80, 1, 1),
+(2423, 1, 231, 'Liver Princess', 'Flakes of liver toasted with shredded vegetables.', 30000.00, '', 'Beef & Goat Main Courses', 90, 1, 1),
+(2424, 1, 231, 'Beef Fillet Steak (Pepper Sauce)', 'Beef fillet steak in a black peppercorn sauce.', 35000.00, '', 'Beef & Goat Main Courses', 100, 1, 1),
+(2425, 1, 231, 'Beef Fillet Steak (Mushroom Sauce)', 'Beef fillet steak in a creamy brown mushroom sauce.', 35000.00, '', 'Beef & Goat Main Courses', 110, 1, 1),
+(2426, 1, 231, 'Beef Fillet Steak (Dry Onion)', 'Beef fillet steak with dry onion.', 35000.00, '', 'Beef & Goat Main Courses', 120, 1, 1),
+(2427, 1, 232, 'Trio of Pork', 'A combination of pork ribs, pork muchomo and pork chops on a single platter.', 45000.00, '', 'Pork Courses', 50, 1, 1),
+(2428, 1, 233, 'Classico e Margherita', 'Tomato, fresh basil, oregano and mozzarella.', 24000.00, 'classic-margherita.jpg', 'Pizzeria', 10, 1, 1),
+(2429, 1, 233, 'Pugliese', 'Tomato, black olives, oregano and cheese.', 24000.00, '', 'Pizzeria', 30, 1, 1),
+(2430, 1, 233, 'Pata', 'Chips, tomato and cheese.', 26000.00, '', 'Pizzeria', 40, 1, 1),
+(2431, 1, 233, 'Salami', 'Tomato, cheese and salami.', 26000.00, '', 'Pizzeria', 60, 1, 1),
+(2432, 1, 233, 'Prosciutto Funghi', 'Ham, mushroom and cheese.', 26000.00, '', 'Pizzeria', 80, 1, 1),
+(2433, 1, 233, 'Prosciutto', 'Cooked ham, tomato and mozzarella.', 27000.00, '', 'Pizzeria', 90, 1, 1),
+(2434, 1, 233, 'Bolognaise', 'Spicy minced meat, mozzarella and tomato.', 27000.00, '', 'Pizzeria', 100, 1, 1),
+(2435, 1, 233, 'Pollo Pizza', 'Italian chicken pizza with green pepper, onions and mushroom.', 27000.00, '', 'Pizzeria', 140, 1, 1),
+(2436, 1, 233, 'Calzone Pizza', 'Minced meat, carrots and green pepper, folded into a semi circular bread shape.', 30000.00, '', 'Pizzeria', 160, 1, 1),
+(2437, 1, 233, 'Farmer\'s Pizza', 'Chicken and mushroom.', 30000.00, '', 'Pizzeria', 170, 1, 1),
+(2438, 1, 233, 'Paradise Special Pizza', 'Minced meat, salami, ham, mushroom, green pepper and onions.', 35000.00, '', 'Pizzeria', 180, 1, 1),
+(2439, 1, 234, 'Pasta Arabiata', 'Pasta in a tomato and fresh chili sauce, topped with cheese.', 20000.00, '', 'Italian Pastas', 10, 1, 1),
+(2440, 1, 234, 'Pasta a la Napolitana', 'Pasta in herby tomato and cheese sauce.', 18000.00, '', 'Italian Pastas', 20, 1, 1),
+(2441, 1, 234, 'Pasta Genovese', 'Pasta in pesto sauce.', 22000.00, '', 'Italian Pastas', 30, 1, 1),
+(2442, 1, 234, 'Pasta a la Carbonara', 'Pasta with egg and bacon in a creamy sauce, topped with cheese.', 25000.00, '', 'Italian Pastas', 40, 1, 1),
+(2443, 1, 234, 'Pasta Classic Bolognaise', 'Pasta in a minced meat, garlic, tomato and red wine sauce, topped with cheese.', 25000.00, '', 'Italian Pastas', 50, 1, 1),
+(2444, 1, 234, 'Pasta ala Cavolfiore e Salsiccia', 'Pasta with cauliflower and sausage in an egg and bacon creamy sauce.', 22000.00, '', 'Italian Pastas', 60, 1, 1),
+(2445, 1, 234, 'Pasta a la Contadina', 'Pasta in chicken, garlic, coriander, white wine and a creamy coconut sauce.', 25000.00, '', 'Italian Pastas', 70, 1, 1),
+(2446, 1, 235, 'Aloo Mutter', 'Diced potatoes and cowpeas prepared in a creamy sauce.', 18000.00, '', 'Asian & Indian Curries', 10, 1, 1),
+(2447, 1, 235, 'Vegetable Chow Mein', 'Noodles with oyster and soy sauce, tossed with fresh vegetables.', 20000.00, '', 'Asian & Indian Curries', 40, 1, 1),
+(2448, 1, 235, 'Chicken Tikka', '', 28000.00, '', 'Asian & Indian Curries', 60, 1, 1),
+(2449, 1, 235, 'Chili Chicken', '', 28000.00, '', 'Asian & Indian Curries', 70, 1, 1),
+(2450, 1, 235, 'Chicken Biryani', 'Cubes of chicken cooked in a creamy sauce, mixed with rice.', 32000.00, '', 'Asian & Indian Curries', 80, 1, 1),
+(2451, 1, 235, 'Fish Biryani', 'Cubes of fish cooked in a creamy sauce, mixed with rice.', 32000.00, '', 'Asian & Indian Curries', 90, 1, 1),
+(2452, 1, 235, 'Goat Biryani', 'Cubes of goat cooked in a creamy sauce, mixed with rice.', 32000.00, '', 'Asian & Indian Curries', 100, 1, 1),
+(2453, 1, 235, 'Chicken Tikka Masala', '', 30000.00, '', 'Asian & Indian Curries', 120, 1, 1),
+(2454, 1, 235, 'Chicken Makhani', 'Boneless tandoori marinated chicken cooked in butter and tomato gravy.', 30000.00, '', 'Asian & Indian Curries', 130, 1, 1),
+(2455, 1, 235, 'Fish Curry Diamond', '', 30000.00, '', 'Asian & Indian Curries', 140, 1, 1),
+(2456, 1, 235, 'Fish Tikka', '', 30000.00, '', 'Asian & Indian Curries', 150, 1, 1),
+(2457, 1, 235, 'Fish Tikka Masala', '', 32000.00, '', 'Asian & Indian Curries', 160, 1, 1),
+(2458, 1, 235, 'Half Tandoori Chicken', 'Chicken marinated with yogurt, ginger, garlic and spices, roasted in a clay oven.', 37000.00, '', 'Asian & Indian Curries', 170, 1, 1),
+(2459, 1, 235, 'Full Tandoori Chicken', 'A full chicken marinated with yogurt, ginger, garlic and spices, roasted in a clay oven.', 47000.00, '', 'Asian & Indian Curries', 180, 1, 1),
+(2460, 1, 236, 'Vegetable Spring Roll (1pc)', '', 1000.00, 'vegetable-spring-rolls.jpg', 'Chinese Corner', 10, 1, 1),
+(2461, 1, 236, 'Chicken Spring Roll (1pc)', '', 2500.00, 'chicken-spring-rolls.webp', 'Chinese Corner', 20, 1, 1),
+(2462, 1, 236, 'Pork Spring Roll (1pc)', '', 2500.00, 'pork-spring-roll.jpg', 'Chinese Corner', 30, 1, 1),
+(2463, 1, 236, 'Vegetable Wanton', '', 5000.00, 'vegetable-wonton.jpg', 'Chinese Corner', 40, 1, 1),
+(2464, 1, 236, 'Special Chicken Wings (1pc)', '', 7000.00, 'special-chicken-wings.webp', 'Chinese Corner', 50, 1, 1),
+(2465, 1, 236, 'Fried Wanton (Chicken or Beef)', '', 8000.00, 'fried-wonton-chicken.jpg', 'Chinese Corner', 60, 1, 1),
+(2466, 1, 236, 'Golden Fried Cauliflower', '', 10000.00, '', 'Chinese Corner', 70, 1, 1),
+(2467, 1, 236, 'Fried Chips Plain', '', 10000.00, '', 'Chinese Corner', 80, 1, 1),
+(2468, 1, 236, 'Special Beef Simsim', '', 15000.00, '', 'Chinese Corner', 90, 1, 1),
+(2469, 1, 236, 'Smoked Fish', '', 15000.00, '', 'Chinese Corner', 100, 1, 1),
+(2470, 1, 236, 'Salty Chicken / Beef', '', 15000.00, 'salty-chicken.webp', 'Chinese Corner', 110, 1, 1),
+(2471, 1, 236, 'Foil Wrapped Chicken', '', 15000.00, '', 'Chinese Corner', 120, 1, 1),
+(2472, 1, 236, 'French Fries with Garlic Sauce', '', 15000.00, '', 'Chinese Corner', 130, 1, 1),
+(2473, 1, 236, 'Fried Egg Rolled Chicken (Pair)', '', 18000.00, 'fried-eggs-rolled-chicken.jpg', 'Chinese Corner', 140, 1, 1),
+(2474, 1, 236, 'Fried Chicken Wings', '', 20000.00, '', 'Chinese Corner', 150, 1, 1),
+(2475, 1, 236, 'Crispy Chicken Legs', '', 20000.00, 'cripcy-chicken-legs.jpg', 'Chinese Corner', 160, 1, 1),
+(2476, 1, 236, 'Golden Fried Prawns', '', 20000.00, '', 'Chinese Corner', 170, 1, 1),
+(2477, 1, 236, 'Fried Baby Corn with Cashew Nuts', '', 20000.00, '', 'Chinese Corner', 180, 1, 1),
+(2478, 1, 236, 'Fried Summary Chicken', '', 25000.00, '', 'Chinese Corner', 190, 1, 1),
+(2479, 1, 236, 'Sauté Chicken Sichuan Style', '', 25000.00, 'saute-chicken-sichuan-style.jpg', 'Chinese Corner', 200, 1, 1),
+(2480, 1, 236, 'Chicken Curry', '', 25000.00, '', 'Chinese Corner', 210, 1, 1),
+(2481, 1, 236, 'Fried French Beans with Garlic Sauce', '', 25000.00, '', 'Chinese Corner', 220, 1, 1),
+(2482, 1, 236, 'Chinese Cabbage Sichuan Style (Hot)', '', 25000.00, 'chinese-cabbage-sichuan-style.jpg', 'Chinese Corner', 230, 1, 1),
+(2483, 1, 236, 'Mixed Vegetables (Onions, Cabbage, Carrots, Pepper, Mushroom)', '', 25000.00, 'mixed-vegetable-onions-cabbage-carrots-pepper-mushroom.jpg', 'Chinese Corner', 240, 1, 1),
+(2484, 1, 236, 'Stir-Fried Chicken with Cashew Nuts', '', 30000.00, '', 'Chinese Corner', 250, 1, 1),
+(2485, 1, 236, 'Spicy Half Chicken with Vegetables', '', 30000.00, '', 'Chinese Corner', 260, 1, 1),
+(2486, 1, 236, 'Fried Chicken with Chinese Black Bean Sauce', '', 30000.00, '', 'Chinese Corner', 270, 1, 1),
+(2487, 1, 236, 'Sweet and Sour Chicken', '', 30000.00, '', 'Chinese Corner', 280, 1, 1),
+(2488, 1, 236, 'Sliced Chicken with Garlic Sauce', '', 30000.00, 'chicken-saute.jpg', 'Chinese Corner', 290, 1, 1),
+(2489, 1, 236, 'Sliced Beef with Chinese Cabbage', '', 30000.00, 'beef-stir-fry.jpg', 'Chinese Corner', 300, 1, 1),
+(2490, 1, 236, 'Shredded Beef with Onions', '', 30000.00, 'shredded-beef-with-vegetables.jpg', 'Chinese Corner', 310, 1, 1),
+(2491, 1, 236, 'Sweet and Sour Beef', '', 30000.00, 'sweet-and-sour-pork.jpg', 'Chinese Corner', 320, 1, 1),
+(2492, 1, 236, 'Sliced Beef in Oyster Sauce', '', 30000.00, '', 'Chinese Corner', 330, 1, 1),
+(2493, 1, 236, 'Shredded Beef with Vegetables', '', 30000.00, '', 'Chinese Corner', 340, 1, 1),
+(2494, 1, 236, 'Sliced Beef with Pineapple Sauce', '', 30000.00, '', 'Chinese Corner', 350, 1, 1),
+(2495, 1, 236, 'Beef Curry', '', 30000.00, '', 'Chinese Corner', 360, 1, 1),
+(2496, 1, 236, 'Sweet and Sour Pork (Chinese)', '', 30000.00, '', 'Chinese Corner', 370, 1, 1),
+(2497, 1, 236, 'Shredded Pork with Green Pepper', '', 30000.00, '', 'Chinese Corner', 380, 1, 1),
+(2498, 1, 236, 'Sauté Pork Sichuan Style (Hot)', '', 30000.00, 'saute-pork-sichuan-style.webp', 'Chinese Corner', 390, 1, 1),
+(2499, 1, 236, 'Spicy Pork with Garlic Sauce', '', 30000.00, '', 'Chinese Corner', 400, 1, 1),
+(2500, 1, 236, 'Sweet and Sour Fish Finger', '', 30000.00, '', 'Chinese Corner', 410, 1, 1),
+(2501, 1, 236, 'Spicy Fish with Ginger & Garlic Sauce', '', 30000.00, '', 'Chinese Corner', 420, 1, 1),
+(2502, 1, 236, 'Sliced Fish with Vegetables', '', 30000.00, '', 'Chinese Corner', 430, 1, 1),
+(2503, 1, 236, 'Sliced Fish in Special Hot Sweet & Sour Sauce', '', 30000.00, '', 'Chinese Corner', 440, 1, 1),
+(2504, 1, 236, 'Special Mixed Vegetables & Sprouts', '', 30000.00, 'special-mixed-vegetables-and-sprout.jpg', 'Chinese Corner', 450, 1, 1),
+(2505, 1, 236, 'Fried Mixed Chicken, Beef & Goat Meat', '', 35000.00, 'fried-mixed-chicken-beef-and-goat-meet.jpg', 'Chinese Corner', 460, 1, 1),
+(2506, 1, 236, 'Fried Shredded Chicken with Bamboo Shoots', '', 35000.00, 'fried-shredded-chicken-with-baboo-shoots.jpg', 'Chinese Corner', 470, 1, 1),
+(2507, 1, 236, 'Sliced Pork with Mushroom and Bamboo Shoots', '', 35000.00, 'sliced-pork-and-mushroom-with-bamboo-shoots.jpg', 'Chinese Corner', 480, 1, 1),
+(2508, 1, 236, 'Fried Beijing Duck with Vegetables', '', 35000.00, '', 'Chinese Corner', 490, 1, 1),
+(2509, 1, 236, 'Fried Duck with Bamboo Shoots', '', 35000.00, '', 'Chinese Corner', 500, 1, 1),
+(2510, 1, 236, 'Fried Prawns with Cashew Nuts', '', 45000.00, 'fried-prawns-cashew-nuts.jpg', 'Chinese Corner', 510, 1, 1),
+(2511, 1, 236, 'Sauté Prawns with Black Bean Sauce', '', 45000.00, 'saute-prawns-with-black-bean-sauce.webp', 'Chinese Corner', 520, 1, 1),
+(2512, 1, 236, 'Fried Prawns with Chinese Black Beans', '', 50000.00, 'fried-prawns-with-chinese-black-bean.jpg', 'Chinese Corner', 530, 1, 1),
+(2513, 1, 236, 'Beijing Roasted Duck (Whole)', '', 100000.00, '', 'Chinese Corner', 540, 1, 1),
+(2514, 1, 237, 'Sizzler Vegetables Plate', '', 30000.00, '', 'Sizzler Hot Plates', 10, 1, 1),
+(2515, 1, 237, 'Sizzler Pork Plate', '', 35000.00, '', 'Sizzler Hot Plates', 20, 1, 1),
+(2516, 1, 237, 'Sizzler Beef Plate', '', 35000.00, '', 'Sizzler Hot Plates', 30, 1, 1),
+(2517, 1, 237, 'Sizzler Chicken Plate', '', 35000.00, '', 'Sizzler Hot Plates', 40, 1, 1),
+(2518, 1, 237, 'Sizzler Shrimps / Prawns Plate', '', 50000.00, 'sizzler-shrimp-or-prawns-plate.jpg', 'Sizzler Hot Plates', 50, 1, 1),
+(2519, 1, 238, 'Steamed Rice', '', 8000.00, '', 'Rice & Noodles', 10, 1, 1),
+(2520, 1, 238, 'Fried Rice', '', 8000.00, '', 'Rice & Noodles', 20, 1, 1),
+(2521, 1, 238, 'Ginger Fried Rice', '', 8000.00, '', 'Rice & Noodles', 30, 1, 1),
+(2522, 1, 238, 'Vegetable Fried Rice', '', 10000.00, '', 'Rice & Noodles', 40, 1, 1),
+(2523, 1, 238, 'Vegetable Fried Noodles', '', 12000.00, '', 'Rice & Noodles', 50, 1, 1),
+(2524, 1, 238, 'Egg Fried Rice', '', 15000.00, 'eggs-fried-rice.webp', 'Rice & Noodles', 60, 1, 1),
+(2525, 1, 238, 'Chicken Fried Rice', '', 25000.00, '', 'Rice & Noodles', 70, 1, 1),
+(2526, 1, 238, 'Chicken / Beef / Pork Fried Noodles', '', 25000.00, '', 'Rice & Noodles', 80, 1, 1),
+(2527, 1, 239, 'Extra Mushroom', '', 4000.00, '', 'Accompaniments & Extras', 10, 1, 1),
+(2528, 1, 239, 'Extra Avocado', '', 4000.00, '', 'Accompaniments & Extras', 20, 1, 1),
+(2529, 1, 239, 'Extra Fried Egg', '', 4000.00, 'extra-fried-eggs.jpg', 'Accompaniments & Extras', 30, 1, 1),
+(2530, 1, 239, 'Extra Bacon', '', 7000.00, '', 'Accompaniments & Extras', 40, 1, 1),
+(2531, 1, 239, 'Extra Cheese', '', 7000.00, '', 'Accompaniments & Extras', 50, 1, 1),
+(2532, 1, 240, 'Cookies', '', 1000.00, '', 'Desserts & Bakery', 10, 1, 1),
+(2533, 1, 240, 'Croissant', '', 2000.00, 'croissants.jpg', 'Desserts & Bakery', 20, 1, 1),
+(2534, 1, 240, 'Beef / Chicken Pie', '', 5000.00, 'beef-or-chicken-pie.jpg', 'Desserts & Bakery', 30, 1, 1),
+(2535, 1, 240, 'Sausage Roll', '', 5000.00, '', 'Desserts & Bakery', 40, 1, 1),
+(2536, 1, 240, 'Bread Loaf', '', 6000.00, '', 'Desserts & Bakery', 50, 1, 1),
+(2537, 1, 240, 'Marble Cake Slice', '', 7000.00, '', 'Desserts & Bakery', 60, 1, 1),
+(2538, 1, 240, 'Chocolate Cake Slice', '', 7000.00, '', 'Desserts & Bakery', 70, 1, 1),
+(2539, 1, 240, 'Strawberry Cake Slice', '', 7000.00, '', 'Desserts & Bakery', 80, 1, 1),
+(2540, 1, 240, 'Lemon Cake Slice', '', 7000.00, '', 'Desserts & Bakery', 90, 1, 1),
+(2541, 1, 240, 'Vanilla Cake Slice', '', 7000.00, '', 'Desserts & Bakery', 100, 1, 1),
+(2542, 1, 240, 'Butter Bread', '', 7000.00, '', 'Desserts & Bakery', 110, 1, 1),
+(2543, 1, 240, 'French Bread', '', 7000.00, '', 'Desserts & Bakery', 120, 1, 1),
+(2544, 1, 240, 'Cinnamon Roll', '', 8000.00, '', 'Desserts & Bakery', 130, 1, 1),
+(2545, 1, 240, 'Ice Cream (3 Scoops)', 'A bowl of three scoops, with a choice of chocolate, vanilla or strawberry.', 9000.00, 'ice-cream-3-scoop.jpg', 'Desserts & Bakery', 140, 1, 1),
+(2546, 1, 240, 'Golden Fried Banana', '', 10000.00, '', 'Desserts & Bakery', 150, 1, 1),
+(2547, 1, 240, 'Special Banana with Honey Sauce', '', 12000.00, '', 'Desserts & Bakery', 180, 1, 1),
+(2548, 1, 240, 'Pineapple Upside-Down Cake', '', 14000.00, '', 'Desserts & Bakery', 190, 1, 1),
+(2549, 1, 240, 'Tropical Fruit Platter', 'A presentation of fresh seasonal fruit: mango, pineapple, melon, orange, grapes and passion fruit.', 15000.00, 'tropical-fruits-platter.jpg', 'Desserts & Bakery', 200, 1, 1),
+(2550, 1, 240, 'Lemon Tart', '', 15000.00, '', 'Desserts & Bakery', 220, 1, 1),
+(2551, 1, 240, 'Mango Tart', '', 16000.00, '', 'Desserts & Bakery', 240, 1, 1),
+(2552, 1, 240, 'White Forest Cake', '', 16000.00, '', 'Desserts & Bakery', 250, 1, 1),
+(2553, 1, 240, 'Profiteroles', '', 16000.00, '', 'Desserts & Bakery', 260, 1, 1),
+(2554, 1, 240, 'Chocolate Fudge Slice', '', 17000.00, '', 'Desserts & Bakery', 270, 1, 1),
+(2555, 1, 240, 'Black Forest Cake (pc)', '', 17000.00, 'black-forest-cake.jpg', 'Desserts & Bakery', 280, 1, 1),
+(2556, 1, 240, 'Classic Carrot Cake', '', 19000.00, '', 'Desserts & Bakery', 290, 1, 1),
+(2557, 1, 240, 'Chocolate Mousse', '', 20000.00, '', 'Desserts & Bakery', 300, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1435,25 +1679,26 @@ CREATE TABLE `news_posts` (
   `apply_url` varchar(300) DEFAULT NULL,
   `author_name` varchar(120) DEFAULT NULL,
   `author_role` varchar(120) DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
   `pinned` tinyint(1) NOT NULL DEFAULT 0,
   `status` varchar(20) NOT NULL DEFAULT 'published',
   `publish_at` datetime NOT NULL DEFAULT current_timestamp(),
   `views` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT NULL
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `news_posts`
 --
 
-INSERT INTO `news_posts` (`id`, `hotel_id`, `slug`, `title`, `category`, `excerpt`, `body`, `image`, `department`, `location`, `employment_type`, `salary`, `deadline`, `apply_email`, `apply_url`, `author_name`, `author_role`, `pinned`, `status`, `publish_at`, `views`, `created_at`, `updated_at`) VALUES
-(1, 1, 'employee-of-the-month', 'Employee of the Month: the team that keeps the Nile calm', 'employee', 'Every month the hotel honours the colleague whose care for our guests stood out above all.', 'Every month the management team reads the guest letters, the front desk log and the kitchen pass, and chooses the colleague whose care for our guests stood out above all.\n\nThis month the honour goes to a member of our housekeeping family whose attention to detail and warm greetings made a difference to every guest they met. From the first folded towel to the last quiet turndown, their work carried the whole hotel.\n\nCongratulations. Thank you for setting the standard the rest of us follow - and for showing, every single day, what Paradise hospitality means.', NULL, 'Housekeeping', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Management Team', 'Hotel Paradise on the Nile', 1, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL),
-(2, 1, 'restaurant-manager-vacancy', 'We are hiring: Restaurant & Bar Manager', 'recruitment', 'The hotel is looking for an experienced food and beverage leader to run our riverside restaurant and bar.', 'Hotel Paradise on the Nile is looking for an experienced food and beverage leader to run our riverside restaurant and bar.\n\nYou will own the floor: the daily service, the team rota, the guest experience and the numbers behind it. If you have run a busy restaurant before, care about the small details and can lead a team with warmth, we would like to hear from you.\n\nWhat we offer: a competitive package, duty meals, a supportive team and a working home on the banks of the Nile.', NULL, 'Food and Beverage', 'Hotel Paradise, Jinja', 'Full-time', 'Competitive, negotiable', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Human Resource', 'Hotel Paradise on the Nile', 1, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL),
-(3, 1, 'student-internship-opportunities', 'Opportunities: internships and graduate placements', 'opportunity', 'Applications are open for hospitality, culinary and front office internships with the hotel.', 'Applications are open for hospitality, culinary and front office internships with the hotel.\n\nThis is an invitation to students and fresh graduates who want to learn the trade in a working five star standard hotel: hands-on shifts, real guest work and mentoring from a team that has done it for years.\n\nTell us who you are and what you would like to learn. Send your application to the front desk and mark it \"Internship\".', NULL, 'Human Resource', 'Hotel Paradise, Jinja', 'Internship', 'Allowance provided', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Human Resource', 'Hotel Paradise on the Nile', 1, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL),
-(4, 1, 'new-riverside-tasting-menu', 'New: the riverside tasting menu is here', 'update', 'Our kitchen has written a new tasting menu, served every evening with a view over the Nile.', 'Our kitchen has written a new tasting menu, served every evening with a view over the Nile.\n\nSmall plates, Nile tilapia, and a dessert the pastry section has been refining for weeks. Every course is prepared to order, and the front of house will talk you through the pairing behind each one.\n\nTables are limited each evening. Book ahead, and let the river do the rest.', NULL, 'Kitchen', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Kitchen Team', 'Hotel Paradise on the Nile', 0, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL),
-(5, 1, 'welcome-to-our-newsroom', 'Welcome to the Hotel Paradise newsroom', 'news', 'A single place for hotel news, updates, opportunities and the people behind Paradise.', 'This is the hotel telling its own story: announcements, service updates, the opportunities we open to our community, and the people who make Paradise what it is.\n\nKeep this page close. When there is something worth knowing - a new menu, a role we are hiring for, an opportunity for a student, or a colleague worth celebrating - it will be posted here first.', NULL, 'Management', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Management Team', 'Hotel Paradise on the Nile', 0, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL);
+INSERT INTO `news_posts` (`id`, `hotel_id`, `slug`, `title`, `category`, `excerpt`, `body`, `image`, `department`, `location`, `employment_type`, `salary`, `deadline`, `apply_email`, `apply_url`, `author_name`, `author_role`, `pinned`, `status`, `publish_at`, `views`, `created_at`, `updated_at`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 'employee-of-the-month', 'Employee of the Month: the team that keeps the Nile calm', 'employee', 'Every month the hotel honours the colleague whose care for our guests stood out above all.', 'Every month the management team reads the guest letters, the front desk log and the kitchen pass, and chooses the colleague whose care for our guests stood out above all.\n\nThis month the honour goes to a member of our housekeeping family whose attention to detail and warm greetings made a difference to every guest they met. From the first folded towel to the last quiet turndown, their work carried the whole hotel.\n\nCongratulations. Thank you for setting the standard the rest of us follow - and for showing, every single day, what Paradise hospitality means.', NULL, 'Housekeeping', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Management Team', 'Hotel Paradise on the Nile', 1, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL, NULL, NULL),
+(2, 1, 'restaurant-manager-vacancy', 'We are hiring: Restaurant & Bar Manager', 'recruitment', 'The hotel is looking for an experienced food and beverage leader to run our riverside restaurant and bar.', 'Hotel Paradise on the Nile is looking for an experienced food and beverage leader to run our riverside restaurant and bar.\n\nYou will own the floor: the daily service, the team rota, the guest experience and the numbers behind it. If you have run a busy restaurant before, care about the small details and can lead a team with warmth, we would like to hear from you.\n\nWhat we offer: a competitive package, duty meals, a supportive team and a working home on the banks of the Nile.', NULL, 'Food and Beverage', 'Hotel Paradise, Jinja', 'Full-time', 'Competitive, negotiable', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Human Resource', 'Hotel Paradise on the Nile', 1, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL, NULL, NULL),
+(3, 1, 'student-internship-opportunities', 'Opportunities: internships and graduate placements', 'opportunity', 'Applications are open for hospitality, culinary and front office internships with the hotel.', 'Applications are open for hospitality, culinary and front office internships with the hotel.\n\nThis is an invitation to students and fresh graduates who want to learn the trade in a working five star standard hotel: hands-on shifts, real guest work and mentoring from a team that has done it for years.\n\nTell us who you are and what you would like to learn. Send your application to the front desk and mark it \"Internship\".', NULL, 'Human Resource', 'Hotel Paradise, Jinja', 'Internship', 'Allowance provided', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Human Resource', 'Hotel Paradise on the Nile', 1, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL, NULL, NULL),
+(4, 1, 'new-riverside-tasting-menu', 'New: the riverside tasting menu is here', 'update', 'Our kitchen has written a new tasting menu, served every evening with a view over the Nile.', 'Our kitchen has written a new tasting menu, served every evening with a view over the Nile.\n\nSmall plates, Nile tilapia, and a dessert the pastry section has been refining for weeks. Every course is prepared to order, and the front of house will talk you through the pairing behind each one.\n\nTables are limited each evening. Book ahead, and let the river do the rest.', NULL, 'Kitchen', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Kitchen Team', 'Hotel Paradise on the Nile', 0, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL, NULL, NULL),
+(5, 1, 'welcome-to-our-newsroom', 'Welcome to the Hotel Paradise newsroom', 'news', 'A single place for hotel news, updates, opportunities and the people behind Paradise.', 'This is the hotel telling its own story: announcements, service updates, the opportunities we open to our community, and the people who make Paradise what it is.\n\nKeep this page close. When there is something worth knowing - a new menu, a role we are hiring for, an opportunity for a student, or a colleague worth celebrating - it will be posted here first.', NULL, 'Management', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Management Team', 'Hotel Paradise on the Nile', 0, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1525,7 +1770,31 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `body`, `data`, `
 (46, 3, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40'),
 (47, 4, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40'),
 (48, 5, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40'),
-(49, 66, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40');
+(49, 66, 'payment', 'Payment request PAY-20261010-002', 'Otema Reagan started a MTN_MOMO payment of UGX 264,960 for the booking HPN-20261010-001.', '{\"reference\":\"PAY-20261010-002\",\"source\":\"booking\",\"amount\":264960,\"method\":\"mtn_momo\",\"guest\":\"Otema Reagan\",\"phone\":\"0772514889\"}', NULL, '2026-10-10 20:54:40'),
+(50, 1, 'booking', 'New website booking HPN-20261011-001', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-001\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:44:29'),
+(51, 2, 'booking', 'New website booking HPN-20261011-001', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-001\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:44:29'),
+(52, 3, 'booking', 'New website booking HPN-20261011-001', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-001\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:44:29'),
+(53, 6, 'booking', 'New website booking HPN-20261011-001', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-001\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:44:29'),
+(54, 66, 'booking', 'New website booking HPN-20261011-001', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-001\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:44:29'),
+(55, 1, 'booking', 'New website booking HPN-20261011-002', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-002\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:46:59'),
+(56, 2, 'booking', 'New website booking HPN-20261011-002', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-002\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:46:59'),
+(57, 3, 'booking', 'New website booking HPN-20261011-002', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-002\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:46:59'),
+(58, 6, 'booking', 'New website booking HPN-20261011-002', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-002\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:46:59'),
+(59, 66, 'booking', 'New website booking HPN-20261011-002', 'Reagan Otema asked for Family Room for 1 night, 2026-10-12 to 2026-10-13. Total UGX 324,990.', '{\"booking_number\":\"HPN-20261011-002\",\"room_type\":\"Family Room\",\"nights\":1,\"check_in\":\"2026-10-12\",\"check_out\":\"2026-10-13\",\"total\":324990,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:46:59'),
+(60, 1, 'payment', 'Payment request PAY-20261011-001', 'Reagan Otema started a MTN_MOMO payment of UGX 324,990 for the booking HPN-20261011-002.', '{\"reference\":\"PAY-20261011-001\",\"source\":\"booking\",\"amount\":324990,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:48:21'),
+(61, 2, 'payment', 'Payment request PAY-20261011-001', 'Reagan Otema started a MTN_MOMO payment of UGX 324,990 for the booking HPN-20261011-002.', '{\"reference\":\"PAY-20261011-001\",\"source\":\"booking\",\"amount\":324990,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:48:21'),
+(62, 3, 'payment', 'Payment request PAY-20261011-001', 'Reagan Otema started a MTN_MOMO payment of UGX 324,990 for the booking HPN-20261011-002.', '{\"reference\":\"PAY-20261011-001\",\"source\":\"booking\",\"amount\":324990,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:48:21'),
+(63, 4, 'payment', 'Payment request PAY-20261011-001', 'Reagan Otema started a MTN_MOMO payment of UGX 324,990 for the booking HPN-20261011-002.', '{\"reference\":\"PAY-20261011-001\",\"source\":\"booking\",\"amount\":324990,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:48:21'),
+(64, 5, 'payment', 'Payment request PAY-20261011-001', 'Reagan Otema started a MTN_MOMO payment of UGX 324,990 for the booking HPN-20261011-002.', '{\"reference\":\"PAY-20261011-001\",\"source\":\"booking\",\"amount\":324990,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:48:21'),
+(65, 66, 'payment', 'Payment request PAY-20261011-001', 'Reagan Otema started a MTN_MOMO payment of UGX 324,990 for the booking HPN-20261011-002.', '{\"reference\":\"PAY-20261011-001\",\"source\":\"booking\",\"amount\":324990,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 09:48:21'),
+(66, 2, 'order', 'New website order ORD-20261011-001', 'mama mafalda placed a takeaway order, 1 item, total UGX 15,525.', '{\"order_number\":\"ORD-20261011-001\",\"items\":1,\"total\":15525,\"guest\":\"mama mafalda\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-10-11 14:46:23'),
+(67, 3, 'order', 'New website order ORD-20261011-001', 'mama mafalda placed a takeaway order, 1 item, total UGX 15,525.', '{\"order_number\":\"ORD-20261011-001\",\"items\":1,\"total\":15525,\"guest\":\"mama mafalda\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-10-11 14:46:23'),
+(68, 5, 'order', 'New website order ORD-20261011-001', 'mama mafalda placed a takeaway order, 1 item, total UGX 15,525.', '{\"order_number\":\"ORD-20261011-001\",\"items\":1,\"total\":15525,\"guest\":\"mama mafalda\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-10-11 14:46:23'),
+(69, 9, 'order', 'New website order ORD-20261011-001', 'mama mafalda placed a takeaway order, 1 item, total UGX 15,525.', '{\"order_number\":\"ORD-20261011-001\",\"items\":1,\"total\":15525,\"guest\":\"mama mafalda\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-10-11 14:46:23'),
+(70, 66, 'order', 'New website order ORD-20261011-001', 'mama mafalda placed a takeaway order, 1 item, total UGX 15,525.', '{\"order_number\":\"ORD-20261011-001\",\"items\":1,\"total\":15525,\"guest\":\"mama mafalda\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-10-11 14:46:23'),
+(71, 2, 'communication', 'New event enquiry EVT-20261011-001', 'Mafalda wants to plan team retreat (EVT-20261011-001). 100 guests. 2026-10-17. Please call 0772514889.', '{\"request_number\":\"EVT-20261011-001\",\"event_type\":\"Team retreat\",\"event_date\":\"2026-10-17\",\"guests\":100,\"venue\":\"The Nile Hall\",\"name\":\"Mafalda\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 14:49:03'),
+(72, 3, 'communication', 'New event enquiry EVT-20261011-001', 'Mafalda wants to plan team retreat (EVT-20261011-001). 100 guests. 2026-10-17. Please call 0772514889.', '{\"request_number\":\"EVT-20261011-001\",\"event_type\":\"Team retreat\",\"event_date\":\"2026-10-17\",\"guests\":100,\"venue\":\"The Nile Hall\",\"name\":\"Mafalda\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 14:49:03'),
+(73, 66, 'communication', 'New event enquiry EVT-20261011-001', 'Mafalda wants to plan team retreat (EVT-20261011-001). 100 guests. 2026-10-17. Please call 0772514889.', '{\"request_number\":\"EVT-20261011-001\",\"event_type\":\"Team retreat\",\"event_date\":\"2026-10-17\",\"guests\":100,\"venue\":\"The Nile Hall\",\"name\":\"Mafalda\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 14:49:03');
 
 -- --------------------------------------------------------
 
@@ -1556,7 +1825,12 @@ INSERT INTO `notification_deliveries` (`id`, `notification_id`, `user_id`, `devi
 (2, 31, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 16:48:28', '2026-10-10 20:51:53'),
 (3, 36, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 16:49:03', '2026-10-10 20:51:53'),
 (4, 41, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 20:54:14', '2026-10-11 03:12:55'),
-(5, 45, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 20:54:40', '2026-10-11 03:12:55');
+(5, 45, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-10 20:54:40', '2026-10-11 03:12:55'),
+(6, 51, 2, 1, 'web_push', 'queued', NULL, 4, 'Could not build the web push payload', '2026-10-11 09:44:29', '2026-10-12 00:41:30'),
+(7, 56, 2, 1, 'web_push', 'queued', NULL, 4, 'Could not build the web push payload', '2026-10-11 09:46:59', '2026-10-12 00:41:30'),
+(8, 61, 2, 1, 'web_push', 'queued', NULL, 4, 'Could not build the web push payload', '2026-10-11 09:48:21', '2026-10-12 00:41:30'),
+(9, 66, 2, 1, 'web_push', 'queued', NULL, 2, 'Could not build the web push payload', '2026-10-11 14:46:23', '2026-10-12 00:41:30'),
+(10, 71, 2, 1, 'web_push', 'queued', NULL, 2, 'Could not build the web push payload', '2026-10-11 14:49:03', '2026-10-12 00:41:30');
 
 -- --------------------------------------------------------
 
@@ -1614,7 +1888,12 @@ INSERT INTO `notification_events` (`id`, `event_key`, `event_type`, `entity_type
 (8, 'order:ORD-20261010-002', 'order', NULL, NULL, '2026-10-10 16:48:28'),
 (9, 'payment:PAY-20261010-001', 'payment', NULL, NULL, '2026-10-10 16:49:03'),
 (10, 'booking:HPN-20261010-001', 'booking', NULL, NULL, '2026-10-10 20:54:14'),
-(11, 'payment:PAY-20261010-002', 'payment', NULL, NULL, '2026-10-10 20:54:40');
+(11, 'payment:PAY-20261010-002', 'payment', NULL, NULL, '2026-10-10 20:54:40'),
+(12, 'booking:HPN-20261011-001', 'booking', NULL, NULL, '2026-10-11 09:44:29'),
+(13, 'booking:HPN-20261011-002', 'booking', NULL, NULL, '2026-10-11 09:46:59'),
+(14, 'payment:PAY-20261011-001', 'payment', NULL, NULL, '2026-10-11 09:48:21'),
+(15, 'order:ORD-20261011-001', 'order', NULL, NULL, '2026-10-11 14:46:23'),
+(16, 'event:EVT-20261011-001', 'communication', NULL, NULL, '2026-10-11 14:49:03');
 
 -- --------------------------------------------------------
 
@@ -1668,7 +1947,8 @@ CREATE TABLE `orders` (
 INSERT INTO `orders` (`id`, `hotel_id`, `user_id`, `shift_id`, `order_number`, `outlet`, `order_type`, `table_name`, `room_id`, `customer_name`, `customer_phone`, `customer_email`, `delivery_address`, `delivery_notes`, `status`, `discount`, `subtotal`, `tax`, `total`, `created_at`) VALUES
 (1, 1, 1, NULL, 'ORD-20261009-001', 'restaurant', 'takeaway', NULL, NULL, 'Otema Reagan', '+256772514889', 'reaganotema2022@gmail.com', 'Jinja city', 'Add salt', 'pending', 0.00, 13000.00, 455.00, 13455.00, '2026-10-09 12:18:03'),
 (2, 1, 1, NULL, 'ORD-20261010-001', 'restaurant', 'takeaway', NULL, NULL, 'Okot Denis', '+256779562514', 'denisokot47@gmail.com', 'walukuba', 'Please hurry withbmy order i need it now.', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-10 16:44:59'),
-(3, 1, 1, NULL, 'ORD-20261010-002', 'restaurant', 'takeaway', NULL, NULL, 'Okot Denis', '+256779562514', 'denisokot47@gmail.com', 'Jinja town', 'I need salt.', 'pending', 0.00, 45000.00, 1575.00, 46575.00, '2026-10-10 16:48:28');
+(3, 1, 1, NULL, 'ORD-20261010-002', 'restaurant', 'takeaway', NULL, NULL, 'Okot Denis', '+256779562514', 'denisokot47@gmail.com', 'Jinja town', 'I need salt.', 'pending', 0.00, 45000.00, 1575.00, 46575.00, '2026-10-10 16:48:28'),
+(4, 1, 1, NULL, 'ORD-20261011-001', 'restaurant', 'takeaway', NULL, NULL, 'mama mafalda', '0772514889', 'reaganotemas@gmail.com', 'jinja', 'less salt', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-11 14:46:23');
 
 -- --------------------------------------------------------
 
@@ -1693,7 +1973,8 @@ CREATE TABLE `order_items` (
 INSERT INTO `order_items` (`id`, `order_id`, `menu_item_id`, `quantity`, `unit_price`, `total`, `notes`) VALUES
 (1, 1, 2282, 1.00, 13000.00, 13000.00, 'Web takeaway order from Otema Reagan, +256772514889'),
 (2, 2, 2279, 1.00, 15000.00, 15000.00, 'Web takeaway order from Okot Denis, +256779562514'),
-(3, 3, 24, 1.00, 45000.00, 45000.00, 'Web takeaway order from Okot Denis, +256779562514');
+(3, 3, 24, 1.00, 45000.00, 45000.00, 'Web takeaway order from Okot Denis, +256779562514'),
+(4, 4, 2290, 1.00, 15000.00, 15000.00, 'Web takeaway order from mama mafalda, 0772514889');
 
 -- --------------------------------------------------------
 
@@ -1766,7 +2047,8 @@ INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `customer_id`, `invoice_id`
 (9, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
 (10, 1, NULL, 1, NULL, 1, NULL, 13455.00, 'card', 'pesapal', 'PAY-20261009-001', 'pending', '2026-10-09 12:19:08'),
 (11, 1, NULL, 3, NULL, 3, NULL, 46575.00, 'mtn_momo', 'pesapal', 'PAY-20261010-001', 'successful', '2026-10-10 16:49:03'),
-(12, 1, NULL, 1, NULL, NULL, 37, 264960.00, 'mtn_momo', 'pesapal', 'PAY-20261010-002', 'successful', '2026-10-10 20:54:40');
+(12, 1, NULL, 1, NULL, NULL, 37, 264960.00, 'mtn_momo', 'pesapal', 'PAY-20261010-002', 'successful', '2026-10-10 20:54:40'),
+(13, 1, NULL, 4, NULL, NULL, 39, 324990.00, 'mtn_momo', 'pesapal', 'PAY-20261011-001', 'successful', '2026-10-11 09:48:21');
 
 -- --------------------------------------------------------
 
@@ -1938,7 +2220,9 @@ CREATE TABLE `purchase_orders` (
   `expected_date` date DEFAULT NULL,
   `notes` text DEFAULT NULL,
   `created_by` bigint(20) UNSIGNED NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
@@ -1973,7 +2257,9 @@ CREATE TABLE `purchase_requisitions` (
   `approved_by` bigint(20) UNSIGNED DEFAULT NULL,
   `approved_at` datetime DEFAULT NULL,
   `note` text DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
@@ -2026,7 +2312,12 @@ INSERT INTO `receipt_deliveries` (`id`, `payment_id`, `hotel_id`, `source`, `ref
 (7, 12, 1, 'booking', 'HPN-20261010-001', 'staff', 'director@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 23:54:40', '2026-10-10 23:54:40'),
 (8, 12, 1, 'booking', 'HPN-20261010-001', 'staff', 'accounts@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 23:54:40', '2026-10-10 23:54:40'),
 (9, 12, 1, 'booking', 'HPN-20261010-001', 'staff', 'frontdesk@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 23:54:41', '2026-10-10 23:54:41'),
-(10, 12, 1, 'booking', 'HPN-20261010-001', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 23:54:41', '2026-10-10 23:54:41');
+(10, 12, 1, 'booking', 'HPN-20261010-001', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-10 23:54:41', '2026-10-10 23:54:41'),
+(11, 13, 1, 'booking', 'HPN-20261011-002', 'email', 'reaganotema2022@gmail.com', 'sent', 1, NULL, NULL, '2026-10-11 12:48:21', '2026-10-11 12:48:21'),
+(12, 13, 1, 'booking', 'HPN-20261011-002', 'staff', 'director@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-11 12:48:21', '2026-10-11 12:48:21'),
+(13, 13, 1, 'booking', 'HPN-20261011-002', 'staff', 'accounts@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-11 12:48:21', '2026-10-11 12:48:21'),
+(14, 13, 1, 'booking', 'HPN-20261011-002', 'staff', 'frontdesk@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-11 12:48:22', '2026-10-11 12:48:22'),
+(15, 13, 1, 'booking', 'HPN-20261011-002', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-11 12:48:22', '2026-10-11 12:48:22');
 
 -- --------------------------------------------------------
 
@@ -2094,22 +2385,26 @@ CREATE TABLE `reservations` (
   `paid` decimal(14,2) NOT NULL DEFAULT 0.00,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `reservations`
 --
 
-INSERT INTO `reservations` (`id`, `hotel_id`, `guest_id`, `booking_number`, `source`, `check_in`, `check_out`, `adults`, `children`, `status`, `room_rate`, `nights`, `subtotal`, `tax`, `total`, `paid`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'HPN-20260925-001', 'phone', '2026-09-25 14:00:00', '2026-09-28 11:00:00', 2, 0, 'checked_in', 248000.00, 3, 744000.00, 0.00, 744000.00, 744000.00, 'Birthday weekend by the Nile', '2026-10-05 05:33:34', NULL),
-(2, 1, 2, 'HPN-20260925-002', 'website', '2026-10-02 14:00:00', '2026-10-04 11:00:00', 2, 1, 'confirmed', 202000.00, 2, 404000.00, 0.00, 404000.00, 0.00, '', '2026-10-05 05:33:34', NULL),
-(3, 1, 3, 'HPN-20260925-003', 'walk_in', '2026-10-05 14:00:00', '2026-10-07 11:00:00', 3, 0, 'confirmed', 213000.00, 2, 426000.00, 0.00, 426000.00, 0.00, '', '2026-10-05 05:33:34', NULL),
-(4, 1, 4, 'HPN-20260925-004', 'agent', '2026-09-20 14:00:00', '2026-09-23 11:00:00', 2, 0, 'checked_out', 314000.00, 3, 942000.00, 0.00, 942000.00, 942000.00, 'Family holiday', '2026-10-05 05:33:34', NULL),
-(34, 1, 46, 'HPN-20261009-001', 'website', '2026-10-10 14:00:00', '2026-10-23 11:00:00', 1, 0, 'confirmed', 248000.00, 13, 3224000.00, 112840.00, 3336840.00, 0.00, NULL, '2026-10-09 09:26:27', '2026-10-09 11:39:55'),
-(35, 1, 46, 'HPN-20261009-002', 'website', '2026-10-10 14:00:00', '2026-10-15 11:00:00', 1, 0, 'pending', 314000.00, 5, 1570000.00, 54950.00, 1624950.00, 0.00, NULL, '2026-10-09 13:53:21', NULL),
-(36, 1, 46, 'HPN-20261009-003', 'website', '2026-10-10 14:00:00', '2026-10-15 11:00:00', 1, 0, 'pending', 314000.00, 5, 1570000.00, 54950.00, 1624950.00, 0.00, NULL, '2026-10-09 13:57:56', NULL),
-(37, 1, 46, 'HPN-20261010-001', 'website', '2026-10-11 14:00:00', '2026-10-13 11:00:00', 2, 0, 'pending', 128000.00, 2, 256000.00, 8960.00, 264960.00, 0.00, NULL, '2026-10-10 20:54:14', NULL);
+INSERT INTO `reservations` (`id`, `hotel_id`, `guest_id`, `booking_number`, `source`, `check_in`, `check_out`, `adults`, `children`, `status`, `room_rate`, `nights`, `subtotal`, `tax`, `total`, `paid`, `notes`, `created_at`, `updated_at`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 1, 'HPN-20260925-001', 'phone', '2026-09-25 14:00:00', '2026-09-28 11:00:00', 2, 0, 'checked_in', 248000.00, 3, 744000.00, 0.00, 744000.00, 744000.00, 'Birthday weekend by the Nile', '2026-10-05 05:33:34', NULL, NULL, NULL),
+(2, 1, 2, 'HPN-20260925-002', 'website', '2026-10-02 14:00:00', '2026-10-04 11:00:00', 2, 1, 'confirmed', 202000.00, 2, 404000.00, 0.00, 404000.00, 0.00, '', '2026-10-05 05:33:34', NULL, NULL, NULL),
+(3, 1, 3, 'HPN-20260925-003', 'walk_in', '2026-10-05 14:00:00', '2026-10-07 11:00:00', 3, 0, 'confirmed', 213000.00, 2, 426000.00, 0.00, 426000.00, 0.00, '', '2026-10-05 05:33:34', NULL, NULL, NULL),
+(4, 1, 4, 'HPN-20260925-004', 'agent', '2026-09-20 14:00:00', '2026-09-23 11:00:00', 2, 0, 'checked_out', 314000.00, 3, 942000.00, 0.00, 942000.00, 942000.00, 'Family holiday', '2026-10-05 05:33:34', NULL, NULL, NULL),
+(34, 1, 46, 'HPN-20261009-001', 'website', '2026-10-10 14:00:00', '2026-10-23 11:00:00', 1, 0, 'confirmed', 248000.00, 13, 3224000.00, 112840.00, 3336840.00, 0.00, NULL, '2026-10-09 09:26:27', '2026-10-09 11:39:55', NULL, NULL),
+(35, 1, 46, 'HPN-20261009-002', 'website', '2026-10-10 14:00:00', '2026-10-15 11:00:00', 1, 0, 'pending', 314000.00, 5, 1570000.00, 54950.00, 1624950.00, 0.00, NULL, '2026-10-09 13:53:21', NULL, NULL, NULL),
+(36, 1, 46, 'HPN-20261009-003', 'website', '2026-10-10 14:00:00', '2026-10-15 11:00:00', 1, 0, 'pending', 314000.00, 5, 1570000.00, 54950.00, 1624950.00, 0.00, NULL, '2026-10-09 13:57:56', NULL, NULL, NULL),
+(37, 1, 46, 'HPN-20261010-001', 'website', '2026-10-11 14:00:00', '2026-10-13 11:00:00', 2, 0, 'pending', 128000.00, 2, 256000.00, 8960.00, 264960.00, 0.00, NULL, '2026-10-10 20:54:14', NULL, NULL, NULL),
+(38, 1, 46, 'HPN-20261011-001', 'website', '2026-10-12 14:00:00', '2026-10-13 11:00:00', 1, 0, 'pending', 314000.00, 1, 314000.00, 10990.00, 324990.00, 0.00, NULL, '2026-10-11 09:44:29', NULL, NULL, NULL),
+(39, 1, 46, 'HPN-20261011-002', 'website', '2026-10-12 14:00:00', '2026-10-13 11:00:00', 1, 0, 'pending', 314000.00, 1, 314000.00, 10990.00, 324990.00, 0.00, NULL, '2026-10-11 09:46:59', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2170,7 +2465,9 @@ INSERT INTO `reservation_rooms` (`id`, `reservation_id`, `room_type_id`, `room_i
 (37, 34, 1, NULL, 1, 248000.00),
 (38, 35, 2, NULL, 1, 314000.00),
 (39, 36, 2, NULL, 1, 314000.00),
-(40, 37, 7, NULL, 1, 128000.00);
+(40, 37, 7, NULL, 1, 128000.00),
+(41, 38, 2, NULL, 1, 314000.00),
+(42, 39, 2, NULL, 1, 314000.00);
 
 -- --------------------------------------------------------
 
@@ -2231,83 +2528,85 @@ CREATE TABLE `rooms` (
   `room_type_id` bigint(20) UNSIGNED NOT NULL,
   `room_number` varchar(30) NOT NULL,
   `floor` varchar(30) DEFAULT NULL,
-  `status` enum('available','reserved','occupied','dirty','cleaning','inspected','maintenance','out_of_service') DEFAULT 'available'
+  `status` enum('available','reserved','occupied','dirty','cleaning','inspected','maintenance','out_of_service') DEFAULT 'available',
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `rooms`
 --
 
-INSERT INTO `rooms` (`id`, `hotel_id`, `room_type_id`, `room_number`, `floor`, `status`) VALUES
-(1, 1, 57, 'S101', 'Floor 1', 'available'),
-(2, 1, 57, 'S102', 'Floor 1', 'available'),
-(3, 1, 57, 'S103', 'Floor 1', 'available'),
-(4, 1, 57, 'S104', 'Floor 1', 'available'),
-(5, 1, 57, 'S105', 'Floor 1', 'available'),
-(6, 1, 57, 'S106', 'Floor 1', 'available'),
-(8, 1, 58, 'F101', 'Floor 1', 'available'),
-(9, 1, 58, 'F102', 'Floor 1', 'available'),
-(10, 1, 58, 'F103', 'Floor 1', 'available'),
-(11, 1, 58, 'F104', 'Floor 1', 'available'),
-(12, 1, 58, 'F105', 'Floor 1', 'available'),
-(13, 1, 58, 'F106', 'Floor 1', 'available'),
-(14, 1, 58, 'F107', 'Floor 1', 'available'),
-(15, 1, 59, 'T201', 'Floor 2', 'available'),
-(16, 1, 59, 'T202', 'Floor 2', 'available'),
-(17, 1, 59, 'T203', 'Floor 2', 'available'),
-(18, 1, 59, 'T204', 'Floor 2', 'available'),
-(19, 1, 59, 'T205', 'Floor 2', 'available'),
-(20, 1, 59, 'T206', 'Floor 2', 'available'),
-(21, 1, 59, 'T207', 'Floor 2', 'available'),
-(22, 1, 59, 'T208', 'Floor 2', 'available'),
-(23, 1, 59, 'T209', 'Floor 2', 'available'),
-(24, 1, 59, 'T210', 'Floor 2', 'available'),
-(25, 1, 59, 'T211', 'Floor 2', 'available'),
-(26, 1, 59, 'T212', 'Floor 2', 'available'),
-(30, 1, 60, 'ED201', 'Floor 2', 'available'),
-(31, 1, 60, 'ED202', 'Floor 2', 'available'),
-(32, 1, 60, 'ED203', 'Floor 2', 'available'),
-(33, 1, 60, 'ED204', 'Floor 2', 'available'),
-(34, 1, 60, 'ED205', 'Floor 2', 'available'),
-(35, 1, 60, 'ED206', 'Floor 2', 'available'),
-(36, 1, 60, 'ED207', 'Floor 2', 'available'),
-(37, 1, 60, 'ED208', 'Floor 2', 'available'),
-(38, 1, 60, 'ED209', 'Floor 2', 'available'),
-(39, 1, 60, 'ED210', 'Floor 2', 'available'),
-(45, 1, 61, 'DD301', 'Floor 3', 'available'),
-(46, 1, 61, 'DD302', 'Floor 3', 'available'),
-(47, 1, 61, 'DD303', 'Floor 3', 'available'),
-(48, 1, 61, 'DD304', 'Floor 3', 'available'),
-(49, 1, 61, 'DD305', 'Floor 3', 'available'),
-(50, 1, 61, 'DD306', 'Floor 3', 'available'),
-(51, 1, 61, 'DD307', 'Floor 3', 'available'),
-(52, 1, 61, 'DD308', 'Floor 3', 'available'),
-(53, 1, 61, 'DD309', 'Floor 3', 'available'),
-(54, 1, 61, 'DD310', 'Floor 3', 'available'),
-(55, 1, 61, 'DD311', 'Floor 3', 'available'),
-(56, 1, 61, 'DD312', 'Floor 3', 'available'),
-(57, 1, 61, 'DD313', 'Floor 3', 'available'),
-(58, 1, 61, 'DD314', 'Floor 3', 'available'),
-(60, 1, 62, 'TW301', 'Floor 3', 'available'),
-(61, 1, 62, 'TW302', 'Floor 3', 'available'),
-(62, 1, 62, 'TW303', 'Floor 3', 'available'),
-(63, 1, 62, 'TW304', 'Floor 3', 'available'),
-(64, 1, 62, 'TW305', 'Floor 3', 'available'),
-(65, 1, 62, 'TW306', 'Floor 3', 'available'),
-(66, 1, 62, 'TW307', 'Floor 3', 'available'),
-(67, 1, 62, 'TW308', 'Floor 3', 'available'),
-(68, 1, 62, 'TW309', 'Floor 3', 'available'),
-(69, 1, 62, 'TW310', 'Floor 3', 'available'),
-(70, 1, 62, 'TW311', 'Floor 3', 'available'),
-(71, 1, 62, 'TW312', 'Floor 3', 'available'),
-(75, 1, 63, 'SG301', 'Floor 3', 'available'),
-(76, 1, 63, 'SG302', 'Floor 3', 'available'),
-(77, 1, 63, 'SG303', 'Floor 3', 'available'),
-(78, 1, 63, 'SG304', 'Floor 3', 'available'),
-(79, 1, 63, 'SG305', 'Floor 3', 'available'),
-(80, 1, 63, 'SG306', 'Floor 3', 'available'),
-(81, 1, 63, 'SG307', 'Floor 3', 'available'),
-(82, 1, 63, 'SG308', 'Floor 3', 'available');
+INSERT INTO `rooms` (`id`, `hotel_id`, `room_type_id`, `room_number`, `floor`, `status`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 57, 'S101', 'Floor 1', 'available', NULL, NULL),
+(2, 1, 57, 'S102', 'Floor 1', 'available', NULL, NULL),
+(3, 1, 57, 'S103', 'Floor 1', 'available', NULL, NULL),
+(4, 1, 57, 'S104', 'Floor 1', 'available', NULL, NULL),
+(5, 1, 57, 'S105', 'Floor 1', 'available', NULL, NULL),
+(6, 1, 57, 'S106', 'Floor 1', 'available', NULL, NULL),
+(8, 1, 58, 'F101', 'Floor 1', 'available', NULL, NULL),
+(9, 1, 58, 'F102', 'Floor 1', 'available', NULL, NULL),
+(10, 1, 58, 'F103', 'Floor 1', 'available', NULL, NULL),
+(11, 1, 58, 'F104', 'Floor 1', 'available', NULL, NULL),
+(12, 1, 58, 'F105', 'Floor 1', 'available', NULL, NULL),
+(13, 1, 58, 'F106', 'Floor 1', 'available', NULL, NULL),
+(14, 1, 58, 'F107', 'Floor 1', 'available', NULL, NULL),
+(15, 1, 59, 'T201', 'Floor 2', 'available', NULL, NULL),
+(16, 1, 59, 'T202', 'Floor 2', 'available', NULL, NULL),
+(17, 1, 59, 'T203', 'Floor 2', 'available', NULL, NULL),
+(18, 1, 59, 'T204', 'Floor 2', 'available', NULL, NULL),
+(19, 1, 59, 'T205', 'Floor 2', 'available', NULL, NULL),
+(20, 1, 59, 'T206', 'Floor 2', 'available', NULL, NULL),
+(21, 1, 59, 'T207', 'Floor 2', 'available', NULL, NULL),
+(22, 1, 59, 'T208', 'Floor 2', 'available', NULL, NULL),
+(23, 1, 59, 'T209', 'Floor 2', 'available', NULL, NULL),
+(24, 1, 59, 'T210', 'Floor 2', 'available', NULL, NULL),
+(25, 1, 59, 'T211', 'Floor 2', 'available', NULL, NULL),
+(26, 1, 59, 'T212', 'Floor 2', 'available', NULL, NULL),
+(30, 1, 60, 'ED201', 'Floor 2', 'available', NULL, NULL),
+(31, 1, 60, 'ED202', 'Floor 2', 'available', NULL, NULL),
+(32, 1, 60, 'ED203', 'Floor 2', 'available', NULL, NULL),
+(33, 1, 60, 'ED204', 'Floor 2', 'available', NULL, NULL),
+(34, 1, 60, 'ED205', 'Floor 2', 'available', NULL, NULL),
+(35, 1, 60, 'ED206', 'Floor 2', 'available', NULL, NULL),
+(36, 1, 60, 'ED207', 'Floor 2', 'available', NULL, NULL),
+(37, 1, 60, 'ED208', 'Floor 2', 'available', NULL, NULL),
+(38, 1, 60, 'ED209', 'Floor 2', 'available', NULL, NULL),
+(39, 1, 60, 'ED210', 'Floor 2', 'available', NULL, NULL),
+(45, 1, 61, 'DD301', 'Floor 3', 'available', NULL, NULL),
+(46, 1, 61, 'DD302', 'Floor 3', 'available', NULL, NULL),
+(47, 1, 61, 'DD303', 'Floor 3', 'available', NULL, NULL),
+(48, 1, 61, 'DD304', 'Floor 3', 'available', NULL, NULL),
+(49, 1, 61, 'DD305', 'Floor 3', 'available', NULL, NULL),
+(50, 1, 61, 'DD306', 'Floor 3', 'available', NULL, NULL),
+(51, 1, 61, 'DD307', 'Floor 3', 'available', NULL, NULL),
+(52, 1, 61, 'DD308', 'Floor 3', 'available', NULL, NULL),
+(53, 1, 61, 'DD309', 'Floor 3', 'available', NULL, NULL),
+(54, 1, 61, 'DD310', 'Floor 3', 'available', NULL, NULL),
+(55, 1, 61, 'DD311', 'Floor 3', 'available', NULL, NULL),
+(56, 1, 61, 'DD312', 'Floor 3', 'available', NULL, NULL),
+(57, 1, 61, 'DD313', 'Floor 3', 'available', NULL, NULL),
+(58, 1, 61, 'DD314', 'Floor 3', 'available', NULL, NULL),
+(60, 1, 62, 'TW301', 'Floor 3', 'available', NULL, NULL),
+(61, 1, 62, 'TW302', 'Floor 3', 'available', NULL, NULL),
+(62, 1, 62, 'TW303', 'Floor 3', 'available', NULL, NULL),
+(63, 1, 62, 'TW304', 'Floor 3', 'available', NULL, NULL),
+(64, 1, 62, 'TW305', 'Floor 3', 'available', NULL, NULL),
+(65, 1, 62, 'TW306', 'Floor 3', 'available', NULL, NULL),
+(66, 1, 62, 'TW307', 'Floor 3', 'available', NULL, NULL),
+(67, 1, 62, 'TW308', 'Floor 3', 'available', NULL, NULL),
+(68, 1, 62, 'TW309', 'Floor 3', 'available', NULL, NULL),
+(69, 1, 62, 'TW310', 'Floor 3', 'available', NULL, NULL),
+(70, 1, 62, 'TW311', 'Floor 3', 'available', NULL, NULL),
+(71, 1, 62, 'TW312', 'Floor 3', 'available', NULL, NULL),
+(75, 1, 63, 'SG301', 'Floor 3', 'available', NULL, NULL),
+(76, 1, 63, 'SG302', 'Floor 3', 'available', NULL, NULL),
+(77, 1, 63, 'SG303', 'Floor 3', 'available', NULL, NULL),
+(78, 1, 63, 'SG304', 'Floor 3', 'available', NULL, NULL),
+(79, 1, 63, 'SG305', 'Floor 3', 'available', NULL, NULL),
+(80, 1, 63, 'SG306', 'Floor 3', 'available', NULL, NULL),
+(81, 1, 63, 'SG307', 'Floor 3', 'available', NULL, NULL),
+(82, 1, 63, 'SG308', 'Floor 3', 'available', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2338,77 +2637,79 @@ CREATE TABLE `room_types` (
   `description` text DEFAULT NULL,
   `max_guests` int(11) NOT NULL DEFAULT 1,
   `base_rate` decimal(14,2) NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT 1
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `room_types`
 --
 
-INSERT INTO `room_types` (`id`, `hotel_id`, `name`, `description`, `max_guests`, `base_rate`, `active`) VALUES
-(1, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
-(2, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
-(3, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
-(4, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
-(5, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
-(6, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(7, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1),
-(8, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
-(9, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
-(10, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
-(11, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
-(12, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
-(13, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(14, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1),
-(15, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
-(16, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
-(17, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
-(18, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
-(19, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
-(20, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(21, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1),
-(22, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
-(23, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
-(24, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
-(25, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
-(26, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
-(27, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(28, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1),
-(29, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
-(30, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
-(31, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
-(32, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
-(33, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
-(34, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(35, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1),
-(36, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
-(37, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
-(38, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
-(39, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
-(40, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
-(41, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(42, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1),
-(43, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
-(44, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
-(45, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
-(46, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
-(47, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
-(48, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(49, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1),
-(50, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
-(51, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
-(52, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
-(53, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
-(54, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
-(55, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(56, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1),
-(57, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1),
-(58, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1),
-(59, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1),
-(60, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1),
-(61, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1),
-(62, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1),
-(63, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1);
+INSERT INTO `room_types` (`id`, `hotel_id`, `name`, `description`, `max_guests`, `base_rate`, `active`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
+(2, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
+(3, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
+(4, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
+(5, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
+(6, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
+(7, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
+(8, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
+(9, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
+(10, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
+(11, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
+(12, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
+(13, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
+(14, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
+(15, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
+(16, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
+(17, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
+(18, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
+(19, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
+(20, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
+(21, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
+(22, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
+(23, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
+(24, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
+(25, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
+(26, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
+(27, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
+(28, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
+(29, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
+(30, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
+(31, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
+(32, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
+(33, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
+(34, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
+(35, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
+(36, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
+(37, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
+(38, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
+(39, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
+(40, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
+(41, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
+(42, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
+(43, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
+(44, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
+(45, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
+(46, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
+(47, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
+(48, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
+(49, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
+(50, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
+(51, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
+(52, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
+(53, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
+(54, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
+(55, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
+(56, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
+(57, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
+(58, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
+(59, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
+(60, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
+(61, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
+(62, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
+(63, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2602,59 +2903,61 @@ CREATE TABLE `suppliers` (
   `address` varchar(255) DEFAULT NULL,
   `tax_id` varchar(80) DEFAULT NULL,
   `active` tinyint(1) DEFAULT 1,
-  `created_at` timestamp NULL DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `suppliers`
 --
 
-INSERT INTO `suppliers` (`id`, `hotel_id`, `name`, `contact_person`, `phone`, `email`, `address`, `tax_id`, `active`, `created_at`) VALUES
-(1, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
-(2, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
-(3, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
-(4, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(5, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL),
-(6, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
-(7, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
-(8, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
-(9, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(10, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL),
-(11, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
-(12, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
-(13, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
-(14, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(15, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL),
-(16, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
-(17, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
-(18, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
-(19, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(20, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL),
-(21, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
-(22, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
-(23, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
-(24, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(25, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL),
-(26, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
-(27, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
-(28, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
-(29, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(30, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL),
-(31, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
-(32, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
-(33, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
-(34, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(35, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL),
-(36, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
-(37, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
-(38, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
-(39, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(40, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL),
-(41, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL),
-(42, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL),
-(43, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL),
-(44, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL),
-(45, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL);
+INSERT INTO `suppliers` (`id`, `hotel_id`, `name`, `contact_person`, `phone`, `email`, `address`, `tax_id`, `active`, `created_at`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL, NULL, NULL),
+(2, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL, NULL, NULL),
+(3, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL, NULL, NULL),
+(4, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL, NULL, NULL),
+(5, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL, NULL, NULL),
+(6, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL, NULL, NULL),
+(7, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL, NULL, NULL),
+(8, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL, NULL, NULL),
+(9, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL, NULL, NULL),
+(10, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL, NULL, NULL),
+(11, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL, NULL, NULL),
+(12, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL, NULL, NULL),
+(13, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL, NULL, NULL),
+(14, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL, NULL, NULL),
+(15, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL, NULL, NULL),
+(16, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL, NULL, NULL),
+(17, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL, NULL, NULL),
+(18, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL, NULL, NULL),
+(19, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL, NULL, NULL),
+(20, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL, NULL, NULL),
+(21, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL, NULL, NULL),
+(22, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL, NULL, NULL),
+(23, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL, NULL, NULL),
+(24, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL, NULL, NULL),
+(25, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL, NULL, NULL),
+(26, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL, NULL, NULL),
+(27, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL, NULL, NULL),
+(28, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL, NULL, NULL),
+(29, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL, NULL, NULL),
+(30, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL, NULL, NULL),
+(31, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL, NULL, NULL),
+(32, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL, NULL, NULL),
+(33, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL, NULL, NULL),
+(34, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL, NULL, NULL),
+(35, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL, NULL, NULL),
+(36, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL, NULL, NULL),
+(37, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL, NULL, NULL),
+(38, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL, NULL, NULL),
+(39, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL, NULL, NULL),
+(40, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL, NULL, NULL),
+(41, 1, 'Nile Distributors Ltd', 'Charles Okello', '+256 771 220 001', 'orders@niledistributors.ug', 'Nasser Road, Jinja', 'NP-0001', 1, NULL, NULL, NULL),
+(42, 1, 'Jinja Fresh Produce', 'Fatuma Nakato', '+256 772 220 002', 'fatuma@jinfresh.ug', 'Main Market, Jinja', 'JF-2200', 1, NULL, NULL, NULL),
+(43, 1, 'Uganda Breweries Supply', 'David Ssewanyana', '+256 773 220 003', 'supply@brewug.ug', 'Kampala', 'UB-3388', 1, NULL, NULL, NULL),
+(44, 1, 'Super Clean Supplies', 'Rita Atim', '+256 774 220 004', 'rt@superclean.ug', 'Madhivani Road, Jinja', 'SC-1144', 1, NULL, NULL, NULL),
+(45, 1, 'Kampala Paper Mart', 'Paul Mugisha', '+256 775 220 005', 'pm@kpmar.ug', 'Kampala Road, Kampala', 'KM-7789', 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2749,28 +3052,30 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `profile_image` varchar(255) DEFAULT NULL,
   `last_login_at` datetime DEFAULT NULL,
-  `password_changed_at` datetime DEFAULT NULL
+  `password_changed_at` datetime DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `hotel_id`, `name`, `email`, `phone`, `password_hash`, `status`, `created_at`, `updated_at`, `profile_image`, `last_login_at`, `password_changed_at`) VALUES
-(1, 1, 'Reagan Otema (Administrator)', 'admin@hotelparadiseonthenile.info', '0772 514 889', '$2y$10$j6OYaPsHSYx7pFkmJ5.QFebkCRxpcqI62S/v8a8W4oio.6dyh1hoC', 'active', NULL, NULL, NULL, NULL, '2026-10-10 15:44:38'),
-(2, 1, 'Hotel Director', 'director@hotelparadiseonthenile.info', '+256 774 000 001', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(3, 1, 'General Manager', 'gm@hotelparadiseonthenile.info', '+256 774 000 002', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(4, 1, 'Finance Officer', 'accounts@hotelparadiseonthenile.info', '+256 774 000 003', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(5, 1, 'Cashier', 'cashier@hotelparadiseonthenile.info', '+256 774 000 004', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(6, 1, 'Front Desk Reception', 'frontdesk@hotelparadiseonthenile.info', '+256 774 000 005', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(7, 1, 'Restaurant Waiter', 'waiter@hotelparadiseonthenile.info', '+256 774 000 006', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(8, 1, 'Bar Staff', 'bar@hotelparadiseonthenile.info', '+256 774 000 007', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(9, 1, 'Kitchen', 'kitchen@hotelparadiseonthenile.info', '+256 774 000 008', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(10, 1, 'Storekeeper', 'store@hotelparadiseonthenile.info', '+256 774 000 009', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(11, 1, 'Procurement Officer', 'procurement@hotelparadiseonthenile.info', '+256 774 000 010', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(12, 1, 'Housekeeping', 'housekeeping@hotelparadiseonthenile.info', '+256 774 000 011', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(13, 1, 'Internal Auditor', 'auditor@hotelparadiseonthenile.info', '+256 774 000 012', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL),
-(66, 1, 'Hotel Paradise Staff', 'staff@hotelparadiseonthenile.info', NULL, '$2y$12$AlYTQE166maMuA7ATDHIBu/E/heL54nmxEUSWcbxDlWp.Ytp.hGL.', 'active', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` (`id`, `hotel_id`, `name`, `email`, `phone`, `password_hash`, `status`, `created_at`, `updated_at`, `profile_image`, `last_login_at`, `password_changed_at`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 'Reagan Otema (Administrator)', 'admin@hotelparadiseonthenile.info', '0772 514 889', '$2y$10$j6OYaPsHSYx7pFkmJ5.QFebkCRxpcqI62S/v8a8W4oio.6dyh1hoC', 'active', NULL, NULL, NULL, NULL, '2026-10-10 15:44:38', NULL, NULL),
+(2, 1, 'Hotel Director', 'director@hotelparadiseonthenile.info', '+256 774 000 001', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 1, 'General Manager', 'gm@hotelparadiseonthenile.info', '+256 774 000 002', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 1, 'Finance Officer', 'accounts@hotelparadiseonthenile.info', '+256 774 000 003', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 1, 'Cashier', 'cashier@hotelparadiseonthenile.info', '+256 774 000 004', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 1, 'Front Desk Reception', 'frontdesk@hotelparadiseonthenile.info', '+256 774 000 005', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(7, 1, 'Restaurant Waiter', 'waiter@hotelparadiseonthenile.info', '+256 774 000 006', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 1, 'Bar Staff', 'bar@hotelparadiseonthenile.info', '+256 774 000 007', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 1, 'Kitchen', 'kitchen@hotelparadiseonthenile.info', '+256 774 000 008', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(10, 1, 'Storekeeper', 'store@hotelparadiseonthenile.info', '+256 774 000 009', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(11, 1, 'Procurement Officer', 'procurement@hotelparadiseonthenile.info', '+256 774 000 010', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(12, 1, 'Housekeeping', 'housekeeping@hotelparadiseonthenile.info', '+256 774 000 011', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(13, 1, 'Internal Auditor', 'auditor@hotelparadiseonthenile.info', '+256 774 000 012', '$2y$10$2DcxWTLhv4yYgC/Zg6lvAuO8r.mnWKi6LnvJULMzgiTxAnRmWcJf2', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(66, 1, 'Hotel Paradise Staff', 'staff@hotelparadiseonthenile.info', NULL, '$2y$12$AlYTQE166maMuA7ATDHIBu/E/heL54nmxEUSWcbxDlWp.Ytp.hGL.', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3179,7 +3484,8 @@ ALTER TABLE `event_bookings`
 --
 ALTER TABLE `event_requests`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uq_event_number` (`request_number`);
+  ADD UNIQUE KEY `uq_event_number` (`request_number`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `expenses`
@@ -3190,14 +3496,16 @@ ALTER TABLE `expenses`
   ADD KEY `department_id` (`department_id`),
   ADD KEY `requested_by` (`requested_by`),
   ADD KEY `idx_exp_status` (`status`),
-  ADD KEY `idx_expenses_status` (`status`);
+  ADD KEY `idx_expenses_status` (`status`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `facility_enquiries`
 --
 ALTER TABLE `facility_enquiries`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uq_enquiry_number` (`enquiry_number`);
+  ADD UNIQUE KEY `uq_enquiry_number` (`enquiry_number`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `finance_transactions`
@@ -3253,7 +3561,8 @@ ALTER TABLE `guests`
   ADD KEY `idx_guest_email` (`email`),
   ADD KEY `idx_guest_phone` (`phone`),
   ADD KEY `idx_guests_email` (`email`),
-  ADD KEY `idx_guests_phone` (`phone`);
+  ADD KEY `idx_guests_phone` (`phone`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `guest_accounts`
@@ -3324,7 +3633,8 @@ ALTER TABLE `inventory_items`
   ADD UNIQUE KEY `code` (`code`),
   ADD KEY `category_id` (`category_id`),
   ADD KEY `idx_inv_active` (`active`),
-  ADD KEY `idx_inventory_active` (`active`);
+  ADD KEY `idx_inventory_active` (`active`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `inventory_movements`
@@ -3473,7 +3783,8 @@ ALTER TABLE `news_posts`
   ADD UNIQUE KEY `uq_news_slug` (`slug`),
   ADD KEY `idx_news_cat` (`category`),
   ADD KEY `idx_news_status` (`status`,`publish_at`),
-  ADD KEY `idx_news_pinned` (`pinned`,`publish_at`);
+  ADD KEY `idx_news_pinned` (`pinned`,`publish_at`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `notifications`
@@ -3644,7 +3955,8 @@ ALTER TABLE `purchase_orders`
   ADD UNIQUE KEY `number` (`number`),
   ADD KEY `supplier_id` (`supplier_id`),
   ADD KEY `requisition_id` (`requisition_id`),
-  ADD KEY `created_by` (`created_by`);
+  ADD KEY `created_by` (`created_by`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `purchase_order_items`
@@ -3663,7 +3975,8 @@ ALTER TABLE `purchase_requisitions`
   ADD KEY `department_id` (`department_id`),
   ADD KEY `requested_by` (`requested_by`),
   ADD KEY `idx_pr_status` (`status`),
-  ADD KEY `idx_requisitions_status` (`status`);
+  ADD KEY `idx_requisitions_status` (`status`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `purchase_requisition_items`
@@ -3715,7 +4028,8 @@ ALTER TABLE `reservations`
   ADD KEY `idx_res_checkout` (`check_out`),
   ADD KEY `idx_res_created` (`created_at`),
   ADD KEY `idx_reservations_status` (`status`),
-  ADD KEY `idx_reservations_dates` (`check_in`,`check_out`);
+  ADD KEY `idx_reservations_dates` (`check_in`,`check_out`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `reservation_rooms`
@@ -3746,7 +4060,8 @@ ALTER TABLE `role_permissions`
 ALTER TABLE `rooms`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `hotel_id` (`hotel_id`,`room_number`),
-  ADD KEY `room_type_id` (`room_type_id`);
+  ADD KEY `room_type_id` (`room_type_id`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `room_status_history`
@@ -3761,7 +4076,8 @@ ALTER TABLE `room_status_history`
 --
 ALTER TABLE `room_types`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `hotel_id` (`hotel_id`);
+  ADD KEY `hotel_id` (`hotel_id`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `sessions`
@@ -3838,7 +4154,8 @@ ALTER TABLE `stock_movements`
 -- Indexes for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `system_filters`
@@ -3885,7 +4202,8 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`),
   ADD UNIQUE KEY `phone` (`phone`),
-  ADD KEY `hotel_id` (`hotel_id`);
+  ADD KEY `hotel_id` (`hotel_id`),
+  ADD KEY `idx_deleted_at` (`deleted_at`);
 
 --
 -- Indexes for table `user_department_access`
@@ -3981,7 +4299,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `beds`
@@ -4017,7 +4335,7 @@ ALTER TABLE `communication_calls`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `customer_addresses`
@@ -4035,13 +4353,13 @@ ALTER TABLE `customer_documents`
 -- AUTO_INCREMENT for table `customer_signin_attempts`
 --
 ALTER TABLE `customer_signin_attempts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `customer_tokens`
 --
 ALTER TABLE `customer_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -4101,7 +4419,7 @@ ALTER TABLE `event_bookings`
 -- AUTO_INCREMENT for table `event_requests`
 --
 ALTER TABLE `event_requests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `expenses`
@@ -4293,31 +4611,31 @@ ALTER TABLE `maintenance_tickets`
 -- AUTO_INCREMENT for table `menu_categories`
 --
 ALTER TABLE `menu_categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=224;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=241;
 
 --
 -- AUTO_INCREMENT for table `menu_items`
 --
 ALTER TABLE `menu_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2353;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2558;
 
 --
 -- AUTO_INCREMENT for table `news_posts`
 --
 ALTER TABLE `news_posts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT for table `notification_deliveries`
 --
 ALTER TABLE `notification_deliveries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `notification_devices`
@@ -4329,19 +4647,19 @@ ALTER TABLE `notification_devices`
 -- AUTO_INCREMENT for table `notification_events`
 --
 ALTER TABLE `notification_events`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `outlets`
@@ -4359,7 +4677,7 @@ ALTER TABLE `password_reset_tokens`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `permissions`
@@ -4437,7 +4755,7 @@ ALTER TABLE `purchase_requisition_items`
 -- AUTO_INCREMENT for table `receipt_deliveries`
 --
 ALTER TABLE `receipt_deliveries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `reception_activity_log`
@@ -4455,13 +4773,13 @@ ALTER TABLE `reception_records`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `reservation_rooms`
 --
 ALTER TABLE `reservation_rooms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `roles`

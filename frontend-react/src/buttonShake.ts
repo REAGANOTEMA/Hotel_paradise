@@ -31,6 +31,8 @@ const ELIGIBLE = [
   '.jumpOrder',
   '.dropBtn',
   '.vgBtn',
+  '.nav nav a',
+  '.drawerNav a',
 ].join(',');
 
 /* Controls that merely look like a button - a card, a row, a carousel dot or an

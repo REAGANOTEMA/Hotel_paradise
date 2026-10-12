@@ -405,6 +405,7 @@ function page_caps(): array{
   'audit'=>['director','auditor'],
   'reports'=>['director','general_manager','accountant','auditor'],
   'users'=>['director','general_manager'],
+  'trash'=>['director','general_manager'],
   'profile'=>[]
  ];
 }
@@ -465,3 +466,6 @@ function role_label(string $r): string{
  $map=['super_admin'=>'Administrator','director'=>'Director','general_manager'=>'General Manager','accountant'=>'Finance','cashier'=>'Cashier','receptionist'=>'Front Desk','waiter'=>'Waiter','bar_staff'=>'Bar Staff','kitchen'=>'Kitchen','storekeeper'=>'Storekeeper','procurement'=>'Procurement','housekeeping'=>'Housekeeping','auditor'=>'Auditor','events_manager'=>'Events Manager','marketing'=>'Marketing','maintenance'=>'Maintenance','human_resource'=>'Human Resource'];
  return $map[$r]??str_replace('_',' ',$r);
 }
+
+/* Soft delete ("Trash"): the helpers every module and the router share. */
+require_once __DIR__.'/trash.php';

@@ -16,7 +16,8 @@
   'use strict';
 
   var ELIGIBLE = 'button,[role="button"],input[type="submit"],' +
-    'input[type="button"],input[type="reset"],a.btn,a.btnGhost';
+    'input[type="button"],input[type="reset"],a.btn,a.btnGhost,' +
+    '.sideNav a,.profMenu a';
 
   /* Chrome that is not really an action - a scrim, a toast dismiss - is left
      alone; anything can opt out with data-noshake. */

@@ -91,6 +91,25 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $K['roles'],$K['table'],$id);
   flash($K['label'].' '.$r[$K['num']].' marked '.$STATUSES[$nst]['label'].'.');
  }
+ if($act==='edit'){
+  $id=(int)($_POST['id']??0);
+  $kind=(string)($_POST['kind']??'');
+  if(!isset($KINDS[$kind])){ flash('Nothing to save.','bad'); go('events'); }
+  $K=$KINDS[$kind];
+  $fn=trim($_POST['full_name']??''); $ph=trim($_POST['phone']??''); $em=trim($_POST['email']??'');
+  $gu=($_POST['guests']??'')!==''?(int)$_POST['guests']:null; $msg=trim($_POST['message']??'');
+  $nst=(string)($_POST['status']??''); if(!isset($STATUSES[$nst])) $nst='new';
+  if($fn===''){ flash('A contact name is required.','bad'); go('events'); }
+  if($kind==='event'){
+   q("UPDATE event_requests SET full_name=?,phone=?,email=?,event_type=?,event_date=NULLIF(?,''),guests=?,venue=?,message=?,status=?,updated_at=NOW() WHERE id=?",
+     [$fn,$ph,$em,trim($_POST['event_type']??''),trim($_POST['event_date']??''),$gu,trim($_POST['venue']??''),$msg,$nst,$id]);
+  }else{
+   q("UPDATE facility_enquiries SET full_name=?,phone=?,email=?,facility=?,preferred_date=NULLIF(?,''),guests=?,message=?,status=?,updated_at=NOW() WHERE id=?",
+     [$fn,$ph,$em,trim($_POST['facility']??''),trim($_POST['preferred_date']??''),$gu,$msg,$nst,$id]);
+  }
+  audit('events_edit',$K['table'],$id);
+  flash($K['label'].' updated.');
+ }
  go('events');
 }
 
@@ -107,8 +126,8 @@ if(!isset($STATUSES[$sf])) $sf='';
 $where=$sf!==''?' WHERE status=?':'';
 $params=$sf!==''?[$sf]:[];
 
-$events=($kf==='enquiry')?[]:rows('SELECT * FROM event_requests'.$where.' ORDER BY id DESC LIMIT 100',$params);
-$enquiries=($kf==='event')?[]:rows('SELECT * FROM facility_enquiries'.$where.' ORDER BY id DESC LIMIT 100',$params);
+$events=($kf==='enquiry')?[]:rows('SELECT * FROM event_requests WHERE deleted_at IS NULL'.($sf!==''?' AND status=?':'').' ORDER BY id DESC LIMIT 100',$params);
+$enquiries=($kf==='event')?[]:rows('SELECT * FROM facility_enquiries WHERE deleted_at IS NULL'.($sf!==''?' AND status=?':'').' ORDER BY id DESC LIMIT 100',$params);
 
 /** One small form per row: pick a status, record it, notify the team. */
 function events_status_form(string $kind,int $id,string $cur,array $statuses): void{
@@ -122,10 +141,10 @@ function events_status_form(string $kind,int $id,string $cur,array $statuses): v
 page_head('Events & Enquiries','events','Website enquiries for events, conferences and facilities');
 
 echo '<div class="kpis">';
-kpi_card('New event enquiries',(string)val("SELECT COUNT(*) FROM event_requests WHERE status='new'"),'Awaiting a call back','gold');
-kpi_card('New facility enquiries',(string)val("SELECT COUNT(*) FROM facility_enquiries WHERE status='new'"),'Front desk to answer','blue');
-kpi_card('Confirmed events',(string)val("SELECT COUNT(*) FROM event_requests WHERE status='confirmed'"),'Won and on the calendar','ok');
-kpi_card('Asked about this month',(string)val('SELECT COUNT(*) FROM event_requests WHERE created_at>=?',[date('Y-m-01')]),'Event enquiries in '.date('M Y'),'navy');
+kpi_card('New event enquiries',(string)val("SELECT COUNT(*) FROM event_requests WHERE status='new' AND deleted_at IS NULL"),'Awaiting a call back','gold');
+kpi_card('New facility enquiries',(string)val("SELECT COUNT(*) FROM facility_enquiries WHERE status='new' AND deleted_at IS NULL"),'Front desk to answer','blue');
+kpi_card('Confirmed events',(string)val("SELECT COUNT(*) FROM event_requests WHERE status='confirmed' AND deleted_at IS NULL"),'Won and on the calendar','ok');
+kpi_card('Asked about this month',(string)val('SELECT COUNT(*) FROM event_requests WHERE deleted_at IS NULL AND created_at>=?',[date('Y-m-01')]),'Event enquiries in '.date('M Y'),'navy');
 echo '</div>';
 
 echo '<div class="rfilter">';
@@ -150,7 +169,7 @@ if($kf!=='enquiry'){
   echo '<td>'.e(fmtdate($r['event_date']) ?: '—').'</td>';
   echo '<td class="num">'.($r['guests']!==null?(int)$r['guests']:'—').'</td>';
   echo '<td>'.badge($STATUSES[$r['status']]['label']??str_replace('_',' ',$r['status']),$STATUSES[$r['status']]['tone']??'grey').'</td>';
-  echo '<td style="white-space:nowrap">'; events_status_form('event',(int)$r['id'],(string)$r['status'],$STATUSES); echo '</td>';
+  echo '<td style="white-space:nowrap">'; events_status_form('event',(int)$r['id'],(string)$r['status'],$STATUSES); echo ' <a class="btn sm" href="'.BASE.'/index.php?page=events&kind=event&edit='.(int)$r['id'].'#editlead">Edit</a> '.trash_button('event_requests',(int)$r['id'],'events').'</td>';
   echo '</tr>';
  }
  if(!count($events)) echo '<tr><td colspan="7" style="text-align:center;color:var(--muted)">No event enquiries' . ($sf!==''?' with this status':'') . ' yet.</td></tr>';
@@ -168,11 +187,39 @@ if($kf!=='event'){
   echo '<td>'.e(fmtdate($r['preferred_date']) ?: '—').'</td>';
   echo '<td class="num">'.($r['guests']!==null?(int)$r['guests']:'—').'</td>';
   echo '<td>'.badge($STATUSES[$r['status']]['label']??str_replace('_',' ',$r['status']),$STATUSES[$r['status']]['tone']??'grey').'</td>';
-  echo '<td style="white-space:nowrap">'; events_status_form('enquiry',(int)$r['id'],(string)$r['status'],$STATUSES); echo '</td>';
+  echo '<td style="white-space:nowrap">'; events_status_form('enquiry',(int)$r['id'],(string)$r['status'],$STATUSES); echo ' <a class="btn sm" href="'.BASE.'/index.php?page=events&kind=enquiry&edit='.(int)$r['id'].'#editlead">Edit</a> '.trash_button('facility_enquiries',(int)$r['id'],'events').'</td>';
   echo '</tr>';
  }
  if(!count($enquiries)) echo '<tr><td colspan="7" style="text-align:center;color:var(--muted)">No facility enquiries' . ($sf!==''?' with this status':'') . ' yet.</td></tr>';
  echo '</tbody></table></div>';
+}
+
+$editId=(int)($_GET['edit']??0);
+if($editId && isset($KINDS[$kf])){
+ $K=$KINDS[$kf];
+ $er=row('SELECT * FROM '.$K['table'].' WHERE id=? AND deleted_at IS NULL',[$editId]);
+ if($er){
+  echo '<div class="panel" id="editlead"><h2>Edit '.e($K['label']).' '.e($er[$K['num']]).'</h2>';
+  echo '<p class="hint">Update the lead details. The reference number never changes.</p>';
+  form_open('events','edit',['kind'=>$kf]);
+  echo '<input type="hidden" name="id" value="'.(int)$er['id'].'">';
+  echo '<div class="field"><label>Contact name</label><input name="full_name" value="'.e($er['full_name']).'" required></div>';
+  echo '<div class="field"><label>Phone</label><input name="phone" value="'.e($er['phone']??'').'"></div>';
+  echo '<div class="field"><label>Email</label><input type="email" name="email" value="'.e($er['email']??'').'"></div>';
+  if($kf==='event'){
+   echo '<div class="field"><label>Event type</label><input name="event_type" value="'.e($er['event_type']??'').'"></div>';
+   echo '<div class="field"><label>Event date</label><input type="date" name="event_date" value="'.e($er['event_date']??'').'"></div>';
+   echo '<div class="field"><label>Venue</label><input name="venue" value="'.e($er['venue']??'').'"></div>';
+  }else{
+   echo '<div class="field"><label>Facility</label><input name="facility" value="'.e($er['facility']??'').'"></div>';
+   echo '<div class="field"><label>Preferred date</label><input type="date" name="preferred_date" value="'.e($er['preferred_date']??'').'"></div>';
+  }
+  echo '<div class="field"><label>Number of guests</label><input type="number" name="guests" min="1" value="'.($er['guests']!==null?(int)$er['guests']:'').'"></div>';
+  echo '<div class="field"><label>Status</label><select name="status">'; foreach($STATUSES as $k=>$s) echo '<option value="'.e($k).'"'.checked((string)$er['status'],$k).'>'.e($s['label']).'</option>'; echo '</select></div>';
+  echo '<div class="field"><label>Message</label><textarea name="message" rows="3">'.e($er['message']??'').'</textarea></div>';
+  echo '<button class="btn">Save lead</button> <a class="btnGhost sm" href="'.BASE.'/index.php?page=events">Cancel</a>'; form_close();
+  echo '</div>';
+ }
 }
 
 page_foot();

@@ -237,6 +237,7 @@ $st=$_GET['st']??'';
 $qtext=trim($_GET['q']??'');
 $where='1=1'; $params=[];
 if($st){ $where.=' AND r.status=?'; $params[]=$st; }
+$where.=' AND r.deleted_at IS NULL';
 if($qtext!==''){ $where.=' AND (g.full_name LIKE ? OR r.booking_number LIKE ?)'; $params[]='%'.$qtext.'%'; $params[]='%'.$qtext.'%'; }
 $list=rows("SELECT r.id,r.booking_number,r.check_in,r.check_out,r.status,r.total,r.paid,r.adults,g.full_name FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE $where ORDER BY r.check_in DESC LIMIT 200",$params);
 
@@ -248,7 +249,7 @@ foreach([''=>'All','pending'=>'Pending','confirmed'=>'Confirmed','checked_in'=>'
 }
 echo '<form method="get" style="margin-left:auto;display:flex;gap:6px"><input type="hidden" name="page" value="reservations"><input name="q" value="'.e($qtext).'" placeholder="Search guest or booking..." style="padding:9px 12px;border:1px solid var(--line);border-radius:9px"><button class="btn sm">Search</button></form></div>';
 echo '<div class="panel"><table class="tbl"><thead><tr><th>Booking</th><th>Guest</th><th>Check in</th><th>Check out</th><th class="num">Total</th><th class="num">Paid</th><th>Status</th><th></th></tr></thead><tbody>';
-foreach($list as $r){ echo '<tr><td>'.e($r['booking_number']).'</td><td><b>'.e($r['full_name']).'</b></td><td>'.fmtdate($r['check_in']).'</td><td>'.fmtdate($r['check_out']).'</td><td class="num">'.money($r['total']).'</td><td class="num">'.money($r['paid']).'</td><td>'.status_badge($r['status']).'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=reservations&view='.(int)$r['id'].'">Open</a></td></tr>'; }
+foreach($list as $r){ echo '<tr><td>'.e($r['booking_number']).'</td><td><b>'.e($r['full_name']).'</b></td><td>'.fmtdate($r['check_in']).'</td><td>'.fmtdate($r['check_out']).'</td><td class="num">'.money($r['total']).'</td><td class="num">'.money($r['paid']).'</td><td>'.status_badge($r['status']).'</td><td style="white-space:nowrap"><a class="btn sm" href="'.BASE.'/index.php?page=reservations&view='.(int)$r['id'].'">Open</a> '.trash_button('reservations',(int)$r['id'],'reservations').'</td></tr>'; }
 if(!count($list)) echo '<tr><td colspan="8" style="text-align:center;color:var(--muted)">No reservations found.</td></tr>';
 echo '</tbody></table></div>';
 

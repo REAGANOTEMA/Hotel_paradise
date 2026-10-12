@@ -688,3 +688,10 @@ ul.clean{list-style:none;margin:0;padding:0}
 .shakeBtn:hover,.shakeBtn:focus,.shakeBtn:focus-visible,.shakeBtn:active,
 .shakeBtn:disabled,.shakeBtn.loading,.shakeBtn[aria-busy="true"]{animation:none}
 @media(prefers-reduced-motion:reduce){.shakeBtn{animation:none}}
+
+/* A row action that has to be a POST (the Trash button, restore, delete for
+   good) sits inline in a table cell, so it stays on the same line as Edit and
+   Open. The little form carries no layout of its own. */
+.actForm{display:inline-block;margin:0}
+.actForm button{vertical-align:middle}
+td .actForm+form.actForm{margin-left:6px}

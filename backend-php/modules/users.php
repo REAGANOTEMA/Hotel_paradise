@@ -49,7 +49,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
  }
 }
 
-$list=rows('SELECT u.*,GROUP_CONCAT(r.name) roles FROM users u LEFT JOIN user_roles ur ON ur.user_id=u.id LEFT JOIN roles r ON r.id=ur.role_id GROUP BY u.id ORDER BY u.name');
+$list=rows('SELECT u.*,GROUP_CONCAT(r.name) roles FROM users u LEFT JOIN user_roles ur ON ur.user_id=u.id LEFT JOIN roles r ON r.id=ur.role_id WHERE u.deleted_at IS NULL GROUP BY u.id ORDER BY u.name');
 $roles=rows('SELECT * FROM roles ORDER BY id');
 $edit=(int)($_GET['edit']??0); $eu=null; if($edit) $eu=row('SELECT u.*,GROUP_CONCAT(r.name) roles FROM users u LEFT JOIN user_roles ur ON ur.user_id=u.id LEFT JOIN roles r ON r.id=ur.role_id WHERE u.id=? GROUP BY u.id',[$edit]);
 
@@ -62,6 +62,7 @@ foreach($list as $u){
  echo '<a class="btn sm" href="'.BASE.'/index.php?page=users&edit='.(int)$u['id'].'">Edit</a> ';
  if($u['status']==='active'){ form_open('users','status',['id'=>$u['id']]); echo '<input type="hidden" name="nst" value="suspended"><button class="btn sm danger" onclick="return confirm(\'Suspend this account?\')">Suspend</button>'; form_close(); }
  else { form_open('users','status',['id'=>$u['id']]); echo '<input type="hidden" name="nst" value="active"><button class="btn sm tick">Activate</button>'; form_close(); }
+ if((int)$u['id']!==(int)(current_user()['id']??0)) echo ' '.trash_button('users',(int)$u['id'],'users');
  echo '</td></tr>';
 }
 echo '</tbody></table></div></div>';
