@@ -342,7 +342,7 @@ function receipts_send_email(array $ctx): array
  $html=receipts_email_html($ctx);
  $text=receipts_email_text($ctx);
 
- $res=mail_send($to,$subject,$html,$text,['attachments'=>receipt_attachments($ctx,'guest')]);
+ $res=mail_send($to,$subject,$html,$text,['attachments'=>receipt_attachments($ctx,'guest'),'account'=>($ctx['kind']==='order'?'restaurant':'reservation')]);
  $out['sent']=(bool)$res['ok'];
  $out['error']=$res['ok']?null:($res['error']??'The message could not be sent.');
  receipt_log($pid,$ctx,$to,$res['ok'],$out['error']);
@@ -426,7 +426,7 @@ function receipts_send_staff_copies(array $ctx): array
   if($to===''||strtolower($to)===$guest) continue;
   if(receipt_staff_already_sent($pid,$to)){ $res['skipped']++; continue; }
   $subject='Receipt '.$ctx['ref'].' (hotel copy)';
-  $send=mail_send($to,$subject,receipts_email_html($ctx,'staff'),receipts_email_text($ctx,'staff'),['attachments'=>receipt_attachments($ctx,'staff')]);
+  $send=mail_send($to,$subject,receipts_email_html($ctx,'staff'),receipts_email_text($ctx,'staff'),['attachments'=>receipt_attachments($ctx,'staff'),'account'=>($ctx['kind']==='order'?'restaurant':'reservation')]);
   $error=$send['ok']?null:($send['error']??'The message could not be sent.');
   receipt_log($pid,$ctx,$to,(bool)$send['ok'],$error,'staff');
   if($send['ok']){ $res['sent']++; $res['to'][]=$to; }

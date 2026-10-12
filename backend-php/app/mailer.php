@@ -84,7 +84,10 @@ function mail_config(): array
   'from_email'=>$pick('from_email','HP_MAIL_FROM',MAIL_HOTEL_EMAIL),
   'from_name'=>$pick('from_name','HP_MAIL_FROM_NAME',MAIL_HOTEL_NAME),
   'reply_to'=>$pick('reply_to','HP_MAIL_REPLY',MAIL_HOTEL_EMAIL),
-  'timeout'=>(int)$pick('timeout','HP_MAIL_TIMEOUT','15'),
+  // Named mailboxes a caller may pick per message (e.g. reservations vs
+  // restaurant). Each entry may override host/port/secure/username/password/
+  // from_email/from_name/reply_to; anything it leaves out falls back to above.
+  'accounts'=>(isset($m['accounts'])&&is_array($m['accounts']))?$m['accounts']:[],
  ];
  return $cfg;
 }
@@ -177,6 +180,20 @@ function mail_send(string $to,string $subject,string $html,string $text='',array
 {
  $cfg=mail_config();
  $result=['ok'=>false,'transport'=>$cfg['transport'],'error'=>null,'to'=>$to,'subject'=>$subject];
+
+ // A caller may name the mailbox this message should leave from, so the front
+ // desk writes as the reservations desk and the restaurant writes as the
+ // restaurant. Only the keys a named account sets are overridden; the rest of
+ // the transport settings stay as configured. An unknown name is ignored.
+ $account=strtolower(trim((string)($opts['account']??'')));
+ if($account!==''&&isset($cfg['accounts'][$account])&&is_array($cfg['accounts'][$account])){
+  $a=$cfg['accounts'][$account];
+  foreach(['host','port','secure','username','password','from_email','from_name','reply_to'] as $k){
+   if(isset($a[$k])&&$a[$k]!=='') $cfg[$k]=$a[$k];
+  }
+  $cfg['port']=(int)$cfg['port'];
+  $cfg['secure']=in_array(strtolower((string)$cfg['secure']),['tls','ssl','none'],true)?strtolower((string)$cfg['secure']):'tls';
+ }
 
  $to=trim($to);
  if(!filter_var($to,FILTER_VALIDATE_EMAIL)){
@@ -351,7 +368,7 @@ function mail_smtp_send(array $cfg,array $parts): array
  $host=$cfg['host'];
  $port=(int)$cfg['port'];
  $secure=$cfg['secure'];
- $timeout=max(5,(int)$cfg['timeout']);
+ $timeout=max(5,(int)($cfg['timeout']??10));
 
  $target=($secure==='ssl'?'ssl':'tcp').'://'.$host.':'.$port;
  $ctx=stream_context_create(['ssl'=>[
@@ -380,7 +397,7 @@ function mail_smtp_send(array $cfg,array $parts): array
  };
 
  $greeting=$read();
- if($code($greeting)!==2) { fclose($fp); return ['ok'=>false,'error'=>'The mail server did not greet us: '.trim($greeting)]; }
+ if(intdiv($code($greeting),100)!==2) { fclose($fp); return ['ok'=>false,'error'=>'The mail server did not greet us: '.trim($greeting)]; }
 
  $ehloHost=mail_message_domain($cfg['from_email']);
  $ehlo=$say('EHLO '.$ehloHost,2);
@@ -420,7 +437,7 @@ function mail_smtp_send(array $cfg,array $parts): array
  $wire=mail_dot_stuff($parts['raw']);
  fwrite($fp,$wire."\r\n.\r\n");
  $end=$read();
- if($code($end)!==2){ fclose($fp); return ['ok'=>false,'error'=>'The mail server did not accept the message: '.trim($end)]; }
+ if(intdiv($code($end),100)!==2){ fclose($fp); return ['ok'=>false,'error'=>'The mail server did not accept the message: '.trim($end)]; }
 
  @$say('QUIT',2);
  fclose($fp);

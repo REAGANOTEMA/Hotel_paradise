@@ -1227,6 +1227,18 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
    once the gateway is live - nothing is stored on this site.
    --------------------------------------------------------------- */
 .payWrap{padding:40px 7vw 96px;max-width:1180px;margin:0 auto}
+.voiceGuide{display:flex;align-items:center;gap:14px;max-width:1180px;margin:22px auto 0;padding:14px 18px;background:#fff;border:1px solid var(--line2);border-left:4px solid var(--gold);border-radius:var(--r);box-shadow:0 2px 14px rgba(7,26,51,.06);transition:border-color .2s ease,box-shadow .2s ease}
+.voiceGuide.on{border-color:var(--gold);box-shadow:0 6px 22px rgba(201,162,39,.16)}
+.voiceGuide .vgIcon{flex:none;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--gold-soft);color:var(--gold-deep)}
+.voiceGuide .vgIcon svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.voiceGuide.on .vgIcon{background:var(--gold);color:#071A33}
+.voiceGuide .vgText{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.voiceGuide .vgText b{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy)}
+.voiceGuide .vgText small{color:var(--muted);font-size:12.5px;line-height:1.5}
+.voiceGuide .vgBtn{flex:none;border:0;border-radius:100px;padding:11px 20px;font:inherit;font-weight:600;font-size:13px;cursor:pointer;background:var(--navy);color:#fff;transition:transform .18s,background .18s}
+.voiceGuide .vgBtn:hover{background:var(--nebula)}
+.voiceGuide.on .vgBtn{background:var(--gold);color:var(--navy)}
+@media (max-width:560px){.voiceGuide{padding:14px 16px;gap:12px}.voiceGuide .vgText small{font-size:12px}.voiceGuide .vgBtn{padding:10px 16px}}
 .payGrid{display:grid;grid-template-columns:.92fr 1.08fr;gap:26px;align-items:start}
 .payCard{background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);padding:30px;margin:0}
 .payCard h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy);margin:4px 0 0}

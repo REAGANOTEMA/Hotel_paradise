@@ -58,9 +58,22 @@ b,strong{font-variant-numeric:tabular-nums}
 .sideClose span:first-child{transform:rotate(45deg)}
 .sideClose span:last-child{transform:rotate(-45deg)}
 
-.sideNav{flex:1;padding:12px 10px 10px;display:flex;flex-direction:column;gap:16px}
-.sideGroup{display:flex;flex-direction:column;gap:3px}
-.sideLabel{margin:0 8px 4px;font-size:9.5px;letter-spacing:.2em;color:rgba(255,255,255,.48);font-weight:700;text-transform:uppercase}
+.sideNav{flex:1;padding:12px 10px 10px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;overflow-x:hidden}
+.sideGroup{display:flex;flex-direction:column}
+.groupHead{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;background:none;border:0;border-radius:10px;cursor:pointer;color:rgba(255,255,255,.62);font:inherit;text-align:left;transition:background var(--t),color var(--t)}
+.groupHead:hover{background:rgba(255,255,255,.05);color:#fff}
+.sideGroup.hasActive>.groupHead{color:#fff}
+.groupHead .gIco{width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center;color:#9fb4c9;transition:color var(--t)}
+.sideGroup.hasActive>.groupHead .gIco,.groupHead:hover .gIco{color:var(--gold)}
+.groupHead .gIco svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.groupHead .gLbl{flex:1;min-width:0;font-size:10px;letter-spacing:.16em;font-weight:700;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.groupHead .chev{margin-left:auto;display:flex;transition:transform .28s ease}
+.groupHead .chev svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sideGroup.fold .groupHead .chev{transform:rotate(-90deg)}
+.groupBody{display:grid;grid-template-rows:1fr;transition:grid-template-rows .3s ease}
+.sideGroup.fold .groupBody{grid-template-rows:0fr}
+.groupBody>.gbInner{overflow:hidden;min-height:0;display:flex;flex-direction:column;gap:2px;padding:2px 0 6px 4px}
+@media (prefers-reduced-motion: reduce){.groupBody{transition:none}}
 .sideNav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:#b9c7d6;font-size:13px;min-height:40px;position:relative;transition:background var(--t),color var(--t)}
 .sideNav a:hover{background:rgba(255,255,255,.06);color:#fff}
 .sideNav a.on{background:linear-gradient(90deg,rgba(201,162,39,.16),rgba(201,162,39,.06));color:#fff}
@@ -89,7 +102,10 @@ b,strong{font-variant-numeric:tabular-nums}
   body.sideCollapsed{--side:78px}
   body.sideCollapsed .sideBrand{justify-content:center;padding:18px 6px 14px}
   body.sideCollapsed .sbText{display:none}
-  body.sideCollapsed .sideLabel{opacity:0;height:0;margin:6px 0 0;overflow:hidden}
+  body.sideCollapsed .groupHead{justify-content:center;padding:9px 6px}
+  body.sideCollapsed .groupHead .gLbl,body.sideCollapsed .groupHead .chev{display:none}
+  body.sideCollapsed .groupBody{grid-template-rows:1fr}
+  body.sideCollapsed .groupBody>.gbInner{padding:2px 0;gap:6px}
   body.sideCollapsed .sideNav{gap:8px}
   body.sideCollapsed .sideNav a{justify-content:center;padding:9px 6px;gap:0}
   body.sideCollapsed .sideNav .lbl{display:none}
@@ -535,6 +551,16 @@ ul.clean{list-style:none;margin:0;padding:0}
 .notifyBtn:hover{border-color:rgba(201,162,39,.6);box-shadow:var(--sh1)}
 .notifyBtn svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .notifyBtn[aria-expanded=true]{border-color:var(--gold);color:var(--gold)}
+.voiceBtn{position:relative;width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s;color:var(--navy)}
+.voiceBtn:hover{border-color:rgba(201,162,39,.6);box-shadow:var(--sh1)}
+.voiceBtn svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.voiceBtn .vOff{display:none}
+.voiceBtn.off{color:#9aa7b4}
+.voiceBtn.off .vOn{display:none}
+.voiceBtn.off .vOff{display:flex}
+.voiceBtn.speaking{border-color:var(--gold);color:var(--gold);animation:voicePulse 1.4s ease-in-out infinite}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(201,162,39,.45)}50%{box-shadow:0 0 0 8px rgba(201,162,39,0)}}
+@media (prefers-reduced-motion: reduce){.voiceBtn.speaking{animation:none}}
 .notifyBadge{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:linear-gradient(180deg,#d64545,#c62828);color:#fff;font-size:10px;font-weight:700;line-height:18px;text-align:center;box-shadow:0 2px 6px rgba(198,40,40,.4)}
 .notifyMenu{position:absolute;top:calc(100% + 12px);right:0;width:340px;max-width:calc(100vw - 24px);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--sh2);padding:6px;z-index:60}
 .notifyMenu[hidden]{display:none}

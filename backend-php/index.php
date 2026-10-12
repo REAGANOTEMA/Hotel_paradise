@@ -163,6 +163,15 @@ if($page==='logout'){ audit('logout','user',current_user()['id']??null); logout_
 
 if(!current_user()){ header('Location: '.BASE.'/index.php?page=login'); exit; }
 
+/* The page name comes straight from the address bar, so it is never trusted as
+   a path. Only a name on the console's own list is ever opened; anything else
+   is turned away here, before it can reach the filesystem. */
+if(!in_array($page,page_names(),true)){
+ page_head('Page not found','dashboard');
+ echo '<div class="panel"><h2>Not found</h2><p>That page is not part of the console. Use the menu to find your way.</p><p><a class="btn" href="'.BASE.'/index.php?page=dashboard">Back to dashboard</a></p></div>';
+ exit;
+}
+
 if(!page_allowed($page)){
  page_head('Not permitted','dashboard');
  echo '<div class="panel"><h2>Access restricted</h2><p class="hint">Your role does not allow access to this module. Contact the administrator if you believe this is a mistake.</p><a class="btn" href="'.BASE.'/index.php?page=dashboard">Back to dashboard</a></div>';

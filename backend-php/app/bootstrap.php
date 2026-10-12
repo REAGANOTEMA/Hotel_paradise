@@ -372,38 +372,55 @@ function news_capability(): ?array{
  return $best;
 }
 
+/**
+ * Every console page the router will ever open, with the roles allowed to see
+ * it. An empty list means the page is open to any signed-in member (their own
+ * dashboard, their own profile, their own notifications). This is the single
+ * source of truth: the router uses its keys as a whitelist, so a page name that
+ * is not on it can never be turned into a file path.
+ */
+function page_caps(): array{
+ return [
+  'dashboard'=>[], // own view
+  // The bell is every signed-in member's own: they see only their notifications.
+  'notifications'=>[], // own
+  // Director's full view
+  'overview'=>['director'],
+  'integrity'=>['director','auditor'],
+  'reservations'=>['director','general_manager','receptionist','events_manager'],
+  'events'=>['director','events_manager','marketing'],
+  'news'=>array_keys(news_roles()),
+  'rooms'=>['director','general_manager','receptionist','housekeeping','maintenance'],
+  'guests'=>['director','general_manager','receptionist','accountant'],
+  'pos'=>['director','general_manager','cashier','waiter','bar_staff'],
+  'fnb'=>['director','general_manager','cashier','waiter','bar_staff'],
+  'kitchen'=>['director','general_manager','kitchen'],
+  'shifts'=>['director','general_manager','cashier','housekeeping'],
+  'inventory'=>['director','general_manager','storekeeper'],
+  'suppliers'=>['director','general_manager','procurement','storekeeper'],
+  'purchases'=>['director','general_manager','procurement','storekeeper','kitchen','housekeeping','maintenance'],
+  'expenses'=>['director','general_manager','accountant'],
+  'finance'=>['director','general_manager','accountant','cashier'],
+  'approvals'=>['director','general_manager','accountant'],
+  'audit'=>['director','auditor'],
+  'reports'=>['director','general_manager','accountant','auditor'],
+  'users'=>['director','general_manager'],
+  'profile'=>[]
+ ];
+}
+
+/** The console pages the router may open, in one place. */
+function page_names(): array{
+ return array_keys(page_caps());
+}
+
 function page_allowed(string $page): bool{
  $u=current_user(); if(!$u) return false;
  $r=roles_of();
  if(in_array('super_admin',$r)) return true;
-  $map=[
-   'dashboard'=>[], // own view
-   // The bell is every signed-in member's own: they see only their notifications.
-   'notifications'=>[], // own
-   // Director's full view
-   'overview'=>['director'],
-   'integrity'=>['director','auditor'],
-   'reservations'=>['director','general_manager','receptionist','events_manager'],
-   'events'=>['director','events_manager','marketing'],
-   'news'=>array_keys(news_roles()),
-   'rooms'=>['director','general_manager','receptionist','housekeeping','maintenance'],
-   'guests'=>['director','general_manager','receptionist','accountant'],
-   'pos'=>['director','general_manager','cashier','waiter','bar_staff'],
-   'fnb'=>['director','general_manager','cashier','waiter','bar_staff'],
-   'kitchen'=>['director','general_manager','kitchen'],
-   'shifts'=>['director','general_manager','cashier','housekeeping'],
-   'inventory'=>['director','general_manager','storekeeper'],
-   'suppliers'=>['director','general_manager','procurement','storekeeper'],
-   'purchases'=>['director','general_manager','procurement','storekeeper','housekeeping','kitchen','maintenance'],
-   'expenses'=>['director','general_manager','accountant'],
-   'finance'=>['director','general_manager','accountant','cashier'],
-   'approvals'=>['director','general_manager','accountant'],
-   'audit'=>['director','auditor'],
-   'reports'=>['director','general_manager','accountant','auditor'],
-   'users'=>['director','general_manager'],
-   'profile'=>[]
-  ];
- $allowed=$map[$page]??[];
+ $map=page_caps();
+ if(!array_key_exists($page,$map)) return false;
+ $allowed=$map[$page];
  if($allowed===[]) return true;
  return (bool)array_intersect($r,$allowed);
 }

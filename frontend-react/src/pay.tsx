@@ -236,6 +236,84 @@ function PayReceipt({src, ref, charged, amt, form, detail, item, qty, unit, meth
  );
 }
 
+/**
+ * An optional, spoken walk-through of paying, for any guest who would rather be
+ * talked through it. The browser reads the steps aloud, one after the next, and
+ * anyone can stop it at any moment. The words follow what the guest is actually
+ * here to pay for, the guide starts only when the guest asks, and it never
+ * blocks the page or replaces anything on it.
+ */
+function VoiceGuide({src, ref, amount}: {src: string; ref: string; amount: number}) {
+ const supported = typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+ const [playing, setPlaying] = React.useState(false);
+ const [stepIndex, setStepIndex] = React.useState(0);
+
+ const steps = React.useMemo(() => {
+  const what = src === 'booking' ? 'room booking' : src === 'order' ? 'food order' : 'payment';
+  const L: string[] = [];
+  L.push('Welcome to the secure checkout at Hotel Paradise on the Nile.');
+  if (ref) L.push(`This is for your ${what}, reference ${ref}, for a total of ${fmt(amount || 0)}.`);
+  else L.push('Once you open this page from a booking or an order, the reference and the amount will appear here.');
+  L.push('First, look over the details on the page, so you are happy with what you are paying for.');
+  L.push('In the receipt details box, type the full name that should appear on your receipt, then a phone number the hotel can confirm on. An email address is optional.');
+  L.push('Next, choose how you would like to pay. You can use Pesapal, MTN Mobile Money, Airtel Money, or a Visa or Mastercard.');
+  L.push('For mobile money, enter your number in the box that opens. For a card, enter the card number, the expiry date, and the CVV from the back of the card.');
+  L.push('When you are ready, press the pay button. Reviewing your details does not charge you, and you are never charged twice.');
+  L.push('Your official receipt is emailed to you and shown here the moment the payment is confirmed.');
+  L.push('If you need help at any time, call the front desk on ' + CALL + '. Thank you for choosing Hotel Paradise on the Nile.');
+  return L;
+ }, [src, amount]);
+
+ const stop = React.useCallback(() => {
+  try { window.speechSynthesis.cancel(); } catch { /* no voice here */ }
+  setPlaying(false);
+  setStepIndex(0);
+  }, []);
+
+ const play = React.useCallback(() => {
+  if (!supported) return;
+  try { window.speechSynthesis.cancel(); } catch { /* start clean */ }
+  let i = 0;
+  const next = () => {
+   if (i >= steps.length) { setPlaying(false); setStepIndex(0); return; }
+   setStepIndex(i + 1);
+   const u = new SpeechSynthesisUtterance(steps[i]);
+   u.rate = 0.97;
+   u.pitch = 1;
+   try {
+    const vs = window.speechSynthesis.getVoices() || [];
+    const v = vs.find(x => /^en[-_]?/i.test(x.lang) && /female|zira|samantha|serena|aria|hazel|libby|sonia/i.test(x.name))
+      || vs.find(x => /^en[-_]?/i.test(x.lang));
+    if (v) u.voice = v;
+   } catch { /* default voice is fine */ }
+   u.onend = () => { i += 1; next(); };
+   u.onerror = () => { setPlaying(false); setStepIndex(0); };
+   window.speechSynthesis.speak(u);
+  };
+  setPlaying(true);
+  next();
+ }, [steps, supported]);
+
+ React.useEffect(() => () => { try { window.speechSynthesis.cancel(); } catch { /* leaving */ } }, []);
+
+ return (
+  <div className={'voiceGuide' + (playing ? ' on' : '')}>
+   <span className="vgIcon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.6a4.7 4.7 0 0 1 0 6.8"/><path d="M18.4 6a8.4 8.4 0 0 1 0 12"/></svg>
+   </span>
+   <div className="vgText">
+    <b>Prefer to be guided?</b>
+    <small>{!supported ? 'Your browser cannot play the spoken guide, but the steps are written on the page.' : playing ? `Playing the guide\u2026 step ${stepIndex} of ${steps.length}` : 'Listen to a short, spoken walk-through of how to pay.'}</small>
+   </div>
+   {supported && (
+    playing
+     ? <button type="button" className="vgBtn" onClick={stop}>Stop</button>
+     : <button type="button" className="vgBtn" onClick={play}>Play guide</button>
+   )}
+  </div>
+ );
+}
+
 function PayPage() {
  const q = new URLSearchParams(window.location.search);
  const src = q.get('src') === 'order' ? 'order' : q.get('src') === 'booking' ? 'booking' : '';
@@ -536,6 +614,8 @@ if (done) {
    <p>Review what you are paying for, add the name and phone number for the receipt, and choose how you would like to pay. Payment is handled by Pesapal, and no card details are ever stored on this website.</p>
    </div>
   </section>
+
+  <VoiceGuide src={src} ref={ref} amount={payable || amt}/>
 
   <section className="payWrap section" style={{paddingTop: 56}}>
    {!src || !ref ? (

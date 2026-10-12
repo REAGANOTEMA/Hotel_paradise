@@ -8,30 +8,40 @@ require_once __DIR__.'/notify.php';
  *  sees only their own console.
  *
  *  A module appears once and in the one group that owns it, so nothing is
- *  repeated and no module sits where it does not belong: the CEO/Director's
- *  whole-house view leads its own group rather than sitting under Front desk,
- *  and each operational area keeps its own tools together. */
+ *  repeated and no module sits where it does not belong. Each group is a
+ *  button that folds its modules away, and the group holding the page in
+ *  view opens itself and reads as the active one. */
 function nav_groups(): array{
   return [
    ['label'=>'Overview','items'=>[
      'dashboard'=>'Dashboard','overview'=>'CEO / Director','integrity'=>'Integrity & Control']],
-   ['label'=>'Front desk','items'=>[
+   ['label'=>'Reservations & Rooms','items'=>[
      'reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
    ['label'=>'News & Events','items'=>[
      'news'=>'News & Careers','events'=>'Events & Enquiries']],
-   ['label'=>'Front of House','items'=>[
+   ['label'=>'Restaurant & Bar','items'=>[
      'pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
    ['label'=>'Kitchen','items'=>[
      'kitchen'=>'Kitchen']],
    ['label'=>'Housekeeping & Maintenance','items'=>[
-     'rooms'=>'Rooms','shifts'=>'Shifts','purchases'=>'Purchases']],
+     'shifts'=>'Shifts']],
    ['label'=>'Procurement & Stores','items'=>[
      'inventory'=>'Inventory','suppliers'=>'Suppliers','purchases'=>'Purchases']],
    ['label'=>'Finance & Control','items'=>[
-     'guests'=>'Guests','expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
+     'expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
    ['label'=>'Administration','items'=>[
-     'overview'=>'CEO / Director','integrity'=>'Integrity & Control','users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile']],
+     'users'=>'Team and Users','notifications'=>'Notifications','profile'=>'My Profile']],
   ];
+}
+
+/** The icon a collapsible group header carries, read off its label so a new
+ *  group needs no second place to register a picture for itself. */
+function nav_group_icon(string $label): string{
+  $map=['overview'=>'grid','reservation'=>'calendar','news'=>'event','restaurant'=>'fork',
+    'kitchen'=>'pot','housekeep'=>'bed','procurement'=>'bag','finance'=>'coins','administration'=>'user'];
+  $l=strtolower($label);
+  foreach($map as $re=>$ico){ if(strpos($l,$re)!==false) return $ico; }
+  return 'grid';
 }
 
 /** One 24px stroke icon per module. Kept in a single place so the rail,
@@ -65,7 +75,10 @@ function svg_icon(string $name): string{
   'wallet'=>'<path d="M20 7.5V6a2 2 0 0 0-2-2H5.5A2.5 2.5 0 0 0 3 6.5v11A2.5 2.5 0 0 0 5.5 20H19a2 2 0 0 0 2-2v-8.5a2 2 0 0 0-2-2H5"/><circle cx="16.5" cy="14" r="1.2"/>',
   'plate'=>'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/>',
   'spark'=>'<path d="M12 3l1.9 5.4L19.5 10l-5.6 1.7L12 17l-1.9-5.3L4.5 10l5.6-1.6z"/>',
- ];
+  'chev'=>'<polyline points="6 9 12 15 18 9"/>',
+  'sound'=>'<path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.6a4.7 4.7 0 0 1 0 6.8"/><path d="M18.4 6a8.4 8.4 0 0 1 0 12"/>',
+  'mute'=>'<path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M16 9.5l4 5M20 9.5l-4 5"/>',
+  ];
  $d=$p[$name]??$p['grid'];
  return '<svg viewBox="0 0 24 24" aria-hidden="true">'.$d.'</svg>';
 }
@@ -97,6 +110,48 @@ function initials(?string $name): string{
  return $s!==''?$s:'HP';
 }
 
+/**
+ * A short, warm spoken welcome for the department that just signed in.
+ *
+ * The browser reads it aloud when the dashboard opens and it can be replayed
+ * from the header at any moment. It only ever speaks the member's own name and
+ * role, so it carries nothing private, and every word is optional: the header
+ * control mutes it and the choice is remembered.
+ */
+function welcome_voice(): array{
+ $u=current_user();
+ $name=trim((string)($u['name']??''));
+ $words=$name!==''?preg_split('/\s+/',$name):[];
+ $first=($words&&$words[0]!=='')?$words[0]:'';
+ $h=(int)date('G');
+ $greet=$h<12?'Good morning':($h<17?'Good afternoon':'Good evening');
+ $byRole=[
+  'director'=>'Welcome back to Hotel Paradise on the Nile, {first}. The whole house is in your hands and everything is ready. Let us make today outstanding.',
+  'general_manager'=>'{greet}, {first}. Welcome back to Hotel Paradise on the Nile. Your team is ready and the day is yours. Let us make it a great one.',
+  'receptionist'=>'Welcome to the front desk, {first}. Our guests are in wonderful hands with you. Have a calm and pleasant shift.',
+  'cashier'=>'Welcome back, {first}. The till is reconciled and ready for you. Wishing you a smooth and accurate shift.',
+  'accountant'=>'Welcome back, {first}. The books are in order and waiting. Have a focused and peaceful day.',
+  'waiter'=>'Welcome, {first}. The restaurant is set, the guests are smiling, and the service is yours. Let us give them something to remember.',
+  'bar_staff'=>'Welcome, {first}. The bar is stocked and ready. Here is to a wonderful shift.',
+  'kitchen'=>'Welcome to the kitchen, Chef {first}. The pass is ready and the brigade is with you. Let us cook something memorable today.',
+  'housekeeping'=>'Welcome, {first}. Thank you for keeping Hotel Paradise immaculate and welcoming. Have a lovely shift.',
+  'storekeeper'=>'Welcome, {first}. The stores are counted and organised. Have a productive day.',
+  'procurement'=>'Welcome, {first}. Supplies are in good order and the day is yours. Have a great shift.',
+  'maintenance'=>'Welcome, {first}. Thank you for keeping everything running smoothly. Have a safe and steady shift.',
+  'auditor'=>'Welcome, {first}. The records are ready for your careful eye. Have a productive day.',
+  'events_manager'=>'Welcome, {first}. Let us turn today\'s plans into experiences our guests will remember.',
+  'marketing'=>'Welcome, {first}. Let us tell the story of Hotel Paradise beautifully today.',
+  'human_resource'=>'Welcome, {first}. Our team is stronger with you here. Have a lovely day.',
+  'super_admin'=>'Welcome back, {first}. Everything is running and the house is ready. Have an excellent day.',
+ ];
+ $text='';
+ foreach(roles_of() as $role){ if(isset($byRole[$role])){ $text=$byRole[$role]; break; } }
+ if($text==='') $text='{greet}, {first}. Welcome to Hotel Paradise on the Nile. It is a pleasure to have you on the team. Have a wonderful shift.';
+ $text=str_replace(['{greet}','{first}'],
+   [$greet,$first!==''?$first:'friend'],$text);
+ return ['text'=>$text,'auto'=>true];
+}
+
 function page_head(string $title,string $active='dashboard',string $sub=''): void{
  $u=current_user();
  $flash=flash_out();
@@ -118,20 +173,30 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<aside class="side" id="side">';
  echo '<a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/paradise-logo.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span></a>';
  echo '<button class="sideClose" id="sideClose" type="button" aria-label="Close menu"><span></span><span></span></button>';
- echo '<nav class="sideNav" aria-label="Modules">';
- foreach(nav_groups() as $g){
-  $open=array_filter(array_keys($g['items']),static fn(string $k): bool=>page_allowed($k));
-  if(!$open) continue;
-  echo '<div class="sideGroup"><p class="sideLabel">'.e($g['label']).'</p>';
-  foreach($g['items'] as $k=>$lbl){
-   if(!page_allowed($k)) continue;
-   $on=$k===$active?' class="on"':'';
-   $cur=$k===$active?' aria-current="page"':'';
-   echo '<a href="'.BASE.'/index.php?page='.$k.'"'.$on.$cur.'><span class="ico">'.svg_icon(nav_icon_key($k)).'</span><span class="lbl">'.e($lbl).'</span></a>';
+  echo '<nav class="sideNav" id="sideNav" aria-label="Modules">';
+  foreach(nav_groups() as $group){
+   /* Only the modules this member may open are offered, so a role never sees a
+      door it cannot walk through. A group with nothing left in it disappears. */
+   $vis=[];
+   foreach($group['items'] as $page=>$label){ if(page_allowed($page)) $vis[$page]=$label; }
+   if($vis===[]) continue;
+   $hasActive=isset($vis[$active]);
+   $gid='grp-'.preg_replace('/[^a-z0-9]+/i','-',strtolower($group['label']));
+   echo '<div class="sideGroup'.($hasActive?' hasActive':'').'" data-gid="'.e($gid).'">';
+   echo '<button class="groupHead" type="button" aria-expanded="true" aria-controls="'.e($gid).'">';
+   echo '<span class="gIco">'.svg_icon(nav_group_icon($group['label'])).'</span>';
+   echo '<span class="gLbl">'.e($group['label']).'</span>';
+   echo '<span class="chev">'.svg_icon('chev').'</span>';
+   echo '</button>';
+   echo '<div class="groupBody" id="'.e($gid).'"><div class="gbInner">';
+   foreach($vis as $page=>$label){
+    $on=$page===$active;
+    echo '<a href="'.BASE.'/index.php?page='.e($page).'"'.($on?' class="on" aria-current="page"':'').'>';
+    echo '<span class="ico">'.svg_icon(nav_icon_key($page)).'</span><span class="lbl">'.e($label).'</span></a>';
+   }
+   echo '</div></div></div>';
   }
-  echo '</div>';
- }
- echo '</nav>';
+  echo '</nav>';
  echo '<div class="sideProfile"><a class="avatar" href="'.BASE.'/index.php?page=profile" aria-label="My profile">'.e(initials($me)).'</a>';
  echo '<span class="sideWho"><b>'.e($me).'</b><small>'.e($role).'</small></span>';
  echo '<a class="sideSignOut" href="'.BASE.'/index.php?page=logout" title="Sign out" aria-label="Sign out">'.svg_icon('logout').'</a></div>';
@@ -150,6 +215,13 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  }
  echo '<div class="topTitles"><h1 class="pageTitle">'.e($title).'</h1>'.($sub?'<p class="pageSub">'.e($sub).'</p>':'').'</div>';
  echo '<div class="topRight">';
+ /* The voice control: plays the department welcome, and silences it. It is on
+    by default and speaks only on the dashboard, so a member hears a warm hello
+    the moment they land and can mute it for good with one tap. */
+ $voice=welcome_voice();
+ echo '<button class="voiceBtn" id="voiceBtn" type="button" aria-pressed="true" aria-label="Welcome voice" title="Welcome voice" data-text="'.e($voice['text']).'" data-auto="'.($active==='dashboard'?'1':'0').'">';
+ echo '<span class="vOn">'.svg_icon('sound').'</span><span class="vOff">'.svg_icon('muted').'</span>';
+ echo '</button>';
  /* The bell is the same feed as the notifications page: a member sees their
     own events, never anyone else's. It is drawn only when the tables exist. */
  if(notify_ready()){
@@ -350,8 +422,82 @@ function page_scripts(): void{
       if(ours&&history.length>1){e.preventDefault();history.back();}
     });
   }
-})();
-</script>
+
+  /* the rail groups fold away, remember their state, and open the group that
+     holds the page in view. On the collapsed rail they stay open so the icons
+     are never hidden behind a closed lid. */
+  var grp=document.querySelectorAll('.sideGroup');
+  if(grp.length){
+    var KEY='hpn_navgroups',stored={};
+    try{stored=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){stored={}}
+    var save=function(){
+      try{localStorage.setItem(KEY,JSON.stringify(stored))}catch(e){}
+    };
+    grp.forEach(function(g){
+      var head=g.querySelector('.groupHead'),body=g.querySelector('.groupBody');
+      if(!head||!body)return;
+      var id=g.getAttribute('data-gid');
+      var open=g.classList.contains('hasActive')||stored[id]!==false;
+      if(stored[id]===false&&!g.classList.contains('hasActive'))open=false;
+      var apply=function(on,quiet){
+        g.classList.toggle('fold',!on);
+        head.setAttribute('aria-expanded',on?'true':'false');
+        if(!quiet&&!g.classList.contains('hasActive')){stored[id]=on;save()}
+      };
+      apply(open,true);
+      head.addEventListener('click',function(){apply(g.classList.contains('fold'),false)});
+    });
+  }
+
+  /* the welcome voice: a warm hello for the department, spoken once on the
+     dashboard and replayable from the header. It never blocks the page and
+     stays silent when the browser has no voice or the member muted it. */
+  var vb=document.getElementById('voiceBtn');
+  if(vb){
+    var synth=window.speechSynthesis,KEYV='hpn_voice';
+    var wanted=function(){try{return localStorage.getItem(KEYV)!=='0'}catch(e){return true}};
+    var paint=function(){var on=wanted();vb.classList.toggle('off',!on);vb.setAttribute('aria-pressed',on?'true':'false')};
+    var speak=function(){
+      if(!synth||!wanted())return;
+      try{
+        synth.cancel();
+        var u=new SpeechSynthesisUtterance(vb.getAttribute('data-text')||'');
+        u.rate=0.98;u.pitch=1.0;u.volume=1;
+        var v=null,vs=synth.getVoices()||[];
+        for(var i=0;i<vs.length;i++){if(/^en[-_]?/i.test(vs[i].lang||'')&&/female|samantha|zira|hazel|serena|aria|libby|sonia/i.test(vs[i].name)){v=vs[i];break}}
+        if(!v){for(var j=0;j<vs.length;j++){if(/^en[-_]?/i.test(vs[j].lang||'')){v=vs[j];break}}}
+        if(v)u.voice=v;
+        vb.classList.add('speaking');
+        u.onend=u.onerror=function(){vb.classList.remove('speaking')};
+        synth.speak(u);
+      }catch(e){vb.classList.remove('speaking')}
+    };
+    paint();
+    vb.addEventListener('click',function(){
+      var on=!wanted();
+      try{localStorage.setItem(KEYV,on?'1':'0')}catch(e){}
+      paint();
+      if(on){speak()}else if(synth){try{synth.cancel()}catch(e){}}
+    });
+    /* speak the welcome on the dashboard, once the voices are ready. A first
+       interaction is used as a fallback for browsers that block auto-speech. */
+    if(vb.getAttribute('data-auto')==='1'&&wanted()){
+      var armed=true,go=function(){
+        if(!armed)return;armed=false;
+        speak();
+        document.removeEventListener('pointerdown',go);
+        document.removeEventListener('keydown',go);
+      };
+      if(synth){
+        if(synth.getVoices&&synth.getVoices().length){setTimeout(go,650)}
+        else if(synth.onvoiceschanged){synth.onvoiceschanged=function(){setTimeout(go,300)};setTimeout(go,1400)}
+        else{setTimeout(go,650)}
+      }
+      document.addEventListener('pointerdown',go);
+      document.addEventListener('keydown',go);
+    }
+  }
+})();</script>
 HTML;
 }
 
