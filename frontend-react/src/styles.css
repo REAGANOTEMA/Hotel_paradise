@@ -571,7 +571,13 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .secBannerGlyph{position:absolute;right:5%;top:50%;transform:translateY(-50%);z-index:1;font-family:'Playfair Display',serif;font-size:clamp(64px,10vw,132px);line-height:1;font-weight:700;color:#ffffff17;pointer-events:none;user-select:none}
 
 /* dish cards, each with its photograph */
-.dishGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.dishGrid{display:grid;grid-template-columns:repeat(4,1fr);--dishGap:24px;gap:var(--dishGap)}
+/* A category with fewer dishes than one full row centres its cards, so the
+   empty cells fall evenly to either side instead of all to the right. A full
+   row still fills the grid exactly as before. */
+@media(min-width:1051px){
+.dishGrid:not(:has(.dishCard:nth-child(4))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 3 * var(--dishGap)) / 4);justify-content:center}
+}
 .dishCard{position:relative;background:#ffffffe6;border-radius:var(--r);display:flex;flex-direction:column;box-shadow:0 10px 30px #071A3310;border:1px solid #ece7db;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;overflow:hidden}
 .dishCard:hover{transform:translateY(-2px);box-shadow:0 18px 42px #071A3318;border-color:#ded5bd}
 /* a dish already in the order keeps a gold edge, so a guest scanning the
@@ -861,7 +867,8 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .planner{position:static;margin-top:6px}
   .bedCard{grid-template-columns:1fr}
   .bedMedia{--r:16/9}
-  .dishGrid{grid-template-columns:repeat(3,1fr);gap:18px}
+  .dishGrid{grid-template-columns:repeat(3,1fr);--dishGap:18px;gap:var(--dishGap)}
+  .dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 2 * var(--dishGap)) / 3);justify-content:center}
   .menuJumpInner{padding:0 5vw}
   .booking{grid-template-columns:1fr 1fr;gap:16px}
   .booking .btn{width:100%}
@@ -928,7 +935,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 /* --- 768: the menu goes to its three-across mobile grid ------------- */
 @media(max-width:768px){
   .menuWrap{padding-top:20px}
-  .dishGrid{grid-template-columns:repeat(3,1fr);gap:12px}
+  .dishGrid{grid-template-columns:repeat(3,1fr);--dishGap:12px;gap:var(--dishGap)}
   /* the card is narrow here, so its insides are re-stacked: the words
      are trimmed, and price and action sit one above the other */
   .dishOpenText{padding:11px 11px 0}
@@ -1032,7 +1039,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .heroDots{bottom:calc(76px + env(safe-area-inset-bottom))}
   /* three across on the smallest phone: the description steps aside and
      the card carries the plate, the name and the price alone */
-  .dishGrid{gap:9px}
+  .dishGrid{--dishGap:9px;gap:var(--dishGap)}
   .dishOpenText{padding:9px 9px 0}
   .dishTitle{font-size:13.5px}
   .dishDesc{display:none}
@@ -2113,3 +2120,26 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
 .bedOpen{position:absolute;inset:0;z-index:1;background:none;border:0;padding:0;border-radius:var(--r);cursor:pointer;}
 .bedOpen:focus-visible{outline:3px solid var(--gold);outline-offset:-3px;}
 .bedSliderBar{position:relative;z-index:2;}
+
+/* ---------------------------------------------------------------
+   TAP TARGETS ON A PHONE
+   Small text links and the carousel bars are grown to a 44px-high
+   touch area. Nothing changes in how they look: the words keep their
+   size and place, and the bars stay centred on the same line.
+   --------------------------------------------------------------- */
+@media(max-width:1000px){
+  .navSignIn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 8px}
+  .drawerCall{display:flex;align-items:center;justify-content:center;min-height:44px}
+}
+@media(max-width:768px){
+  .footLink,.projLink,.mapBox p a,.footerLegal a{display:inline-flex;align-items:center;min-height:44px}
+  .backLink,.catChip,.newsChip,.jumpOrder,.printBtn,.addBtn{min-height:44px}
+  .legalToc a{min-height:44px;align-items:center}
+  .legalFoot a{padding:12px 0}
+  .bedArrow,.pwdToggle{width:44px;height:44px}
+  /* The bar is drawn 26px tall inside a 44px hit area, kept centred by the
+     dots' own alignment, so the visible line does not move. */
+  .heroDots{height:26px}
+  .heroDots .dot{height:44px}
+  .heroDots .dot::before,.heroDots .dot::after{top:20px}
+}
