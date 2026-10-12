@@ -532,6 +532,83 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .plannerNote .acctPrompt a{color:var(--gold-ink);font-weight:800;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px;white-space:nowrap}
 .plannerNote .acctPrompt a:hover{color:var(--navy)}
 
+/* ---------------------------------------------------------------
+   THE ACCOUNT GATE
+   The one point every guest passes through before an order or a
+   booking is sent. It is set as a small membership card: deep navy
+   with a fine gold hairline, a gold seal, one confident way through
+   and a quiet way back for a guest who already has an account. The
+   card is shared by the menu and the rooms page, so it reads the
+   same wherever a guest meets it.
+   --------------------------------------------------------------- */
+.acctGate{
+  grid-column:1 / -1;
+  position:relative;overflow:hidden;
+  padding:24px 22px 20px;border-radius:16px;
+  background:
+    radial-gradient(130% 130% at 100% 0%,rgba(201,162,39,.20),transparent 55%),
+    radial-gradient(120% 120% at 0% 100%,rgba(30,58,95,.55),transparent 60%),
+    linear-gradient(150deg,#0C2547 0%,#071A33 58%,#061529 100%);
+  border:1px solid rgba(201,162,39,.32);
+  box-shadow:0 20px 50px rgba(7,26,51,.30),inset 0 1px 0 rgba(255,255,255,.07);
+  color:#dbe4ef;
+}
+/* a solid gold rule along the top edge and a slow sheen that crosses
+   the card once, the way light moves over a polished surface */
+.acctGate::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#E7C766,#C9A227 50%,#E7C766,transparent);z-index:1}
+.acctGate::after{content:'';position:absolute;top:-40%;bottom:-40%;left:-35%;width:28%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.11),transparent);transform:skewX(-16deg);pointer-events:none;transition:left .9s cubic-bezier(.22,.7,.3,1)}
+.acctGate:hover::after{left:130%}
+.gateSeal{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;color:#0C2547;background:linear-gradient(160deg,#F3DA84,#C9A227 70%);box-shadow:0 10px 22px rgba(201,162,39,.38),inset 0 1px 0 rgba(255,255,255,.65),0 0 0 6px rgba(201,162,39,.10)}
+.gateSeal svg{width:24px;height:24px}
+.gateTitle{display:block;margin:16px 0 7px;font-family:'Playfair Display',serif;font-weight:600;font-size:1.24rem;line-height:1.25;letter-spacing:.2px;color:#fff}
+.gateCopy{margin:0;color:#A6B6CB;font-size:13.5px;line-height:1.7}
+.gateActions{margin-top:20px;display:flex;flex-direction:column;gap:13px}
+.gateOr{display:flex;align-items:center;gap:12px;color:#7C8DA6;font-size:10.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+.gateOr::before,.gateOr::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.40),transparent)}
+.gatePrimary{
+  position:relative;overflow:hidden;
+  display:inline-flex;align-items:center;justify-content:center;gap:11px;
+  width:100%;min-height:54px;padding:15px 22px;border-radius:12px;
+  font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+  color:#061529;
+  background:linear-gradient(180deg,#F6DE87 0%,#DBB43C 46%,#B8921F 100%);
+  box-shadow:0 14px 30px rgba(201,162,39,.42),inset 0 1px 0 rgba(255,255,255,.75),inset 0 -2px 0 rgba(120,90,10,.35);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+.gatePrimary:hover{transform:translateY(-2px);filter:brightness(1.03);box-shadow:0 20px 42px rgba(201,162,39,.55),inset 0 1px 0 rgba(255,255,255,.8)}
+.gatePrimary:active{transform:translateY(0);box-shadow:inset 0 3px 8px rgba(120,90,10,.35)}
+.gatePrimary::before{content:'';position:absolute;top:0;bottom:0;left:-60%;width:38%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-18deg);pointer-events:none;transition:left .7s ease}
+.gatePrimary:hover::before{left:135%}
+.gatePrimary svg{width:19px;height:12px;flex:none;transition:transform .2s ease}
+.gatePrimary:hover svg{transform:translateX(4px)}
+.gateSecondary{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;min-height:52px;padding:14px 22px;border-radius:12px;
+  font-weight:700;font-size:13.5px;letter-spacing:.03em;
+  color:#EBD79B;background:rgba(255,255,255,.035);
+  border:1px solid rgba(201,162,39,.45);
+  transition:background .2s ease,border-color .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.gateSecondary:hover{background:rgba(201,162,39,.14);border-color:#E0C46A;color:#fff;transform:translateY(-1px);box-shadow:0 12px 26px rgba(0,0,0,.26)}
+.gateSecondary svg{width:17px;height:17px;flex:none;color:#D8B94E}
+.gateSecondary:hover svg{color:#F3DA84}
+.gateFine{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;color:#8B9BB1;font-size:11.5px;letter-spacing:.02em;text-align:center}
+.gateFine svg{width:14px;height:14px;flex:none;color:var(--gold)}
+.acctGate .linkBtn{color:#EBD79B}
+.acctGate .linkBtn:hover{color:#fff}
+@media(max-width:560px){
+  .acctGate{padding:20px 16px 16px;border-radius:14px}
+  .gatePrimary{font-size:12px;letter-spacing:.06em;padding:14px 16px}
+  .gateSecondary{font-size:12.5px}
+  .gateFine{font-size:11px;gap:6px}
+}
+@media(prefers-reduced-motion:reduce){
+  .acctGate::after{transition:none}
+  .gatePrimary:hover,.gateSecondary:hover{transform:none}
+  .gatePrimary:hover svg{transform:none}
+}
+@media print{.acctGate{display:none!important}}
+
 /* menu page */
 .menuMeta{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 18px;color:#8a95a5;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:30px}
 .menuMetaCount{color:var(--gold-ink);font-weight:700}
@@ -2186,6 +2263,7 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
 .catChip:focus-visible,.nav nav a:focus-visible,.navSignIn:focus-visible,
 .menuSearch input:focus-visible,.printBtn:focus-visible,
 .dropBtn:focus-visible,.qtyStep button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.gatePrimary:focus-visible,.gateSecondary:focus-visible{outline:2px solid #fff;outline-offset:3px;box-shadow:0 0 0 5px var(--gold)}
 
 /* ---------------------------------------------------------------
    THE MENU CONCIERGE

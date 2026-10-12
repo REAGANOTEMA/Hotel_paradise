@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {EndLinks, TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, customerToken, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
+import {EndLinks, TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, customerToken, BackLink, PageHeroCover, AccountGate, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {MenuConcierge} from './concierge';
 import {
@@ -915,11 +915,9 @@ if (d.ok) {
           {live ? (
             !signedIn ? (
               <div className="trayForm">
-                <div className="acctGate">
-                  <p>One quick account and your order stays exactly as you built it. Your name, phone and email come back with you, so the kitchen and the receipt have everything they need. You come straight back here to send it.</p>
-                  <a className="btn planBook" href={accountUrl('signup')}>Create your account and continue</a>
-                  <a className="linkBtn" href={accountUrl('signin')}>I already have an account</a>
-                </div>
+                <AccountGate signupHref={accountUrl('signup')} signinHref={accountUrl('signin')}>
+                  One quick account and your order stays exactly as you built it. Your name, phone and email come back with you, so the kitchen and the receipt have everything they need. You come straight back here to send it.
+                </AccountGate>
                 {tray.length > 0 && <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>}
               </div>
             ) : (

@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms as baseRooms, EndLinks, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, customerToken, BackLink, PageHeroCover, type HeroCoverFrame} from './shared';
+import {rooms as baseRooms, EndLinks, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, customerToken, BackLink, PageHeroCover, AccountGate, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled, type ImageGroup} from './SmartImage';
 
 /** The photographs each room is still waiting for, shown on request only. */
@@ -404,11 +404,9 @@ if (d.ok) {
          </div>
         </>
        ) : (
-        <div className="acctGate">
-         <p>One quick account and your name, phone and email come back with you, so the booking and its receipt never ask for them twice. It takes a moment, and you come straight back to this exact bed.</p>
-         <a className="btn planBook" href={continueUrl('signup')}>Create your account and continue</a>
-         <a className="linkBtn" href={continueUrl('signin')}>I already have an account</a>
-        </div>
+        <AccountGate signupHref={continueUrl('signup')} signinHref={continueUrl('signin')}>
+         One quick account and your name, phone and email come back with you, so the booking and its receipt never ask for them twice. It takes a moment, and you come straight back to this exact bed.
+        </AccountGate>
        )}
 
        <div className="stepHead"><span className="stepNum">3</span><b>Dates</b></div>

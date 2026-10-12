@@ -471,6 +471,54 @@ export function EndLinks({links}: {links: {label: string; href: string; primary?
 }
 
 /**
+ * The gate a guest passes through once, before an order or a booking is sent.
+ *
+ * Rather than two plain links, it is set as a small membership card in navy and
+ * gold: a seal, a short reason to make the account, one confident way through,
+ * and a quiet way back for a guest who already has one. The same card is used
+ * by the menu and by the rooms page, so the promise is worded once and the two
+ * can never drift apart. The explanatory sentence is passed in as children.
+ */
+const GateSeal = () => (
+ <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+  <circle cx="12" cy="8.4" r="3.6" stroke="currentColor" strokeWidth="1.7"/>
+  <path d="M4.8 20a7.2 7.2 0 0 1 14.4 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
+ </svg>
+);
+const GateGo = () => (
+ <svg viewBox="0 0 20 12" fill="none" aria-hidden="true" focusable="false">
+  <path d="M1 6h16M12.6 1.4 17.2 6l-4.6 4.6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+ </svg>
+);
+const GateCheck = () => (
+ <svg viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false">
+  <path d="M2 7.4 5.4 11 12 3.6" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"/>
+ </svg>
+);
+
+export function AccountGate({signupHref, signinHref, children}: {signupHref: string; signinHref: string; children?: React.ReactNode}) {
+ return (
+  <div className="acctGate">
+   <span className="gateSeal" aria-hidden="true"><GateSeal/></span>
+   <b className="gateTitle">One account, and your place is kept</b>
+   <p className="gateCopy">{children}</p>
+   <div className="gateActions">
+    <a className="gatePrimary" href={signupHref}>
+     <span>Create your account and continue</span>
+     <GateGo/>
+    </a>
+    <span className="gateOr" aria-hidden="true">or</span>
+    <a className="gateSecondary" href={signinHref}>
+     <GateSeal/>
+     <span>I already have an account</span>
+    </a>
+   </div>
+   <p className="gateFine"><GateCheck/>Free to create. Takes a minute. Nothing is charged.</p>
+  </div>
+ );
+}
+
+/**
  * The photograph that fills the header of a subpage, and the sequence of
  * frames it turns over in.
  *

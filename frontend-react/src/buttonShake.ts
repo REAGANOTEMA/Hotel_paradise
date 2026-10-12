@@ -34,6 +34,8 @@ const ELIGIBLE = [
   '.navSignIn',
   '.drawerNav a',
   '.catChip',
+  '.gatePrimary',
+  '.gateSecondary',
 ].join(',');
 
 /* Controls that merely look like a button - a card, a row, a carousel dot or an
