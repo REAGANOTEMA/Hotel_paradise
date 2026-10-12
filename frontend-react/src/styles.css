@@ -543,19 +543,32 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .menuWatermark{position:absolute;top:0;bottom:0;left:0;right:0;z-index:0;pointer-events:none;user-select:none;background-repeat:repeat;background-size:640px 360px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360'%3E%3Ctext x='320' y='190' text-anchor='middle' font-family='Georgia,Times New Roman,serif' font-size='46' font-weight='700' letter-spacing='3' fill='%23071A33' fill-opacity='0.07' transform='rotate(-26 320 180)'%3EHotel Paradise on the Nile%3C/text%3E%3C/svg%3E")}
 .menuWrap>*:not(.menuWatermark){position:relative;z-index:1}
 
-/* category filter bar: choosing one shows only that category */
+/* category filter bar: choosing one shows only that category, and the
+   search box narrows the whole list by word */
 .menuJump{position:sticky;top:var(--navh);z-index:9;background:#ffffffef;backdrop-filter:blur(8px);border-bottom:1px solid #e7e2d6;box-shadow:0 4px 18px #071A3308;padding:0;width:100%}
-.menuJumpInner{width:96%;max-width:1400px;margin:auto;padding:9px 0;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none}
+.menuTools{width:96%;max-width:1400px;margin:auto;display:flex;align-items:center;gap:14px;padding:11px 0 7px}
+.menuSearch{position:relative;flex:1 1 340px;max-width:560px;display:flex;align-items:center}
+.menuSearch>svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:17px;height:17px;fill:none;stroke:var(--faint);stroke-width:2;stroke-linecap:round;pointer-events:none}
+.menuSearch input{width:100%;height:44px;padding:0 44px 0 44px;border:1px solid #e0dccf;border-radius:999px;background:#fff;font-family:inherit;font-size:14.5px;color:var(--ink);box-shadow:0 2px 12px #071A330a;transition:border-color .18s ease,box-shadow .18s ease}
+.menuSearch input:hover{border-color:#c9bfa4}
+.menuSearch input:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.menuSearch input::placeholder{color:var(--faint)}
+.menuClear{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:0;background:#eef0f3;color:var(--navy);transition:background .16s ease,color .16s ease}
+.menuClear svg{width:10px;height:10px}
+.menuClear:hover{background:var(--gold);color:#071A33}
+.menuResult{color:var(--gold-ink);font-size:12px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
+.menuJumpInner{width:96%;max-width:1400px;margin:auto;padding:0 0 9px;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none}
 .menuJumpInner::-webkit-scrollbar{display:none}
-.catChip{flex:none;border:1px solid transparent;background:transparent;border-radius:999px;padding:8px 15px;font-size:12.5px;font-weight:600;letter-spacing:.5px;color:#4a5666;white-space:nowrap;transition:color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
-.catChip:hover{color:var(--navy);border-color:#ded5bd;background:#faf7ef}
-.catChip.on{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 4px 14px #071A332e}
-.catChip.on::after{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);margin-left:8px;vertical-align:middle}
-.jumpOrder{flex:none;margin-left:auto;padding:9px 18px;background:var(--gold);color:#071A33;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;transition:background .18s ease,box-shadow .18s ease}
-.jumpOrder:hover{background:#d8aa2e;box-shadow:0 6px 18px #C9A22755}
+.catChip{flex:none;border:1px solid #e6e0d2;background:#fbf9f3;border-radius:999px;padding:8px 16px;font-size:12.5px;font-weight:600;letter-spacing:.4px;color:#4a5666;white-space:nowrap;transition:color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.catChip:hover{color:var(--navy);border-color:#ded5bd;background:#fff;transform:translateY(-1px);box-shadow:0 4px 12px #071A3312}
+.catChip.on{background:linear-gradient(180deg,var(--navy2),var(--navy));color:#fff;border-color:var(--navy);box-shadow:0 6px 18px #071A332e,inset 0 1px 0 rgba(255,255,255,.14)}
+.catChip.on::after{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);margin-left:8px;vertical-align:middle;box-shadow:0 0 0 3px #C9A22733}
+.jumpOrder{flex:none;margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:linear-gradient(180deg,#eccd68,#c9a227);color:#071A33;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;box-shadow:0 8px 20px #C9A2273d,inset 0 1px 0 rgba(255,255,255,.55);transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
+.jumpOrder:hover{transform:translateY(-1px);box-shadow:0 12px 26px #C9A22755,inset 0 1px 0 rgba(255,255,255,.6)}
+@media(max-width:700px){.menuTools{flex-wrap:wrap;gap:9px}.menuSearch{flex:1 1 100%;max-width:none}.menuResult{order:3;margin-left:auto}.jumpOrder{margin-left:0}}
 
 /* sections */
-.secBlock{margin-bottom:60px;scroll-margin-top:150px;padding:0 0vw}
+.secBlock{margin-bottom:60px;scroll-margin-top:220px;padding:0 0vw}
 .secHead{margin-bottom:26px}
 .secEyebrow{color:var(--gold-ink);font-size:11px;font-weight:700;letter-spacing:4px;margin:0 0 6px}
 .secHead h2,.secBanner h2{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(28px,3.4vw,42px);color:var(--navy);margin:0 0 10px;line-height:1.1}
@@ -585,6 +598,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 }
 .dishCard{position:relative;background:#ffffffe6;border-radius:var(--r);display:flex;flex-direction:column;box-shadow:0 10px 30px #071A3310;border:1px solid #ece7db;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;overflow:hidden}
 .dishCard:hover{transform:translateY(-2px);box-shadow:0 18px 42px #071A3318;border-color:#ded5bd}
+/* a hairline of gold wakes along the top edge as the card is picked up */
+.dishCard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold) 50%,transparent);transform:scaleX(0);transform-origin:center;transition:transform .35s ease;z-index:4;pointer-events:none}
+.dishCard:hover::after,.dishCard.held::after{transform:scaleX(1)}
 /* a dish already in the order keeps a gold edge, so a guest scanning the
    menu can see at a glance what they have chosen */
 .dishCard.held{border-color:var(--gold);box-shadow:0 10px 30px #C9A22722}
@@ -617,9 +633,9 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .dishFoot{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .dishFoot b{color:var(--gold-ink);font-size:15px;white-space:nowrap}
 .dishFoot b.askPrice{color:#7c8593;font-size:12.5px;font-weight:600;font-style:italic}
-.addBtn{display:inline-flex;align-items:center;gap:7px;background:var(--gold);color:#071A33;font-weight:700;letter-spacing:1px;font-size:12px;padding:10px 16px;border-radius:var(--r);flex:none;transition:background .18s ease,box-shadow .18s ease}
+.addBtn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(180deg,#eccd68,#c9a227);color:#071A33;font-weight:700;letter-spacing:1px;font-size:12px;padding:10px 16px;border-radius:var(--r);flex:none;box-shadow:0 6px 16px #C9A22738,inset 0 1px 0 rgba(255,255,255,.5);transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
 .addBtn svg{width:12px;height:12px;flex:none}
-.addBtn:hover{background:#d8aa2e;box-shadow:0 6px 18px #C9A22755}
+.addBtn:hover{transform:translateY(-1px);box-shadow:0 10px 24px #C9A22755,inset 0 1px 0 rgba(255,255,255,.6)}
 .addBtn:active{background:var(--gold-deep);box-shadow:inset 0 2px 5px rgba(7,26,51,.25);transform:translateY(1px)}
 
 /* read by a screen reader only, for the card wide open button */
@@ -658,7 +674,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 
 /* collapsed order panel, sits under the menu */
 .orderPanelWrap{padding-top:0;max-width:900px}
-.orderPanel{background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:150px}
+.orderPanel{background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:220px}
 .orderPanelHead{width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px 26px;background:none;text-align:left;transition:background .2s ease}
 .orderPanelHead:hover{background:#fdfaf1}
 .orderPanelTitle b{display:block;font-family:'Playfair Display';font-size:24px;color:var(--navy)}
@@ -874,7 +890,8 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .bedMedia{--r:16/9}
   .dishGrid{grid-template-columns:repeat(3,1fr);--dishGap:18px;gap:var(--dishGap)}
   .dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 2 * var(--dishGap)) / 3);justify-content:center}
-  .menuJumpInner{padding:0 5vw}
+  .menuJumpInner{padding:0 0 9px}
+  .menuTools{padding:10px 0 7px}
   .booking{grid-template-columns:1fr 1fr;gap:16px}
   .booking .btn{width:100%}
   .grid{grid-template-columns:repeat(2,1fr)}
@@ -889,8 +906,8 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .nav{padding:0 4vw}
   .nav nav,.nav .navCta{display:none}
   .burger{display:block}
-  .secBlock{scroll-margin-top:126px}
-  .orderPanel{scroll-margin-top:126px}
+  .secBlock{scroll-margin-top:200px}
+  .orderPanel{scroll-margin-top:200px}
   /* the floating order button sits above the fixed booking bar */
   .orderPill{bottom:calc(96px + env(safe-area-inset-bottom))}
   /* the way back to the top clears the fixed booking bar, and on the menu it
@@ -1662,35 +1679,45 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 }
 
 /* ---------------------------------------------------------------
-   A SINGLE, PATIENT ATTENTION CUE
+   A QUIET ATTENTION CUE
    Only the handful of genuine booking calls to action wear this.
-   Every eight and a half seconds a small nudge draws the eye, then
-   it rests. The nudge stops the instant a guest points at it, tabs
-   to it, or presses it, and never runs at all for anyone who has
-   asked for less motion. No button is ever shaken while it is being
-   used.
+   Nothing moves on its own any more: the call keeps its still, lit
+   surface, and a single sweep of light crosses it the moment a
+   guest points at it, tabs to it or presses it. For anyone who
+   asked for less motion the sweep is simply left out.
    --------------------------------------------------------------- */
-@keyframes ctaNudge{
-  0%,70%,100%{transform:translate3d(0,0,0)}
-  73%{transform:translate3d(-2px,0,0) rotate(-.5deg)}
-  76%{transform:translate3d(2px,0,0) rotate(.5deg)}
-  79%{transform:translate3d(-1.4px,0,0) rotate(-.32deg)}
-  82%{transform:translate3d(1px,0,0) rotate(.22deg)}
-  85%{transform:translate3d(0,0,0)}
-}
-.ctaAttn{position:relative;overflow:hidden;animation:ctaNudge 8.5s ease-in-out infinite}
-.ctaAttn:hover,.ctaAttn:focus,.ctaAttn:focus-visible,.ctaAttn:active,.ctaAttn.loading{animation:none}
+.ctaAttn{position:relative;overflow:hidden}
 .ctaAttn::before{
   content:'';position:absolute;top:0;bottom:0;left:-70%;width:45%;
   background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
   transform:skewX(-18deg);opacity:0;pointer-events:none;
 }
-.ctaAttn:hover::before{animation:ctaShine .85s ease}
+.ctaAttn:hover::before,.ctaAttn:focus-visible::before{animation:ctaShine .85s ease}
 @keyframes ctaShine{0%{left:-70%;opacity:0}22%{opacity:.85}100%{left:120%;opacity:0}}
 @media(prefers-reduced-motion:reduce){
-  .ctaAttn{animation:none}
-  .ctaAttn:hover::before{animation:none}
+  .ctaAttn:hover::before,.ctaAttn:focus-visible::before{animation:none}
 }
+
+/* ---------------------------------------------------------------
+   A PREMIUM PRESS RIPPLE
+   The single response every action control gives when it is
+   actually used. buttonShake.ts drops one span at the point of the
+   press; it opens as a soft ring of light and fades. It only ever
+   moves transform and opacity, so nothing about a control's size,
+   place, colour or behaviour changes, and it never runs at all for
+   anyone who asked for less motion.
+   --------------------------------------------------------------- */
+.pressHost{position:relative;overflow:hidden}
+.pressRipple{
+  position:absolute;border-radius:50%;pointer-events:none;
+  transform:translate(-50%,-50%) scale(.2);opacity:.9;
+  background:radial-gradient(circle,rgba(255,255,255,.62),rgba(201,162,39,.30) 45%,transparent 70%);
+  animation:pressRipple .6s cubic-bezier(.22,.7,.3,1) forwards;
+}
+@keyframes pressRipple{
+  to{transform:translate(-50%,-50%) scale(1);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){.pressRipple{display:none}}
 
 
 
@@ -2150,32 +2177,12 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
 }
 
 /* ---------------------------------------------------------------
-   A SHARED, STAGGERED BUTTON SHAKE
-
-   Every action control wears the same gentle three second ripple, but
-   never at the same moment: buttonShake.ts hands each one its own point
-   in the cycle, so a screen of buttons breathes in a slow wave instead
-   of pulsing in unison. The shake only ever moves `translate` and
-   `rotate` - compositor properties kept apart from the `transform`
-   a hover or press already uses - so no button's size, place, colour,
-   shadow or behaviour changes. It pauses the instant a control is
-   pointed at, focused, pressed, disabled, submitting or loading, and
-   it never runs at all for anyone who asked for less motion.
+   A CALM, CONSISTENT FOCUS RING
+   Every control the press ripple answers also draws the same gold
+   ring when it is reached by keyboard, so the site is navigable by
+   tab the whole way through.
    --------------------------------------------------------------- */
-@keyframes btnShake{
-  0%{translate:0 0;rotate:0deg}
-  2%{translate:-2.5px 0;rotate:-.7deg}
-  4%{translate:2.5px 0;rotate:.7deg}
-  6%{translate:-2px 0;rotate:-.5deg}
-  8%{translate:2px 0;rotate:.5deg}
-  10%{translate:-1px 0;rotate:-.25deg}
-  12%{translate:1px 0;rotate:.25deg}
-  14%,100%{translate:0 0;rotate:0deg}
-}
-.shakeBtn{
-  animation:btnShake 3s ease-in-out infinite;
-  animation-delay:var(--btn-shake-delay,0s);
-}
-.shakeBtn:hover,.shakeBtn:focus,.shakeBtn:focus-visible,.shakeBtn:active,
-.shakeBtn:disabled,.shakeBtn.loading,.shakeBtn[aria-busy="true"]{animation:none}
-@media(prefers-reduced-motion:reduce){.shakeBtn{animation:none}}
+.btn:focus-visible,.addBtn:focus-visible,.jumpOrder:focus-visible,
+.catChip:focus-visible,.nav nav a:focus-visible,.navSignIn:focus-visible,
+.menuSearch input:focus-visible,.printBtn:focus-visible,
+.dropBtn:focus-visible,.qtyStep button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}

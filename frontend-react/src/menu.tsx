@@ -135,6 +135,13 @@ const CloseIcon = () => (
   </svg>
 );
 
+const SearchIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle cx="11" cy="11" r="7"/>
+    <path d="M20 20l-3.2-3.2"/>
+  </svg>
+);
+
 const ArrowIcon = () => (
   <svg viewBox="0 0 18 12" fill="none" aria-hidden="true" focusable="false">
     <path d="M1 6h15M11.5 1.5 16 6l-4.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -484,6 +491,10 @@ function MenuPage() {
   // The category the guest has picked. null means the whole menu, so the
   // page still opens as one printed list until a category is chosen.
   const [cat, setCat] = React.useState<string | null>(null);
+  // What the guest has typed into the search box. Applied over the whole menu,
+  // or over the chosen category, so a word and a category narrow the list
+  // together rather than one replacing the other.
+  const [q, setQ] = React.useState('');
   const [name, setName] = React.useState(() => { try { return window.localStorage.getItem('hpn_name') || ''; } catch { return ''; } });
   const [phone, setPhone] = React.useState(() => { try { return window.localStorage.getItem('hpn_phone') || ''; } catch { return ''; } });
   const [email, setEmail] = React.useState(() => { try { return window.localStorage.getItem('hpn_email') || ''; } catch { return ''; } });
@@ -592,9 +603,25 @@ function MenuPage() {
   // the whole menu rather than to an empty screen.
   const activeCat = cat && sections.some(s => s.key === cat) ? cat : null;
   const visible = activeCat ? sections.filter(s => s.key === activeCat) : sections;
-  // A section or a group the kitchen has emptied out is left off the page
-  // altogether, rather than shown as a heading with nothing beneath it.
-  const shown = visible.filter(s => s.groups.some(g => g.items.length > 0));
+
+  // The search is a plain case-insensitive word match over the dish name, its
+  // copy and the heading it sits under. A word and a category work together.
+  const needle = q.trim().toLowerCase();
+  const matches = (dish: MenuItem) =>
+    !needle || (dish.name + ' ' + dish.desc + ' ' + dish.group).toLowerCase().includes(needle);
+
+  // A section or a group the kitchen has emptied out - or the search has
+  // filtered to nothing - is left off the page altogether, rather than shown
+  // as a heading with nothing beneath it.
+  const shown = visible
+    .map(s => ({
+      ...s,
+      groups: s.groups
+        .map(g => ({...g, items: g.items.filter(matches)}))
+        .filter(g => g.items.length > 0)
+    }))
+    .filter(s => s.groups.length > 0);
+  const resultCount = totalDishes(shown);
 
   /** One category, or the whole menu, and back to the head of the list. */
   const pickCat = (key: string | null) => {
@@ -710,14 +737,37 @@ if (d.ok) {
         <p className="eyebrow">DINING AND BAR</p>
         <h1>Our menu, your order.</h1>
         <p>
-          Every dish in its own section, with a photograph of each plate. Pick a category above to see only
-          that part of the menu, or leave it on All to read the whole thing. Open any dish to see it in full,
-          choose your companion and a salad, and add it to your order. Prices include taxes.
+          Every dish in its own section, with a photograph of each plate. Search for a dish by name, or pick a
+          category above to see only that part of the menu and leave it on All to read the whole thing. Open any
+          dish to see it in full, choose your companion and a salad, and add it to your order. Prices include taxes.
         </p>
       </div>
     </section>
 
     <div className="menuJump" id="jump">
+      <div className="menuTools">
+        <label className="menuSearch">
+          <SearchIcon/>
+          <input
+            type="search"
+            value={q}
+            onChange={e => setQ(e.target.value)}
+            placeholder="Search the menu, for example chicken, pizza, coffee"
+            aria-label="Search the menu"
+          />
+          {q.length > 0 && (
+            <button type="button" className="menuClear" onClick={() => setQ('')} aria-label="Clear the search">
+              <CloseIcon/>
+            </button>
+          )}
+        </label>
+        <span className="menuResult" aria-live="polite">
+          {needle ? resultCount + (resultCount === 1 ? ' dish' : ' dishes') : ''}
+        </span>
+        <button className="jumpOrder" onClick={goToOrder}>
+          Your order{count > 0 && ' (' + count + ')'}
+        </button>
+      </div>
       <div className="menuJumpInner" role="group" aria-label="Choose a category">
         <button
           className={'catChip' + (activeCat === null ? ' on' : '')}
@@ -732,9 +782,6 @@ if (d.ok) {
             onClick={() => pickCat(s.key)}
           >{s.name}</button>
         ))}
-        <button className="jumpOrder" onClick={goToOrder}>
-          Your order{count > 0 && ' (' + count + ')'}
-        </button>
       </div>
     </div>
 
@@ -744,8 +791,9 @@ if (d.ok) {
       <div className="menuMeta">
         <span>{MENU_REVISION}</span>
         <span className="menuMetaCount">
+          {needle ? '“' + q.trim() + '” · ' : ''}
           {activeCat ? visible.map(s => s.name).join(' · ') + ' · ' : ''}
-          {totalDishes(visible)} dishes
+          {resultCount} {resultCount === 1 ? 'dish' : 'dishes'}
         </span>
         <button className="printBtn" onClick={() => window.print()}>Print this menu</button>
       </div>
@@ -753,8 +801,18 @@ if (d.ok) {
       {shown.length === 0 && (
         <div className="stateMsg emptyState">
           <PlateGlyph/>
-          <h3>Nothing on the menu just now</h3>
-          <p>The kitchen has nothing filed under this category at the moment. Choose another category above, or call {CALL} to ask what is being cooked.</p>
+          <h3>{needle ? 'No dish matches that search' : 'Nothing on the menu just now'}</h3>
+          {needle ? (
+            <p>
+              Nothing on the menu matches “{q.trim()}”{activeCat ? ' in ' + (visible[0]?.name ?? 'this category') : ''}.
+              {' '}Try another word, choose a different category, or call {CALL} to ask what is being cooked.
+            </p>
+          ) : (
+            <p>The kitchen has nothing filed under this category at the moment. Choose another category above, or call {CALL} to ask what is being cooked.</p>
+          )}
+          {needle && (
+            <button className="btn ghost2" onClick={() => setQ('')}>Clear the search</button>
+          )}
         </div>
       )}
 

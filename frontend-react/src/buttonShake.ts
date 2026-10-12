@@ -1,18 +1,17 @@
 /**
- * A shared, staggered shake for every button on the site.
+ * A premium press response for every action control on the site.
  *
- * One tiny controller instead of a timer per button. Each eligible control is
- * handed a negative animation-delay spread evenly across the three second
- * cycle, so a screen of buttons ripples rather than pulsing in unison. The
- * animation itself lives in the stylesheet and only ever moves `translate` and
- * `rotate`, compositor properties kept separate from the `transform` a hover or
- * press already uses, so nothing about a button's size, position, colour or
- * click behaviour changes.
+ * The site used to give every button a slow, continuous shake. It read as
+ * restless rather than luxurious, so the idle motion is gone. What is left is
+ * one deliberate response to an actual press: a soft gold ripple that opens
+ * from the point the pointer or the finger touched, and fades away. Nothing
+ * moves on its own, so a screen of controls is calm until a guest uses one,
+ * and anyone who asked for reduced motion is left entirely alone.
  *
- * Buttons added later - a menu drawn from the API, a modal, a dashboard table -
- * are picked up by a single MutationObserver. Only controls near the viewport
- * animate, so a page holding hundreds of buttons stays cheap, and anyone who
- * asked for reduced motion is left entirely alone.
+ * The ripple is drawn as a single element per press, appended to the control
+ * and removed the moment it has finished. It only ever animates transform and
+ * opacity, so a button's size, place, colour, shadow and click behaviour are
+ * untouched.
  */
 
 const ELIGIBLE = [
@@ -32,7 +31,9 @@ const ELIGIBLE = [
   '.dropBtn',
   '.vgBtn',
   '.nav nav a',
+  '.navSignIn',
   '.drawerNav a',
+  '.catChip',
 ].join(',');
 
 /* Controls that merely look like a button - a card, a row, a carousel dot or an
@@ -42,116 +43,54 @@ const DENY =
   '.newsCard,.newsFeature,.newsEotm,.newsMini,.payMethodRow,' +
   '.orderPanelHead,.orderPanelToggle,.dot,.linkBtn,.bedOpen,[data-noshake]';
 
-const PHI = 1.618033988749895;
-const CYCLE = 3;
+let reduce = false;
+try {
+  reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+} catch {
+  /* a browser without matchMedia simply keeps the gentle default */
+}
 
-let seq = 0;
-let observer: IntersectionObserver | null = null;
-const watching = new WeakSet<Element>();
-
-/** A control worth shaking: a real button that is not disabled or busy. */
-function eligible(el: Element): el is HTMLElement {
+/** A control worth answering: a real button that is not disabled or busy. */
+function eligible(el: Element | null): el is HTMLElement {
+  if (!el) return false;
   const h = el as HTMLElement;
   if (typeof h.matches !== 'function') return false;
   if (!h.matches(ELIGIBLE)) return false;
-  if (h.matches(DENY)) return false;
+  if (h.closest(DENY)) return false;
   if (h.hasAttribute('disabled')) return false;
   if (h.classList.contains('loading')) return false;
   if (h.getAttribute('aria-busy') === 'true') return false;
   return true;
 }
 
-/** Give the control its own point in the three second cycle and start it. */
-function begin(el: HTMLElement): void {
-  if (el.classList.contains('shakeBtn')) return;
-  const offset = (seq++ * PHI) % CYCLE;
-  el.style.setProperty('--btn-shake-delay', (-offset).toFixed(3) + 's');
-  el.classList.add('shakeBtn');
-}
-
-function end(el: Element): void {
-  el.classList.remove('shakeBtn');
-}
-
-function observe(el: Element): void {
-  if (watching.has(el)) return;
-  watching.add(el);
-  if (observer) observer.observe(el);
-  else begin(el as HTMLElement);
-}
-
-function release(el: Element): void {
-  if (observer && watching.has(el)) observer.unobserve(el);
-  watching.delete(el);
-  end(el);
-}
-
-function scan(root: ParentNode): void {
-  const self = root as Element;
-  if (self.nodeType === 1 && eligible(self)) observe(self);
-  if (typeof root.querySelectorAll === 'function') {
-    root.querySelectorAll(ELIGIBLE).forEach((node) => {
-      if (eligible(node)) observe(node);
-    });
-  }
-}
-
-/** Re-check a control whose class, disabled or busy state just changed. */
-function refresh(target: Element): void {
-  if (eligible(target)) observe(target);
-  else if (watching.has(target)) release(target);
-}
-
-function start(): void {
-  if (typeof window === 'undefined' || typeof document === 'undefined') return;
-
-  let reduce = false;
-  try {
-    reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  } catch {
-    /* a browser without matchMedia simply keeps the gentle default */
-  }
+/** A soft ring of light, opening from where the control was touched. */
+function ripple(host: HTMLElement, x: number, y: number): void {
   if (reduce) return;
-
-  if (typeof IntersectionObserver !== 'undefined') {
-    observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) begin(entry.target as HTMLElement);
-          else end(entry.target);
-        }
-      },
-      { rootMargin: '140px 0px', threshold: 0 },
-    );
+  const box = host.getBoundingClientRect();
+  const size = Math.max(box.width, box.height) * 2.2;
+  const span = document.createElement('span');
+  span.className = 'pressRipple';
+  span.setAttribute('aria-hidden', 'true');
+  span.style.width = size + 'px';
+  span.style.height = size + 'px';
+  span.style.left = (x - box.left) + 'px';
+  span.style.top = (y - box.top) + 'px';
+  try {
+    host.appendChild(span);
+  } catch {
+    /* a void control such as <input> cannot hold a child; leave it be */
+    return;
   }
-
-  const boot = (): void => {
-    if (!document.body) return;
-    scan(document.body);
-    const mo = new MutationObserver((mutations) => {
-      for (const m of mutations) {
-        if (m.type === 'childList') {
-          m.addedNodes.forEach((n) => {
-            if (n.nodeType === 1) scan(n as Element);
-          });
-        } else if (m.target.nodeType === 1) {
-          refresh(m.target as Element);
-        }
-      }
-    });
-    mo.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['class', 'disabled', 'aria-busy'],
-    });
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot, { once: true });
-  } else {
-    boot();
-  }
+  host.classList.add('pressHost');
+  window.setTimeout(() => span.remove(), 640);
 }
 
-start();
+function onDown(e: PointerEvent): void {
+  const target = e.target instanceof Element ? e.target.closest(ELIGIBLE) : null;
+  if (!eligible(target)) return;
+  ripple(target, e.clientX, e.clientY);
+}
+
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  document.addEventListener('pointerdown', onDown, {passive: true});
+}
