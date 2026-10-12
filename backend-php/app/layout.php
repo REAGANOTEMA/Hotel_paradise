@@ -533,7 +533,7 @@ function receipt_sheet(array $r): string{
   $h.='</div>';
  }
  if(!empty($r['foot'])) $h.='<div class="sheetFoot">'.$r['foot'].'</div>';
- $h.='<div class="sheetCut">Thank you &middot; Hotel Paradise on the Nile</div>';
+ $h.='<div class="sheetCut">Thank you &middot; Hotel Paradise on the Nile<br><span class="sheetCredit">Designed by Reagansoft Innovation Limited &middot; reagansoftinnovation.com</span></div>';
  $h.='</div>';
  return $h;
 }

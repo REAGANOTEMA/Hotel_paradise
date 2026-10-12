@@ -527,6 +527,7 @@ ul.clean{list-style:none;margin:0;padding:0}
 .sheetTotals .big{font-size:13.5px}
 .sheetFoot{margin-top:6px;font-size:10.5px;color:#333;text-align:center}
 .sheetCut{margin-top:8px;padding-top:4px;border-top:1px dashed #999;font-size:9px;letter-spacing:.12em;text-transform:uppercase;text-align:center;color:#444}
+.sheetCredit{display:block;margin-top:3px;font-size:8px;letter-spacing:.06em;text-transform:none;color:#666}
 
 /* ---- notifications: the header bell, its menu, and the module -------------- */
 .notifyWrap{position:relative;flex:none}

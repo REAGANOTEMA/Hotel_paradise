@@ -149,7 +149,10 @@ function privileges(mysqli $db): array{
   if($privs==='USAGE') continue;
   $scopes[]=$scope;
   $global=($scope==='*.*');
-  if($global&&str_contains($privs,'ALL PRIVILEGES')) $all=true;
+  // MariaDB prints a global admin as "ALL PRIVILEGES"; MySQL 8 prints the whole
+  // list out instead. Both are recognised, so root is not read as a limited
+  // account and the cross-database grants below are not skipped on MySQL 8.
+  if($global&&(str_contains($privs,'ALL PRIVILEGES')||str_contains($privs,'CREATE USER')||str_contains($privs,'GRANT OPTION'))) $all=true;
   if($global&&str_contains($privs,'CREATE USER')) $createUser=true;
   if($global&&str_contains($privs,'CREATE')) $createDb=true;
  }

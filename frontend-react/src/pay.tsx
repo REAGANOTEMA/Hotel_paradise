@@ -319,7 +319,7 @@ function PayPage() {
      const res = await fetch(await apiUrl('account'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'me', token: t})});
      const d = await res.json();
      if (!alive || !d || !d.ok || !d.customer) return;
-     setForm(f => ({...f, name: f.name || String(d.customer.name || ''), phone: f.phone || String(d.customer.phone || ''), email: f.email || String(d.customer.email || '')}));
+     setForm(f => ({...f, name: f.name || String(d.customer.name || ''), phone: f.phone || String(d.customer.phone || ''), email: String(d.customer.email || '') || f.email}));
     } catch {
      /* the url and the browser's own memory stand */
     }

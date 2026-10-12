@@ -40,8 +40,8 @@ const NOTIFY_CATEGORIES = [
  *  Every list carries the Administrator, so the systems desk always holds the
  *  full picture; everyone else hears only what their job needs. */
 const NOTIFY_DEFAULT_ROLES = [
- 'booking'       => ['director','general_manager','super_admin','receptionist'],
- 'order'         => ['director','general_manager','super_admin','cashier','kitchen'],
+ 'booking'       => ['director','general_manager','super_admin','receptionist','accountant'],
+ 'order'         => ['director','general_manager','super_admin','cashier','kitchen','accountant'],
  'payment'       => ['director','general_manager','super_admin','accountant','cashier'],
  'communication' => ['director','general_manager','super_admin'],
  'incident'      => ['director','general_manager','super_admin'],

@@ -298,7 +298,7 @@ function RoomsPage() {
   try {
    const res = await fetch(await apiUrl('booking'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
     name: form.name, phone: form.phone, email: form.email, check_in: form.check_in, check_out: form.check_out,
-    room_type: sel.type, adults: parseInt(form.adults) || 1
+    room_type: sel.type, adults: parseInt(form.adults) || 1, token: customerToken()
    })});
     const d = await res.json();
 if (d.ok) {

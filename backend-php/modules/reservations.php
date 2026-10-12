@@ -5,6 +5,29 @@ $act=$_GET['act']??'';
 $id=(int)($_GET['id']??$_POST['id']??0);
 $view=(int)($_GET['view']??0);
 
+/*
+ * The window during which a settled booking payment is still "fresh" on the
+ * reception screen. The feed and the list below both read it, so the screen
+ * only ever tries to print a payment it is actually carrying. Fifteen minutes
+ * is longer than a guest takes to pay and a receptionist takes to look up.
+ */
+$deskPrintWindow=900;
+
+/*
+ * The reception screen's own feed. A website booking becomes a payment the
+ * moment the guest pays; this reports every such payment inside the window, so
+ * a reception screen (which has only drawn the ones it started with) reloads
+ * the moment a new one lands. The reload draws it, and the drawing prints it -
+ * the front desk gets the bill on paper the instant the guest pays online.
+ */
+if($act==='feed'){
+ header('Content-Type: application/json; charset=utf-8');
+ $since=date('Y-m-d H:i:s',time()-$deskPrintWindow);
+ $rows=rows("SELECT id FROM payments WHERE reservation_id IS NOT NULL AND status='successful' AND created_at>=? ORDER BY id DESC LIMIT 25",[$since]);
+ echo json_encode(['ids'=>array_map(static fn(array $r): string=>'pay-'.(int)$r['id'],$rows)]);
+ exit;
+}
+
 if($_SERVER['REQUEST_METHOD']==='POST' && $act){
  switch($act){
   case 'new':
@@ -228,5 +251,18 @@ echo '<div class="panel"><table class="tbl"><thead><tr><th>Booking</th><th>Guest
 foreach($list as $r){ echo '<tr><td>'.e($r['booking_number']).'</td><td><b>'.e($r['full_name']).'</b></td><td>'.fmtdate($r['check_in']).'</td><td>'.fmtdate($r['check_out']).'</td><td class="num">'.money($r['total']).'</td><td class="num">'.money($r['paid']).'</td><td>'.status_badge($r['status']).'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=reservations&view='.(int)$r['id'].'">Open</a></td></tr>'; }
 if(!count($list)) echo '<tr><td colspan="8" style="text-align:center;color:var(--muted)">No reservations found.</td></tr>';
 echo '</tbody></table></div>';
+
+/*
+ * The front desk's printer. Every booking payment that settled inside the
+ * window is drawn as a fresh hotel copy, so the browser prints it by itself,
+ * and the feed watches for the next one. A website booking that has just been
+ * paid therefore reaches the reception printer without anyone touching it,
+ * exactly as a walk-in payment does once it is recorded here.
+ */
+require_once __DIR__.'/../app/receipts.php';
+$since=date('Y-m-d H:i:s',time()-$deskPrintWindow);
+$deskPays=rows("SELECT id FROM payments WHERE reservation_id IS NOT NULL AND status='successful' AND created_at>=? ORDER BY id DESC LIMIT 25",[$since]);
+foreach($deskPays as $dp) receipts_hotel_template((int)$dp['id'],true);
+receipt_print('reservations',BASE.'/index.php?page=reservations&act=feed');
 page_foot();
 

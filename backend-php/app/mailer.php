@@ -194,7 +194,11 @@ function mail_send(string $to,string $subject,string $html,string $text='',array
 
  if($text==='') $text=mail_text_from_html($html);
 
- $parts=mail_compose($to,$subject,$html,$text,$reply,$cfg);
+ // Attachments are optional and are cleaned before they are trusted into a
+ // message: a name or a type carrying a line break could forge a header.
+ $attachments=mail_normalize_attachments(is_array($opts['attachments']??null)?$opts['attachments']:[]);
+
+ $parts=mail_compose($to,$subject,$html,$text,$reply,$cfg,$attachments);
  if($parts['error']!==null){ $result['error']=$parts['error']; return $result; }
 
  // A log transport is for a developer who wants to see the message without a
@@ -228,35 +232,84 @@ function mail_send(string $to,string $subject,string $html,string $text='',array
 }
 
 /**
+ * Cleans the attachment list a caller passed.
+ *
+ * Each entry becomes name, mime and the raw bytes. A name is reduced to
+ * safe characters and a mime type may not carry a line break, so neither can
+ * be used to inject a header. An entry with no bytes is dropped.
+ *
+ * @return array<int,array{name:string,mime:string,data:string}>
+ */
+function mail_normalize_attachments(array $list): array
+{
+ $out=[];
+ foreach($list as $a){
+  if(!is_array($a)) continue;
+  $data=(string)($a['data']??'');
+  if($data==='') continue;
+  $name=(string)($a['name']??'attachment');
+  $name=preg_replace('/[^A-Za-z0-9._-]+/','-',$name)??$name;
+  $name=trim($name,'-');
+  if($name==='') $name='attachment';
+  // Keep only the leading type/subtype, so a stray header after a line break
+  // can never ride along inside the Content-Type a reader is handed.
+  $mime=(string)($a['mime']??'application/octet-stream');
+  if(preg_match('#^([A-Za-z0-9.+-]+/[A-Za-z0-9.+-]+)#',$mime,$mm)) $mime=$mm[1];
+  else $mime='application/octet-stream';
+  $out[]=['name'=>$name,'mime'=>$mime,'data'=>$data];
+ }
+ return $out;
+}
+
+/**
  * Builds the message once, in the shapes both transports need.
  *
  * A multipart/alternative body carries a plain text copy and an HTML copy of
  * the same thing, so a phone that cannot show the design still shows the words.
+ * When attachments are present the whole alternative is wrapped in a
+ * multipart/mixed body, which is what a mail client needs to show the message
+ * and offer the file together (the receipt goes to a guest as a PDF this way).
  */
-function mail_compose(string $to,string $subject,string $html,string $text,string $reply,array $cfg): array
+function mail_compose(string $to,string $subject,string $html,string $text,string $reply,array $cfg,array $attachments=[]): array
 {
  $out=['error'=>null,'headers'=>'','body'=>'','raw'=>'','subject'=>mail_encode($subject)];
- $boundary='=_hp_'.bin2hex(random_bytes(12));
  $from=mail_from_header($cfg['from_email'],$cfg['from_name']);
 
- $body='--'.$boundary."\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n"
+ $altBoundary='=_hp_alt_'.bin2hex(random_bytes(12));
+ $alternative='--'.$altBoundary."\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n"
   .chunk_split(base64_encode($text),76,"\r\n")
-  .'--'.$boundary."\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n"
+  .'--'.$altBoundary."\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n"
   .chunk_split(base64_encode($html),76,"\r\n")
-  .'--'.$boundary.'--';
+  .'--'.$altBoundary.'--';
+
+ if($attachments){
+  $mixedBoundary='=_hp_mix_'.bin2hex(random_bytes(12));
+  $body='--'.$mixedBoundary."\r\nContent-Type: multipart/alternative; boundary=\"".$altBoundary."\"\r\n\r\n"
+   .$alternative."\r\n";
+  foreach($attachments as $a){
+   $body.='--'.$mixedBoundary."\r\nContent-Type: ".$a['mime'].'; name="'.$a['name'].'"'."\r\n"
+    .'Content-Transfer-Encoding: base64'."\r\n"
+    .'Content-Disposition: attachment; filename="'.$a['name'].'"'."\r\n\r\n"
+    .chunk_split(base64_encode($a['data']),76,"\r\n");
+  }
+  $body.='--'.$mixedBoundary.'--';
+  $contentType='multipart/mixed; boundary="'.$mixedBoundary.'"';
+ }else{
+  $body=$alternative;
+  $contentType='multipart/alternative; boundary="'.$altBoundary.'"';
+ }
 
  $headers='From: '.$from."\r\n"
   .'To: '.$to."\r\n"
   .($reply!==''?'Reply-To: '.$reply."\r\n":'')
   .'MIME-Version: 1.0'."\r\n"
-  .'Content-Type: multipart/alternative; boundary="'.$boundary.'"'."\r\n"
+  .'Content-Type: '.$contentType."\r\n"
   .'Date: '.date('r')."\r\n"
   .'Message-ID: <'.bin2hex(random_bytes(12)).'@'.mail_message_domain($cfg['from_email']).">\r\n"
   .'X-Mailer: Hotel Paradise management system'."\r\n";
 
  $out['headers']=$headers;
  $out['body']=$body;
- $out['raw']=$headers.'Subject: '.$out['subject']."\r\n\r\n".$body;
  // The raw form used on the wire puts To and Subject first, as a mail client
  // expects to read them before it reads anything it cannot show.
  $out['raw']='To: '.$to."\r\n".'Subject: '.$out['subject']."\r\n".$headers."\r\n".$body;

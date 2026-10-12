@@ -223,8 +223,11 @@ function receipts_context(int $paymentId): ?array
    if($name===''){ $name=trim((string)($customer['full_name']??'')); }
    $phone=(string)($o['customer_phone']??'');
    if($phone===''){ $phone=(string)($customer['phone']??''); }
-   $email=(string)($o['customer_email']??'');
-   if($email===''){ $email=(string)($customer['email']??''); }
+   // The account the payment was made from is the address of record: a receipt
+   // always goes to the email the guest registered with, and only falls back to
+   // whatever the order itself carried when there is no account.
+   $email=receipt_valid_email((string)($customer['email']??''));
+   if($email===''){ $email=(string)($o['customer_email']??''); }
    $ctx['guest']=['name'=>$name,'phone'=>$phone,'email'=>receipt_valid_email($email)];
 
    $ctx['totals']['subtotal']=(float)$o['subtotal'];
@@ -258,8 +261,11 @@ function receipts_context(int $paymentId): ?array
 
    $name=(string)$r['full_name'];
    if($name===''){ $name=(string)($customer['full_name']??''); }
-   $email=(string)($r['email']??'');
-   if($email===''){ $email=(string)($customer['email']??''); }
+   // The account the payment was made from is the address of record: the receipt
+   // goes to the email the guest registered with, and only falls back to the
+   // guest record's own address when there is no account behind the payment.
+   $email=receipt_valid_email((string)($customer['email']??''));
+   if($email===''){ $email=(string)($r['email']??''); }
    $ctx['guest']=['name'=>$name,'phone'=>(string)$r['phone'],'email'=>receipt_valid_email($email)];
 
    $ctx['totals']['subtotal']=(float)$r['subtotal'];
@@ -336,7 +342,7 @@ function receipts_send_email(array $ctx): array
  $html=receipts_email_html($ctx);
  $text=receipts_email_text($ctx);
 
- $res=mail_send($to,$subject,$html,$text);
+ $res=mail_send($to,$subject,$html,$text,['attachments'=>receipt_attachments($ctx,'guest')]);
  $out['sent']=(bool)$res['ok'];
  $out['error']=$res['ok']?null:($res['error']??'The message could not be sent.');
  receipt_log($pid,$ctx,$to,$res['ok'],$out['error']);
@@ -420,7 +426,7 @@ function receipts_send_staff_copies(array $ctx): array
   if($to===''||strtolower($to)===$guest) continue;
   if(receipt_staff_already_sent($pid,$to)){ $res['skipped']++; continue; }
   $subject='Receipt '.$ctx['ref'].' (hotel copy)';
-  $send=mail_send($to,$subject,receipts_email_html($ctx,'staff'),receipts_email_text($ctx,'staff'));
+  $send=mail_send($to,$subject,receipts_email_html($ctx,'staff'),receipts_email_text($ctx,'staff'),['attachments'=>receipt_attachments($ctx,'staff')]);
   $error=$send['ok']?null:($send['error']??'The message could not be sent.');
   receipt_log($pid,$ctx,$to,(bool)$send['ok'],$error,'staff');
   if($send['ok']){ $res['sent']++; $res['to'][]=$to; }
@@ -671,4 +677,210 @@ function receipts_email_text(array $ctx, string $audience='guest'): string
   $L[]='This is your official receipt.';
  }
  return implode("\n",$L);
+}
+
+/* ==================================================================
+   THE PDF RECEIPT
+
+   The guest is also sent the receipt as a PDF, so it can be kept,
+   printed or forwarded without the email client altering it. The PDF
+   is written here, by hand, with the two core Helvetica fonts every
+   reader already carries: no library, no Composer, nothing to install.
+   A failure to build it never stops the email - it simply goes without
+   its attachment and the reason is written to the error log.
+   ================================================================== */
+
+/** The credit line the studio signs every receipt with. */
+const RECEIPT_DESIGN_CREDIT='Designed by Reagansoft Innovation Limited  -  reagansoftinnovation.com';
+
+/**
+ * The attachment list for a receipt email, or an empty list if the PDF could
+ * not be built. Wrapped so a broken PDF can never fail the message itself.
+ *
+ * @return array<int,array{name:string,mime:string,data:string}>
+ */
+function receipt_attachments(array $ctx,string $audience='guest'): array
+{
+ try{
+  $pdf=receipt_pdf($ctx,$audience);
+  if(!is_string($pdf)||$pdf==='') return [];
+  $ref=preg_replace('/[^A-Za-z0-9._-]+/','-',(string)($ctx['ref']??'receipt'))?:'receipt';
+  $tag=$audience==='staff'?'-hotel-copy':'';
+  return [['name'=>'Receipt-'.$ref.$tag.'.pdf','mime'=>'application/pdf','data'=>$pdf]];
+ }catch(\Throwable $e){
+  error_log('[hotel receipts] PDF for payment '.($ctx['payment_id']??'?').' skipped: '.$e->getMessage());
+  return [];
+ }
+}
+
+/** One row of the PDF: a left string and, optionally, a figure in the column. */
+function receipt_pdf_line(array &$lines,string $text,string $font='F1',float $size=10.0,?string $right=null): void
+{
+ $lines[]=['t'=>$text,'r'=>$right,'f'=>$font,'s'=>$size];
+}
+
+/** Builds the whole receipt as a PDF document, returning its bytes. */
+function receipt_pdf(array $ctx,string $audience='guest'): string
+{
+ $staff=$audience==='staff';
+ $lines=[];
+
+ receipt_pdf_line($lines,MAIL_HOTEL_NAME,'F2',17.0);
+ receipt_pdf_line($lines,MAIL_HOTEL_CITY.'  -  '.MAIL_HOTEL_PHONE,'F1',9.0);
+ receipt_pdf_line($lines,MAIL_HOTEL_EMAIL.'  -  '.MAIL_HOTEL_SITE,'F1',8.5);
+ receipt_pdf_line($lines,'','F1',6.0);
+ receipt_pdf_line($lines,$staff?'RECEIPT (HOTEL COPY)':'OFFICIAL RECEIPT','F2',12.5);
+ receipt_pdf_line($lines,'Receipt number: '.$ctx['ref'],'F1',10.5);
+ receipt_pdf_line($lines,'Date: '.fmtdt($ctx['paid_at']),'F1',10.0);
+ if(($ctx['guest']['name']??'')!=='') receipt_pdf_line($lines,'Guest: '.$ctx['guest']['name'],'F1',10.0);
+ if(($ctx['guest']['phone']??'')!=='') receipt_pdf_line($lines,'Phone: '.$ctx['guest']['phone'],'F1',10.0);
+ if(($ctx['guest']['email']??'')!=='') receipt_pdf_line($lines,'Email: '.$ctx['guest']['email'],'F1',10.0);
+ receipt_pdf_line($lines,'','F1',6.0);
+
+ foreach($ctx['meta'] as $k=>$v){
+  if($v===''||$v===null) continue;
+  receipt_pdf_line($lines,$k.': '.$v,'F1',10.0);
+ }
+
+ if($ctx['lines']){
+  receipt_pdf_line($lines,'','F1',6.0);
+  receipt_pdf_line($lines,'ITEMS','F2',11.0);
+  foreach($ctx['lines'] as $l){
+   $name=(string)$l['name'];
+   if(($l['qty']??'')!==''&&$l['qty']!==null) $name.='  x '.$l['qty'];
+   if(!empty($l['note'])) $name.='  ('.$l['note'].')';
+   $amount=$l['total']!==null?money($l['total']):null;
+   receipt_pdf_line($lines,$name,'F1',10.0,$amount);
+  }
+ }
+
+ receipt_pdf_line($lines,'','F1',6.0);
+ if($ctx['totals']['subtotal']!==null) receipt_pdf_line($lines,'Subtotal','F1',10.0,money($ctx['totals']['subtotal']));
+ if(($ctx['totals']['tax']??0)>0) receipt_pdf_line($lines,'Service charge (3.5%)','F1',10.0,money($ctx['totals']['tax']));
+ if(($ctx['totals']['discount']??0)>0) receipt_pdf_line($lines,'Discount','F1',10.0,'-'.money($ctx['totals']['discount']));
+ receipt_pdf_line($lines,'Total','F2',11.5,money($ctx['totals']['total']));
+ receipt_pdf_line($lines,'Payment received','F2',11.5,money($ctx['amount']));
+ receipt_pdf_line($lines,'Method','F1',10.0,$ctx['method_label']);
+ if(($ctx['reference']??'')!=='') receipt_pdf_line($lines,'Reference','F1',10.0,(string)$ctx['reference']);
+ receipt_pdf_line($lines,'Total paid to date','F1',10.0,money($ctx['totals']['paid']));
+ if((float)$ctx['totals']['balance']>0.001){
+  receipt_pdf_line($lines,'Balance still due','F2',11.0,money($ctx['totals']['balance']));
+ }else{
+  receipt_pdf_line($lines,'Paid in full. Thank you.','F2',10.5);
+ }
+
+ receipt_pdf_line($lines,'','F1',8.0);
+ if($staff){
+  receipt_pdf_line($lines,'Hotel copy of the official receipt issued to the guest.','F1',9.5);
+  receipt_pdf_line($lines,'Filed for the department and the director of '.MAIL_HOTEL_NAME.'.','F1',9.5);
+ }else{
+  receipt_pdf_line($lines,'Thank you for choosing '.MAIL_HOTEL_NAME.'.','F1',9.5);
+  receipt_pdf_line($lines,'This is your official receipt.','F1',9.5);
+ }
+ receipt_pdf_line($lines,'','F1',7.0);
+ receipt_pdf_line($lines,RECEIPT_DESIGN_CREDIT,'F1',8.5);
+
+ return pdf_document($lines);
+}
+
+/** Turns one line of text into the ASCII a core PDF font can draw. */
+function receipt_pdf_text(string $t): string
+{
+ $t=str_replace(["\r\n","\r","\n"],' ',$t);
+ if(function_exists('iconv')){
+  $c=@iconv('UTF-8','ISO-8859-1//TRANSLIT',$t);
+  if(is_string($c)) $t=$c;
+ }
+ // Anything a single-byte core font cannot draw becomes a plain question mark.
+ $t=preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/','',$t)??$t;
+ return str_replace(['\\','(',')'],['\\\\','\\(','\\)'],$t);
+}
+
+/** Breaks a string into pieces no longer than $max characters, on spaces. */
+function receipt_pdf_wrap(string $text,int $max): array
+{
+ $text=trim($text);
+ if($text==='') return [''];
+ if($max<8) $max=8;
+ $words=preg_split('/\s+/',$text)?:[$text];
+ $out=[]; $cur='';
+ foreach($words as $w){
+  if($cur===''){ $cur=$w; }
+  elseif(strlen($cur)+1+strlen($w)<=$max){ $cur.=' '.$w; }
+  else{ $out[]=$cur; $cur=$w; }
+  while(strlen($cur)>$max){ $out[]=substr($cur,0,$max); $cur=substr($cur,$max); }
+ }
+ if($cur!=='') $out[]=$cur;
+ return $out;
+}
+
+/**
+ * Lays lines onto A4 pages and returns a complete, valid PDF.
+ *
+ * Only what a receipt needs is implemented: the two Helvetica fonts, a left
+ * column, a right figure column, page breaks and a correct cross-reference
+ * table. That is enough for every reader, and small enough to audit.
+ *
+ * @param array<int,array{t:string,r:?string,f:string,s:float}> $lines
+ */
+function pdf_document(array $lines): string
+{
+ $pw=595.0; $ph=842.0; $mx=42.0; $rightX=553.0;
+ $top=$ph-48.0; $bottom=54.0;
+
+ // Lay the lines out, wrapping anything too wide, and break to a new page
+ // whenever the next line would run off the foot of the current one.
+ $laid=[]; $page=[]; $y=$top;
+ foreach($lines as $ln){
+  $size=(float)($ln['s']??10.0); if($size<6) $size=6; if($size>22) $size=22;
+  $font=($ln['f']??'F1')==='F2'?'F2':'F1';
+  $max=(int)floor(1000.0/$size); if($max<12) $max=12;
+  $wrapped=receipt_pdf_wrap((string)($ln['t']??''),$max);
+  foreach($wrapped as $i=>$piece){
+   $step=$size*1.45;
+   if($y-$step<$bottom){ $laid[]=$page; $page=[]; $y=$top; }
+   $righty=($i===count($wrapped)-1)?($ln['r']??null):null;
+   $page[]=['t'=>receipt_pdf_text((string)$piece),'r'=>$righty!==null?receipt_pdf_text((string)$righty):null,'f'=>$font,'s'=>$size,'y'=>$y];
+   $y-=$step;
+  }
+ }
+ $laid[]=$page;
+
+ // Objects: 1 catalog, 2 pages, 3/4 the two fonts, then a page and a content
+ // stream for every laid-out page.
+ $objects=[];
+ $objects[1]='<< /Type /Catalog /Pages 2 0 R >>';
+ $objects[3]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+ $objects[4]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+ $kids=[]; $next=5;
+ foreach($laid as $pl){
+  $pageId=$next++; $contentId=$next++;
+  $kids[]=$pageId.' 0 R';
+  $stream='';
+  foreach($pl as $l){
+   $stream.='BT /'.$l['f'].' '.$l['s'].' Tf 1 0 0 1 '.$mx.' '.$l['y'].' Tm ('.$l['t'].') Tj ET'."\n";
+   if($l['r']!==null){
+    $stream.='BT /'.$l['f'].' '.$l['s'].' Tf 1 0 0 1 '.$rightX.' '.$l['y'].' Tm ('.$l['r'].') Tj ET'."\n";
+   }
+  }
+  $objects[$pageId]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '.$pw.' '.$ph.'] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents '.$contentId.' 0 R >>';
+  $objects[$contentId]='<< /Length '.strlen($stream).' >>'."\nstream\n".$stream.'endstream';
+ }
+ $objects[2]='<< /Type /Pages /Kids ['.implode(' ',$kids).'] /Count '.count($laid).' >>';
+ ksort($objects);
+
+ $pdf="%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";
+ $offsets=[];
+ foreach($objects as $id=>$body){
+  $offsets[$id]=strlen($pdf);
+  $pdf.=$id." 0 obj\n".$body."\nendobj\n";
+ }
+ $maxId=max(array_keys($objects));
+ $xref=strlen($pdf);
+ $pdf.='xref'."\n".'0 '.($maxId+1)."\n"."0000000000 65535 f \n";
+ for($i=1;$i<=$maxId;$i++){
+  $pdf.=sprintf('%010d 00000 n '."\n",$offsets[$i]??0);
+ }
+ $pdf.='trailer'."\n".'<< /Size '.($maxId+1).' /Root 1 0 R >>'."\n".'startxref'."\n".$xref."\n".'%%EOF';
+ return $pdf;
 }

@@ -662,6 +662,7 @@ function MenuPage() {
     try {
       const res = await fetch(await apiUrl('order'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
         name: name.trim(), phone: phone.trim(), email: email.trim(), address: address.trim(), notes: notes.trim(),
+        token: customerToken(),
         items: tray.map(x => ({
           id: x.dish.id,
           qty: x.qty,

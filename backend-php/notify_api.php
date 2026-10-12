@@ -109,6 +109,49 @@ if($act==='read_all'){
  $out(['ok'=>true,'unread'=>0]);
 }
 
+/* ---- read one in full ------------------------------------------------------ */
+if($act==='open'){
+ if($method!=='POST') $out(['ok'=>false,'error'=>'POST required'],405);
+ $id=(int)($body['id']??0);
+ if($id<=0) $out(['ok'=>false,'error'=>'Missing notification'],422);
+ // Only ever the signed-in member's own row: one member's notification is
+ // never another's, so opening one can never reveal a colleague's copy.
+ $n=row('SELECT id,type,title,body,data,read_at,created_at FROM notifications WHERE id=? AND user_id=?',[$id,$uid]);
+ if(!$n) $out(['ok'=>false,'error'=>'That notification is not on your list'],404);
+ if($n['read_at']===null){
+  q('UPDATE notifications SET read_at=NOW() WHERE id=? AND user_id=? AND read_at IS NULL',[$id,$uid]);
+  $n['read_at']=date('Y-m-d H:i:s');
+ }
+ $data=null;
+ if(is_string($n['data'])&&$n['data']!==''){ $decoded=json_decode($n['data'],true); if(is_array($decoded)) $data=$decoded; }
+ $out(['ok'=>true,'unread'=>notify_unread($uid),'item'=>[
+  'id'=>(int)$n['id'],'type'=>(string)$n['type'],'title'=>(string)$n['title'],
+  'body'=>(string)$n['body'],'data'=>$data?:new \stdClass(),
+  'read'=>true,'when'=>fmtdt($n['created_at'])
+ ]]);
+}
+
+/* ---- remove one, from this member's list only ------------------------------ */
+if($act==='delete'){
+ if($method!=='POST') $out(['ok'=>false,'error'=>'POST required'],405);
+ $id=(int)($body['id']??0);
+ if($id<=0) $out(['ok'=>false,'error'=>'Missing notification'],422);
+ // Deleting takes the member's own copy and nothing else. Every member holds
+ // their own row, so one person tidying their list never clears another's -
+ // a director who deletes a notice leaves the finance office's copy untouched.
+ try{ q('DELETE FROM notification_deliveries WHERE notification_id=? AND user_id=?',[$id,$uid]); }catch(\Throwable $e){}
+ $st=q('DELETE FROM notifications WHERE id=? AND user_id=?',[$id,$uid]);
+ $out(['ok'=>true,'deleted'=>$st->rowCount(),'unread'=>notify_unread($uid)]);
+}
+
+/* ---- clear everything already read, from this member's list only ----------- */
+if($act==='delete_read'){
+ if($method!=='POST') $out(['ok'=>false,'error'=>'POST required'],405);
+ try{ q('DELETE d FROM notification_deliveries d JOIN notifications n ON n.id=d.notification_id WHERE n.user_id=? AND n.read_at IS NOT NULL',[$uid]); }catch(\Throwable $e){}
+ $st=q('DELETE FROM notifications WHERE user_id=? AND read_at IS NOT NULL',[$uid]);
+ $out(['ok'=>true,'deleted'=>$st->rowCount(),'unread'=>notify_unread($uid)]);
+}
+
 /* ---- category preferences ------------------------------------------------- */
 if($act==='prefs'){
  if($method!=='POST') $out(['ok'=>false,'error'=>'POST required'],405);

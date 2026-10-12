@@ -121,26 +121,60 @@ echo '</div>';
 echo '</div>';
 
 /* ---- the list ---- */
+$hasRead=false; foreach($items as $n){ if($n['read_at']!==null){ $hasRead=true; break; } }
 echo '<div class="panel"><div class="panelHead"><h2>Notifications</h2>';
+echo '<div class="bar">';
 if($unread>0){
  echo '<form method="post" action="'.BASE.'/index.php?page=notifications&act=read_all"><button class="btnGhost sm">Mark all read</button></form>';
 }
-echo '</div>';
+if($hasRead){
+ echo '<button type="button" class="btnGhost sm" id="clearRead" title="Remove the notifications you have already read from your list">Clear read</button>';
+}
+echo '</div></div>';
 if($items===[]){
  empty_state('Nothing yet','Bookings, orders and payments raised on the website will show up here.');
 }else{
  echo '<ul class="notifyList" id="notifyList">';
  foreach($items as $n){
   $isRead=$n['read_at']!==null;
-  echo '<li class="'.($isRead?'':'unread').'" data-id="'.(int)$n['id'].'">';
+  echo '<li class="'.($isRead?'':'unread').'" data-id="'.(int)$n['id'].'"'
+   .' data-type="'.e($n['type']).'" data-title="'.e($n['title']).'"'
+   .' data-body="'.e($n['body']).'" data-when="'.e(fmtdt($n['created_at'])).'">';
   echo '<span class="nIco">'.svg_icon($n['type']==='payment'?'coins':($n['type']==='order'?'pot':($n['type']==='booking'?'calendar':'bell'))).'</span>';
-  echo '<div class="nBody"><b>'.e($n['title']).'</b><p>'.e($n['body']).'</p><small>'.e(fmtdt($n['created_at'])).'</small></div>';
+  echo '<div class="nBody nOpenWrap" role="button" tabindex="0" aria-label="Open notification"><b>'.e($n['title']).'</b><p>'.e($n['body']).'</p><small>'.e(fmtdt($n['created_at'])).'</small></div>';
+  echo '<div class="nActions">';
+  echo '<button type="button" class="nOpen linkish" data-id="'.(int)$n['id'].'">Open</button>';
   if(!$isRead) echo '<button type="button" class="nRead linkish" data-id="'.(int)$n['id'].'">Mark read</button>';
+  echo '<button type="button" class="nDel linkish danger" data-id="'.(int)$n['id'].'">Delete</button>';
+  echo '</div>';
   echo '</li>';
  }
  echo '</ul>';
 }
 echo '</div>';
+
+/* Opening a notification reads it in full; deleting takes only this member's
+   own copy, so a colleague's list is never touched. The box below is the one
+   place a full notification is shown. */
+echo '<style>
+.nActions{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.notifyList li{cursor:pointer}
+.nOpenWrap:focus{outline:2px solid var(--gold);outline-offset:2px;border-radius:8px}
+.nModal{position:fixed;inset:0;background:#071a3399;display:flex;align-items:center;justify-content:center;padding:18px;z-index:80}
+.nModal[hidden]{display:none}
+.nCard{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:86vh;overflow:auto;padding:24px 24px 20px;box-shadow:0 24px 60px #071a3355}
+.nCard h3{font-family:\'Playfair Display\',serif;color:var(--navy);margin:0 0 4px;font-size:21px}
+.nCard .nWhen{color:var(--muted);font-size:12.5px;margin-bottom:14px}
+.nCard .nText{color:var(--navy);font-size:15px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.nCard .nFoot{display:flex;gap:8px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap}
+.linkish.danger{color:#c62828}
+</style>';
+echo '<div class="nModal" id="nModal" hidden><div class="nCard" role="dialog" aria-modal="true" aria-labelledby="nModalTitle">'
+ .'<h3 id="nModalTitle"></h3><div class="nWhen" id="nModalWhen"></div><div class="nText" id="nModalText"></div>'
+ .'<div class="nFoot"><button type="button" class="btnGhost sm" id="nModalMark">Mark read</button>'
+ .'<button type="button" class="btnGhost sm" id="nModalDelete" style="color:#c62828">Delete</button>'
+ .'<button type="button" class="btn sm" id="nModalClose">Close</button></div>'
+ .'</div></div>';
 
 $base=json_encode(BASE);
 $vapidJs=json_encode($vapid['public']??'');
@@ -206,23 +240,70 @@ echo <<<HTML
   }).catch(function(){ setState('Could not send the test.','warn'); });
  });
 
- document.querySelectorAll('.nRead').forEach(function(b){
-  b.addEventListener('click',function(){
-   api('read',{id:parseInt(b.getAttribute('data-id'),10)}).then(function(){
-    var li=b.closest('li'); if(li){ li.classList.remove('unread'); b.remove(); }
-   });
+ /* One list, one set of handlers. Opening reads a notification in full; the
+    delete buttons remove only this member's own copy, and the server enforces
+    that, so a director clearing a notice leaves finance's copy in place. */
+ var list=document.getElementById('notifyList');
+ var modal=document.getElementById('nModal');
+ var mTitle=document.getElementById('nModalTitle');
+ var mWhen=document.getElementById('nModalWhen');
+ var mText=document.getElementById('nModalText');
+ var mMark=document.getElementById('nModalMark');
+ var mDel=document.getElementById('nModalDelete');
+ var currentId=0;
+
+ function liOf(id){ return list?list.querySelector('li[data-id="'+id+'"]'):null; }
+ function markLocalRead(li){ if(!li) return; li.classList.remove('unread'); var b=li.querySelector('.nRead'); if(b) b.remove(); }
+ function removeLocal(id){ var li=liOf(id); if(li) li.remove(); }
+ function openModal(id){
+  var li=liOf(id); if(!li) return;
+  currentId=id;
+  mTitle.textContent=li.getAttribute('data-title')||'Notification';
+  mWhen.textContent=li.getAttribute('data-when')||'';
+  mText.textContent=li.getAttribute('data-body')||'';
+  mMark.hidden=!li.classList.contains('unread');
+  modal.hidden=false;
+  if(mMark.focus) mMark.focus();
+ }
+ function closeModal(){ modal.hidden=true; currentId=0; }
+
+ if(list){
+  list.addEventListener('click',function(e){
+   var el=e.target;
+   var open=el.closest('.nOpen'), del=el.closest('.nDel'), rd=el.closest('.nRead'), wrap=el.closest('.nOpenWrap');
+   if(open){ e.stopPropagation(); var id=parseInt(open.getAttribute('data-id'),10);
+    api('open',{id:id}).then(function(){ markLocalRead(liOf(id)); openModal(id); }); return; }
+   if(rd){ e.stopPropagation(); var id2=parseInt(rd.getAttribute('data-id'),10);
+    api('read',{id:id2}).then(function(){ markLocalRead(liOf(id2)); }); return; }
+   if(del){ e.stopPropagation(); var id3=parseInt(del.getAttribute('data-id'),10);
+    if(!confirm('Remove this notification from your list? Other people keep their own copy.')) return;
+    api('delete',{id:id3}).then(function(){ removeLocal(id3); if(currentId===id3) closeModal(); }); return; }
+   if(wrap){ var id4=parseInt(wrap.closest('li').getAttribute('data-id'),10);
+    api('open',{id:id4}).then(function(){ markLocalRead(liOf(id4)); openModal(id4); }); }
   });
+  list.addEventListener('keydown',function(e){
+   if(e.key==='Enter'||e.key===' '){ var w=e.target.closest('.nOpenWrap'); if(w){ e.preventDefault(); w.click(); } }
+  });
+ }
+
+ if(modal){
+  document.getElementById('nModalClose').addEventListener('click',closeModal);
+  modal.addEventListener('click',function(e){ if(e.target===modal) closeModal(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!modal.hidden) closeModal(); });
+  mMark.addEventListener('click',function(){ if(!currentId) return; var id=currentId;
+   api('read',{id:id}).then(function(){ markLocalRead(liOf(id)); mMark.hidden=true; }); });
+  mDel.addEventListener('click',function(){ if(!currentId) return; var id=currentId;
+   if(!confirm('Remove this notification from your list? Other people keep their own copy.')) return;
+   api('delete',{id:id}).then(function(){ removeLocal(id); closeModal(); }); });
+ }
+
+ var clear=document.getElementById('clearRead');
+ if(clear) clear.addEventListener('click',function(){
+  if(!confirm('Remove all the notifications you have already read? Everyone else keeps their own copies.')) return;
+  api('delete_read',{}).then(function(){ location.reload(); });
  });
 
  /* The bell in the header uses the same feed, so the count here stays honest. */
- var box=document.getElementById('notifyList');
- if(box) box.addEventListener('click',function(e){
-  var li=e.target.closest('li'); if(!li) return;
-  var id=parseInt(li.getAttribute('data-id'),10);
-  if(id && li.classList.contains('unread')){
-   api('read',{id:id}).then(function(){ li.classList.remove('unread'); var b=li.querySelector('.nRead'); if(b) b.remove(); });
-  }
- });
 })();
 </script>
 HTML;

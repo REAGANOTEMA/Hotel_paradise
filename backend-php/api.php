@@ -112,6 +112,29 @@ function booking_withdrawal_fee(): array{
   return ['label'=>$label,'amount'=>round(max(0.0,$fee),2)];
 }
 
+/**
+ * The signed-in guest behind a session token, or null.
+ *
+ * The website's account is the address of record: it is where a booking, an
+ * order and every receipt are sent. The booking, the order and the payment all
+ * read it back from here, rather than trusting a name or an address typed into
+ * a form, so a guest who typed one address when they registered always receives
+ * their receipt there. Only the token's sha256 is compared and a closed account
+ * is nobody, so a stolen or expired token opens nothing.
+ */
+function api_customer_from_token(string $tok): ?array{
+ $tok=trim($tok);
+ if($tok===''||table_columns('customers')===[]||table_columns('customer_tokens')===[]) return null;
+ try{
+  $t=row('SELECT customer_id,expires_at,purpose FROM customer_tokens WHERE token_hash=? LIMIT 1',[hash('sha256',$tok)]);
+  if(!$t) return null;
+  if(strtotime((string)$t['expires_at'])<time()) return null;
+  if((string)($t['purpose']??'')!=='session') return null;
+  $c=row('SELECT * FROM customers WHERE id=?',[(int)$t['customer_id']]);
+  if(!$c||($c['status']??'')==='closed') return null;
+  return $c;
+ }catch(Throwable $e){ return null; }
+}
 
 $act=$_GET['act']??'';
 $method=$_SERVER['REQUEST_METHOD'];
@@ -192,6 +215,18 @@ function menu_item_count(PDO $pdo): ?int{
 
 if($act==='booking'){
  $name=trim($body['name']??''); $phone=trim($body['phone']??''); $email=trim($body['email']??'');
+ // The account the guest is signed in with is the address of record. Its email
+ // is the one the receipt must reach, so it is taken over the form's, and a
+ // blank name or number is filled from it too. Reading it here - before the
+ // guest is matched or made - means the guest record is found, or created,
+ // under the account's own address.
+ $acct=api_customer_from_token((string)($body['token']??''));
+ if($acct){
+  $acctEmail=strtolower(trim((string)$acct['email']));
+  if($acctEmail!=='') $email=$acctEmail;
+  if($name==='') $name=trim((string)$acct['full_name']);
+  if($phone==='') $phone=trim((string)$acct['phone']);
+ }
  $cin=$body['check_in']??''; $cout=$body['check_out']??''; $type=$body['room_type']??''; $adults=(int)($body['adults']??1); $children=(int)($body['children']??0);
  if($name===''||$cin===''||$cout===''){ $out(['ok'=>false,'error'=>'Please provide your name and check in and check out dates.'],422); }
  if($cout<=$cin){ $out(['ok'=>false,'error'=>'Check out must be after check in.'],422); }
@@ -205,6 +240,11 @@ if($act==='booking'){
  if(!$gid){
   q('INSERT INTO guests(hotel_id,full_name,phone,email,created_at) VALUES(1,?,?,?,NOW())',[$name,$phone,$email]);
   $gid=(int)db()->lastInsertId();
+ }elseif($acct&&$email!==''){
+  // The guest was found by their phone under an older address. The account's
+  // own email wins, so this booking's receipt - and any later one - reaches the
+  // address they registered with rather than a stale one.
+  try{ q('UPDATE guests SET email=? WHERE id=? AND (email IS NULL OR LOWER(email)<>?)',[$email,$gid,$email]); }catch(Throwable $e){}
  }
  $num=next_number('HPN','reservations','booking_number');
  $rate=(float)$rt['base_rate']; $subtotal=round($rate*$nights,2);
@@ -379,6 +419,17 @@ if($act==='order'){
   $email=trim((string)($body['email']??''));
   $address=trim((string)($body['address']??''));
   $cnotes=trim((string)($body['notes']??''));
+  // The signed-in account is the address of record, exactly as it is for a
+  // booking: its email is taken over the form's, and its name and number fill
+  // any the guest left blank, so the order and its receipt carry the details
+  // the guest registered with.
+  $acct=api_customer_from_token((string)($body['token']??''));
+  if($acct){
+    $acctEmail=strtolower(trim((string)$acct['email']));
+    if($acctEmail!=='') $email=$acctEmail;
+    if($name==='') $name=trim((string)$acct['full_name']);
+    if($phone==='') $phone=trim((string)$acct['phone']);
+  }
   $lines=$body['items']??[];
   if(!is_array($lines)||count($lines)===0){ $out(['ok'=>false,'error'=>'Your order is empty. Add at least one dish first.'],422); }
   if($name===''||$phone===''){ $out(['ok'=>false,'error'=>'Please provide your name and phone number so we can confirm your order.'],422); }
@@ -464,6 +515,16 @@ if($act==='payment'){
   // was placed without one. It is only ever written onto a record that has no
   // address of its own, so a guest can never overwrite the hotel's own record.
   $email=filter_var(trim((string)($body['email']??'')),FILTER_VALIDATE_EMAIL)?:'';
+  // The signed-in account is the address of record. Its email is preferred over
+  // anything the page sent, so a receipt always follows the address the guest
+  // registered with. A guest with no account keeps the address they typed.
+  $acct=api_customer_from_token((string)($body['token']??''));
+  $acctEmail=$acct?filter_var(strtolower(trim((string)$acct['email'])),FILTER_VALIDATE_EMAIL)?:'':'';
+  if($acctEmail!=='') $email=$acctEmail;
+  if($acct){
+    if($name==='') $name=trim((string)$acct['full_name']);
+    if($phone==='') $phone=trim((string)$acct['phone']);
+  }
   $method=strtolower(trim((string)($body['method']??'')));
   if(!in_array($method,['pesapal','mtn_momo','airtel_money','card'],true)){
     $out(['ok'=>false,'error'=>'Please choose a payment method.'],422);
@@ -484,17 +545,18 @@ if($act==='payment'){
     if(!$o){ $out(['ok'=>false,'error'=>'We could not find that order reference. Please call +256 759 504 928.'],404); }
     $oid=(int)$o['id']; $expected=(float)$o['total'];
   }
-  // Keep the address on the record it belongs to, but never overwrite a real
-  // one: the receipt is built from the booking or the order, so the address has
-  // to live there. A database without the order column simply keeps the guests
-  // copy as it was.
+  // Keep the address on the record it belongs to, so the receipt - which is
+  // built from the booking or the order - has somewhere to go. A signed-in
+  // account is the address of record and overwrites what the record held; a
+  // guest with no account fills a blank and never overwrites a real one.
   if($email!==''){
     try{
+      $force=$acctEmail!=='';
       if($oid!==null&&existing_columns('orders',['customer_email'])!==[]){
-        q('UPDATE orders SET customer_email=? WHERE id=? AND (customer_email IS NULL OR customer_email=\'\')',[$email,$oid]);
+        q('UPDATE orders SET customer_email=? WHERE id=?'.($force?'':' AND (customer_email IS NULL OR customer_email=\'\')'),[$email,$oid]);
       }
       if($rid!==null){
-        q('UPDATE guests g JOIN reservations r ON r.guest_id=g.id SET g.email=? WHERE r.id=? AND (g.email IS NULL OR g.email=\'\')',[$email,$rid]);
+        q('UPDATE guests g JOIN reservations r ON r.guest_id=g.id SET g.email=? WHERE r.id=?'.($force?'':' AND (g.email IS NULL OR g.email=\'\')'),[$email,$rid]);
       }
     }catch(Throwable $e){
       error_log('[hotel api] could not attach payment email: '.$e->getMessage());
@@ -510,14 +572,10 @@ if($act==='payment'){
   $expected=round(max(0.0,$expected-$already),2);
   if($expected<=0){ $out(['ok'=>false,'error'=>'There is nothing left to pay on this reference. If you think this is wrong, please call +256 759 504 928.'],422); }
 
-  // The signed in guest's id rides along with the payment, so a receipt can be
-  // found again from the account. An anonymous payment is still a valid payment.
-  $custId=null;
-  $cTok=trim((string)($body['token']??''));
-  if($cTok!=='' && table_columns('customer_tokens')!==[]){
-    $ct=row('SELECT customer_id,expires_at FROM customer_tokens WHERE token_hash=? AND purpose=\'session\'',[hash('sha256',$cTok)]);
-    if($ct&&strtotime((string)$ct['expires_at'])>=time()){ $custId=(int)$ct['customer_id']; }
-  }
+  // The signed in guest's id rides along with the payment, so the receipt can be
+  // found again from the account and always sent to the address on it. An
+  // anonymous payment is still a valid payment and simply has no account.
+  $custId=$acct?(int)$acct['id']:null;
 
   $payRef=next_number('PAY','payments','provider_reference');
   $paymentCols=existing_columns('payments',['id','hotel_id','user_id','customer_id','invoice_id','order_id','reservation_id','amount','method','provider','provider_reference','status','created_at']);

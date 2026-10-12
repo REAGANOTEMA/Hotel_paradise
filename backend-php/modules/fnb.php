@@ -14,11 +14,26 @@ declare(strict_types=1);
 $act=$_GET['act']??'';
 $u=current_user();
 
+/*
+ * The window during which a settled order payment is still "fresh" on the F&B
+ * screen. A website order becomes a payment the moment the guest pays; the feed
+ * reports it inside this window so the screen reloads, draws the hotel copy and
+ * prints it by itself, and the till gets the bill on paper without anyone
+ * touching it. Fifteen minutes matches the reception screen.
+ */
+$deskPrintWindow=900;
+
 /** Orders the list has not drawn. A new one reloads the page to draw it. */
 if($act==='feed'){
  header('Content-Type: application/json; charset=utf-8');
  $ids=rows('SELECT o.id FROM orders o WHERE DATE(o.created_at)=CURDATE() ORDER BY o.id DESC LIMIT 100');
- echo json_encode(['ids'=>array_map(static fn(array $r): int=>(int)$r['id'],$ids)]);
+ $out=array_map(static fn(array $r): int=>(int)$r['id'],$ids);
+ // A settled order payment reads as "pay-<id>", the same shape the reception
+ // screen uses, so the page reloads for it and the fresh hotel copy prints.
+ $since=date('Y-m-d H:i:s',time()-$deskPrintWindow);
+ $pays=rows("SELECT id FROM payments WHERE order_id IS NOT NULL AND status='successful' AND created_at>=? ORDER BY id DESC LIMIT 25",[$since]);
+ foreach($pays as $p){ $out[]='pay-'.(int)$p['id']; }
+ echo json_encode(['ids'=>$out]);
  exit;
 }
 
@@ -268,6 +283,24 @@ if(!count($orders)){
  echo '</tbody></table>';
 }
 echo '</div>';
+
+/*
+ * The till's printer. Every order payment that settled inside the window -
+ * whether taken here or paid on the website a moment ago - is drawn as a fresh
+ * hotel copy, so the browser prints it by itself, and the feed above watches for
+ * the next one. That is how a guest who pays online reaches the F&B printer
+ * without anyone touching the screen.
+ */
+require_once __DIR__.'/../app/receipts.php';
+$since=date('Y-m-d H:i:s',time()-$deskPrintWindow);
+$deskPays=rows("SELECT id,order_id FROM payments WHERE order_id IS NOT NULL AND status='successful' AND created_at>=? ORDER BY id DESC LIMIT 25",[$since]);
+foreach($deskPays as $dp){
+ // The payment that was just settled here already printed as the order's own
+ // bill a moment ago, so its official copy is drawn but not printed twice. Every
+ // other settled payment - a guest who paid on the website - prints itself.
+ $freshPay=!($justPrinted && (int)$dp['order_id']===$viewId);
+ receipts_hotel_template((int)$dp['id'],$freshPay);
+}
 
 receipt_print('fnb',BASE.'/index.php?page=fnb'.($only?'&outlet='.rawurlencode($only):'').'&act=feed');
 page_foot();
