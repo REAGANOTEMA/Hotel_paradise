@@ -7988,16 +7988,16 @@
       "h": 576,
       "variants": []
     },
+    "food-1024x1016": {
+      "ext": "webp",
+      "w": 1024,
+      "h": 1016,
+      "variants": []
+    },
     "hotel-paradise-on-the-nile-conferences-weddings-cover": {
       "ext": "jpg",
       "w": 2000,
       "h": 624,
-      "variants": []
-    },
-    "hotel-paradise-on-the-nile-logo": {
-      "ext": "webp",
-      "w": 1532,
-      "h": 442,
       "variants": []
     },
     "hotel-paradise": {
@@ -8280,6 +8280,12 @@
         }
       ]
     },
+    "old-logo": {
+      "ext": "webp",
+      "w": 1532,
+      "h": 442,
+      "variants": []
+    },
     "paradise-banquet-hall-768x1024": {
       "ext": "jpg",
       "w": 768,
@@ -8308,6 +8314,12 @@
           "h": 960
         }
       ]
+    },
+    "paradise-nile-sunset-990x1024": {
+      "ext": "jpg",
+      "w": 990,
+      "h": 1024,
+      "variants": []
     },
     "pizza-and-drinks-and-souce": {
       "ext": "jpg",

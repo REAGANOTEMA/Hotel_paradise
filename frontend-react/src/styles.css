@@ -1566,6 +1566,31 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 .evFormNote{color:var(--faint);font-size:13px;text-align:center;margin:4px 0 0;line-height:1.7}
 
 /* ---------------------------------------------------------------
+   THE TALK PAGE: two doors into one form, and what guests have said.
+   --------------------------------------------------------------- */
+.talkTabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px auto 22px;max-width:780px}
+.talkTab{font-family:inherit;font-size:13.5px;font-weight:700;letter-spacing:.02em;color:var(--navy);background:#fff;border:1px solid var(--line2);border-radius:999px;padding:12px 22px;min-height:44px;cursor:pointer;box-shadow:var(--shadow);transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease}
+.talkTab:hover{border-color:var(--gold);color:var(--gold-ink);transform:translateY(-1px)}
+.talkTab.on{background:var(--gold);border-color:var(--gold-deep);color:var(--navy);box-shadow:0 10px 24px rgba(201,162,39,.28)}
+.talkTab:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.stars{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 0}
+.stars .star{font-size:30px;line-height:1;background:none;border:0;color:#D8DCE3;cursor:pointer;padding:2px 3px;transition:color .15s ease,transform .15s ease}
+.stars .star:hover{transform:scale(1.12)}
+.stars .star.on{color:var(--gold)}
+.stars .star:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+.starWord{margin-left:8px;color:var(--faint);font-size:13px;font-weight:600;letter-spacing:.02em}
+.saidGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+.said{background:#fff;border:1px solid var(--line2);border-top:3px solid var(--gold);border-radius:var(--r);padding:24px 24px 22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;margin:0}
+.saidStars{color:var(--gold);font-size:17px;letter-spacing:2px}
+.said blockquote{margin:0;color:var(--ink);font-size:15.5px;line-height:1.75}
+.said figcaption{display:flex;flex-direction:column;gap:2px;margin-top:auto;padding-top:6px}
+.said figcaption b{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.02rem}
+.said figcaption span{color:var(--faint);font-size:12.5px}
+.saidEmpty{text-align:center;color:var(--faint);font-size:15px;max-width:640px;margin:6px auto 0;line-height:1.7}
+@media(max-width:900px){.saidGrid{grid-template-columns:1fr}.talkTab{flex:1 1 46%}}
+
+
+/* ---------------------------------------------------------------
    THE FACILITIES PAGE: deep alternating panels, then the gifts.
    --------------------------------------------------------------- */
 .facStack{display:flex;flex-direction:column;gap:clamp(40px,6vw,72px)}

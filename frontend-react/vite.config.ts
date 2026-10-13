@@ -55,6 +55,7 @@ export default defineConfig({
         events: 'events.html',
         facilities: 'facilities.html',
         news: 'news.html',
+        talk: 'talk.html',
         terms: 'terms.html',
         privacy: 'privacy.html',
         cookies: 'cookies.html'

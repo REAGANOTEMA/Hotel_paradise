@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/../app/guest_comm.php';
 
 /*
  * The director's page: the house seen whole.
@@ -406,6 +407,53 @@ echo '<div class="li"><span>Kitchen screen<br><small>Dockets, printed as orders 
 echo '<div class="li"><span>Food and beverage<br><small>Bills, outlets and payments</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=fnb">Open</a></b></div>';
 echo '<div class="li"><span>Reports<br><small>The ledger behind these numbers</small></span><b><a class="btnGhost sm" href="'.BASE.'/index.php?page=reports">Open</a></b></div>';
 echo '</div></div></div></div>';
+
+// Guest communications: the director sees the whole conversation, both desks.
+if(guest_message_ready()){
+ $gmc=guest_message_counts();
+ $gs=guest_message_scope();
+ $ph=implode(',',array_fill(0,count($gs),'?'));
+ $gmRecent=rows("SELECT id,reference,full_name,department,subject,status,created_at FROM guest_messages WHERE kind='message' AND department IN ($ph) ORDER BY id DESC LIMIT 10",$gs);
+ $gxRecent=rows("SELECT id,full_name,rating,message,status,created_at FROM guest_messages WHERE kind='experience' AND department IN ($ph) ORDER BY id DESC LIMIT 6",$gs);
+ $gxFeatured=(int)val("SELECT COUNT(*) FROM guest_messages WHERE kind='experience' AND status='featured'");
+ $tones=['new'=>'warn','assigned'=>'blue','resolved'=>'ok','featured'=>'gold'];
+ echo '<div class="panel" style="margin-top:20px">';
+ echo '<div class="toolbar" style="margin-bottom:12px"><div><h2>Guest communications</h2><p class="hint" style="margin:0">Every message and written experience the guests have sent to the house.</p></div>';
+ echo '<div class="bar"><a class="btn sm btnAttn" href="'.BASE.'/index.php?page=messages">Guest messages</a> <a class="btnGhost sm" href="'.BASE.'/index.php?page=testimonials">Experiences</a></div></div>';
+ echo '<div class="miniList" style="margin-bottom:14px">';
+ echo '<div class="li"><span>New waiting for an answer</span><b>'.(int)$gmc['new'].'</b></div>';
+ echo '<div class="li"><span>Still open</span><b>'.(int)$gmc['open'].'</b></div>';
+ echo '<div class="li"><span>Messages</span><b>'.(int)$gmc['message'].'</b></div>';
+ echo '<div class="li"><span>Experiences</span><b>'.(int)$gmc['experience'].'</b></div>';
+ echo '<div class="li"><span>Featured on the website</span><b>'.(int)$gxFeatured.'</b></div>';
+ echo '</div>';
+ echo '<div class="twoCol"><div>';
+ echo '<h3>Latest messages</h3>';
+ if(!$gmRecent) echo '<p class="emptyLine">No messages yet.</p>';
+ else{
+  echo '<table class="tbl"><thead><tr><th>Guest</th><th>Desk</th><th>Subject</th><th>Status</th><th>When</th></tr></thead><tbody>';
+  foreach($gmRecent as $m){
+   echo '<tr><td><b>'.e($m['full_name']).'</b><br><small>'.e($m['reference']).'</small></td>';
+   echo '<td>'.e(guest_message_departments()[$m['department']]??$m['department']).'</td>';
+   echo '<td>'.e($m['subject']??'(no subject)').'</td>';
+   echo '<td>'.badge(guest_message_statuses()[$m['status']]??$m['status'],$tones[$m['status']]??'grey').'</td>';
+   echo '<td>'.fmtdate($m['created_at']).'</td></tr>';
+  }
+  echo '</tbody></table>';
+ }
+ echo '</div><div>';
+ echo '<h3>Latest experiences</h3>';
+ if(!$gxRecent) echo '<p class="emptyLine">No experiences yet.</p>';
+ else{
+  echo '<div class="miniList">';
+  foreach($gxRecent as $x){
+   echo '<div class="li"><span><b>'.e($x['full_name']).'</b> &middot; <span style="color:var(--gold)">'.str_repeat('&#9733;',(int)$x['rating']).'</span><br><small>'.e(mb_strimwidth((string)$x['message'],0,70,'&hellip;')).'</small></span>';
+   echo badge(guest_message_statuses()[$x['status']]??$x['status'],$tones[$x['status']]??'grey').'</div>';
+  }
+  echo '</div>';
+ }
+ echo '</div></div></div>';
+}
 
 // Daily comprehensive summary
 echo '<div class="panel" style="margin-top:20px">';

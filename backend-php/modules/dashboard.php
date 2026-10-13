@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/../app/guest_comm.php';
 
 $t=today();
 // A day as a half-open range (00:00:00 today up to, not including, 00:00:00
@@ -52,8 +53,44 @@ else{ echo '<div class="miniList">'; foreach($payments as $p){ echo '<div class=
 echo '</div>';
 echo '<div class="panel"><h2>Awaiting approval</h2><p class="hint">Expense requests and purchase requisitions.</p>';
 if(!count($pend)){ echo '<p class="emptyLine">Everything is up to date.</p>'; }
-else{ echo '<div class="miniList">'; foreach($pend as $p){ echo '<div class="li"><span>'.e($p['ref']).'<br><small>'.e(ucfirst($p['kind'])).'</small></span>'.($p['amount']>0?'<b>'.money($p['amount']).'</b>':'').'</div>'; } echo '</div><a class="btn sm" style="margin-top:12px" href="'.BASE.'/index.php?page=approvals">Review approvals</a>'; }
+else{ echo '<div class="miniList">'; foreach($pend as $p){ echo '<div class="li"><span>'.e($p['ref']).'<br><small>'.e(ucfirst($p['kind'])).'</small></span>'.($p['amount']>0?'<b>'.money($p['amount']).'</b>':'').'</div>'; } echo '</div><a class="btn sm btnAttn" style="margin-top:12px" href="'.BASE.'/index.php?page=approvals">Review approvals</a>'; }
 echo '</div></div></div>';
+
+// Guest communications: the messages and experiences on this member's desk.
+// A front desk member sees what is sent to the house, the kitchen what is sent
+// to the kitchen, and the management team sees both, uncounted and unread.
+$gmc=guest_message_counts();
+if(guest_message_ready()&&$gmc['total']>0){
+ $gs=guest_message_scope();
+ $ph=implode(',',array_fill(0,count($gs),'?'));
+ $recentM=rows("SELECT id,reference,full_name,department,subject,status FROM guest_messages WHERE kind='message' AND department IN ($ph) ORDER BY id DESC LIMIT 5",$gs);
+ $recentX=rows("SELECT id,full_name,rating,message,status FROM guest_messages WHERE kind='experience' AND department IN ($ph) ORDER BY id DESC LIMIT 3",$gs);
+ $tones=['new'=>'warn','assigned'=>'blue','resolved'=>'ok','featured'=>'gold'];
+ echo '<div class="dashGrid" style="margin-top:18px"><div class="panel">';
+ echo '<h2>Guest messages</h2><p class="hint">'.($gmc['new']>0?$gmc['new'].' new waiting for an answer.':'').'What guests have sent to your desk.</p>';
+ if(!$recentM){ echo '<p class="emptyLine">No guest messages on your desk.</p>'; }
+ else{
+  echo '<table class="tbl"><thead><tr><th>Guest</th><th>Desk</th><th>Subject</th><th>Status</th></tr></thead><tbody>';
+  foreach($recentM as $m){
+   echo '<tr><td><b>'.e($m['full_name']).'</b><br><small>'.e($m['reference']).'</small></td>';
+   echo '<td>'.e(guest_message_departments()[$m['department']]??$m['department']).'</td>';
+   echo '<td>'.e($m['subject']??'(no subject)').'</td>';
+   echo '<td>'.badge(guest_message_statuses()[$m['status']]??$m['status'],$tones[$m['status']]??'grey').'</td></tr>';
+  }
+  echo '</tbody></table>';
+ }
+ echo '<div style="margin-top:12px"><a class="btn sm btnAttn" href="'.BASE.'/index.php?page=messages">Open guest messages</a></div>';
+ echo '</div>';
+ if(page_allowed('testimonials')&&$recentX){
+  echo '<div class="panel"><h2>Guest experiences</h2><p class="hint">The latest stay reviews on your desk.</p><div class="miniList">';
+  foreach($recentX as $x){
+   echo '<div class="li"><span>'.e($x['full_name']).'<br><small>'.str_repeat('&#9733;',(int)$x['rating']).' &middot; <em>'.e(mb_strimwidth((string)$x['message'],0,48,'&hellip;')).'</em></small></span>'.badge(guest_message_statuses()[$x['status']]??$x['status'],$tones[$x['status']]??'grey').'</div>';
+  }
+  echo '</div><div style="margin-top:12px"><a class="btn sm" href="'.BASE.'/index.php?page=testimonials">Open experiences</a></div>';
+  echo '</div>';
+ }
+ echo '</div>';
+}
 
 // The newsroom, as much of it as this member holds. A department writes its own
 // small stories here; an editor and the management team see their whole desk.

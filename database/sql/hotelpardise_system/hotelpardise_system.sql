@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 12, 2026 at 07:48 AM
+-- Generation Time: Oct 13, 2026 at 08:50 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -827,6 +827,35 @@ CREATE TABLE `guest_folio_entries` (
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `guest_messages`
+--
+
+CREATE TABLE `guest_messages` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `hotel_id` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `reference` varchar(40) NOT NULL,
+  `source` enum('website','in_stay') NOT NULL DEFAULT 'website',
+  `kind` enum('message','experience') NOT NULL DEFAULT 'message',
+  `full_name` varchar(120) NOT NULL,
+  `phone` varchar(40) DEFAULT NULL,
+  `email` varchar(160) DEFAULT NULL,
+  `department` enum('front_office','kitchen') NOT NULL DEFAULT 'front_office',
+  `room_number` varchar(20) DEFAULT NULL,
+  `subject` varchar(160) DEFAULT NULL,
+  `message` text NOT NULL,
+  `rating` tinyint(3) UNSIGNED DEFAULT NULL,
+  `status` enum('new','assigned','resolved','featured') NOT NULL DEFAULT 'new',
+  `assigned_to` int(10) UNSIGNED DEFAULT NULL,
+  `reply` text DEFAULT NULL,
+  `replied_by` int(10) UNSIGNED DEFAULT NULL,
+  `replied_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -3586,6 +3615,18 @@ ALTER TABLE `guest_folio_entries`
   ADD KEY `reservation_id` (`reservation_id`);
 
 --
+-- Indexes for table `guest_messages`
+--
+ALTER TABLE `guest_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_gm_reference` (`reference`),
+  ADD KEY `idx_gm_status` (`status`),
+  ADD KEY `idx_gm_dept_status` (`department`,`status`),
+  ADD KEY `idx_gm_kind_status` (`kind`,`status`),
+  ADD KEY `idx_gm_assigned` (`assigned_to`),
+  ADD KEY `idx_gm_created` (`created_at`);
+
+--
 -- Indexes for table `hotels`
 --
 ALTER TABLE `hotels`
@@ -4486,6 +4527,12 @@ ALTER TABLE `guest_documents`
 --
 ALTER TABLE `guest_folio_entries`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `guest_messages`
+--
+ALTER TABLE `guest_messages`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hotels`

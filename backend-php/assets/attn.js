@@ -1,12 +1,18 @@
 /*
- * A shared, staggered shake for every button in the management suite.
+ * A shared, staggered shake that only ever touches controls the console has
+ * deliberately marked as its recommended actions.
  *
- * The same gentle three second ripple as the public site. One controller hands
- * each eligible control its own point in the cycle, so a table of buttons
- * breathes in a slow wave rather than pulsing together. The animation lives in
- * admin.css and only ever moves `translate` and `rotate`, which sit apart from
- * the `transform` a hover or press already uses, so no button's size, place,
- * colour or behaviour changes.
+ * "Recommended" is a choice, never a sweep: only an element carrying the
+ * .btnAttn class is ever asked to ripple, and only the notification bell
+ * joins in by itself - and then only while its unread badge is showing. A
+ * table, a toolbar or a form full of buttons stays perfectly still, so a
+ * screen with a hundred actions never looks like it is trembling and the eye
+ * is drawn to the one button that actually wants it. A module opts a control
+ * in by adding class="... btnAttn"; the animation lives in admin.css and only
+ * ever moves `translate` and `rotate`, which sit apart from the `transform` a
+ * hover or press already uses, so no button's size, place, colour or
+ * behaviour changes. It rests the instant a control is pointed at, focused,
+ * pressed, disabled, submitting or loading.
  *
  * Buttons drawn later - a table refreshed over the network, a modal, a panel -
  * are caught by one MutationObserver, only controls near the viewport animate,
@@ -15,13 +21,11 @@
 (function () {
   'use strict';
 
-  var ELIGIBLE = 'button,[role="button"],input[type="submit"],' +
-    'input[type="button"],input[type="reset"],a.btn,a.btnGhost,' +
-    '.sideNav a,.profMenu a';
-
-  /* Chrome that is not really an action - a scrim, a toast dismiss - is left
-     alone; anything can opt out with data-noshake. */
-  var DENY = '.sideScrim,.groupHead,.toast button,[data-noshake]';
+  /* The opt-in marker and the one automatic exception: the bell, which shakes
+     only while it has something to ring about. */
+  var MARK = '.btnAttn';
+  var BELL = 'notifyBtn';
+  var BADGE = 'notifyBadge';
 
   var PHI = 1.618033988749895;
   var CYCLE = 3;
@@ -29,14 +33,19 @@
   var observer = null;
   var watching = new WeakSet();
 
+  function bellLive() {
+    var b = document.getElementById(BADGE);
+    return !!b && !b.hidden;
+  }
+
   function eligible(el) {
     if (!el || typeof el.matches !== 'function') return false;
-    if (!el.matches(ELIGIBLE)) return false;
-    if (el.matches(DENY)) return false;
     if (el.hasAttribute('disabled')) return false;
     if (el.classList.contains('loading')) return false;
     if (el.getAttribute('aria-busy') === 'true') return false;
-    return true;
+    if (el.classList.contains('btnAttn')) return true;
+    if (el.id === BELL) return bellLive();
+    return false;
   }
 
   function begin(el) {
@@ -66,16 +75,24 @@
   function scan(root) {
     if (root.nodeType === 1 && eligible(root)) observe(root);
     if (typeof root.querySelectorAll === 'function') {
-      var found = root.querySelectorAll(ELIGIBLE);
-      for (var i = 0; i < found.length; i++) {
-        if (eligible(found[i])) observe(found[i]);
+      var marked = root.querySelectorAll(MARK);
+      for (var i = 0; i < marked.length; i++) {
+        if (eligible(marked[i])) observe(marked[i]);
       }
     }
+    if (root === document || root === document.body) bellSync();
   }
 
   function refresh(target) {
     if (eligible(target)) observe(target);
     else if (watching.has(target)) release(target);
+    if (target.id === BELL || target.id === BADGE) bellSync();
+  }
+
+  function bellSync() {
+    var bellEl = document.getElementById(BELL);
+    if (!bellEl) return;
+    if (bellLive()) begin(bellEl); else end(bellEl);
   }
 
   function start() {
@@ -115,7 +132,7 @@
         childList: true,
         subtree: true,
         attributes: true,
-        attributeFilter: ['class', 'disabled', 'aria-busy'],
+        attributeFilter: ['class', 'disabled', 'aria-busy', 'hidden'],
       });
     };
 

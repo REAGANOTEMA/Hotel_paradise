@@ -229,7 +229,7 @@ export function TopBar() {
  );
 }
 
-export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./events.html', 'Plan an event'], ['./facilities.html', 'Facilities'], ['./news.html', 'News & Careers'], ['./system/', 'Staffs Logins']] as const;
+export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./events.html', 'Plan an event'], ['./facilities.html', 'Facilities'], ['./talk.html', 'Talk to us'], ['./news.html', 'News & Careers'], ['./system/', 'Staffs Logins']] as const;
 
 /** The padlock that marks the staff entrance, so the last button reads as a
  *  door into the management system rather than one more page of the site. */
@@ -374,6 +374,7 @@ export function Footer() {
        <React.Fragment key={p}>{i > 0 && '  ·  '}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>
       ))}</p>
       <p><a className="footLink" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a></p>
+      <p><a className="footLink" href="./talk.html">Message the hotel</a></p>
       <p>Front desk open 24 hours</p>
      </div>
      <div className="footerStudio">
@@ -421,6 +422,7 @@ const EXPLORE_ICONS: Record<string, React.ReactNode> = {
   events: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18M8 15h4"/></>,
   facilities: <><path d="M3 12a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 1 3 0"/><path d="M3 18a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 1 3 0"/></>,
   news: <><rect x="3" y="5" width="13" height="15" rx="2"/><path d="M16 8h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5M7 9h5M7 13h5M7 17h4"/></>,
+  talk: <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v7A2.5 2.5 0 0 1 17.5 15H9l-4.5 4V5.5Z"/><path d="M8 8h8M8 11h5"/></>,
   account: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>
 };
 
@@ -429,6 +431,7 @@ const EXPLORE = [
   ['./menu.html', 'Menu and dining', 'Every dish, with takeaway and delivery, and a tray you build yourself.', 'dining', 'See the menu and order'],
   ['./events.html', 'Plan an event', 'Weddings, conferences and functions in our halls and riverside gardens.', 'events', 'Plan your event'],
   ['./facilities.html', 'Facilities', 'The pool, the health club, the bar and the grounds.', 'facilities', 'Explore the facilities'],
+  ['./talk.html', 'Talk to us', 'Message the front desk or the kitchen, or tell us about your stay.', 'talk', 'Send a message'],
   ['./news.html', 'News & Careers', 'Announcements, opportunities and the roles we are hiring for.', 'news', 'Read news and careers'],
   ['./account.html', 'Your account', 'Track your bookings and orders, or sign in to book faster.', 'account', 'Open your account'],
 ] as const;

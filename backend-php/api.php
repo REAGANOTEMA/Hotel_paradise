@@ -2,6 +2,7 @@
 declare(strict_types=1);
 declare(strict_types=1);
 require __DIR__.'/app/bootstrap.php';
+require_once __DIR__.'/app/guest_comm.php';
 header('Content-Type: application/json; charset=utf-8');
 
 // A public endpoint must never answer with a PHP error page. The website reads
@@ -141,7 +142,7 @@ $method=$_SERVER['REQUEST_METHOD'];
 // 'avatar' is a read of the signed-in guest's own photograph. It is listed with
 // the other GET requests so an <img> can point straight at it, and it still
 // requires the guest's session token, so one guest can never read another's.
-$read=['rooms','menu','health','checkout','avatar','news'];
+$read=['rooms','menu','health','checkout','avatar','news','testimonials'];
 if($method!=='GET'&&$method!=='POST'){ $out(['ok'=>false,'error'=>'Method not allowed'],405); }
 if($method==='GET'){
  if(!in_array($act,$read)){ $out(['ok'=>false,'error'=>'Method not allowed for this request'],405); }
@@ -1129,6 +1130,41 @@ function ensure_events_tables(): void{
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
 }
 
+/** The one table behind guest messages and written experiences. It is created
+ *  eagerly on first contact so the site and the console agree about it; the
+ *  migration in database/sql/hotelpardise_system/guest_messages.sql is the
+ *  source of truth and running it first is always fine. */
+function ensure_guest_tables(): void{
+ db()->exec('CREATE TABLE IF NOT EXISTS guest_messages(
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  hotel_id INT UNSIGNED NOT NULL DEFAULT 1,
+  reference VARCHAR(40) NOT NULL,
+  source ENUM(\'website\',\'in_stay\') NOT NULL DEFAULT \'website\',
+  kind ENUM(\'message\',\'experience\') NOT NULL DEFAULT \'message\',
+  full_name VARCHAR(120) NOT NULL,
+  phone VARCHAR(40) NULL,
+  email VARCHAR(160) NULL,
+  department ENUM(\'front_office\',\'kitchen\') NOT NULL DEFAULT \'front_office\',
+  room_number VARCHAR(20) NULL,
+  subject VARCHAR(160) NULL,
+  message TEXT NOT NULL,
+  rating TINYINT UNSIGNED NULL,
+  status ENUM(\'new\',\'assigned\',\'resolved\',\'featured\') NOT NULL DEFAULT \'new\',
+  assigned_to INT UNSIGNED NULL,
+  reply TEXT NULL,
+  replied_by INT UNSIGNED NULL,
+  replied_at DATETIME NULL,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NULL,
+  PRIMARY KEY(id),
+  UNIQUE KEY uq_gm_reference(reference),
+  KEY idx_gm_status(status),
+  KEY idx_gm_dept_status(department,status),
+  KEY idx_gm_kind_status(kind,status),
+  KEY idx_gm_created(created_at)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
+}
+
 /** A date sent by the browser is only ever the shape the site's own field
  *  produces; anything else is dropped, never stored. */
 function clean_date(string $d): string{ return preg_match('/^\d{4}-\d{2}-\d{2}$/',$d)==1?$d:''; }
@@ -1191,6 +1227,77 @@ if($act==='facility'){
     ['director','general_manager','receptionist','marketing']);
   $out(['ok'=>true,'reference'=>$num,
     'message'=>'Thank you, '.$name.'. The front desk will call '.$phone.' to confirm your visit.']);
+}
+
+/**
+ * A guest message to the front office or the kitchen, or a written stay
+ * experience. Name and the message itself are the whole contract; a phone and
+ * an email are welcome because they are how a desk answers, a room number
+ * marks a message as coming from a guest in the house, and a rating is what
+ * turns the note into an experience. A signed-in guest's account fills the
+ * name, phone and email, exactly as a booking does, so their reply always
+ * reaches the address of record.
+ */
+if($act==='guest_message'){
+  ensure_guest_tables();
+  $name=trim((string)($body['name']??''));
+  $phone=trim((string)($body['phone']??''));
+  $email=trim((string)($body['email']??''));
+  $kind=trim((string)($body['kind']??'message'));
+  if($kind!=='experience') $kind='message';
+  $department=trim((string)($body['department']??'front_office'));
+  if($department!=='kitchen') $department='front_office';
+  $room=trim((string)($body['room_number']??''));
+  $subject=trim((string)($body['subject']??''));
+  $message=trim((string)($body['message']??''));
+  $rating=(int)($body['rating']??0);
+  if($name===''||$message===''){
+   $out(['ok'=>false,'error'=>'Please tell us your name and write your message so the team can answer it.'],422);
+  }
+  if($kind==='experience'&&($rating<1||$rating>5)){
+   $out(['ok'=>false,'error'=>'Please choose a rating from one to five stars.'],422);
+  }
+  $acct=api_customer_from_token((string)($body['token']??''));
+  if($acct){
+   $accountEmail=strtolower(trim((string)$acct['email']));
+   if($accountEmail!=='') $email=$accountEmail;
+   if($name==='') $name=trim((string)$acct['full_name']);
+   if($phone==='') $phone=trim((string)$acct['phone']);
+  }
+  $num=next_number('GM','guest_messages','reference');
+  q('INSERT INTO guest_messages(hotel_id,reference,source,kind,full_name,phone,email,department,room_number,subject,message,rating,status,created_at)
+    VALUES(1,?,?,?,?,?,?,?,?,?,?,?,\'new\',NOW())',
+   [$num,$room!==''?'in_stay':'website',$kind,$name,
+    $phone!==''?$phone:null,$email!==''?$email:null,$department,
+    $room!==''?$room:null,$subject!==''?$subject:null,$message,
+    $kind==='experience'?$rating:null]);
+  $mid=(int)db()->lastInsertId();
+  audit('web_guest_message','guest_messages',$mid,
+   ['reference'=>$num,'kind'=>$kind,'department'=>$department,'room'=>$room,'rating'=>$rating,'phone'=>$phone]);
+  if($kind==='experience'){
+   api_notify('gx:'.$num,'communication','New guest experience',
+    $name.' left '.(int)$rating.' star'.($rating===1?'':'s').' about '.($department==='kitchen'?'the kitchen':'their stay').' ('.$num.').'.($room!==''?' Room '.$room.'.':''),
+    ['reference'=>$num,'kind'=>$kind,'department'=>$department,'rating'=>$rating,'room'=>$room,'name'=>$name,'phone'=>$phone],
+    guest_message_notify_roles($department,'experience'));
+   $out(['ok'=>true,'reference'=>$num,
+    'message'=>'Thank you, '.$name.'. Your words reach our team, and the best of them appear on the website.']);
+  }
+  api_notify('gm:'.$num,'communication','New guest message '.$num,
+   $name.' wrote to the '.($department==='kitchen'?'kitchen':'front office').($room!==''?' (room '.$room.')':'').': '.mb_strimwidth($message,0,120,'&#8230;'),
+   ['reference'=>$num,'kind'=>$kind,'department'=>$department,'room'=>$room,'name'=>$name,'phone'=>$phone],
+   guest_message_notify_roles($department));
+  $out(['ok'=>true,'reference'=>$num,
+   'message'=>'Thank you, '.$name.'. '.($room!==''?'Your message has reached the team and they will answer at the house.':'The '.($department==='kitchen'?'kitchen':'front desk').' will answer you shortly.')
+    .' A copy is kept for the house records.']);
+}
+
+/** The experiences the team has featured, for the website to show. Only rows
+ *  the team chose to publish, and only ever the calm words a guest wrote. */
+if($act==='testimonials'){
+  ensure_guest_tables();
+  $items=rows("SELECT full_name,rating,message,department,created_at FROM guest_messages WHERE kind='experience' AND status='featured' ORDER BY id DESC LIMIT 12",[]);
+  $out(['ok'=>true,
+   'items'=>array_map(fn($t)=>['name'=>(string)$t['full_name'],'rating'=>(int)$t['rating'],'text'=>(string)$t['message'],'department'=>(string)$t['department'],'when'=>fmtdate($t['created_at'])],$items)]);
 }
 
 $out(["ok"=>false,"error"=>"Unknown request"],404);

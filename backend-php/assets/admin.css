@@ -22,7 +22,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 img,svg{max-width:100%;height:auto}
 h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif;font-weight:600;margin:0;line-height:1.18}
 a{color:inherit;text-decoration:none}
@@ -74,7 +74,7 @@ b,strong{font-variant-numeric:tabular-nums}
 .sideGroup.fold .groupBody{grid-template-rows:0fr}
 .groupBody>.gbInner{overflow:hidden;min-height:0;display:flex;flex-direction:column;gap:2px;padding:2px 0 6px 4px}
 @media (prefers-reduced-motion: reduce){.groupBody{transition:none}}
-.sideNav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:#b9c7d6;font-size:13px;min-height:40px;position:relative;transition:background var(--t),color var(--t)}
+.sideNav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:#b9c7d6;font-size:13.5px;min-height:40px;position:relative;transition:background var(--t),color var(--t)}
 .sideNav a:hover{background:rgba(255,255,255,.06);color:#fff}
 .sideNav a.on{background:linear-gradient(90deg,rgba(201,162,39,.16),rgba(201,162,39,.06));color:#fff}
 .sideNav a.on::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;background:linear-gradient(180deg,var(--gold),var(--gold2));border-radius:0 2px 2px 0}
@@ -137,8 +137,8 @@ b,strong{font-variant-numeric:tabular-nums}
 .topBack svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .topBack:hover{border-color:rgba(201,162,39,.65);color:var(--gold-deep);box-shadow:var(--sh1)}
 .topBack:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.pageTitle{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);letter-spacing:.02em}
-.pageSub{margin:2px 0 0;color:var(--muted);font-size:12.5px}
+.pageTitle{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);letter-spacing:.015em}
+.pageSub{margin:3px 0 0;color:#465269;font-size:13px}
 .topRight{display:flex;align-items:center;gap:12px;flex:none;position:relative}
 .profBtn{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 5px;transition:border-color var(--t),box-shadow var(--t)}
 .profBtn:hover{border-color:rgba(201,162,39,.6);box-shadow:var(--sh1)}
@@ -192,18 +192,18 @@ b,strong{font-variant-numeric:tabular-nums}
 .kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--k)}
 .kpi::after{content:'';position:absolute;top:0;right:0;width:96px;height:96px;background:radial-gradient(circle at top right,rgba(201,162,39,.1),transparent 68%);pointer-events:none}
 .kpi:hover{transform:translateY(-1px);box-shadow:var(--sh2);border-color:rgba(201,162,39,.45)}
-.kpiLbl{font-size:10px;letter-spacing:.16em;color:var(--muted);font-weight:700;text-transform:uppercase;padding-right:36px}
-.kpiVal{font-family:'Playfair Display',serif;font-size:28px;color:var(--navy);margin:6px 0 2px;line-height:1.08;font-variant-numeric:tabular-nums}
-.kpiHint{font-size:11.5px;color:var(--faint)}
+.kpiLbl{font-size:10.5px;letter-spacing:.16em;color:var(--muted);font-weight:700;text-transform:uppercase;padding-right:36px}
+.kpiVal{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--navy);margin:7px 0 2px;line-height:1.08;font-variant-numeric:tabular-nums}
+.kpiHint{font-size:12px;color:#5D6878}
 .kpiIco{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(7,26,51,.06);color:var(--k);z-index:1}
 .kpiIco svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
 /* Panels/Toolbars/Empty */
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:16px}
 .panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:18px;box-shadow:var(--sh1);position:relative}
-.panel h2{font-family:'Playfair Display',serif;font-size:17px;color:var(--navy);margin-bottom:4px;padding-left:14px;position:relative}
-.panel h2::before{content:'';position:absolute;left:0;top:.32em;width:4px;height:16px;border-radius:2px;background:linear-gradient(180deg,var(--gold),var(--gold2))}
-.panel .hint{color:var(--muted);font-size:12.5px;margin:0 0 14px}
+.panel h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:5px;padding-left:14px;position:relative}
+.panel h2::before{content:'';position:absolute;left:0;top:.32em;width:4px;height:17px;border-radius:2px;background:linear-gradient(180deg,var(--gold),var(--gold2))}
+.panel .hint{color:#53617a;font-size:13px;margin:0 0 14px}
 .panel h3{font-family:'Playfair Display',serif;font-size:14px;color:var(--navy);margin:16px 0 8px}
 .panelHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .emptyState{text-align:center;padding:32px 18px;border:1px dashed rgba(212,175,55,.6);border-radius:var(--r);background:linear-gradient(180deg,#fbfaf6,#f7f5ee);color:var(--muted)}
@@ -219,17 +219,17 @@ b,strong{font-variant-numeric:tabular-nums}
 /* Tables */
 table.tbl{width:100%;border-collapse:collapse}
 .tableScroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
-.tbl th{text-align:left;font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;padding:10px 12px;border-bottom:1px solid var(--line);background:#faf9f5;white-space:nowrap;font-weight:700}
-.tbl td{padding:11px 12px;border-bottom:1px solid var(--line2);vertical-align:middle;font-size:13px}
+.tbl th{text-align:left;font-size:10.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;padding:10px 12px;border-bottom:1px solid var(--line);background:#faf9f5;white-space:nowrap;font-weight:700}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--line2);vertical-align:middle;font-size:13.5px}
 .tbl tbody tr{transition:background var(--t)}
 .tbl tbody tr:hover td{background:#fbfaf6}
 .tbl tbody tr:last-child td{border-bottom:0}
-.tbl td:first-child{color:var(--navy)}
+.tbl td:first-child{color:var(--navy);font-weight:600}
 .tbl .num{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
 .tbl a{color:var(--nile);font-weight:600}
 .tbl a:hover{color:var(--gold)}
 .tbl th.stickyHead{position:sticky;top:0;z-index:2}
-.tbl td small{color:var(--muted);font-size:11.5px;line-height:1.5}
+.tbl td small{color:#5D6878;font-size:12px;line-height:1.55}
 
 /* Badges - one shape, seven tones. The label always carries the meaning;
    the tint only reinforces it. */
@@ -308,10 +308,10 @@ fieldset legend{font-size:10px;letter-spacing:.16em;text-transform:uppercase;fon
 .twoCol{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start}
 .dashGrid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
 ul.clean{list-style:none;margin:0;padding:0}
-.miniList .li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.miniList .li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line2);font-size:13.5px}
 .miniList .li:last-child{border-bottom:0}
 .miniList .li b{color:var(--navy)}
-.miniList .li small,.tbl td small{color:var(--muted);font-size:11.5px;line-height:1.5}
+.miniList .li small,.tbl td small{color:#5D6878;font-size:12px;line-height:1.55}
 
 /* Room board, POS, misc */
 .roomGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
@@ -656,16 +656,18 @@ ul.clean{list-style:none;margin:0;padding:0}
 /* An optional, selective attention cue for one genuine call to action.
    Every eight and a half seconds a small nudge draws the eye; it stops
    the moment the button is pointed at, focused or pressed, and for
-   anyone who has asked for less motion. */
+   anyone who has asked for less motion. The soft gold ring is the quiet
+   way a recommended action reads even while it rests. */
 @keyframes btnNudge{0%,70%,100%{transform:translate3d(0,0,0)}73%{transform:translate3d(-2px,0,0) rotate(-.5deg)}76%{transform:translate3d(2px,0,0) rotate(.5deg)}79%{transform:translate3d(-1.4px,0,0) rotate(-.32deg)}82%{transform:translate3d(1px,0,0) rotate(.22deg)}85%{transform:translate3d(0,0,0)}}
-.btnAttn{animation:btnNudge 8.5s ease-in-out infinite}
+.btnAttn{animation:btnNudge 8.5s ease-in-out infinite;box-shadow:0 1px 0 rgba(255,255,255,.45) inset,0 -1px 0 rgba(0,0,0,.10) inset,0 4px 12px rgba(201,162,39,.28),0 0 0 3px rgba(201,162,39,.16)}
 .btnAttn:hover,.btnAttn:focus,.btnAttn:focus-visible,.btnAttn:active,.btnAttn.loading{animation:none}
 
-/* A SHARED, STAGGERED BUTTON SHAKE
-   Every action control wears the same gentle three second ripple, but
-   never at the same moment: attn.js hands each one its own point in the
-   cycle, so a table of buttons breathes in a slow wave instead of
-   pulsing in unison. The shake only moves `translate` and `rotate` -
+/* THE RECOMMENDED-ACTION SHAKE
+   Only a control the console has marked .btnAttn wears the gentle three
+   second ripple, and the notification bell joins in by itself only while
+   it has an unread badge. attn.js hands each one its own point in the
+   cycle, so a row of recommended buttons breathes in a slow wave instead
+   of pulsing in unison. The shake only moves `translate` and `rotate` -
    compositor properties kept apart from the `transform` a hover or
    press already uses - so no button's size, place, colour, shadow or
    behaviour changes. It rests the instant a control is pointed at,

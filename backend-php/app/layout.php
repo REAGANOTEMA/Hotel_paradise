@@ -19,6 +19,8 @@ function nav_groups(): array{
      'reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
    ['label'=>'News & Events','items'=>[
      'news'=>'News & Careers','events'=>'Events & Enquiries']],
+   ['label'=>'Guest Communications','items'=>[
+     'messages'=>'Guest Messages','testimonials'=>'Guest Experiences']],
    ['label'=>'Restaurant & Bar','items'=>[
      'pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
    ['label'=>'Kitchen','items'=>[
@@ -38,7 +40,8 @@ function nav_groups(): array{
  *  group needs no second place to register a picture for itself. */
 function nav_group_icon(string $label): string{
   $map=['overview'=>'grid','reservation'=>'calendar','news'=>'event','restaurant'=>'fork',
-    'kitchen'=>'pot','housekeep'=>'bed','procurement'=>'bag','finance'=>'coins','administration'=>'user'];
+    'kitchen'=>'pot','housekeep'=>'bed','procurement'=>'bag','finance'=>'coins','administration'=>'user',
+    'guest comm'=>'globe'];
   $l=strtolower($label);
   foreach($map as $re=>$ico){ if(strpos($l,$re)!==false) return $ico; }
   return 'grid';
@@ -272,10 +275,11 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 
 /** The icon a module carries in the rail. */
 function nav_icon_key(string $page): string{
-   $map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations'=>'calendar','rooms'=>'bed','guests'=>'users','events'=>'event',
-  'pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
-  'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
-  'reports'=>'bars','users'=>'users','notifications'=>'bell','trash'=>'trash','profile'=>'user'];
+$map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations'=>'calendar','rooms'=>'bed','guests'=>'users','events'=>'event',
+   'pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
+   'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
+   'reports'=>'bars','users'=>'users','notifications'=>'bell','trash'=>'trash','profile'=>'user',
+   'messages'=>'bell','testimonials'=>'spark'];
  return $map[$page]??'grid';
 }
 
