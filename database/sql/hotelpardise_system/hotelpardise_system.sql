@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 13, 2026 at 12:40 PM
+-- Generation Time: Oct 13, 2026 at 09:03 PM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -121,7 +121,39 @@ INSERT INTO `audit_logs` (`id`, `hotel_id`, `user_id`, `action`, `entity_type`, 
 (38, 1, NULL, 'web_order', 'order', 4, '{\"order_number\":\"ORD-20261011-001\",\"subtotal\":15000,\"service_charge\":525,\"total\":15525,\"customer\":\"mama mafalda\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '41.210.147.80', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-11 14:46:23'),
 (39, 1, NULL, 'web_event', 'event_requests', 2, '{\"request_number\":\"EVT-20261011-001\",\"event_type\":\"Team retreat\",\"event_date\":\"2026-10-17\",\"guests\":100,\"venue\":\"The Nile Hall\",\"phone\":\"0772514889\"}', NULL, '41.210.147.80', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-11 14:49:03'),
 (40, 1, 2, 'login', 'user', 2, NULL, NULL, '41.210.147.80', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-11 14:49:59'),
-(41, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.23.138', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36', '2026-10-12 00:41:29');
+(41, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.23.138', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36', '2026-10-12 00:41:29'),
+(42, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:12:16'),
+(43, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:13:24'),
+(44, 1, 2, 'logout', 'user', 2, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:18:47'),
+(45, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:18:52'),
+(46, 1, 2, 'customer_profile_update', 'customers', 1, '{\"id\":1,\"fields\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]}', NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:29:03'),
+(47, 1, 2, 'web_order', 'order', 5, '{\"order_number\":\"ORD-20261013-001\",\"subtotal\":30000,\"service_charge\":1050,\"total\":31050,\"customer\":\"Reagan Otema\",\"phone\":\"+256772514889\",\"address\":\"JINJA\"}', NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:29:48'),
+(48, 1, 10, 'login', 'user', 10, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:35:07'),
+(49, 1, 10, 'logout', 'user', 10, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:36:06'),
+(50, 1, 5, 'login', 'user', 5, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:37:01'),
+(51, 1, 5, 'logout', 'user', 5, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:38:33'),
+(52, 1, 4, 'login', 'user', 4, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:39:02'),
+(53, 1, 4, 'logout', 'user', 4, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:39:18'),
+(54, 1, 13, 'login', 'user', 13, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:39:39'),
+(55, 1, 8, 'login', 'user', 8, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:42:38'),
+(56, 1, 8, 'logout', 'user', 8, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:43:11'),
+(57, 1, 3, 'login', 'user', 3, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:43:35'),
+(58, 1, 3, 'invoice_draft', 'invoice', 10, '[]', '{\"billing_name\":\"ReaganSoft Innovation Ltd\"}', '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:45:30'),
+(59, 1, 3, 'logout', 'user', 3, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:47:00'),
+(60, 1, 11, 'login', 'user', 11, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:47:43'),
+(61, 1, 11, 'logout', 'user', 11, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:48:22'),
+(62, 1, 12, 'login', 'user', 12, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:49:30'),
+(63, 1, 12, 'logout', 'user', 12, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:49:49'),
+(64, 1, 7, 'login', 'user', 7, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:50:04'),
+(65, 1, 7, 'logout', 'user', 7, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:50:32'),
+(66, 1, 9, 'login', 'user', 9, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:50:58'),
+(67, 1, 9, 'logout', 'user', 9, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:51:31'),
+(68, 1, 6, 'login', 'user', 6, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:52:04'),
+(69, 1, 6, 'logout', 'user', 6, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-13 10:52:22'),
+(70, 1, 1, 'login', 'user', 1, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-13 10:58:25'),
+(71, 1, 1, 'logout', 'user', 1, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-13 10:58:53'),
+(72, 1, NULL, 'web_order', 'order', 6, '{\"order_number\":\"ORD-20261013-002\",\"subtotal\":6000,\"service_charge\":210,\"total\":6210,\"customer\":\"Otema Reagan\",\"phone\":\"+256772514889\",\"address\":\"Jinja\"}', NULL, '102.86.9.110', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-13 11:19:23'),
+(73, 1, 2, 'login', 'user', 2, NULL, NULL, '102.86.9.110', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36', '2026-10-13 11:19:59');
 
 -- --------------------------------------------------------
 
@@ -259,10 +291,11 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `hotel_id`, `full_name`, `email`, `phone`, `password_hash`, `google_sub`, `status`, `created_at`, `updated_at`, `last_login_at`, `profile_image`, `date_of_birth`, `gender`, `nationality`, `national_id`, `address`, `city`, `country`, `postcode`, `company`, `job_title`, `preferred_language`, `dietary_preferences`, `room_preferences`, `marketing_opt_in`, `emergency_contact_name`, `emergency_contact_phone`, `notes`, `deleted_at`, `deleted_by`) VALUES
-(1, 1, 'Otema Reagan', 'reaganotema2022@gmail.com', '0772514889', '$2y$10$Tki76GP1jf405y9UUUI1Ret6Xw9sdaPrHVODp.fYu0P7ib/JOSl9.', NULL, 'active', '2026-10-09 12:25:49', '2026-10-09 15:18:33', '2026-10-09 15:18:33', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
+(1, 1, 'Reagan Otema', 'reaganotema2022@gmail.com', '0772514889', '$2y$10$Tki76GP1jf405y9UUUI1Ret6Xw9sdaPrHVODp.fYu0P7ib/JOSl9.', NULL, 'active', '2026-10-09 12:25:49', '2026-10-13 14:33:14', '2026-10-13 14:33:14', 'cust_1_1791887343_c701756e.jpg', '1998-06-01', 'male', 'Ugandan', 'CM9801910356YD', 'JINJA', 'JINJA', 'Uganda', '904188', 'ReaganSoft Innovation Ltd', 'Director', 'english', 'too much salt', 'quiet side', 1, 'Reagan Otema', '0772514889', 'arrival time', NULL, NULL),
 (2, 1, 'Andrew wakabi', 'andrew@gmail.com', '0772514889', '$2y$10$Mi0P4grIsraJuxS5bIgnXuPHhGnH4DMnDGOK3N.UWlY06xPHcfzyC', NULL, 'active', '2026-10-09 16:54:56', '2026-10-09 16:55:09', '2026-10-09 16:55:09', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
 (3, 1, 'Okot Denis', 'denisokot47@gmail.com', '0705761090', '$2y$10$0x18s2lSk1oUg7pNubR1TuGeBY.CUHBzCAt6tvD7PomQzOzr/ExTW', NULL, 'active', '2026-10-10 19:46:56', '2026-10-10 19:47:13', '2026-10-10 19:47:13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
-(4, 1, 'Reagan Otema', 'reaganotemas@gmail.com', '0772514889', '$2y$10$uu9Ag/WbheyjzMV18aVJyeSCZfe8nXn7B6ODG1nnowKMpSwjkak1i', NULL, 'active', '2026-10-11 12:45:41', '2026-10-11 12:45:51', '2026-10-11 12:45:51', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL);
+(4, 1, 'Reagan Otema', 'reaganotemas@gmail.com', '0772514889', '$2y$10$uu9Ag/WbheyjzMV18aVJyeSCZfe8nXn7B6ODG1nnowKMpSwjkak1i', NULL, 'active', '2026-10-11 12:45:41', '2026-10-11 12:45:51', '2026-10-11 12:45:51', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
+(5, 1, 'Lillian Kwagala', 'lilliankwagala29@gmail.com', '0778209207', '$2y$10$xUiaVulNuX1U/plJSDlNN.qW102nTWSh8EcsW8F5v8YVPJ7WJqnHa', NULL, 'active', '2026-10-13 13:34:15', '2026-10-13 13:34:28', '2026-10-13 13:34:28', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -346,10 +379,13 @@ CREATE TABLE `customer_tokens` (
 
 INSERT INTO `customer_tokens` (`id`, `customer_id`, `token_hash`, `purpose`, `expires_at`, `created_at`, `last_seen_at`) VALUES
 (2, 1, 'affe6ada25f3e8f97db1b4686af3667b356f947f17a595e07a4fec879543f87c', 'session', '2026-11-08 12:25:58', '2026-10-09 12:25:58', '2026-10-09 20:29:34'),
-(3, 1, '1d0e1c469538fed09b8daadb8ba6350d585c5ad7d2ea4f85277663247f6745c0', 'session', '2026-11-08 15:18:33', '2026-10-09 15:18:33', NULL),
+(3, 1, '1d0e1c469538fed09b8daadb8ba6350d585c5ad7d2ea4f85277663247f6745c0', 'session', '2026-11-08 15:18:33', '2026-10-09 15:18:33', '2026-10-13 14:17:17'),
 (5, 2, 'bd029a38119fa03d18c1793b7ec37e63486786b19ff5882188e1d52cb729b470', 'session', '2026-11-08 16:55:09', '2026-10-09 16:55:09', NULL),
 (7, 3, 'f0a84ae1d463eea025b809a5c8cce8bcfb5e10858621fc93db1401b89788e08e', 'session', '2026-11-09 19:47:13', '2026-10-10 19:47:13', '2026-10-10 19:50:27'),
-(9, 4, '848d0c4e9859f56f75e3c54fe906b7a720b06fbf575eb8f21089c39b52aff70b', 'session', '2026-11-10 12:45:51', '2026-10-11 12:45:51', '2026-10-11 12:45:51');
+(9, 4, '848d0c4e9859f56f75e3c54fe906b7a720b06fbf575eb8f21089c39b52aff70b', 'session', '2026-11-10 12:45:51', '2026-10-11 12:45:51', '2026-10-11 12:45:51'),
+(10, 1, 'ae4033425e62d001aceac245499acb1e2289421ac6427ef6a251c3a9bc196be6', 'session', '2026-11-12 13:23:05', '2026-10-13 13:23:05', '2026-10-13 13:30:56'),
+(12, 5, 'e6b0fdf8048a0c4701df51b1a72b79d516418c87007e540db046f94bce25e37e', 'session', '2026-11-12 13:34:28', '2026-10-13 13:34:28', '2026-10-13 13:46:21'),
+(13, 1, '766d088501c000f9458bdf1489d509338fe08f99ca25f763e38169ada8612bc3', 'session', '2026-11-12 14:33:14', '2026-10-13 14:33:14', '2026-10-13 14:34:08');
 
 -- --------------------------------------------------------
 
@@ -1083,7 +1119,8 @@ CREATE TABLE `invoices` (
 --
 
 INSERT INTO `invoices` (`id`, `hotel_id`, `guest_id`, `billing_name`, `billing_email`, `billing_phone`, `invoice_number`, `subtotal`, `tax`, `discount`, `currency`, `notes`, `total`, `status`, `due_date`, `issued_at`, `issued_by`, `created_at`, `updated_at`, `deleted_at`, `deleted_by`) VALUES
-(1, 1, 1, NULL, NULL, NULL, 'INV-HPN-20260925-0001', 744000.00, 0.00, 0.00, 'UGX', NULL, 744000.00, 'paid', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(1, 1, 1, NULL, NULL, NULL, 'INV-HPN-20260925-0001', 744000.00, 0.00, 0.00, 'UGX', NULL, 744000.00, 'paid', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(10, 1, NULL, 'ReaganSoft Innovation Ltd', 'ceo@reagansofinnovation.com', '0772514889', 'DRF-20261013-001', 0.00, 0.00, 0.00, 'UGX', 'payment must be made after five days', 0.00, 'draft', NULL, NULL, NULL, '2026-10-13 10:45:30', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1102,6 +1139,13 @@ CREATE TABLE `invoice_events` (
   `to_value` text DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `invoice_events`
+--
+
+INSERT INTO `invoice_events` (`id`, `invoice_id`, `event`, `amount`, `reason`, `applier`, `from_value`, `to_value`, `created_at`) VALUES
+(1, 10, 'note', 0.00, 'Draft started', 3, NULL, NULL, '2026-10-13 13:45:30');
 
 -- --------------------------------------------------------
 
@@ -1858,7 +1902,19 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `body`, `data`, `
 (70, 66, 'order', 'New website order ORD-20261011-001', 'mama mafalda placed a takeaway order, 1 item, total UGX 15,525.', '{\"order_number\":\"ORD-20261011-001\",\"items\":1,\"total\":15525,\"guest\":\"mama mafalda\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-10-11 14:46:23'),
 (71, 2, 'communication', 'New event enquiry EVT-20261011-001', 'Mafalda wants to plan team retreat (EVT-20261011-001). 100 guests. 2026-10-17. Please call 0772514889.', '{\"request_number\":\"EVT-20261011-001\",\"event_type\":\"Team retreat\",\"event_date\":\"2026-10-17\",\"guests\":100,\"venue\":\"The Nile Hall\",\"name\":\"Mafalda\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 14:49:03'),
 (72, 3, 'communication', 'New event enquiry EVT-20261011-001', 'Mafalda wants to plan team retreat (EVT-20261011-001). 100 guests. 2026-10-17. Please call 0772514889.', '{\"request_number\":\"EVT-20261011-001\",\"event_type\":\"Team retreat\",\"event_date\":\"2026-10-17\",\"guests\":100,\"venue\":\"The Nile Hall\",\"name\":\"Mafalda\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 14:49:03'),
-(73, 66, 'communication', 'New event enquiry EVT-20261011-001', 'Mafalda wants to plan team retreat (EVT-20261011-001). 100 guests. 2026-10-17. Please call 0772514889.', '{\"request_number\":\"EVT-20261011-001\",\"event_type\":\"Team retreat\",\"event_date\":\"2026-10-17\",\"guests\":100,\"venue\":\"The Nile Hall\",\"name\":\"Mafalda\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 14:49:03');
+(73, 66, 'communication', 'New event enquiry EVT-20261011-001', 'Mafalda wants to plan team retreat (EVT-20261011-001). 100 guests. 2026-10-17. Please call 0772514889.', '{\"request_number\":\"EVT-20261011-001\",\"event_type\":\"Team retreat\",\"event_date\":\"2026-10-17\",\"guests\":100,\"venue\":\"The Nile Hall\",\"name\":\"Mafalda\",\"phone\":\"0772514889\"}', NULL, '2026-10-11 14:49:03'),
+(74, 1, 'order', 'New website order ORD-20261013-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261013-001\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"+256772514889\",\"address\":\"JINJA\"}', NULL, '2026-10-13 10:29:48'),
+(75, 2, 'order', 'New website order ORD-20261013-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261013-001\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"+256772514889\",\"address\":\"JINJA\"}', NULL, '2026-10-13 10:29:48'),
+(76, 3, 'order', 'New website order ORD-20261013-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261013-001\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"+256772514889\",\"address\":\"JINJA\"}', NULL, '2026-10-13 10:29:48'),
+(77, 5, 'order', 'New website order ORD-20261013-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261013-001\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"+256772514889\",\"address\":\"JINJA\"}', NULL, '2026-10-13 10:29:48'),
+(78, 9, 'order', 'New website order ORD-20261013-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261013-001\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"+256772514889\",\"address\":\"JINJA\"}', NULL, '2026-10-13 10:29:48'),
+(79, 66, 'order', 'New website order ORD-20261013-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261013-001\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"+256772514889\",\"address\":\"JINJA\"}', NULL, '2026-10-13 10:29:48'),
+(80, 1, 'order', 'New website order ORD-20261013-002', 'Otema Reagan placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261013-002\",\"items\":1,\"total\":6210,\"guest\":\"Otema Reagan\",\"phone\":\"+256772514889\",\"address\":\"Jinja\"}', NULL, '2026-10-13 11:19:23'),
+(81, 2, 'order', 'New website order ORD-20261013-002', 'Otema Reagan placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261013-002\",\"items\":1,\"total\":6210,\"guest\":\"Otema Reagan\",\"phone\":\"+256772514889\",\"address\":\"Jinja\"}', NULL, '2026-10-13 11:19:23'),
+(82, 3, 'order', 'New website order ORD-20261013-002', 'Otema Reagan placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261013-002\",\"items\":1,\"total\":6210,\"guest\":\"Otema Reagan\",\"phone\":\"+256772514889\",\"address\":\"Jinja\"}', NULL, '2026-10-13 11:19:23'),
+(83, 5, 'order', 'New website order ORD-20261013-002', 'Otema Reagan placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261013-002\",\"items\":1,\"total\":6210,\"guest\":\"Otema Reagan\",\"phone\":\"+256772514889\",\"address\":\"Jinja\"}', NULL, '2026-10-13 11:19:23'),
+(84, 9, 'order', 'New website order ORD-20261013-002', 'Otema Reagan placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261013-002\",\"items\":1,\"total\":6210,\"guest\":\"Otema Reagan\",\"phone\":\"+256772514889\",\"address\":\"Jinja\"}', NULL, '2026-10-13 11:19:23'),
+(85, 66, 'order', 'New website order ORD-20261013-002', 'Otema Reagan placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261013-002\",\"items\":1,\"total\":6210,\"guest\":\"Otema Reagan\",\"phone\":\"+256772514889\",\"address\":\"Jinja\"}', NULL, '2026-10-13 11:19:23');
 
 -- --------------------------------------------------------
 
@@ -1894,7 +1950,9 @@ INSERT INTO `notification_deliveries` (`id`, `notification_id`, `user_id`, `devi
 (7, 56, 2, 1, 'web_push', 'queued', NULL, 4, 'Could not build the web push payload', '2026-10-11 09:46:59', '2026-10-12 00:41:30'),
 (8, 61, 2, 1, 'web_push', 'queued', NULL, 4, 'Could not build the web push payload', '2026-10-11 09:48:21', '2026-10-12 00:41:30'),
 (9, 66, 2, 1, 'web_push', 'queued', NULL, 2, 'Could not build the web push payload', '2026-10-11 14:46:23', '2026-10-12 00:41:30'),
-(10, 71, 2, 1, 'web_push', 'queued', NULL, 2, 'Could not build the web push payload', '2026-10-11 14:49:03', '2026-10-12 00:41:30');
+(10, 71, 2, 1, 'web_push', 'queued', NULL, 2, 'Could not build the web push payload', '2026-10-11 14:49:03', '2026-10-12 00:41:30'),
+(11, 75, 2, 1, 'web_push', 'queued', NULL, 0, NULL, '2026-10-13 10:29:48', '2026-10-13 10:29:48'),
+(12, 81, 2, 1, 'web_push', 'queued', NULL, 0, NULL, '2026-10-13 11:19:23', '2026-10-13 11:19:23');
 
 -- --------------------------------------------------------
 
@@ -1957,7 +2015,9 @@ INSERT INTO `notification_events` (`id`, `event_key`, `event_type`, `entity_type
 (13, 'booking:HPN-20261011-002', 'booking', NULL, NULL, '2026-10-11 09:46:59'),
 (14, 'payment:PAY-20261011-001', 'payment', NULL, NULL, '2026-10-11 09:48:21'),
 (15, 'order:ORD-20261011-001', 'order', NULL, NULL, '2026-10-11 14:46:23'),
-(16, 'event:EVT-20261011-001', 'communication', NULL, NULL, '2026-10-11 14:49:03');
+(16, 'event:EVT-20261011-001', 'communication', NULL, NULL, '2026-10-11 14:49:03'),
+(17, 'order:ORD-20261013-001', 'order', NULL, NULL, '2026-10-13 10:29:48'),
+(18, 'order:ORD-20261013-002', 'order', NULL, NULL, '2026-10-13 11:19:23');
 
 -- --------------------------------------------------------
 
@@ -2014,7 +2074,9 @@ INSERT INTO `orders` (`id`, `hotel_id`, `user_id`, `shift_id`, `order_number`, `
 (1, 1, 1, NULL, 'ORD-20261009-001', 'restaurant', 'takeaway', NULL, NULL, 'Otema Reagan', '+256772514889', 'reaganotema2022@gmail.com', 'Jinja city', 'Add salt', 'pending', 0.00, 13000.00, 455.00, 13455.00, '2026-10-09 12:18:03', NULL, NULL),
 (2, 1, 1, NULL, 'ORD-20261010-001', 'restaurant', 'takeaway', NULL, NULL, 'Okot Denis', '+256779562514', 'denisokot47@gmail.com', 'walukuba', 'Please hurry withbmy order i need it now.', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-10 16:44:59', NULL, NULL),
 (3, 1, 1, NULL, 'ORD-20261010-002', 'restaurant', 'takeaway', NULL, NULL, 'Okot Denis', '+256779562514', 'denisokot47@gmail.com', 'Jinja town', 'I need salt.', 'pending', 0.00, 45000.00, 1575.00, 46575.00, '2026-10-10 16:48:28', NULL, NULL),
-(4, 1, 1, NULL, 'ORD-20261011-001', 'restaurant', 'takeaway', NULL, NULL, 'mama mafalda', '0772514889', 'reaganotemas@gmail.com', 'jinja', 'less salt', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-11 14:46:23', NULL, NULL);
+(4, 1, 1, NULL, 'ORD-20261011-001', 'restaurant', 'takeaway', NULL, NULL, 'mama mafalda', '0772514889', 'reaganotemas@gmail.com', 'jinja', 'less salt', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-11 14:46:23', NULL, NULL),
+(5, 1, 1, NULL, 'ORD-20261013-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '+256772514889', 'reaganotema2022@gmail.com', 'JINJA', 'too much salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-10-13 10:29:48', NULL, NULL),
+(6, 1, 1, NULL, 'ORD-20261013-002', 'restaurant', 'takeaway', NULL, NULL, 'Otema Reagan', '+256772514889', 'reaganotema2022@gmail.com', 'Jinja', 'Less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-13 11:19:23', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2040,7 +2102,9 @@ INSERT INTO `order_items` (`id`, `order_id`, `menu_item_id`, `quantity`, `unit_p
 (1, 1, 2282, 1.00, 13000.00, 13000.00, 'Web takeaway order from Otema Reagan, +256772514889'),
 (2, 2, 2279, 1.00, 15000.00, 15000.00, 'Web takeaway order from Okot Denis, +256779562514'),
 (3, 3, 24, 1.00, 45000.00, 45000.00, 'Web takeaway order from Okot Denis, +256779562514'),
-(4, 4, 2290, 1.00, 15000.00, 15000.00, 'Web takeaway order from mama mafalda, 0772514889');
+(4, 4, 2290, 1.00, 15000.00, 15000.00, 'Web takeaway order from mama mafalda, 0772514889'),
+(5, 5, 2294, 1.00, 30000.00, 30000.00, 'Web takeaway order from Reagan Otema, +256772514889'),
+(6, 6, 2292, 1.00, 6000.00, 6000.00, 'Web takeaway order from Otema Reagan, +256772514889');
 
 -- --------------------------------------------------------
 
@@ -4393,7 +4457,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT for table `beds`
@@ -4429,7 +4493,7 @@ ALTER TABLE `communication_calls`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `customer_addresses`
@@ -4447,13 +4511,13 @@ ALTER TABLE `customer_documents`
 -- AUTO_INCREMENT for table `customer_signin_attempts`
 --
 ALTER TABLE `customer_signin_attempts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `customer_tokens`
 --
 ALTER TABLE `customer_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -4633,13 +4697,13 @@ ALTER TABLE `inventory_movements`
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `invoice_events`
 --
 ALTER TABLE `invoice_events`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `invoice_items`
@@ -4735,13 +4799,13 @@ ALTER TABLE `news_posts`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT for table `notification_deliveries`
 --
 ALTER TABLE `notification_deliveries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `notification_devices`
@@ -4753,19 +4817,19 @@ ALTER TABLE `notification_devices`
 -- AUTO_INCREMENT for table `notification_events`
 --
 ALTER TABLE `notification_events`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `outlets`
