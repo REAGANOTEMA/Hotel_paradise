@@ -3,6 +3,7 @@ declare(strict_types=1);
 declare(strict_types=1);
 require __DIR__.'/app/bootstrap.php';
 require_once __DIR__.'/app/guest_comm.php';
+require_once __DIR__.'/app/invoices.php';
 header('Content-Type: application/json; charset=utf-8');
 
 // A public endpoint must never answer with a PHP error page. The website reads
@@ -533,14 +534,23 @@ if($act==='payment'){
   if($name===''||$phone===''){
     $out(['ok'=>false,'error'=>'Please provide your name and phone number for the receipt.'],422);
   }
-  $label=$src==='booking'?'booking':($src==='order'?'order':'');
+  $label=$src==='booking'?'booking':($src==='order'?'order':($src==='invoice'?'invoice':''));
   if($label===''||$ref===''){ $out(['ok'=>false,'error'=>'Nothing to pay. Please start again from the rooms or the menu.'],422); }
 
-  $rid=null; $oid=null; $expected=0.0; $atDesk=0.0;
+  $rid=null; $oid=null; $iid=null; $expected=0.0; $atDesk=0.0;
   if($src==='booking'){
     $r=row('SELECT id,total,'.nullable_column('reservations','paid','paid').' FROM reservations WHERE booking_number=?',[$ref]);
     if(!$r){ $out(['ok'=>false,'error'=>'We could not find that booking reference. Please call +256 759 504 928.'],404); }
     $rid=(int)$r['id']; $expected=(float)$r['total']; $atDesk=(float)($r['paid']??0);
+  }elseif($src==='invoice'){
+    if(!function_exists('invoice_ready')||!invoice_ready()){
+      $out(['ok'=>false,'error'=>'Online invoicing is not available on this installation yet. Please call +256 759 504 928.'],503);
+    }
+    $iv=row('SELECT * FROM invoices WHERE invoice_number=?',[$ref]);
+    if(!$iv||in_array($iv['status'],['cancelled','refunded','draft'],true)){
+      $out(['ok'=>false,'error'=>'We could not find that invoice. Please call +256 759 504 928.'],404);
+    }
+    $iid=(int)$iv['id']; $expected=(float)$iv['total'];
   }else{
     $o=row('SELECT id,total FROM orders WHERE order_number=?',[$ref]);
     if(!$o){ $out(['ok'=>false,'error'=>'We could not find that order reference. Please call +256 759 504 928.'],404); }
@@ -552,12 +562,21 @@ if($act==='payment'){
   // guest with no account fills a blank and never overwrites a real one.
   if($email!==''){
     try{
-      $force=$acctEmail!=='';
+      $force=$acctEmail!==''&&$iid===null;
       if($oid!==null&&existing_columns('orders',['customer_email'])!==[]){
         q('UPDATE orders SET customer_email=? WHERE id=?'.($force?'':' AND (customer_email IS NULL OR customer_email=\'\')'),[$email,$oid]);
       }
       if($rid!==null){
         q('UPDATE guests g JOIN reservations r ON r.guest_id=g.id SET g.email=? WHERE r.id=?'.($force?'':' AND (g.email IS NULL OR g.email=\'\')'),[$email,$rid]);
+      }
+      if($iid!==null){
+        // An invoice is addressed to its own billing record, not to a guest
+        // account. The address the guest typed fills a blank and never
+        // overwrites the desk's own billing details.
+        $bc=invoice_columns()['invoice'];
+        if($bc['billing_email']!==''&&$acctEmail===''){
+          q('UPDATE invoices SET billing_email=COALESCE(NULLIF(billing_email,\'\'),?) WHERE id=?',[$email,$iid]);
+        }
       }
     }catch(Throwable $e){
       error_log('[hotel api] could not attach payment email: '.$e->getMessage());
@@ -568,8 +587,11 @@ if($act==='payment'){
   // figure, so a reference opened twice cannot be charged twice. Only a payment
   // that actually succeeded counts: a request still waiting with the front desk
   // leaves the amount exactly where it was.
-  $already=$atDesk+(float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE status=\'successful\' AND '
+  $already=$atDesk;
+  if($iid!==null){ $already+=(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND invoice_id=?",[$iid]); }
+  else{ $already+=(float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE status=\'successful\' AND '
     .($oid!==null?'order_id=?':'reservation_id=?'),[$oid!==null?$oid:$rid]);
+  }
   $expected=round(max(0.0,$expected-$already),2);
   if($expected<=0){ $out(['ok'=>false,'error'=>'There is nothing left to pay on this reference. If you think this is wrong, please call +256 759 504 928.'],422); }
 
@@ -579,9 +601,13 @@ if($act==='payment'){
   $custId=$acct?(int)$acct['id']:null;
 
   $payRef=next_number('PAY','payments','provider_reference');
-  $paymentCols=existing_columns('payments',['id','hotel_id','user_id','customer_id','invoice_id','order_id','reservation_id','amount','method','provider','provider_reference','status','created_at']);
-  $ins=['hotel_id'=>1,'user_id'=>null,'customer_id'=>$custId,'invoice_id'=>null,'order_id'=>$oid,'reservation_id'=>$rid,
-    'amount'=>$expected,'method'=>$method,'provider'=>'pesapal','provider_reference'=>$payRef,'status'=>'pending'];
+  // Every checkout mints its own token. The row is unique on it, so a doubled
+  // tap - the same browser, the same reference - lands on one payment, never
+  // two, and the gateway is handed that token when the real Pesapal goes live.
+  $checkoutToken=bin2hex(random_bytes(16));
+  $paymentCols=existing_columns('payments',['id','hotel_id','user_id','customer_id','invoice_id','order_id','reservation_id','amount','method','provider','provider_reference','checkout_token','status','created_at']);
+  $ins=['hotel_id'=>1,'user_id'=>null,'customer_id'=>$custId,'invoice_id'=>$iid,'order_id'=>$oid,'reservation_id'=>$rid,
+    'amount'=>$expected,'method'=>$method,'provider'=>'pesapal','provider_reference'=>$payRef,'checkout_token'=>$checkoutToken,'status'=>'pending'];
   $ins=array_intersect_key($ins,array_flip($paymentCols));
   $insCols=array_keys($ins);
   q('INSERT INTO payments('.implode(',',$insCols).',created_at)'
@@ -592,19 +618,27 @@ if($act==='payment'){
   $name.' started a '.strtoupper($method).' payment of '.money($expected).' for the '.$label.' '.$ref.'.',
   ['reference'=>$payRef,'source'=>$label,'amount'=>$expected,'method'=>$method,'guest'=>$name,'phone'=>$phone]);
  // No gateway is connected yet, so a payment settles here the moment it is
- // made: the row is marked successful, the receipt is produced, and the
- // reference reads as paid. The guest's own page then prints that receipt.
- if(PAYMENT_DEMO_SETTLE){
-  q('UPDATE payments SET status=\'successful\' WHERE id=?',[$pid]);
-  require_once __DIR__.'/app/receipts.php';
-  $rcpt=receipts_after_payment($pid);
-  audit('web_payment_settled','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'successful']);
-  $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'demo','online'=>true,'status'=>'successful','paid'=>true,
+  // made: the row is marked successful, the receipt is produced, and the
+  // reference reads as paid. The guest's own page then prints that receipt.
+  if(PAYMENT_DEMO_SETTLE){
+   q('UPDATE payments SET status=\'successful\' WHERE id=?',[$pid]);
+   // The verification stamp is written by the server, never by the browser.
+   // When the real Pesapal is connected this same stamp is set inside the
+   // IPN handler, after the server has asked the gateway to confirm the money.
+   if(existing_columns('payments',['verified_at'])!==[]) q('UPDATE payments SET verified_at=NOW() WHERE id=?',[$pid]);
+   if($iid!==null&&function_exists('invoice_recompute')){ invoice_recompute($iid); }
+   require_once __DIR__.'/app/receipts.php';
+   $rcpt=receipts_after_payment($pid);
+   audit('web_payment_settled','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'successful']);
+   $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'demo','online'=>true,'status'=>'successful','paid'=>true,
     'receipt_sent'=>(bool)($rcpt['email_sent']??false),
     'message'=>'Payment received. Your receipt is ready'.(($rcpt['email_sent']??false)?' and a copy has been emailed to you':'').'.']);
- }
- $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,'status'=>'pending','paid'=>false,
-    'message'=>'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.']);
+  }
+  $msg=$iid!==null
+    ?'The front desk has your payment request and it will be matched to invoice '.$ref.'. Nothing is marked paid until the money is verified.'
+    :'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.';
+  $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,'status'=>'pending','paid'=>false,
+    'message'=>$msg]);
 }
 
 /**
@@ -623,7 +657,7 @@ if($act==='payment'){
 if($act==='checkout'){
   $src=trim((string)($body['src']??$body['source']??''));
   $ref=trim((string)($body['ref']??$body['reference']??''));
-  if($ref===''||!in_array($src,['booking','order'],true)){
+  if($ref===''||!in_array($src,['booking','order','invoice'],true)){
     $out(['ok'=>false,'error'=>'We could not read that reference. Please start again from the rooms or the menu.'],422);
   }
 
@@ -684,6 +718,54 @@ if($act==='checkout'){
         'fee_label'=>booking_withdrawal_fee()['label']
       ],
       'payments'=>$payments]);
+  }
+
+  if($src==='invoice'){
+    // An invoice may be read back by number alone: the number is what a guest
+    // writes on a cheque or pastes from a statement, and what the desk holds.
+    // Only issued (or later) invoices are shown; a draft is not public.
+    if(!function_exists('invoice_ready')||!invoice_ready()){
+      $out(['ok'=>false,'error'=>'Online invoicing is not available on this installation yet. Please call +256 759 504 928.'],503);
+    }
+    $iv=row('SELECT * FROM invoices WHERE invoice_number=?',[$ref]);
+    if(!$iv||in_array($iv['status'],['cancelled','refunded','draft'],true)){
+      $out(['ok'=>false,'error'=>'We could not find that invoice. Please call +256 759 504 928.'],404);
+    }
+    $iid=(int)$iv['id'];
+    $payColsL=existing_columns('payments',['provider_reference','method','amount','status','created_at']);
+    $invoicePayments=rows('SELECT '.implode(',',$payColsL).' FROM payments WHERE invoice_id=? ORDER BY id DESC LIMIT 20',[$iid]);
+    $invPay=array_map(fn($p)=>[
+      'reference'=>(string)($p['provider_reference']??''),
+      'method'=>(string)($p['method']??''),
+      'amount'=>(float)($p['amount']??0),
+      'status'=>(string)($p['status']??''),
+      'when'=>substr((string)($p['created_at']??''),0,16)
+    ],$invoicePayments);
+    $settledAmt=$settled($invoicePayments);
+    $ivCols=invoice_columns()['invoice'];
+    $due=round(max(0.0,(float)$iv['total']-$settledAmt),2);
+    $lines=invoice_lines($iid);
+    $items=array_map(fn($l)=>[
+      'description'=>(string)$l['description'],
+      'qty'=>(float)$l['quantity'],
+      'unit'=>(float)$l['unit_price'],
+      'total'=>(float)$l['total']
+    ],$lines);
+    $out(['ok'=>true,'source'=>'invoice','reference'=>(string)$iv['invoice_number'],'status'=>(string)$iv['status'],
+      'total'=>(float)$iv['total'],'paid'=>round($settledAmt,2),'due'=>$due,
+      'invoice'=>[
+        'number'=>(string)$iv['invoice_number'],
+        'billing_name'=>(string)($iv['billing_name']??''),
+        'billing_email'=>(string)($iv['billing_email']??''),
+        'billing_phone'=>(string)($iv['billing_phone']??''),
+        'issued'=>substr((string)($iv['issued_at']??''),0,16),
+        'due_date'=>substr((string)($iv['due_date']??''),0,10),
+        'subtotal'=>(float)($iv['subtotal']??0),
+        'discount'=>(float)($iv['discount']??0),
+        'notes'=>(string)($iv['notes']??''),
+        'items'=>$items
+      ],
+      'payments'=>$invPay]);
   }
 
   $o=row('SELECT * FROM orders WHERE order_number=?',[$ref]);

@@ -208,7 +208,32 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     }else{
       q('UPDATE news_posts SET deleted_at=NOW(),deleted_by=? WHERE id=?',[(int)($u['id']??null),$id]);
       audit('trash','news_posts',$id,['slug'=>$r['slug'],'title'=>$r['title']]);
+      notify_console('news:trash:'.$id, 'communication','Newsroom: '.$r['title'].' moved to trash',
+        'A news post was moved to Trash by '.($u['name']??'a team member').'.',
+        ['news_id'=>$id,'slug'=>$r['slug']],['director','general_manager','super_admin'],'news_post',$id);
       flash('News post moved to Trash.');
+    }
+    go('news');
+  }
+  if($a==='publish'){
+    /* A one-tap toggle from the list: take a draft live, or pull a live post
+       back to draft. Only an editor or owner may flip it, and the Director is
+       told either way, so nothing appears or disappears from the site silently. */
+    $id=(int)($_GET['id']??$_POST['id']??0);
+    $r=row('SELECT * FROM news_posts WHERE id=?',[$id]);
+    if(!$r){
+      flash('Post not found.','bad');
+    }elseif(!$inScope($r)){
+      flash('That post does not belong to you. Ask an editor to change it.','bad');
+    }else{
+      $next=$r['status']==='published'?'draft':'published';
+      q('UPDATE news_posts SET status=?,updated_at=NOW() WHERE id=?',[$next,$id]);
+      audit('news_'.$next,'news_posts',$id,['slug'=>$r['slug']]);
+      notify_console('news:'.$next.':'.$id, 'communication',
+        'Newsroom: '.$r['title'].' '.($next==='published'?'is now live':'taken down'),
+        ($next==='published'?'Published':'Unpublished').' on the website by '.($u['name']??'a team member').'.',
+        ['news_id'=>$id,'slug'=>$r['slug'],'status'=>$next],['director','general_manager','super_admin'],'news_post',$id);
+      flash('Post '.($next==='published'?'published':'moved to draft').'.');
     }
     go('news');
   }
@@ -409,6 +434,9 @@ if($act==='list'){
     echo '<td style="white-space:nowrap">';
     echo '<a class="btn sm blue" href="'.e($link).'" target="_blank" rel="noopener">View</a> ';
     echo '<a class="btn sm navy" href="'.BASE.'/index.php?page=news&act=edit&id='.(int)$r['id'].'">Edit</a> ';
+    form_open('news','publish',['id'=>$r['id']],['style'=>'display:inline']);
+    echo '<button class="btn sm '.(($r['status']==='published')?'blue':'tick').'" type="submit">'.(($r['status']==='published')?'Unpublish':'Publish').'</button>';
+    form_close();
     form_open('news','delete',['id'=>$r['id']],['style'=>'display:inline','onsubmit'=>"return confirm('Move this post to the Trash? You can restore it from the Trash page.')"]);
     echo '<button class="btn sm danger" type="submit">Delete</button>';
     form_close();

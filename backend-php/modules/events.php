@@ -95,25 +95,31 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $K['roles'],$K['table'],$id);
   flash($K['label'].' '.$r[$K['num']].' marked '.$STATUSES[$nst]['label'].'.');
  }
- if($act==='edit'){
-  $id=(int)($_POST['id']??0);
-  $kind=(string)($_POST['kind']??'');
-  if(!isset($KINDS[$kind])){ flash('Nothing to save.','bad'); go('events'); }
-  $K=$KINDS[$kind];
-  $fn=trim($_POST['full_name']??''); $ph=trim($_POST['phone']??''); $em=trim($_POST['email']??'');
-  $gu=($_POST['guests']??'')!==''?(int)$_POST['guests']:null; $msg=trim($_POST['message']??'');
-  $nst=(string)($_POST['status']??''); if(!isset($STATUSES[$nst])) $nst='new';
-  if($fn===''){ flash('A contact name is required.','bad'); go('events'); }
-  if($kind==='event'){
-   q("UPDATE event_requests SET full_name=?,phone=?,email=?,event_type=?,event_date=NULLIF(?,''),guests=?,venue=?,message=?,status=?,updated_at=NOW() WHERE id=?",
-     [$fn,$ph,$em,trim($_POST['event_type']??''),trim($_POST['event_date']??''),$gu,trim($_POST['venue']??''),$msg,$nst,$id]);
-  }else{
-   q("UPDATE facility_enquiries SET full_name=?,phone=?,email=?,facility=?,preferred_date=NULLIF(?,''),guests=?,message=?,status=?,updated_at=NOW() WHERE id=?",
-     [$fn,$ph,$em,trim($_POST['facility']??''),trim($_POST['preferred_date']??''),$gu,$msg,$nst,$id]);
+if($act==='edit'){
+   $id=(int)($_POST['id']??0);
+   $kind=(string)($_POST['kind']??'');
+   if(!isset($KINDS[$kind])){ flash('Nothing to save.','bad'); go('events'); }
+   $K=$KINDS[$kind];
+   $fn=trim($_POST['full_name']??''); $ph=trim($_POST['phone']??''); $em=trim($_POST['email']??'');
+   $gu=($_POST['guests']??'')!==''?(int)$_POST['guests']:null; $msg=trim($_POST['message']??'');
+   $nst=(string)($_POST['status']??''); if(!isset($STATUSES[$nst])) $nst='new';
+   if($fn===''){ flash('A contact name is required.','bad'); go('events'); }
+   $old=row('SELECT * FROM '.$K['table'].' WHERE id=?',[$id]);
+   if($kind==='event'){
+    q("UPDATE event_requests SET full_name=?,phone=?,email=?,event_type=?,event_date=NULLIF(?,''),guests=?,venue=?,message=?,status=?,updated_at=NOW() WHERE id=?",
+      [$fn,$ph,$em,trim($_POST['event_type']??''),trim($_POST['event_date']??''),$gu,trim($_POST['venue']??''),$msg,$nst,$id]);
+   }else{
+    q("UPDATE facility_enquiries SET full_name=?,phone=?,email=?,facility=?,preferred_date=NULLIF(?,''),guests=?,message=?,status=?,updated_at=NOW() WHERE id=?",
+      [$fn,$ph,$em,trim($_POST['facility']??''),trim($_POST['preferred_date']??''),$gu,$msg,$nst,$id]);
+   }
+   audit('events_edit',$K['table'],$id);
+   notify_console($kind.'-edit:'.$id,'communication',
+    $K['label'].' '.($old[$K['num']]??'#'.$id).' details updated',
+    ($old['full_name']??$fn).' — '.(string)($u['name']??'staff').' updated this '.(strtolower($K['label'])).'.',
+    [$K['num']=>($old[$K['num']]??'#'.$id),'name'=>$old['full_name']??$fn],
+    array_merge(['director','general_manager','super_admin'],$K['roles']),$K['table'],$id);
+   flash($K['label'].' updated.');
   }
-  audit('events_edit',$K['table'],$id);
-  flash($K['label'].' updated.');
- }
  go('events');
 }
 

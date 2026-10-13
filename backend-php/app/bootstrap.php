@@ -454,6 +454,7 @@ function page_caps(): array{
   'testimonials'=>['director','general_manager','marketing'],
   'expenses'=>['director','general_manager','accountant'],
   'finance'=>['director','general_manager','accountant','cashier'],
+  'invoices'=>['director','general_manager','accountant','cashier','auditor'],
   'approvals'=>['director','general_manager','accountant'],
   'audit'=>['director','auditor'],
   'reports'=>['director','general_manager','accountant','auditor'],

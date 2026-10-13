@@ -38,10 +38,17 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    flash('Stock request '.$num.' sent to the store manager and the Director.');
    go('purchases');
    break;
-  case 'reqstatus':
-   $rid=(int)($_POST['id']??0); $nst=$_POST['nst']??'';
-   $r=row('SELECT * FROM purchase_requisitions WHERE id=?',[$rid]); if(!$r) break;
-   $res=stock_request_decide($rid,$nst,(string)($_POST['reason']??''),(int)$u['id']);
+case 'reqstatus':
+    $rid=(int)($_POST['id']??0); $nst=$_POST['nst']??'';
+    $r=row('SELECT * FROM purchase_requisitions WHERE id=?',[$rid]); if(!$r) break;
+    /* Approving or turning down a request is a director or general manager
+       decision. Anyone may open the page, but only these roles may change a
+       decision: the store keeps its inbox separate from who may act on it. */
+    if(!(has_role('director')||has_role('general_manager')||has_role('super_admin'))){
+     flash('Only the Director or General Manager may decide a stock request.','bad');
+     go(($_POST['back']??'')==='inventory'?'inventory':'purchases'); break;
+    }
+    $res=stock_request_decide($rid,$nst,(string)($_POST['reason']??''),(int)$u['id']);
    if(!$res['ok']){
     flash($res['error']==='reason-required'?'A reason is required when turning down a request.':'That request could not be updated.','bad');
    }else{
@@ -180,7 +187,12 @@ echo '<table class="tbl"><thead><tr><th>Number</th><th>Department</th><th>Reques
 foreach($reqs as $r){
 $line=(int)val('SELECT COALESCE(SUM(ri.requested_qty),0) FROM purchase_requisition_items ri WHERE ri.requisition_id=?',[$r['id']]);
   echo '<tr><td><b>'.e($r['number']).'</b></td><td>'.e($r['dept']).'</td><td>'.e($r['reqby']).'</td><td><small>'.$line.' item(s)</small></td><td>'.status_badge($r['status']).'</td><td>';
- if($r['status']==='pending'){ form_open('purchases','reqstatus',['id'=>$r['id']]); echo '<input type="hidden" name="nst" value="approved"><button class="btn sm tick">Approve</button>'; form_close(); form_open('purchases','reqstatus',['id'=>$r['id']]); echo '<input type="hidden" name="nst" value="rejected"><button class="btn sm danger">Reject</button>'; form_close(); }
+ if($r['status']==='pending'){
+   $reqsCanDecide=has_role('director')||has_role('general_manager')||has_role('super_admin');
+   if($reqsCanDecide){ form_open('purchases','reqstatus',['id'=>$r['id']]); echo '<input type="hidden" name="nst" value="approved"><button class="btn sm tick">Approve</button>'; form_close(); }
+   if($reqsCanDecide){ form_open('purchases','reqstatus',['id'=>$r['id']]); echo '<input type="hidden" name="nst" value="rejected"><input name="reason" placeholder="Reason (required)" style="margin:0 0 6px;width:150px;padding:7px;border:1px solid var(--line);border-radius:8px"><button class="btn sm danger">Reject</button>'; form_close(); }
+   if(!$reqsCanDecide) echo '<small style="color:var(--muted)">Awaiting Director or General Manager</small>';
+  }
  if($r['status']==='approved'){ echo ' <button class="btn sm blue" onclick="document.getElementById(\'poFrom'.(int)$r['id'].'\').hidden=false">Create purchase order</button>';
   echo '<div id="poFrom'.(int)$r['id'].'" hidden style="margin-top:10px;background:#f6f4ea;border:1px solid var(--line);border-radius:10px;padding:12px">';
   form_open('purchases','reqtopo'); echo '<input type="hidden" name="id" value="'.(int)$r['id'].'">';

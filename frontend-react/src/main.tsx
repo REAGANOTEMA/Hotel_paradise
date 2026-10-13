@@ -16,30 +16,35 @@ import {heroShots, SmartImage, type HeroShot, type ImageGroup} from './SmartImag
 const DINING_TOP = withService(100000);
 
 type DineRate = {
- name: string;
- note: string;
- tag: string;
- icon: 'sun' | 'pot' | 'fork' | 'moon';
- from: number;
- to: number;
- priceText: string;
- unit: string;
- free?: boolean;
-};
+  name: string;
+  note: string;
+  tag: string;
+  icon: 'sun' | 'pot' | 'fork' | 'moon';
+  from: number;
+  to: number;
+  priceText: string;
+  unit: string;
+  free?: boolean;
+  photo: string;
+ };
 
 const dining: DineRate[] = [
  {name: 'Breakfast', tag: 'Included with every room', icon: 'sun',
   note: 'For non residents, or children above six years sharing a room with their parents.',
-  from: withService(25000), to: withService(25000), priceText: fmtPrice(25000), unit: 'per person'},
+  from: withService(25000), to: withService(25000), priceText: fmtPrice(25000), unit: 'per person',
+  photo: 'breakfast2-hero'},
  {name: 'Buffet meal', tag: 'Lunch and dinner', icon: 'pot',
   note: 'Served daily around lunch and dinner, a full table of hot dishes and salads.',
-  from: withService(40000), to: withService(40000), priceText: fmtPrice(40000), unit: 'per person'},
+  from: withService(40000), to: withService(40000), priceText: fmtPrice(40000), unit: 'per person',
+  photo: 'buffet'},
  {name: 'A la carte menu', tag: '251 dishes', icon: 'fork',
   note: 'From light bites to full platters, served through the day and into the evening.',
-  from: withService(6000), to: DINING_TOP, priceText: fmtPrice(6000) + ' – ' + withService(100000).toLocaleString(), unit: 'per dish'},
+  from: withService(6000), to: DINING_TOP, priceText: fmtPrice(6000) + ' – ' + withService(100000).toLocaleString(), unit: 'per dish',
+  photo: 'steak-with-wedges'},
  {name: 'Baby cots', tag: 'On the house', icon: 'moon',
   note: 'Available on request for your little one, set up in your room before you arrive.',
-  from: 0, to: 0, priceText: 'Free', unit: 'on request', free: true}
+  from: 0, to: 0, priceText: 'Free', unit: 'on request', free: true,
+  photo: 'double-deluxe-bed'}
 ];
 
 /** The small line drawing that heads each dining card. */
@@ -59,29 +64,42 @@ function dineIcon(name: DineRate['icon']) {
  * The baby cot, which is free, is drawn full and blue rather than gold.
  */
 function DiningBoard() {
- return (
-  <div className="dineGrid">
-   {dining.map(m => {
-    const left = m.free ? 0 : Math.round((m.from / DINING_TOP) * 100);
-    const width = m.free ? 100 : Math.max(6, Math.round(((m.to - m.from) / DINING_TOP) * 100));
-    return (
-     <article className={'dineCard reveal' + (m.free ? ' free' : '')} key={m.name}>
-      <div className="dineTop">
-       <span className="dineIco">{dineIcon(m.icon)}</span>
-       <span className="dineTag">{m.tag}</span>
-      </div>
-      <h4>{m.name}</h4>
-      <p className="dineNote">{m.note}</p>
-      <div className="dineBar" aria-hidden="true">
-       <span className="dineFill" style={{marginLeft: left + '%', width: width + '%'}}/>
-      </div>
-      <div className="dinePrice"><b>{m.priceText}</b><span>{m.unit}</span></div>
-     </article>
-    );
-   })}
-  </div>
- );
-}
+  return (
+   <div className="dineGrid">
+    {dining.map(m => {
+     const left = m.free ? 0 : Math.round((m.from / DINING_TOP) * 100);
+     const width = m.free ? 100 : Math.max(6, Math.round(((m.to - m.from) / DINING_TOP) * 100));
+     return (
+      <article className={'dineCard reveal' + (m.free ? ' free' : '')} key={m.name}>
+       <div className="dinePhoto">
+        <SmartImage
+         group="site"
+         name={m.photo}
+         alt={m.name}
+         ratio="16 / 10"
+         widths={[320, 480, 640, 960]}
+         sizes="(max-width:600px) 100vw, (max-width:1000px) 50vw, 25vw"
+         position="50% 45%"
+         zoom
+        />
+        <div className="dineScrim" aria-hidden="true"/>
+        <span className="dineBadge">{dineIcon(m.icon)}</span>
+        <span className="dineTag">{m.tag}</span>
+       </div>
+       <div className="dineBody">
+        <h4>{m.name}</h4>
+        <p className="dineNote">{m.note}</p>
+        <div className="dineBar" aria-hidden="true">
+         <span className="dineFill" style={{marginLeft: left + '%', width: width + '%'}}/>
+        </div>
+        <div className="dinePrice"><b>{m.priceText}</b><span>{m.unit}</span></div>
+       </div>
+      </article>
+     );
+    })}
+   </div>
+  );
+ }
 
 const facts = [
  {t: 'Rooms', d: '69 rooms spread across 3 floors', img: 'fact-rooms'},

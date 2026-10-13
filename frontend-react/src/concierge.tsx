@@ -201,6 +201,7 @@ const TOPICS: {id: string; re: RegExp}[] = [
   {id: 'safety', re: /\b(security|safe|secure|surveillance|cctv)\b/},
   {id: 'founding', re: /\b(when (did|was) (it|you|the hotel)|founded|founder|owner|who (started|owns|built|opened)|established|since when|how old (is|are)|history|story|registration|registered|ursb)\b/},
   {id: 'about', re: /\b(who are you|tell me about|what is (this|your|the hotel)|about (you|the hotel|us)|our story|history)\b/},
+  {id: 'designer', re: /\b(who (designed|built|made|created|developed)|designer|developer|made by|built by|website designer|reagan|reagansoft|software house|who is behind)\b/},
   {id: 'prices', re: /\b(price|prices|cost|how much|how expensive|cheap)\b/},
 ];
 
@@ -270,9 +271,10 @@ const INFO_ANSWERS: Record<string, string> = {
   jobs: `Send your CV to the front desk email on the website, and our Human Resource office will be in touch.`,
   gift: `Call ${PH} and we will arrange a gift card for any amount, valid across the rooms, the restaurant and the bar.`,
   safety: `The entrance and the grounds are watched around the clock, rooms have secure locks, and parking is on site.`,
-  founding: `Hotel Paradise on the Nile opened its doors on ${HOTEL.founded}, and it is registered with ${HOTEL.registration}. It was founded by ${HOTEL.founders}, who still own it today. The hotel opened with ${HOTEL.roomsAtOpening} rooms and has grown into the ${HOTEL.roomsToday} rooms it has now.`,
+  founding: `Hotel Paradise on the Nile is one of the oldest and best loved hotels in Jinja, and one of the most iconic on the river. It opened its doors on ${HOTEL.founded}, and it is registered with ${HOTEL.registration}. It was founded by ${HOTEL.founders}, who still own it today. The hotel opened with ${HOTEL.roomsAtOpening} rooms and has grown into the ${HOTEL.roomsToday} rooms you see now. It is a true Jinja landmark.`,
   rooms: `The hotel opened with ${HOTEL.roomsAtOpening} rooms in nineteen ninety eight and has grown to ${HOTEL.roomsToday} today, from cosy singles to full suites with a view of the river. Say a room type, or open the Rooms page, and I will tell you more.`,
-  about: `Hotel Paradise on the Nile sits on the banks of the River Nile in Jinja, on the water since ${HOTEL.founded}. It was founded by ${HOTEL.founders} with just ${HOTEL.roomsAtOpening} rooms, and today it has ${HOTEL.roomsToday} — rooms with a view, a riverside restaurant, a pool, a gym and a bar. It is registered with ${HOTEL.registration}.`,
+  about: `Hotel Paradise on the Nile is one of Jinja's iconic and oldest hotels. It sits on the banks of the River Nile in Jinja, on the water since ${HOTEL.founded}. It was founded by ${HOTEL.founders} with just ${HOTEL.roomsAtOpening} rooms, and today it has ${HOTEL.roomsToday} — rooms with a view, a riverside restaurant, a pool, a gym and a bar. It is registered with ${HOTEL.registration}.`,
+  designer: `This website and the management system were designed and built by Mr Reagan Otema, founder of Reagansoft Innovation Limited here in Uganda. Their office is in Jinja. For more about the company, visit their website, reagansoftinnovation dot com.`,
   prices: `Name the dish and I will read you its price, or name a section and I will point you to it.`,
 };
 
@@ -334,8 +336,8 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     const v = who === 'woman' ? voicesRef.current.female : voicesRef.current.male;
     if (v) u.voice = v;
     u.lang = v?.lang || 'en-US';
-    u.rate = 0.9;
-    u.pitch = who === 'woman' ? 1.05 : 0.85;
+    u.rate = 0.85;
+    u.pitch = who === 'woman' ? 1.03 : 0.82;
     u.volume = 1;
     return u;
   };

@@ -53,6 +53,18 @@ type PayDetail = {
   tax: number;
   items: PayLine[];
  };
+ invoice?: {
+  number: string;
+  billing_name: string;
+  billing_email: string;
+  billing_phone: string;
+  issued: string;
+  due_date: string;
+  subtotal: number;
+  discount: number;
+  notes: string;
+  items: {description: string; qty: number; unit: number; total: number}[];
+ };
  payments: {reference: string; method: string; amount: number; status: string; when: string}[];
 };
 
@@ -201,9 +213,24 @@ function PayReceipt({src, ref, charged, amt, form, detail, item, qty, unit, meth
       ))}
      </div>
     );
+   })() : detail?.invoice ? (() => {
+    const iv = detail.invoice;
+    return (
+     <div className="prSec">
+      <h4>INVOICE {iv.number}</h4>
+      {iv.billing_name && <p className="prNote">Billed to: {iv.billing_name}</p>}
+      {iv.issued && <p className="prNote">Issued: {iv.issued}{iv.due_date ? ' | Due: ' + iv.due_date : ''}</p>}
+      {iv.items.map((it, i) => (
+       <div className="prItem" key={i}>
+        <b>{it.description}</b>
+        <span>{it.qty} x {fmt(it.unit)} = {fmt(it.total)}</span>
+       </div>
+      ))}
+     </div>
+    );
    })() : (
     <div className="prSec">
-     <h4>{src === 'booking' ? 'ROOM BOOKING' : 'FOOD ORDER'}</h4>
+     <h4>{src === 'booking' ? 'ROOM BOOKING' : src === 'invoice' ? 'INVOICE' : 'FOOD ORDER'}</h4>
      <div className="prItem"><b>{item || '-'}</b></div>
      {qty && <p className="prNote">Quantity: {qty}{unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''}</p>}
     </div>
@@ -226,6 +253,15 @@ function PayReceipt({src, ref, charged, amt, form, detail, item, qty, unit, meth
       {o.tax > 0 && <Row k="Service Charge (3.5%):" v={fmt(o.tax)}/>}
       <div className="prTotal"><span>TOTAL:</span><b>{fmt(detail.total)}</b></div>
       {detail.paid > 0 && <Row k="Already Paid:" v={'-' + fmt(detail.paid)}/>}
+     </>);
+    })() : detail?.invoice ? (() => {
+     const iv = detail.invoice;
+     return (<>
+      <Row k="Subtotal:" v={fmt(iv.subtotal)}/>
+      {iv.discount > 0 && <Row k="Discount:" v={'-' + fmt(iv.discount)}/>}
+      <div className="prTotal"><span>TOTAL:</span><b>{fmt(detail.total)}</b></div>
+      {detail.paid > 0 && <Row k="Already Paid:" v={'-' + fmt(detail.paid)}/>}
+      <Row k="Balance Due:" v={fmt(detail.due)}/>
      </>);
     })() : (
      <div className="prTotal"><span>TOTAL:</span><b>{fmt(total)}</b></div>
@@ -316,7 +352,7 @@ function VoiceGuide({src, ref, amount}: {src: string; ref: string; amount: numbe
 
 function PayPage() {
  const q = new URLSearchParams(window.location.search);
- const src = q.get('src') === 'order' ? 'order' : q.get('src') === 'booking' ? 'booking' : '';
+ const src = q.get('src') === 'order' ? 'order' : q.get('src') === 'booking' ? 'booking' : q.get('src') === 'invoice' ? 'invoice' : '';
  const ref = q.get('ref') || '';
  const amt = Math.max(0, parseInt(q.get('amt') || '0', 10) || 0);
  const item = q.get('item') || '';
@@ -470,7 +506,7 @@ function PayPage() {
    say('Guest', form.name.trim() || '-');
    say('Phone', normPhone(form.phone) || '-');
    if (form.email.trim()) say('Email', form.email.trim());
-   say(src === 'booking' ? 'Booking' : 'Order', ref || '-');
+   say(src === 'booking' ? 'Booking' : src === 'invoice' ? 'Invoice' : 'Order', ref || '-');
    if (done && done.reference && done.reference !== ref) say('Payment ref', done.reference);
     say('Method', METHOD_TEXT[method] || method);
     say('Amount', money(charged || amt));
@@ -512,8 +548,27 @@ function PayPage() {
     L.push('');
    }
 
+   if (detail && detail.invoice) {
+    const iv = detail.invoice;
+    L.push('INVOICE ' + iv.number);
+    if (iv.billing_name) say('Billed to', iv.billing_name);
+    if (iv.issued) say('Issued', iv.issued);
+    if (iv.due_date) say('Due', iv.due_date);
+    L.push('');
+    iv.items.forEach((it, i) => {
+     L.push((i + 1) + '. ' + it.qty + ' x ' + fmt(it.unit) + ' - ' + it.description + '  ' + money(it.total));
+    });
+    L.push('');
+    say('Subtotal', money(iv.subtotal));
+    if (iv.discount > 0) say('Discount', '-' + money(iv.discount));
+    say('Total', money(detail.total));
+    if (detail.paid > 0) say('Already paid', money(detail.paid));
+    say('Balance due', money(detail.due));
+    L.push('');
+   }
+
    if (!detail) {
-    L.push(src === 'booking' ? 'ROOM BOOKING' : 'FOOD ORDER');
+    L.push(src === 'booking' ? 'ROOM BOOKING' : src === 'invoice' ? 'INVOICE' : 'FOOD ORDER');
     say(src === 'booking' ? 'Room' : 'Items', item || '-');
     if (qty) say('Quantity', qty + (unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''));
     say('Total', money(charged || amt));
@@ -569,7 +624,7 @@ if (done) {
      <div className="payCheck"><CheckIcon/></div>
      <p className="eyebrow">PAYMENT REQUEST RECEIVED</p>
      <h1 className="payThanks">Thank you, {form.name.trim().split(' ')[0] || 'friend'}.</h1>
-     <p className="payDoneLine">Your <b>{src === 'booking' ? 'room booking ' : 'food order '}</b>for <b>{fmt(charged || amt)}</b> is with the hotel.</p>
+     <p className="payDoneLine">Your <b>{src === 'booking' ? 'room booking ' : src === 'invoice' ? 'invoice payment ' : 'food order '}</b>for <b>{fmt(charged || amt)}</b> is with the hotel.</p>
      <div className="doneRef"><span>Your reference</span><b>{done.reference}</b></div>
      <p className="payDoneNote">{done.message}</p>
      {done.paid ? (
@@ -629,7 +684,7 @@ if (done) {
     <div>
       <div className="payCard">
        <p className="eyebrow">YOUR REQUEST</p>
-       <h3>{detail?.booking?.room_type || item || (src === 'booking' ? 'Room booking' : 'Food order')}</h3>
+       <h3>{detail?.booking?.room_type || (detail?.invoice ? 'Invoice ' + detail.invoice.number : item) || (src === 'booking' ? 'Room booking' : src === 'invoice' ? 'Hotel invoice' : 'Food order')}</h3>
        {detail && <span className={'badge ' + statusTone(detail.status)} style={{marginTop: 10}}>{detail.status || 'Status'}</span>}
       <dl className="payLine">
        <div><dt>Reference</dt><dd>{ref}</dd></div>
@@ -641,6 +696,9 @@ if (done) {
        )}
        {detail?.order && (
         <div><dt>Order</dt><dd>{detail.order.outlet === 'room_service' ? 'Room service' : detail.order.outlet === 'bar' ? 'Bar order' : 'Restaurant'}{detail.order.kind ? ' · ' + detail.order.kind.replace('_', ' ') : ''}<br/>{detail.order.placed}</dd></div>
+       )}
+       {detail?.invoice && (
+        <div><dt>Invoice</dt><dd>{detail.invoice.number}{detail.invoice.issued ? ' · Issued ' + detail.invoice.issued : ''}{detail.invoice.due_date ? ' · Due ' + detail.invoice.due_date : ''}</dd></div>
        )}
        {!detail && qty && (
         <div><dt>On this request</dt><dd>{qty}{unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''}</dd></div>
@@ -683,6 +741,31 @@ if (done) {
        </div>
       )}
 
+      {detail?.invoice && (
+       <>
+        {detail.invoice.items.length > 0 && (
+         <div className="payLines">
+          {detail.invoice.items.map((l, i) => (
+           <div className="payLineItem" key={i}>
+            <span className="payLineText">
+             <b>{l.description}</b>
+             <small>{l.qty} &times; {fmt(l.unit)}</small>
+            </span>
+            <span className="payLineSum">{fmt(l.total)}</span>
+           </div>
+          ))}
+         </div>
+        )}
+        <div className="payLines">
+         <div className="payMoney"><span>Subtotal</span><b>{fmt(detail.invoice.subtotal)}</b></div>
+         {detail.invoice.discount > 0 && <div className="payMoney"><span>Discount</span><b>&minus;{fmt(detail.invoice.discount)}</b></div>}
+         <div className="payMoney"><span>Total</span><b>{fmt(detail.total)}</b></div>
+         {detail.paid > 0 && <div className="payMoney paidRow"><span>Already paid</span><b>&minus;{fmt(detail.paid)}</b></div>}
+         <div className="payMoney"><span>Balance due</span><b>{fmt(detail.due)}</b></div>
+        </div>
+       </>
+      )}
+
       {looking && <div className="payMoney" style={{color: '#7b8798'}}><span>Checking this reference with the hotel&hellip;</span></div>}
 
       <div className="payDue">
@@ -721,7 +804,7 @@ if (done) {
      <div className="payCard paySteps">
       <p className="eyebrow">WHAT HAPPENS NEXT</p>
       <ol>
-       <li>We confirm your {src === 'booking' ? 'room' : 'order'} by phone on {form.phone || 'the number you give'}.</li>
+       <li>We confirm your {src === 'booking' ? 'room' : src === 'invoice' ? 'invoice payment' : 'order'} by phone on {form.phone || 'the number you give'}.</li>
        <li>Pesapal sends a secure payment once online payments are live here.</li>
        <li>Until then, pay at the front desk in cash, by card or by mobile money.</li>
       </ol>

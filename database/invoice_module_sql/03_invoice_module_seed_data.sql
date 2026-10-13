@@ -1,0 +1,17 @@
+-- Hotel Paradise on the Nile — Invoice & Pesapal module, step 3 of 3
+-- File   : database/invoice_module_sql/03_invoice_module_seed_data.sql
+-- Run on : the MAIN database (hotelpardise_system), manually, optional.
+--          Idempotent. No USE statement: connect first, then select the database
+--          you are installing into; this file touches no table by itself.
+--
+-- This file ships intentionally EMPTY of rows.
+--
+-- The master development rules for this module forbid fabricating data, and an
+-- invoice module has no configuration that belongs in the database: invoice
+-- numbering, tax defaults and payment gateway tokens are application settings
+-- held in PHP, not rows. Everything this module writes arrives from real hotel
+-- work (a reservation, a menu order, a front-desk payment) — never from an
+-- installer.
+--
+-- If this project ever grows a settings table of its own, its seed rows belong
+-- here in the correct dependency order. Until then there is nothing to seed.

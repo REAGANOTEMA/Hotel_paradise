@@ -29,8 +29,8 @@ function nav_groups(): array{
      'shifts'=>'Shifts']],
    ['label'=>'Procurement & Stores','items'=>[
      'inventory'=>'Inventory','suppliers'=>'Suppliers','purchases'=>'Purchases']],
-   ['label'=>'Finance & Control','items'=>[
-     'expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
+['label'=>'Finance & Control','items'=>[
+      'invoices'=>'Invoices','expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
    ['label'=>'Administration','items'=>[
      'users'=>'Team and Users','notifications'=>'Notifications','trash'=>'Trash','profile'=>'My Profile']],
   ];
@@ -279,6 +279,7 @@ $map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations
    'pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
    'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
    'reports'=>'bars','users'=>'users','notifications'=>'bell','trash'=>'trash','profile'=>'user',
+   'invoices'=>'file',
    'messages'=>'bell','testimonials'=>'spark'];
  return $map[$page]??'grid';
 }
