@@ -209,7 +209,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '</div></aside>';
 
  /* ---- the header ---- */
- echo '<div class="main" id="mainContent"><header class="top">';
+ echo '<div class="main" id="mainContent"><div class="ambient" aria-hidden="true"></div><header class="top">';
  echo '<button class="sideToggle" id="sideToggle" type="button" aria-label="Open menu" aria-controls="side" aria-expanded="false"><span></span><span></span><span></span></button>';
  /* Every module but the dashboard carries a way back. It steps through the
     visit when a console page is behind it, and otherwise opens the dashboard,
@@ -644,6 +644,125 @@ function order_delivery(?array $order): array{
 }
 
 /**
+ * The hotel's own details, written once, for anything the console prints on
+ * paper: an invoice, a statement, a receipt. The values live here rather than in
+ * each module so a phone number or an address can never drift between documents.
+ * The name and city are read from the hotel's own record when it has them.
+ */
+function hotel_brand(): array{
+ static $b=null;
+ if($b!==null) return $b;
+ $h=row('SELECT name,city,country FROM hotels WHERE id=1')?:[];
+ $site=defined('SITE_URL')?rtrim(SITE_URL,'/'):'';
+ $name=trim((string)($h['name']??''));
+ $city=trim((string)($h['city']??''));
+ $country=trim((string)($h['country']??''));
+ return $b=[
+  'name'=>$name!==''?$name:'Hotel Paradise on the Nile',
+  'city'=>$city!==''?$city:'Jinja',
+  'country'=>$country!==''?$country:'Uganda',
+  'legal'=>'Hotel Paradise on the Nile Ltd',
+  'address'=>'Plot 12, 19 & 25 Kiira Lane, Jinja, Uganda',
+  'po_box'=>'P.O. Box 1139, Jinja, Uganda',
+  'phones'=>['+256 759 504 928','+256 773 565 668'],
+  'email'=>'frontdesk@hotelparadiseonthenile.info',
+  'website'=>'www.hotelparadiseonthenile.info',
+  'certification'=>'UNBS Certified, US 130:2017',
+  'logo'=>$site.'/images/logo-256.png',
+  'crest'=>$site.'/images/logo-64.png',
+ ];
+}
+
+/**
+ * The house style for a printed document - an invoice, a statement, a formal
+ * receipt. Returned as a string of CSS so a popup window can write a whole,
+ * self-contained page: the navy and gold of the console, a serif for figures
+ * that matter, and a quiet A4 sheet that leaves the printer clean.
+ */
+function document_css(): string{
+ return <<<CSS
+ @page{size:A4;margin:14mm}
+ *{box-sizing:border-box}
+ body{margin:0;background:#eef1f5;color:#0b1f38;font:13px/1.55 Georgia,'Times New Roman',serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .doc{max-width:760px;margin:0 auto;background:#fff;position:relative;overflow:hidden;padding:38px 42px 30px;border-top:6px solid #0b2545;box-shadow:0 18px 50px rgba(11,37,69,.14)}
+ .docHead{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid #e2e6ec}
+ .docBrand{display:flex;gap:14px;align-items:center}
+ .docLogo{width:62px;height:62px;object-fit:contain}
+ .docName{font:700 21px 'Playfair Display',Georgia,serif;letter-spacing:.02em;line-height:1.05;color:#0b2545}
+ .docName span{display:block;font-size:10.5px;letter-spacing:.34em;color:#c9a227;font-weight:700;margin-top:4px}
+ .docTag{font-size:10.5px;color:#5b6b7f;margin-top:5px;letter-spacing:.06em}
+ .docContact{text-align:right;font-size:10.5px;color:#44566c;line-height:1.5}
+ .docContact b{color:#0b2545}
+ .docTitle{display:flex;justify-content:space-between;align-items:flex-end;margin:20px 0 4px;padding-bottom:10px;border-bottom:2px solid #c9a227}
+ .docKind{font:700 30px 'Playfair Display',Georgia,serif;letter-spacing:.14em;color:#0b2545}
+ .docNo{font-size:12px;color:#0b2545;background:#f2f5f9;border:1px solid #e2e6ec;border-radius:999px;padding:5px 14px;letter-spacing:.08em}
+ .docMeta{display:flex;justify-content:space-between;gap:26px;margin:16px 0 20px}
+ .metaBlock{flex:1}
+ .metaBlock h4{font:700 9.5px Arial,Helvetica,sans-serif;letter-spacing:.2em;color:#8a99ab;margin:0 0 6px}
+ .metaBlock p{margin:0;font-size:12.5px;color:#22344a;line-height:1.6}
+ .metaBlock.right{max-width:290px}
+ .kv{width:100%;border-collapse:collapse}
+ .kv td{padding:3px 0;font-size:12px;border-bottom:1px dotted #d8dee6}
+ .kv td:last-child{text-align:right;font-weight:700;color:#0b2545}
+ table.lines{width:100%;border-collapse:collapse;margin:6px 0 4px}
+ table.lines thead th{background:#0b2545;color:#fff;font:700 10px Arial,Helvetica,sans-serif;letter-spacing:.14em;text-align:left;padding:9px 10px}
+ table.lines thead th.num{text-align:right}
+ table.lines tbody td{padding:9px 10px;border-bottom:1px solid #e9edf2;font-size:12.5px;vertical-align:top}
+ table.lines tbody tr:nth-child(even){background:#f8fafc}
+ table.lines td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+ .docFoot{display:flex;justify-content:space-between;gap:26px;margin-top:18px;align-items:flex-start}
+ .words{flex:1;font-size:11px;color:#5b6b7f;font-style:italic;padding-top:6px}
+ .words b{display:block;font-style:normal;font:700 9.5px Arial,Helvetica,sans-serif;letter-spacing:.18em;color:#8a99ab;margin-bottom:5px}
+ .totals{width:300px;border-collapse:collapse}
+ .totals td{padding:5px 0;font-size:12.5px;border-bottom:1px solid #eef1f5}
+ .totals td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+ .totals tr.grand td{border-top:2px solid #0b2545;border-bottom:2px solid #0b2545;font:700 15px 'Playfair Display',Georgia,serif;color:#0b2545;padding:8px 0}
+ .totals tr.balance td{color:#a3231f;font-weight:700}
+ .docSign{display:flex;justify-content:space-between;align-items:flex-end;margin-top:44px;gap:24px}
+ .signLine{width:230px;border-top:1px solid #0b2545;padding-top:5px;font-size:10.5px;color:#5b6b7f;text-align:center}
+ .stamp{font:700 22px 'Playfair Display',Georgia,serif;letter-spacing:.18em;color:#1f8a4c;border:3px double #1f8a4c;border-radius:10px;padding:6px 18px;transform:rotate(-7deg);opacity:.85}
+ .stamp.void{color:#a3231f;border-color:#a3231f}
+ .docTerms{margin-top:20px;padding-top:12px;border-top:1px solid #e2e6ec;font-size:10px;color:#7a8899;line-height:1.65}
+ .docCredit{margin-top:10px;text-align:center;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#9aa7b6}
+ .watermark{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%) rotate(-22deg);font:700 84px 'Playfair Display',Georgia,serif;color:rgba(163,35,31,.07);letter-spacing:.06em;pointer-events:none;z-index:0}
+ .doc>*{position:relative;z-index:1}
+ @media print{body{background:#fff}.doc{box-shadow:none;max-width:none;padding:0;border-top:0}.docHead{border-top:5px solid #0b2545;padding-top:16px}}
+ CSS;
+}
+
+/** A whole number written in words, so a bill can carry the sum as well as the digits. */
+function int_to_words(int $n): string{
+ $n=(int)$n;
+ if($n<0) return 'Minus '.int_to_words(-$n);
+ if($n===0) return 'Zero';
+ $ones=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+ $tens=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+ $chunk=function(int $x) use($ones,$tens): string{
+  $s='';
+  if($x>=100){ $s.=$ones[intdiv($x,100)].' Hundred'; $x%=100; if($x>0) $s.=' and '; }
+  if($x>=20){ $s.=$tens[intdiv($x,10)]; $x%=10; if($x>0) $s.='-'.$ones[$x]; }
+  elseif($x>0){ $s.=$ones[$x]; }
+  return $s;
+ };
+ $out=[];
+ foreach([[1000000000,'Billion'],[1000000,'Million'],[1000,'Thousand']] as $sc){
+  if($n>=$sc[0]){ $out[]=$chunk(intdiv($n,$sc[0])).' '.$sc[1]; $n%=$sc[0]; }
+ }
+ if($n>0) $out[]=$chunk($n);
+ return implode(' ',array_filter($out));
+}
+
+/** A sum of money in words: "Three Hundred Twenty-Five Thousand Shillings only". */
+function amount_in_words(float $amount,string $currency='Shillings',string $fraction='Cents'): string{
+ $amount=round(abs($amount),2);
+ $whole=(int)floor($amount);
+ $cents=(int)round(($amount-$whole)*100);
+ $s=int_to_words($whole).' '.$currency;
+ if($cents>0) $s.=' and '.int_to_words($cents).' '.$fraction;
+ return $s.' only';
+}
+
+/**
  * One sheet of paper.
  *
  * $kind     what the paper is called, in the bar across the top
@@ -656,7 +775,8 @@ function order_delivery(?array $order): array{
 function receipt_sheet(array $r): string{
  $h='<div class="sheet">';
  $h.='<div class="sheetBar">'.e($r['kind']??'RECEIPT').'</div>';
- $h.='<div class="sheetHotel"><b>HOTEL PARADISE ON THE NILE</b><span>Jinja &middot; Uganda &middot; +256 759 504 928</span></div>';
+ $b=hotel_brand();
+ $h.='<div class="sheetHotel"><img class="sheetLogo" src="'.e($b['crest']).'" alt=""><b>HOTEL PARADISE ON THE NILE</b><span>'.e($b['city']).' &middot; '.e($b['country']).' &middot; '.e($b['phones'][0]).'</span></div>';
  if(isset($r['number'])) $h.='<div class="sheetNo">'.e($r['number']).'</div>';
  if(!empty($r['meta'])){
   $h.='<div class="sheetMeta">';

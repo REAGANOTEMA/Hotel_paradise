@@ -20,13 +20,13 @@ Installation order
 ------------------
 1. Run the three SQL files against the MAIN system database, in number order.
    The files carry no USE statement, so first CONNECT and select the database
-   you are installing into (either hotelpardise_system or hotelpardise_website —
-   every statement is guarded and no-ops on a database that lacks the tables):
+   you are installing into. They use plain MariaDB DDL (ADD COLUMN IF NOT EXISTS
+   / CREATE INDEX IF NOT EXISTS), so they run from the phpMyAdmin SQL box, the
+   Import tab, or the mysql command line, and each one is safe to re-run.
        01_invoice_module_schema.sql      add columns + invoice_events table
        02_invoice_module_indexes.sql     the indexes the lookups lean on
        03_invoice_module_seed_data.sql   intentionally empty (see that file)
-   Every file is idempotent: running any of them again is a harmless no-op.
-   Use phpMyAdmin (Import while the database is selected) or:
+   Use phpMyAdmin (SQL box or Import while the database is selected) or:
      C:\xampp\mysql\bin\mysql.exe -u root -p hotelpardise_system < 01_invoice_module_schema.sql
 
 2. Nothing else needs installing — the PHP layer detects the new columns the
@@ -61,6 +61,6 @@ How a payment flows
 
 Numbering
 ---------
-Invoice numbers come from next_number() against a 'invoice' counter (the same
-scheme the rest of the hotel uses), so INV-000123 follows INV-000122 with no
-gaps and no collisions, even when two desks issue at the same moment.
+Invoice numbers come from next_number() against a counter (the same scheme the
+rest of the hotel uses), so INV-000123 follows INV-000122 with no gaps and no
+collisions, even when two desks issue at the same moment.

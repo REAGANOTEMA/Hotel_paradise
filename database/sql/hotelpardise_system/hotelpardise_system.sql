@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 13, 2026 at 10:15 AM
+-- Generation Time: Oct 13, 2026 at 12:40 PM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.26
 
@@ -1058,20 +1058,50 @@ CREATE TABLE `invoices` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `hotel_id` bigint(20) UNSIGNED NOT NULL,
   `guest_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `billing_name` varchar(190) DEFAULT NULL,
+  `billing_email` varchar(190) DEFAULT NULL,
+  `billing_phone` varchar(50) DEFAULT NULL,
   `invoice_number` varchar(80) NOT NULL,
   `subtotal` decimal(14,2) DEFAULT 0.00,
   `tax` decimal(14,2) DEFAULT 0.00,
+  `discount` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `currency` char(3) NOT NULL DEFAULT 'UGX',
+  `notes` text DEFAULT NULL,
   `total` decimal(14,2) DEFAULT 0.00,
   `status` enum('draft','issued','partially_paid','paid','cancelled','refunded') DEFAULT 'draft',
-  `created_at` timestamp NULL DEFAULT NULL
+  `due_date` date DEFAULT NULL,
+  `issued_at` datetime DEFAULT NULL,
+  `issued_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `invoices`
 --
 
-INSERT INTO `invoices` (`id`, `hotel_id`, `guest_id`, `invoice_number`, `subtotal`, `tax`, `total`, `status`, `created_at`) VALUES
-(1, 1, 1, 'INV-HPN-20260925-0001', 744000.00, 0.00, 744000.00, 'paid', NULL);
+INSERT INTO `invoices` (`id`, `hotel_id`, `guest_id`, `billing_name`, `billing_email`, `billing_phone`, `invoice_number`, `subtotal`, `tax`, `discount`, `currency`, `notes`, `total`, `status`, `due_date`, `issued_at`, `issued_by`, `created_at`, `updated_at`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 1, NULL, NULL, NULL, 'INV-HPN-20260925-0001', 744000.00, 0.00, 0.00, 'UGX', NULL, 744000.00, 'paid', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoice_events`
+--
+
+CREATE TABLE `invoice_events` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `invoice_id` bigint(20) UNSIGNED NOT NULL,
+  `event` enum('issue','void','discount','adjust','note') NOT NULL,
+  `amount` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `reason` text DEFAULT NULL,
+  `applier` bigint(20) UNSIGNED DEFAULT NULL,
+  `from_value` text DEFAULT NULL,
+  `to_value` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1082,6 +1112,7 @@ INSERT INTO `invoices` (`id`, `hotel_id`, `guest_id`, `invoice_number`, `subtota
 CREATE TABLE `invoice_items` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `invoice_id` bigint(20) UNSIGNED NOT NULL,
+  `item_no` int(11) NOT NULL DEFAULT 0,
   `description` varchar(255) NOT NULL,
   `quantity` decimal(14,3) DEFAULT 1.000,
   `unit_price` decimal(14,2) DEFAULT 0.00,
@@ -2062,7 +2093,11 @@ CREATE TABLE `payments` (
   `method` varchar(50) NOT NULL,
   `provider` varchar(100) DEFAULT NULL,
   `provider_reference` varchar(190) DEFAULT NULL,
+  `checkout_token` varchar(190) DEFAULT NULL,
   `status` enum('pending','successful','failed','refunded','reversed') DEFAULT 'pending',
+  `verified_at` datetime DEFAULT NULL,
+  `gateway_result` text DEFAULT NULL,
+  `payer_phone` varchar(50) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -2070,20 +2105,20 @@ CREATE TABLE `payments` (
 -- Dumping data for table `payments`
 --
 
-INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `customer_id`, `invoice_id`, `order_id`, `reservation_id`, `amount`, `method`, `provider`, `provider_reference`, `status`, `created_at`) VALUES
-(1, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(2, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(3, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(4, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(5, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(6, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(7, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(8, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(9, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(10, 1, NULL, 1, NULL, 1, NULL, 13455.00, 'card', 'pesapal', 'PAY-20261009-001', 'pending', '2026-10-09 12:19:08'),
-(11, 1, NULL, 3, NULL, 3, NULL, 46575.00, 'mtn_momo', 'pesapal', 'PAY-20261010-001', 'successful', '2026-10-10 16:49:03'),
-(12, 1, NULL, 1, NULL, NULL, 37, 264960.00, 'mtn_momo', 'pesapal', 'PAY-20261010-002', 'successful', '2026-10-10 20:54:40'),
-(13, 1, NULL, 4, NULL, NULL, 39, 324990.00, 'mtn_momo', 'pesapal', 'PAY-20261011-001', 'successful', '2026-10-11 09:48:21');
+INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `customer_id`, `invoice_id`, `order_id`, `reservation_id`, `amount`, `method`, `provider`, `provider_reference`, `checkout_token`, `status`, `verified_at`, `gateway_result`, `payer_phone`, `created_at`) VALUES
+(1, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
+(2, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
+(3, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
+(4, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
+(5, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
+(6, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
+(7, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
+(8, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
+(9, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
+(10, 1, NULL, 1, NULL, 1, NULL, 13455.00, 'card', 'pesapal', 'PAY-20261009-001', NULL, 'pending', NULL, NULL, NULL, '2026-10-09 12:19:08'),
+(11, 1, NULL, 3, NULL, 3, NULL, 46575.00, 'mtn_momo', 'pesapal', 'PAY-20261010-001', NULL, 'successful', NULL, NULL, NULL, '2026-10-10 16:49:03'),
+(12, 1, NULL, 1, NULL, NULL, 37, 264960.00, 'mtn_momo', 'pesapal', 'PAY-20261010-002', NULL, 'successful', NULL, NULL, NULL, '2026-10-10 20:54:40'),
+(13, 1, NULL, 4, NULL, NULL, 39, 324990.00, 'mtn_momo', 'pesapal', 'PAY-20261011-001', NULL, 'successful', NULL, NULL, NULL, '2026-10-11 09:48:21');
 
 -- --------------------------------------------------------
 
@@ -3698,7 +3733,17 @@ ALTER TABLE `inventory_movements`
 --
 ALTER TABLE `invoices`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `invoice_number` (`invoice_number`);
+  ADD UNIQUE KEY `invoice_number` (`invoice_number`),
+  ADD KEY `idx_invoices_guest` (`guest_id`),
+  ADD KEY `idx_invoices_open` (`hotel_id`,`status`,`issued_at`);
+
+--
+-- Indexes for table `invoice_events`
+--
+ALTER TABLE `invoice_events`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_invoice_events_invoice` (`invoice_id`),
+  ADD KEY `idx_invoice_events_created` (`created_at`);
 
 --
 -- Indexes for table `invoice_items`
@@ -3916,6 +3961,7 @@ ALTER TABLE `password_reset_tokens`
 --
 ALTER TABLE `payments`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_payments_checkout_token` (`checkout_token`),
   ADD KEY `idx_pay_order` (`order_id`),
   ADD KEY `idx_pay_res` (`reservation_id`),
   ADD KEY `idx_pay_cust` (`customer_id`),
@@ -3923,7 +3969,8 @@ ALTER TABLE `payments`
   ADD KEY `idx_pay_provider_ref` (`provider_reference`),
   ADD KEY `idx_payments_order` (`order_id`),
   ADD KEY `idx_payments_reservation` (`reservation_id`),
-  ADD KEY `idx_payments_customer` (`customer_id`);
+  ADD KEY `idx_payments_customer` (`customer_id`),
+  ADD KEY `idx_payments_invoice` (`invoice_id`);
 
 --
 -- Indexes for table `permissions`
@@ -4589,6 +4636,12 @@ ALTER TABLE `invoices`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
+-- AUTO_INCREMENT for table `invoice_events`
+--
+ALTER TABLE `invoice_events`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `invoice_items`
 --
 ALTER TABLE `invoice_items`
@@ -5180,6 +5233,12 @@ ALTER TABLE `inventory_movements`
   ADD CONSTRAINT `fk_im_item` FOREIGN KEY (`item_id`) REFERENCES `inventory_items` (`id`),
   ADD CONSTRAINT `fk_im_property` FOREIGN KEY (`property_id`) REFERENCES `properties` (`id`),
   ADD CONSTRAINT `fk_im_user` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `invoice_events`
+--
+ALTER TABLE `invoice_events`
+  ADD CONSTRAINT `fk_invoice_events_invoice` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `invoice_items`

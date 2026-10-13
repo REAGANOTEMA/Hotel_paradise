@@ -447,6 +447,27 @@ function PayPage() {
   /** What the receipt will say, once it has been said. */
   const [charged, setCharged] = React.useState(0);
 
+  /**
+   * Back from Pesapal.
+   *
+   * The gateway hands the guest back here after paying. The reference is read
+   * back from the house above; the moment it shows the money is in, the official
+   * receipt is raised exactly as it would be at the desk. Until the gateway's
+   * confirmation reaches the server the page says so rather than guessing -
+   * money is never called in from the browser.
+   */
+  const gatewayReturn = q.get('paid') === '1';
+  React.useEffect(() => {
+   if (!gatewayReturn || !detail || done) return;
+   setDone({
+    reference: detail.reference || ref,
+    message: settled
+     ? 'Payment received. Your official receipt is below' + (form.email.trim() ? ', and a copy has been emailed to ' + form.email.trim() : '') + '.'
+     : 'We are confirming this payment with Pesapal. Your receipt will appear here the moment it is confirmed, and is already on its way to your account.',
+    paid: settled,
+   });
+  }, [gatewayReturn, detail, settled, done]);
+
   const momoLabel = method === 'mtn_momo' ? 'MTN' : 'Airtel';
 
  const pay = async () => {
@@ -473,6 +494,11 @@ function PayPage() {
    const res = await fetch(await apiUrl('payment'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
    const d = await res.json();
    if (d.ok) {
+    // The real gateway hands back a secure checkout link. Leaving the page for
+    // Pesapal, which is where the money is actually taken; nothing is marked
+    // paid here, and the receipt is produced server-side only once Pesapal
+    // confirms, then shown when the guest is sent back.
+    if (d.redirect_url) { window.location.assign(String(d.redirect_url)); return; }
     setCharged(typeof d.amount === 'number' ? Math.round(d.amount) : payable);
     // A receipt is only a receipt once the money is actually in. Until the
     // gateway marks the payment successful this is a request, so no receipt is

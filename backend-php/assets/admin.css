@@ -13,10 +13,19 @@
   --ok:#2e7d32; --warn:#b26a00; --bad:#c62828; --blue:#0B5D78; --grey:#64748b;
   --side:250px;
   --r:10px; --rSm:8px;
-  --sh1:0 1px 2px rgba(7,26,51,.04), 0 10px 24px rgba(7,26,51,.08);
-  --sh2:0 1px 2px rgba(7,26,51,.04), 0 14px 32px rgba(7,26,51,.1);
-  --sh3:0 1px 2px rgba(7,26,51,.04), 0 18px 44px rgba(7,26,51,.14);
+  --sh1:inset 0 1px 0 rgba(255,255,255,.6), 0 1px 2px rgba(7,26,51,.05), 0 10px 24px rgba(7,26,51,.09);
+  --sh2:inset 0 1px 0 rgba(255,255,255,.62), 0 2px 4px rgba(7,26,51,.06), 0 16px 34px rgba(7,26,51,.12);
+  --sh3:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 6px rgba(7,26,51,.08), 0 22px 50px rgba(7,26,51,.16);
   --t:.18s ease;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --t2:.28s var(--ease);
+  --e1:inset 0 1px 0 rgba(255,255,255,.6), 0 1px 2px rgba(7,26,51,.05), 0 8px 20px rgba(7,26,51,.08);
+  --e2:inset 0 1px 0 rgba(255,255,255,.65), 0 2px 4px rgba(7,26,51,.06), 0 14px 30px rgba(7,26,51,.11);
+  --e3:inset 0 1px 0 rgba(255,255,255,.7), 0 3px 6px rgba(7,26,51,.07), 0 24px 48px rgba(7,26,51,.16);
+  --e4:inset 0 1px 0 rgba(255,255,255,.75), 0 8px 20px rgba(7,26,51,.1), 0 34px 76px rgba(7,26,51,.22);
+  --foil:linear-gradient(180deg,#e0b53a,#C9A227 48%,#A9861B);
+  --foilLine:linear-gradient(90deg,#e0b53a,#C9A227 46%,#A9861B);
+  --glass:rgba(255,255,255,.82);
   --ring:0 0 0 3px rgba(201,162,39,.22);
 }
 *{box-sizing:border-box}
@@ -530,6 +539,7 @@ ul.clean{list-style:none;margin:0;padding:0}
 .sheet{width:78mm;max-width:100%;margin:0 auto;background:#fff;color:#000;padding:5mm 4mm;font-family:'DM Sans',sans-serif;font-size:12px;line-height:1.42}
 .sheetBar{background:#071A33;color:#fff;text-align:center;letter-spacing:.22em;font-size:9.5px;font-weight:700;padding:5px 4px}
 .sheetHotel{text-align:center;margin-top:6px}
+.sheetHotel .sheetLogo{display:block;width:36px;height:36px;object-fit:contain;margin:0 auto 3px}
 .sheetHotel b{display:block;font-family:'Playfair Display',serif;font-size:12.5px;letter-spacing:.04em}
 .sheetHotel span{display:block;font-size:9.5px;color:#444;margin-top:1px}
 .sheetNo{text-align:center;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin:6px 0 2px}
@@ -701,3 +711,207 @@ ul.clean{list-style:none;margin:0;padding:0}
 .actForm{display:inline-block;margin:0}
 .actForm button{vertical-align:middle}
 td .actForm+form.actForm{margin-left:6px}
+
+/* ==================================================================
+   NILE LUXE — LAYERED DEPTH (v4 enhancement layer)
+
+   This whole block is additive: every selector already existed above,
+   so nothing is renamed or removed. Depth is built in quiet layers —
+   an elevation ladder, frosted glass where menus float, and gold foil
+   reserved for accents — and every motion touches only `transform` and
+   `opacity`, so a full table of controls stays cheap. Under
+   `prefers-reduced-motion` the drift and the entrance rests, and under
+   `forced-colors` the surfaces keep a real border.
+   ================================================================== */
+
+/* 1 · Atmosphere ---------------------------------------------------
+   A warm, faintly lit working surface plus a slow-drifting wash that
+   lives behind the content. The drift is a lonely transform on a fixed
+   layer, so it never touches layout and never costs a repaint of the
+   panels above it. */
+body{background:
+  radial-gradient(1200px 620px at 100% -10%,rgba(201,162,39,.05),transparent 62%),
+  radial-gradient(920px 520px at -8% 112%,rgba(11,93,120,.05),transparent 62%),
+  var(--bg)}
+.ambient{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(40% 42% at 18% 10%,rgba(201,162,39,.11),transparent 70%),
+    radial-gradient(44% 46% at 86% 90%,rgba(11,93,120,.10),transparent 72%),
+    radial-gradient(70% 70% at 50% 50%,rgba(247,243,234,.45),transparent 82%);
+  animation:ambientDrift 46s ease-in-out infinite alternate}
+@keyframes ambientDrift{
+  from{transform:translate3d(-1.4%,-1%,0) scale(1)}
+  to{transform:translate3d(1.4%,1%,0) scale(1.05)}}
+
+/* 2 · The rail: deeper navy, a faint top glow and a hairline gold edge */
+.side{
+  background:
+    radial-gradient(120% 170px at 50% 0,rgba(224,181,58,.13),transparent 72%),
+    linear-gradient(168deg,#040b18,#071A33 46%,#0c2344 78%,#0f2850);
+  border-right:1px solid rgba(201,162,39,.16);
+  box-shadow:inset -1px 0 0 rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.06),10px 0 34px rgba(3,9,20,.3)}
+.sideBrand{border-bottom-color:rgba(255,255,255,.06)}
+.sideBrand::after{content:'';position:absolute;left:16px;right:16px;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,162,39,.55),transparent);pointer-events:none}
+.sideLogo{box-shadow:0 6px 20px rgba(0,0,0,.5),0 0 0 3px rgba(201,162,39,.14)}
+.sideNav .ico{box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 1px 2px rgba(0,0,0,.22)}
+.sideNav a.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 16px rgba(3,9,20,.28)}
+.sideNav a.on::before{background:var(--foil)}
+.avatar{box-shadow:inset 0 0 0 2px rgba(255,255,255,.25),0 2px 8px rgba(0,0,0,.28)}
+
+/* 3 · The topbar: frosted glass over a hairline gold rule. It stays
+   sticky, so the blur is the only thing the eye notices as it passes. */
+.top{
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.76));
+  border-bottom:1px solid rgba(228,224,210,.9);
+  -webkit-backdrop-filter:blur(16px) saturate(150%);
+  backdrop-filter:blur(16px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 24px rgba(7,26,51,.07)}
+.notifyBtn,.voiceBtn,.profBtn{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 2px 6px rgba(7,26,51,.08)}
+.notifyBtn:hover,.voiceBtn:hover,.profBtn:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 20px rgba(7,26,51,.13)}
+
+/* 4 · Type scale: grand on a desktop, never overflowing on a phone. */
+.pageTitle{font-size:clamp(17px,.95rem + .6vw,24px);letter-spacing:.012em}
+.pageSub{font-size:clamp(11.5px,.7rem + .28vw,13.5px)}
+.panel h2{letter-spacing:.008em}
+
+/* 5 · The elevation ladder on every raised surface. Panels sit on e1
+   and hold still; the interactive cards step up a tier as the pointer
+   lands, with the same 1px inner highlight carrying the light. */
+.panel,.kpi,.room,.itemCard,.cart{border-radius:14px}
+.panel{box-shadow:var(--e1)}
+.panel h2::before{background:var(--foil)}
+.panel,.metaCell,.cart{position:relative}
+.content>.panel{box-shadow:var(--e1)}
+.emptyState{box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+
+/* Dimensional KPI cards: a soft perspective tilt, a floating icon
+   roundel and a radial sheen, all driven by the existing --k accent. */
+.kpis{perspective:1500px}
+.kpi{background:linear-gradient(180deg,#fff,#fdfcf8);transform-style:preserve-3d}
+.kpi::after{background:radial-gradient(circle at 84% 10%,rgba(224,181,58,.16),transparent 60%)}
+.kpi:hover{transform:translateY(-2px) rotateX(1.1deg) rotateY(-1.4deg);box-shadow:var(--e3);border-color:rgba(201,162,39,.5)}
+.kpiIco{
+  background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(7,26,51,.05));
+  border:1px solid rgba(255,255,255,.75);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 7px 16px rgba(7,26,51,.16);
+  transform:translateZ(26px)}
+.kpiVal{font-size:clamp(21px,1.15rem + 1.5vw,31px);letter-spacing:.005em}
+.kpiHint{font-size:clamp(11.5px,.72rem + .18vw,12.5px)}
+
+.room{box-shadow:var(--e1)}
+.room:hover{transform:translateY(-2px);box-shadow:var(--e2)}
+.itemCard{box-shadow:var(--e1)}
+.itemCard:hover{box-shadow:var(--e2)}
+.cart{box-shadow:var(--e2)}
+.metaCell{box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+
+/* 6 · Tables: a quieter header wash and a gold-tinted hover rail. */
+.tbl th{background:linear-gradient(180deg,#fbfaf5,#f4f2e9);border-bottom-color:rgba(228,224,210,.95)}
+.tbl tbody tr:hover td{background:linear-gradient(90deg,rgba(201,162,39,.07),rgba(201,162,39,.02))}
+.tableScroll{scrollbar-width:thin}
+.tableScroll::-webkit-scrollbar{height:9px}
+.tableScroll::-webkit-scrollbar-thumb{background:rgba(7,26,51,.18);border-radius:999px}
+.tableScroll::-webkit-scrollbar-thumb:hover{background:rgba(7,26,51,.3)}
+
+/* 7 · Buttons — and the fix for the modules that emit `btn ghost` /
+   `btn ghost2` (and the occasional `btn navy`). They were undefined, so
+   those controls fell back to solid gold. Now each is a real frosted
+   secondary action with its own hover, active, focus and disabled
+   states, and none of them can accidentally look enabled while busy. */
+.btn.ghost,.btnGhost{
+  background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(255,255,255,.74));
+  color:var(--navy);border:1px solid var(--line);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(7,26,51,.06),0 6px 16px rgba(7,26,51,.06)}
+.btn.ghost:hover,.btnGhost:hover{
+  background:#fff;border-color:rgba(201,162,39,.62);color:var(--gold-deep);transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 10px 22px rgba(201,162,39,.22)}
+.btn.ghost:active,.btnGhost:active{transform:translateY(1px);box-shadow:inset 0 2px 5px rgba(7,26,51,.12)}
+.btn.ghost.sm,.btnGhost.sm{box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 1px 2px rgba(7,26,51,.05)}
+.btn.ghost2{
+  background:linear-gradient(180deg,rgba(11,93,120,.12),rgba(11,93,120,.04));
+  color:var(--nile);border:1px solid rgba(11,93,120,.32);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 2px rgba(7,26,51,.05)}
+.btn.ghost2:hover{
+  background:linear-gradient(180deg,rgba(11,93,120,.2),rgba(11,93,120,.1));
+  border-color:rgba(11,93,120,.55);color:#084a5e;transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 10px 22px rgba(11,93,120,.2)}
+.btn.ghost2:active{transform:translateY(1px);box-shadow:inset 0 2px 5px rgba(7,26,51,.14)}
+.btn.navy{
+  background:linear-gradient(180deg,#18386a,#0f2850 52%,#0a1e3d);color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -2px 1px rgba(0,0,0,.32),0 2px 4px rgba(7,26,51,.2),0 10px 22px rgba(15,40,80,.3)}
+.btn.navy:hover{
+  background:linear-gradient(180deg,#1c4177,#123056 52%,#0c2344);transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -2px 1px rgba(0,0,0,.34),0 4px 8px rgba(7,26,51,.22),0 16px 34px rgba(15,40,80,.34)}
+.btn.navy:active{transform:translateY(1px);box-shadow:inset 0 2px 5px rgba(0,0,0,.4)}
+.btn.ghost:focus-visible,.btn.ghost2:focus-visible,.btn.navy:focus-visible,.btnGhost:focus-visible{
+  outline:none;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--gold)}
+.btn.ghost[disabled],.btn.ghost2[disabled],.btn.navy[disabled],.btnGhost[disabled],.btn.ghost.loading,.btn.ghost2.loading,.btn.navy.loading{
+  background-image:none;box-shadow:none;opacity:.55;cursor:not-allowed;transform:none;pointer-events:none}
+.btn.sm:not(.ghost):not(.ghost2):not(.navy):hover{box-shadow:0 6px 16px rgba(201,162,39,.26)}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--gold)}
+
+/* 8 · Badges: a hairline of light so the pill reads as a solid chip. */
+.badge{box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}
+.badge.gold{background:linear-gradient(180deg,rgba(224,181,58,.22),rgba(201,162,39,.1));color:#7c6110;border-color:rgba(201,162,39,.55)}
+
+/* 9 · Forms: a whisper of inset depth, and a gold focus that lifts. */
+.field input,.field select,.field textarea{box-shadow:inset 0 1px 2px rgba(7,26,51,.05)}
+.field input:focus,.field select:focus,.field textarea:focus{
+  box-shadow:inset 0 1px 2px rgba(7,26,51,.03),var(--ring);background:#fffdf6}
+.loginCard .field input{box-shadow:inset 0 1px 2px rgba(7,26,51,.06)}
+.loginCard .field input:focus{box-shadow:inset 0 1px 2px rgba(7,26,51,.03),0 0 0 3px rgba(212,175,55,.18),0 8px 20px rgba(212,175,55,.16)}
+fieldset{background:linear-gradient(180deg,rgba(250,249,245,.6),transparent)}
+
+/* 10 · Floating glass: the member menu, the bell menu and the modal sit
+   on the top of the ladder, so they get the deepest shadow and a blur. */
+.profMenu,.notifyMenu{
+  background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(255,255,255,.9));
+  -webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);
+  box-shadow:var(--e4)}
+.modalPanel{
+  background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(253,252,248,.97));
+  -webkit-backdrop-filter:blur(20px) saturate(150%);backdrop-filter:blur(20px) saturate(150%);
+  box-shadow:var(--e4);border-radius:16px}
+.toast{box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 24px 54px rgba(3,9,20,.4)}
+
+/* 11 · The entrance: panels and KPI cards fade and rise 8px on load,
+   lightly staggered. `backwards` fill (not `forwards`) means the resting
+   state is the element's own, so hover transforms keep working once the
+   reveal has finished. */
+@keyframes riseIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.content>.panel,.content .panel{animation:riseIn .5s var(--ease) backwards}
+.kpis .kpi{animation:riseIn .5s var(--ease) backwards}
+.kpis .kpi:nth-child(2){animation-delay:.05s}
+.kpis .kpi:nth-child(3){animation-delay:.1s}
+.kpis .kpi:nth-child(4){animation-delay:.15s}
+.kpis .kpi:nth-child(5){animation-delay:.2s}
+.kpis .kpi:nth-child(6){animation-delay:.25s}
+.kpis .kpi:nth-child(n+7){animation-delay:.3s}
+
+/* 12 · Mobile: keep every control reachable and the header uncluttered. */
+@media(max-width:720px){
+  .topBack{padding:8px 10px}
+  .topBack span{display:none}
+  .kpiIco{transform:none}
+}
+@media(max-width:560px){
+  .kpiVal{font-size:clamp(20px,1rem + 2.4vw,26px)}
+  .pageTitle{font-size:clamp(16px,.9rem + 1.4vw,20px)}
+}
+
+/* 13 · Honour the visitor's own settings. */
+@media(prefers-reduced-motion:reduce){
+  .ambient{animation:none}
+  .content>.panel,.content .panel,.kpis .kpi{animation:none}
+  .kpi:hover,.room:hover,.itemCard:hover,.btn.ghost:hover,.btn.ghost2:hover,.btn.navy:hover,.btnGhost:hover{transform:none}
+  .btn.ghost:active,.btnGhost:active{transform:none}
+}
+@media(forced-colors:active){
+  .btn.ghost,.btn.ghost2,.btn.navy,.btnGhost{border:1px solid ButtonText}
+  .kpi,.panel,.room,.itemCard,.cart,.modalPanel{border:1px solid CanvasText}
+  .kpi::after,.kpi::before,.panel h2::before,.sideBrand::after{forced-color-adjust:none}
+}

@@ -34,28 +34,92 @@ function formula_invoice_lines(int $view,array $lines): void{
  echo '</tbody></table>';
 }
 
-/** The printable statement, drawn to its own window so the browser prints
- *  exactly one sheet. */
+/**
+ * The printed invoice: a whole, self-contained, branded page.
+ *
+ * It carries the hotel's own crest, its address and its colours, so a bill that
+ * leaves the desk looks like the house and not like a spreadsheet. It is built
+ * as one HTML document and handed to a fresh window, which prints exactly the
+ * sheet and nothing of the console around it. The document is JSON-encoded into
+ * the script so no line, however it is punctuated, can break the page.
+ */
 function invoice_print(array $inv,array $lines,float $paid,float $due): void{
- $hotel=row('SELECT name,city FROM hotels WHERE id=1');
- $top=($hotel['name']??'Hotel Paradise on the Nile').' &middot; '.e($hotel['city']??'Jinja');
- echo '<button class="btn sm" style="margin-top:14px" onclick="invoicePrint()">Print / Save PDF</button>';
- echo '<div id="invPrint" style="display:none">';
- echo '<h1 style="margin:0 0 4px">'.e($inv['invoice_number']?:('Draft #'.$inv['id'])).'</h1>';
- echo '<p style="margin:0 0 14px">'.$top.'<br>Issued '.fmtdt($inv['issued_at']??$inv['created_at']).($due>0?' &middot; Due '.e(substr((string)($inv['due_date']??''),0,10)):'').'</p>';
- echo '<h2 style="margin:0 0 4px">Billed to</h2><p style="margin:0 0 14px">'.e($inv['billing_name']??'').'<br>'
-  .e($inv['billing_email']??'').'<br>'.e($inv['billing_phone']??'').'</p>';
- echo '<table border="1" cellpadding="6" cellspacing="0" style="width:100%;border-collapse:collapse"><thead><tr><th align="left">Qty</th><th align="left">Description</th><th align="right">Total</th></tr></thead><tbody>';
+ $b=hotel_brand();
+ $num=(string)($inv['invoice_number']?:('Draft #'.$inv['id']));
+ $issued=fmtdt($inv['issued_at']??$inv['created_at']);
+ $dueDate=substr((string)($inv['due_date']??''),0,10);
+ $statusRaw=(string)$inv['status'];
+ $statusLabel=ucwords(str_replace('_',' ',$statusRaw));
+ $void=in_array($statusRaw,['cancelled','void','refunded'],true);
+ $paidOff=!$void && $due<=0.0001 && $paid>0;
+
+ $subtotal=(float)($inv['subtotal']??0);
+ $discount=(float)($inv['discount']??0);
+ $total=(float)($inv['total']??0);
+
+ $rows=''; $i=0;
  foreach($lines as $l){
-  echo '<tr><td>'.e(rtrim(rtrim(number_format((float)$l['quantity'],2,'.',''),'0'),'.')).'</td><td>'.e($l['description']).'</td>'
-   .'<td align="right">'.money($l['total']).'</td></tr>';
+  $i++;
+  $qty=rtrim(rtrim(number_format((float)$l['quantity'],2,'.',''),'0'),'.');
+  $rows.='<tr><td class="num">'.$i.'</td><td>'.e((string)$l['description']).'</td>'
+   .'<td class="num">'.e($qty).'</td><td class="num">'.money($l['unit_price']).'</td><td class="num">'.money($l['total']).'</td></tr>';
  }
- echo '<tr><td colspan="2" align="right"><b>Total</b></td><td align="right"><b>'.money($inv['total']).'</b></td></tr>'
-  .'<tr><td colspan="2" align="right">Received</td><td align="right">'.money($paid).'</td></tr>'
-  .'<tr><td colspan="2" align="right"><b>Balance due</b></td><td align="right"><b>'.money($due).'</b></td></tr>';
- echo '</tbody></table>';
- if(!empty($inv['notes'])) echo '<p>'.e($inv['notes']).'</p>';
- echo '<p>Thank you for staying with us.</p></div>';
+ if($i===0) $rows='<tr><td colspan="5" style="text-align:center;color:#8a99ab;padding:18px">No lines on this invoice.</td></tr>';
+
+ $billName=trim((string)($inv['billing_name']??''));
+ $billEmail=trim((string)($inv['billing_email']??''));
+ $billPhone=trim((string)($inv['billing_phone']??''));
+
+ $body='<div class="doc">'
+  .($void?'<div class="watermark">VOID</div>':'')
+  .'<header class="docHead">'
+   .'<div class="docBrand"><img class="docLogo" src="'.e($b['logo']).'" alt="">'
+    .'<div><div class="docName">HOTEL PARADISE<span>ON THE NILE</span></div>'
+    .'<div class="docTag">'.e($b['city']).' &middot; '.e($b['country']).' &middot; Since 1998</div></div></div>'
+   .'<div class="docContact"><div><b>'.e($b['legal']).'</b></div>'
+    .'<div>'.e($b['address']).'</div><div>'.e($b['po_box']).'</div>'
+    .'<div>Tel: '.e(implode(' / ',$b['phones'])).'</div>'
+    .'<div>'.e($b['email']).'</div><div>'.e($b['website']).'</div></div>'
+  .'</header>'
+  .'<div class="docTitle"><div class="docKind">INVOICE</div><div class="docNo">'.e($num).'</div></div>'
+  .'<div class="docMeta">'
+   .'<div class="metaBlock"><h4>BILLED TO</h4><p><b>'.e($billName!==''?$billName:'-').'</b>'
+    .($billEmail!==''?'<br>'.e($billEmail):'').($billPhone!==''?'<br>'.e($billPhone):'').'</p></div>'
+   .'<div class="metaBlock right"><h4>DETAILS</h4><table class="kv">'
+    .'<tr><td>Issued</td><td>'.e($issued).'</td></tr>'
+    .($dueDate!==''?'<tr><td>Due</td><td>'.e($dueDate).'</td></tr>':'')
+    .'<tr><td>Status</td><td>'.e($statusLabel).'</td></tr>'
+   .'</table></div>'
+  .'</div>'
+  .'<table class="lines"><thead><tr><th class="num">#</th><th>Description</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Total</th></tr></thead><tbody>'.$rows.'</tbody></table>'
+  .'<div class="docFoot">'
+   .'<div class="words"><b>AMOUNT IN WORDS</b>'.e(amount_in_words($total)).'</div>'
+   .'<table class="totals">'
+    .'<tr><td>Subtotal</td><td>'.money($subtotal).'</td></tr>'
+    .($discount>0?'<tr><td>Discount</td><td>-'.money($discount).'</td></tr>':'')
+    .'<tr class="grand"><td>Total</td><td>'.money($total).'</td></tr>'
+    .($paid>0?'<tr><td>Received</td><td>'.money($paid).'</td></tr>':'')
+    .'<tr class="'.($due>0?'balance':'').'"><td>Balance due</td><td>'.money($due).'</td></tr>'
+   .'</table>'
+  .'</div>'
+  .'<div class="docSign"><div class="signLine">Authorised signature</div>'
+   .($paidOff?'<div class="stamp">PAID</div>':($void?'<div class="stamp void">VOID</div>':'')).'</div>'
+  .(!empty($inv['notes'])?'<div class="docTerms"><b>Notes:</b> '.e((string)$inv['notes']).'</div>':'')
+  .'<div class="docTerms">Thank you for choosing '.e($b['name']).'. Kindly settle any balance by the date shown. Payments are accepted by cash, mobile money, card or bank transfer. This document is computer generated and is valid without a handwritten signature.</div>'
+  .'<div class="docCredit">Designed by Reagansoft Innovation Limited &middot; reagansoftinnovation.com</div>'
+  .'</div>';
+
+ $doc='<!doctype html><html lang="en"><head><meta charset="utf-8">'
+  .'<meta name="viewport" content="width=device-width,initial-scale=1">'
+  .'<title>Invoice '.e($num).' &middot; '.e($b['name']).'</title>'
+  .'<style>'.document_css().'</style></head><body>'.$body
+  .'<div class="noprint" style="text-align:center;margin:18px">'
+  .'<button onclick="window.print()" style="padding:11px 22px;border:0;border-radius:9px;background:#0b2545;color:#fff;font:600 14px Arial,Helvetica,sans-serif;cursor:pointer">Print / Save PDF</button></div>'
+  .'<style>@media print{.noprint{display:none}}</style></body></html>';
+
+ $docJs=json_encode($doc,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT);
+ echo '<button class="btn sm" style="margin-top:14px" onclick="invoicePrint()">Print / Save PDF</button>';
+ echo '<script>function invoicePrint(){var w=window.open("","_blank","width=820,height=1000");if(!w){return false}var d=w.document;d.open();d.write('.$docJs.');d.close();w.focus();setTimeout(function(){try{w.print()}catch(e){}},400);return false}</script>';
 }
 
 /* ---------------- actions ---------------- */
@@ -318,7 +382,6 @@ if($view>0){
 
   invoice_print($inv,$lines,$paid,$due);
   echo '</div>';
-  echo '<script>function invoicePrint(){var b=document.getElementById(\'invPrint\');var w=window.open(\'\',\'_blank\',\'width=760,height=900\');w.document.write(\'<style>body{font:13px/1.6 Georgia,serif;padding:32px;max-width:620px;margin:0 auto}table{margin:12px 0}</style>\'+b.innerHTML);setTimeout(function(){w.print();},150);}</script>';
   page_foot(); return;
  }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 require __DIR__.'/app/bootstrap.php';
 require_once __DIR__.'/app/guest_comm.php';
 require_once __DIR__.'/app/invoices.php';
+require_once __DIR__.'/app/pesapal.php';
 header('Content-Type: application/json; charset=utf-8');
 
 // A public endpoint must never answer with a PHP error page. The website reads
@@ -138,12 +139,58 @@ function api_customer_from_token(string $tok): ?array{
  }catch(Throwable $e){ return null; }
 }
 
+/**
+ * Move a payment to its final state, and let the rest of the house follow.
+ *
+ * This is the one place a payment is ever marked settled once the gateway has
+ * spoken, and it is only ever reached from the server side (the offline demo
+ * settle here, or the Pesapal callback/IPN further down) - never from a request
+ * the guest's browser can shape. It writes the verification stamp the server
+ * owns, nudges the invoice it belongs to so the balance is recomputed, and -
+ * only when the money is truly in, and only the first time - produces and
+ * emails the receipt. A repeated callback finds the row already settled, so a
+ * doubled notification never receipts or charges twice.
+ */
+function web_settle_payment(int $pid, string $status, array $raw=[]): array{
+ $pay=row('SELECT * FROM payments WHERE id=?',[$pid]);
+ if(!$pay) return ['ok'=>false,'status'=>'','receipt_sent'=>false];
+ if(!in_array($status,['successful','failed','reversed','refunded','pending'],true)) $status='pending';
+ $already=(string)($pay['status']??'')==='successful';
+
+ $set=['status=?']; $args=[$status];
+ // The verification stamp is written by the server, never by the browser.
+ if($status!=='pending'&&existing_columns('payments',['verified_at'])!==[]){ $set[]='verified_at=NOW()'; }
+ if($raw!==[]&&existing_columns('payments',['gateway_result'])!==[]){
+  $set[]='gateway_result=?'; $args[]=json_encode($raw,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+ }
+ $args[]=$pid;
+ q('UPDATE payments SET '.implode(',',$set).' WHERE id=?',$args);
+
+ if($pay['invoice_id']!==null&&function_exists('invoice_recompute')){
+  try{ invoice_recompute((int)$pay['invoice_id']); }catch(Throwable $e){ error_log('[hotel api] invoice recompute skipped: '.$e->getMessage()); }
+ }
+ if((string)($pay['status']??'')!==$status){
+  audit('payment_settled','payments',$pid,['provider_reference'=>(string)($pay['provider_reference']??''),'from'=>(string)($pay['status']??''),'to'=>$status]);
+ }
+
+ $sent=false;
+ // A receipt follows confirmed money only, and only once.
+ if($status==='successful'&&!$already){
+  try{
+   require_once __DIR__.'/app/receipts.php';
+   $rcpt=receipts_after_payment($pid);
+   $sent=(bool)($rcpt['email_sent']??false);
+  }catch(Throwable $e){ error_log('[hotel api] receipt after payment '.$pid.' skipped: '.$e->getMessage()); }
+ }
+ return ['ok'=>true,'status'=>$status,'receipt_sent'=>$sent];
+}
+
 $act=$_GET['act']??'';
 $method=$_SERVER['REQUEST_METHOD'];
 // 'avatar' is a read of the signed-in guest's own photograph. It is listed with
 // the other GET requests so an <img> can point straight at it, and it still
 // requires the guest's session token, so one guest can never read another's.
-$read=['rooms','menu','health','checkout','avatar','news','testimonials'];
+$read=['rooms','menu','health','checkout','avatar','news','testimonials','pesapal_ipn','pesapal_callback'];
 if($method!=='GET'&&$method!=='POST'){ $out(['ok'=>false,'error'=>'Method not allowed'],405); }
 if($method==='GET'){
  if(!in_array($act,$read)){ $out(['ok'=>false,'error'=>'Method not allowed for this request'],405); }
@@ -617,24 +664,49 @@ if($act==='payment'){
  api_notify('payment:'.$payRef,'payment','Payment request '.$payRef,
   $name.' started a '.strtoupper($method).' payment of '.money($expected).' for the '.$label.' '.$ref.'.',
   ['reference'=>$payRef,'source'=>$label,'amount'=>$expected,'method'=>$method,'guest'=>$name,'phone'=>$phone]);
- // No gateway is connected yet, so a payment settles here the moment it is
-  // made: the row is marked successful, the receipt is produced, and the
-  // reference reads as paid. The guest's own page then prints that receipt.
-  if(PAYMENT_DEMO_SETTLE){
-   q('UPDATE payments SET status=\'successful\' WHERE id=?',[$pid]);
-   // The verification stamp is written by the server, never by the browser.
-   // When the real Pesapal is connected this same stamp is set inside the
-   // IPN handler, after the server has asked the gateway to confirm the money.
-   if(existing_columns('payments',['verified_at'])!==[]) q('UPDATE payments SET verified_at=NOW() WHERE id=?',[$pid]);
-   if($iid!==null&&function_exists('invoice_recompute')){ invoice_recompute($iid); }
-   require_once __DIR__.'/app/receipts.php';
-   $rcpt=receipts_after_payment($pid);
-   audit('web_payment_settled','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'successful']);
-   $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'demo','online'=>true,'status'=>'successful','paid'=>true,
-    'receipt_sent'=>(bool)($rcpt['email_sent']??false),
-    'message'=>'Payment received. Your receipt is ready'.(($rcpt['email_sent']??false)?' and a copy has been emailed to you':'').'.']);
+ // Real gateway first. When the Pesapal keys are present the guest is handed
+ // off to Pesapal's own secure page and this row stays pending; the money is
+ // never marked paid from the browser. Only the server-side callback / IPN
+ // below does that, after Pesapal itself confirms the transaction. Until the
+ // keys are filled in this branch is skipped and the safe offline behaviour
+ // underneath is used unchanged.
+ if(pesapal_enabled()){
+  $sub=pesapal_submit_order([
+   'reference'=>$payRef,
+   'amount'=>$expected,
+   'description'=>ucfirst($label).' '.$ref,
+   'email'=>$email,
+   'phone'=>$phone,
+   'name'=>$name,
+  ]);
+  if($sub['ok']){
+   if(existing_columns('payments',['gateway_result'])!==[]){
+    q('UPDATE payments SET gateway_result=? WHERE id=?',[
+      json_encode(['gateway'=>'pesapal','tracking_id'=>$sub['tracking_id'],'env'=>pesapal_config()['env'],'initiated_at'=>date('c')],JSON_UNESCAPED_SLASHES),$pid]);
+   }
+   audit('web_payment_gateway','payments',$pid,['provider_reference'=>$payRef,'gateway'=>'pesapal','tracking_id'=>$sub['tracking_id'],'status'=>'pending']);
+   $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>true,'status'=>'pending','paid'=>false,
+    'redirect_url'=>$sub['redirect_url'],
+    'message'=>'Taking you to Pesapal to pay '.money($expected).' securely.']);
   }
-  $msg=$iid!==null
+  // The gateway would not open a checkout. Never pretend that it did: leave the
+  // row pending for the front desk, say so plainly, and keep the reason in the
+  // log for the team rather than on the guest's screen.
+  error_log('[hotel api] pesapal submit failed for '.$payRef.': '.$sub['error']);
+  $out(['ok'=>false,'error'=>'We could not reach Pesapal just now. Please try again in a moment, or call +256 759 504 928 and the front desk will take your payment.'],502);
+ }
+ // No gateway connected yet, so a payment settles here the moment it is made:
+ // the row is marked successful, the receipt is produced, and the reference
+ // reads as paid. The guest's own page then prints that receipt. This is the
+ // same path the real gateway's callback uses once the keys are live.
+ if(PAYMENT_DEMO_SETTLE){
+  $settle=web_settle_payment($pid,'successful',['gateway'=>'demo']);
+  audit('web_payment_settled','payments',$pid,['provider_reference'=>$payRef,'source'=>$src,'reference'=>$ref,'method'=>$method,'amount'=>$expected,'status'=>'successful']);
+  $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'demo','online'=>true,'status'=>'successful','paid'=>true,
+   'receipt_sent'=>(bool)($settle['receipt_sent']??false),
+   'message'=>'Payment received. Your receipt is ready'.(($settle['receipt_sent']??false)?' and a copy has been emailed to you':'').'.']);
+ }
+ $msg=$iid!==null
     ?'The front desk has your payment request and it will be matched to invoice '.$ref.'. Nothing is marked paid until the money is verified.'
     :'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.';
   $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,'status'=>'pending','paid'=>false,
@@ -1384,6 +1456,81 @@ if($act==='testimonials'){
   $items=rows("SELECT full_name,rating,message,department,created_at FROM guest_messages WHERE kind='experience' AND status='featured' ORDER BY id DESC LIMIT 12",[]);
   $out(['ok'=>true,
    'items'=>array_map(fn($t)=>['name'=>(string)$t['full_name'],'rating'=>(int)$t['rating'],'text'=>(string)$t['message'],'department'=>(string)$t['department'],'when'=>fmtdate($t['created_at'])],$items)]);
+}
+
+/**
+ * Pesapal, server to server, tells us what became of a transaction.
+ *
+ * This is the only thing that marks an online payment successful, and it is the
+ * reason the browser is never believed: the merchant reference Pesapal echoes
+ * back is matched against the payment row we minted, then the tracking id is
+ * confirmed with a GetTransactionStatus call before anything at all is written.
+ * A repeated IPN finds the row already settled and quietly agrees, so a doubled
+ * callback never receipts or charges twice. Pesapal expects a small JSON
+ * acknowledgement back; its shape is not acted on, only logged.
+ */
+if($act==='pesapal_ipn'){
+ $tid=trim((string)($_GET['OrderTrackingId']??$_GET['orderTrackingId']??''));
+ $mref=trim((string)($_GET['OrderMerchantReference']??$_GET['orderMerchantReference']??''));
+ $type=trim((string)($_GET['OrderNotificationType']??$_GET['orderNotificationType']??''));
+ $ack=function(int $http,string $message,string $status) use($type,$tid,$mref): void{
+  http_response_code($http);
+  echo json_encode(['orderNotificationType'=>$type,'orderTrackingId'=>$tid,'orderMerchantReference'=>$mref,'status'=>$status,'message'=>$message],JSON_UNESCAPED_UNICODE);
+  exit;
+ };
+ if($tid===''||$mref==='') $ack(200,'Missing identifiers','0');
+ $pay=row('SELECT * FROM payments WHERE provider_reference=? LIMIT 1',[$mref]);
+ if(!$pay) $ack(200,'Unknown reference','0');
+
+ $st=pesapal_transaction_status($tid);
+ if(!$st['ok']){
+  // Do not guess. Leave the row pending and let the callback, which the guest
+  // triggers by returning, try again with a fresh status call.
+  error_log('[hotel api] pesapal status check failed for '.$mref.': '.$st['error']);
+  $ack(200,'Could not verify','0');
+ }
+ $status=pesapal_map_status((string)$st['description'],(int)$st['status_code']);
+ $settle=web_settle_payment((int)$pay['id'],$status,[
+  'gateway'=>'pesapal','tracking_id'=>$tid,'code'=>$st['status_code'],'description'=>$st['description'],'raw'=>$st['raw'],
+ ]);
+ $ack(200,ucfirst($status),$status==='successful'?'1':'0');
+}
+
+/**
+ * Where Pesapal sends the guest's browser once they are done.
+ *
+ * Its only job is to send the guest back to the site's own pay page with their
+ * reference, so that page reads the true status from the house. But it verifies
+ * first - the same call the IPN makes - so a guest who returns before the IPN
+ * lands still gets their money confirmed and their receipt produced.
+ */
+if($act==='pesapal_callback'){
+ $tid=trim((string)($_GET['OrderTrackingId']??$_GET['orderTrackingId']??''));
+ $mref=trim((string)($_GET['OrderMerchantReference']??$_GET['orderMerchantReference']??''));
+ if($mref==='') $mref=trim((string)($_GET['reference']??''));
+
+ $pay=$mref!==''?row('SELECT * FROM payments WHERE provider_reference=? LIMIT 1',[$mref]):null;
+ if($pay&&$tid!==''){
+  $st=pesapal_transaction_status($tid);
+  if($st['ok']){
+   web_settle_payment((int)$pay['id'],pesapal_map_status((string)$st['description'],(int)$st['status_code']),[
+    'gateway'=>'pesapal','tracking_id'=>$tid,'code'=>$st['status_code'],'description'=>$st['description'],'raw'=>$st['raw'],
+   ]);
+  }else{
+   error_log('[hotel api] pesapal callback status failed for '.$mref.': '.$st['error']);
+  }
+ }
+ // Which page the guest came from, read from the row rather than trusted from
+ // the request, so the return lands on the right one.
+ $src='';
+ if($pay){
+  if((int)($pay['invoice_id']??0)>0) $src='invoice';
+  elseif((int)($pay['order_id']??0)>0) $src='order';
+  elseif((int)($pay['reservation_id']??0)>0) $src='booking';
+ }
+ $q=http_build_query(array_filter(['src'=>$src,'ref'=>$mref,'gateway'=>'pesapal','paid'=>'1'],fn($v)=>$v!==''));
+ header('Location: '.rtrim(SITE_URL,'/').'/pay.html'.($q!==''?'?'.$q:''),true,302);
+ exit;
 }
 
 $out(["ok"=>false,"error"=>"Unknown request"],404);
