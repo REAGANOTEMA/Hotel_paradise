@@ -360,7 +360,7 @@ export function Footer() {
     <div className="flag"><i></i><i></i><i></i></div>
     <div className="footerMain">
      <div className="footerBrand">
-      <img className="footerLogo" src="./images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel Paradise on the Nile" width={96} height={96}/>
+      <img className="footerLogo" src={LOGO} alt="Hotel Paradise on the Nile" width={256} height={256}/>
       <p className="footerTag">Premium hospitality in Jinja, on the banks of the Nile.</p>
       <div className="footerTagMore">
        <span>Sixty nine rooms and suites, riverside dining, a swimming pool and gardens for every occasion, all within one calm address.</span>
@@ -380,8 +380,9 @@ export function Footer() {
      <div className="footerStudio">
       <h4>BUILT BY</h4>
       <a className="studioLink" href={STUDIO.url} target="_blank" rel="noopener noreferrer">
-       <span className="studioName">{STUDIO.name}</span>
-       <span className="studioUrl">{STUDIO.label}</span>
+       <img className="studioLogo" src="./images/reagansoftinnovation-logo.jpeg" alt={STUDIO.name} width={44} height={44}/>
+       <span className="studioId"><span className="studioName">{STUDIO.name}</span>
+       <span className="studioUrl">{STUDIO.label}</span></span>
       </a>
       <p>Design, build and support of this website and the hotel management system.</p>
       <a className="studioWa" href={'https://wa.me/' + STUDIO.whatsapp} target="_blank" rel="noopener noreferrer">

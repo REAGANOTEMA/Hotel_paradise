@@ -99,6 +99,10 @@ function notify_dispatch(string $eventKey,string $category,string $title,string 
  if(!notify_ready()) return $fail('notifications-not-installed');
  if($eventKey==='') return $fail('missing-event-key');
  if($roles===[]) $roles=NOTIFY_DEFAULT_ROLES[$category]??['director','general_manager'];
+ /* The Director holds the whole house. Whatever an event is and whoever it was
+    first meant for, it is copied to her and to the systems desk, so nothing in
+    the hotel moves without appearing in her notifications. */
+ foreach(['director','super_admin'] as $always){ if(!in_array($always,$roles,true)) $roles[]=$always; }
 
  try{
   // One event, one notification. Checking first keeps a retry from ringing

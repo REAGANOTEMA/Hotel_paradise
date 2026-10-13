@@ -72,7 +72,11 @@ b,strong{font-variant-numeric:tabular-nums}
 .sideGroup.fold .groupHead .chev{transform:rotate(-90deg)}
 .groupBody{display:grid;grid-template-rows:1fr;transition:grid-template-rows .3s ease}
 .sideGroup.fold .groupBody{grid-template-rows:0fr}
-.groupBody>.gbInner{overflow:hidden;min-height:0;display:flex;flex-direction:column;gap:2px;padding:2px 0 6px 4px}
+.groupBody>.gbInner{overflow:hidden;min-height:0;display:flex;flex-direction:column;gap:2px;padding:2px 0 6px 4px;position:relative}
+/* A hairline that ties the revealed modules to the group title, so the title
+   reads as a section heading and the modules beneath it as its children. */
+.groupBody>.gbInner::before{content:'';position:absolute;left:12px;top:6px;bottom:12px;width:1px;background:linear-gradient(180deg,rgba(201,162,39,.5),rgba(255,255,255,.06));pointer-events:none}
+.sideGroup.fold .groupBody>.gbInner::before{display:none}
 @media (prefers-reduced-motion: reduce){.groupBody{transition:none}}
 .sideNav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:#b9c7d6;font-size:13.5px;min-height:40px;position:relative;transition:background var(--t),color var(--t)}
 .sideNav a:hover{background:rgba(255,255,255,.06);color:#fff}

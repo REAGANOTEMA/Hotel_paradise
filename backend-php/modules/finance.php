@@ -40,9 +40,8 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
  }
 }
 
-$from=(int)strtotime(trim($_GET['from']?:''));
-$d1=trim($_GET['from']?:date('Y-m-d'));
-$d2=trim($_GET['to']?:date('Y-m-d'));
+$d1=trim((string)($_GET['from']??''))?:date('Y-m-d');
+$d2=trim((string)($_GET['to']??''))?:date('Y-m-d');
 if($d2<$d1){ $tmp=$d1; $d1=$d2; $d2=$tmp; }
 $payments=rows("SELECT p.*,u.name usr,CASE WHEN p.invoice_id IS NOT NULL THEN 'invoice' WHEN p.order_id IS NOT NULL THEN 'order' WHEN p.reservation_id IS NOT NULL THEN 'reservation' ELSE 'other' END src FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE DATE(p.created_at) BETWEEN ? AND ? ORDER BY p.id DESC",[$d1,$d2]);
 

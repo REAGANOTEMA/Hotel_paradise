@@ -471,7 +471,54 @@ function DishDetail({
    THE MENU
    ------------------------------------------------------------------ */
 
+/**
+ * Lights the Add buttons one after the other, two seconds apart, so a long
+ * menu gently shows a guest where to press rather than relying on them to
+ * notice the small button on every card.
+ *
+ * Only the buttons actually on screen take a turn, and the light is put out
+ * the moment the guest touches the menu, so the page never nags. The whole
+ * thing rests for anyone who has asked their system to reduce motion.
+ */
+function useAddButtonLights() {
+  React.useEffect(() => {
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch {}
+    if (reduce) return;
+
+    let at = 0;
+    const lit = new Set<HTMLElement>();
+    const clear = () => { lit.forEach(el => el.classList.remove('addLit')); lit.clear(); };
+
+    const tick = () => {
+      if (document.hidden) return;
+      const all = Array.from(document.querySelectorAll<HTMLElement>('.dishGrid .addBtn'));
+      const vh = window.innerHeight;
+      const onScreen = all.filter(el => {
+        const r = el.getBoundingClientRect();
+        return r.bottom > vh * 0.12 && r.top < vh * 0.9 && r.width > 0;
+      });
+      if (!onScreen.length) { clear(); return; }
+      clear();
+      const el = onScreen[at % onScreen.length];
+      at += 1;
+      el.classList.add('addLit');
+      lit.add(el);
+    };
+
+    const id = window.setInterval(tick, 2000);
+    const onInteract = () => { clear(); };
+    document.addEventListener('pointerdown', onInteract, {passive: true});
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener('pointerdown', onInteract);
+      clear();
+    };
+  }, []);
+}
+
 function MenuPage() {
+  useAddButtonLights();
   const [sections, setSections] = React.useState<MenuSection[]>(FALLBACK);
   const [live, setLive] = React.useState(false);
   // The order survives a trip to sign in and back. A guest builds their tray,

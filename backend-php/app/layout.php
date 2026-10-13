@@ -186,8 +186,8 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
    if($vis===[]) continue;
    $hasActive=isset($vis[$active]);
    $gid='grp-'.preg_replace('/[^a-z0-9]+/i','-',strtolower($group['label']));
-   echo '<div class="sideGroup'.($hasActive?' hasActive':'').'" data-gid="'.e($gid).'">';
-   echo '<button class="groupHead" type="button" aria-expanded="true" aria-controls="'.e($gid).'">';
+   echo '<div class="sideGroup'.($hasActive?' hasActive':' fold').'" data-gid="'.e($gid).'">';
+   echo '<button class="groupHead" type="button" aria-expanded="'.($hasActive?'true':'false').'" aria-controls="'.e($gid).'">';
    echo '<span class="gIco">'.svg_icon(nav_group_icon($group['label'])).'</span>';
    echo '<span class="gLbl">'.e($group['label']).'</span>';
    echo '<span class="chev">'.svg_icon('chev').'</span>';
@@ -442,8 +442,9 @@ function page_scripts(): void{
       var head=g.querySelector('.groupHead'),body=g.querySelector('.groupBody');
       if(!head||!body)return;
       var id=g.getAttribute('data-gid');
-      var open=g.classList.contains('hasActive')||stored[id]!==false;
-      if(stored[id]===false&&!g.classList.contains('hasActive'))open=false;
+      /* A group opens only when it holds the page in view, or when the member
+         opened it before. Everything else stays folded until it is clicked. */
+      var open=g.classList.contains('hasActive')||stored[id]===true;
       var apply=function(on,quiet){
         g.classList.toggle('fold',!on);
         head.setAttribute('aria-expanded',on?'true':'false');

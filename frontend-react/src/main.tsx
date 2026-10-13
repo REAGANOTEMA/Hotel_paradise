@@ -2,7 +2,7 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms, ExploreMore, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, telHref, bgUrl, useReveal} from './shared';
-import {heroShots, SmartImage, type HeroShot} from './SmartImage';
+import {heroShots, SmartImage, type HeroShot, type ImageGroup} from './SmartImage';
 
 /**
  * What dining costs, worked out from the base figures so that the 3.5% the
@@ -92,6 +92,46 @@ const facts = [
  {t: 'Wellness', d: 'Health club with a swimming pool', img: 'fact-wellness'}
 ];
 
+/**
+ * A photograph and a short piece of writing, side by side, used to open a
+ * section with one strong picture rather than a row of small ones.
+ *
+ * `mood` dresses the frame: `smoke` lays a slow drift of smoke over the
+ * picture, which suits a dish lifted hot from the pass. The writing changes
+ * side with `flip`, so two of these can sit near each other without looking
+ * like a repeated block.
+ */
+function SplitFeature({
+  group = 'site', name, alt, ratio, eyebrow, title, text, cta, href, flip = false, mood
+}: {
+  group?: ImageGroup; name: string; alt: string; ratio: string;
+  eyebrow: string; title: string; text: string; cta: string; href: string;
+  flip?: boolean; mood?: 'smoke';
+}) {
+  return (
+    <div className={'splitBand reveal' + (flip ? ' flip' : '')}>
+      <div className={'splitMedia' + (mood === 'smoke' ? ' smoke' : '')}>
+        <SmartImage
+          group={group}
+          name={name}
+          alt={alt}
+          ratio={ratio}
+          widths={[480, 960, 1440]}
+          sizes="(max-width:900px) 100vw, 560px"
+          position="50% 50%"
+          zoom
+        />
+      </div>
+      <div className="splitCopy">
+        <p className="eyebrow">{eyebrow}</p>
+        <h2>{title}</h2>
+        <p className="splitText">{text}</p>
+        <a className="btn" href={href}>{cta}</a>
+      </div>
+    </div>
+  );
+}
+
 const MAP_QUERY = HOTEL.shortName + ', ' + HOTEL.addressForMap;
 const MAP_EMBED = 'https://www.google.com/maps?q=' + encodeURIComponent(MAP_QUERY) + '&output=embed';
 const MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(MAP_QUERY);
@@ -99,7 +139,22 @@ const MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIC
 const HERO_WIDTHS = [640, 1024, 1440, 1920, 2560];
 
 /** The carousel turns over on this, and so does the zoom on each slide. */
-const SLIDE_MS = 5000;
+const SLIDE_MS = 6000;
+
+/**
+ * What a slide is a photograph of, so the frame can dress it to suit: a dish
+ * carries a soft drift of smoke over it, a poured drink a faint handheld
+ * tremor, as if the picture were a short film rather than a still.
+ */
+const FOOD_SLUGS = new Set([
+  'pork-bbq', 'pizza-and-drinks-and-souce', 'steak-on-plate', 'wine-and-fried-chiken',
+  'sea-food-hero', 'food-pizza-two', 'fish-and-chips', 'chicken-whole-roasted', 'burger-chips-and-beer'
+]);
+const JUICE_SLUGS = new Set(['coctail-juice', 'spirit-alcholic-drink-poured-in-the-glass']);
+
+/** The one effect class a slide's photograph calls for, or none. */
+const slideMood = (slug: string): '' | ' isFood' | ' isJuice' =>
+  FOOD_SLUGS.has(slug) ? ' isFood' : JUICE_SLUGS.has(slug) ? ' isJuice' : '';
 
 /** Only widths the file really has, so a 680px photo is never asked to fill 2560. */
 const heroSrcSet = (shot: HeroShot) => {
@@ -154,91 +209,91 @@ const HERO_COPY: HeroCopy[] = [
   {
     eyebrow: 'HEALTH CLUB AND POOL',
     title: 'Golden afternoons by the pool.',
-    text: 'Cool off in our sparkling swimming pool, framed by sun loungers, lush gardens and the gentle sound of the Nile. Pure relaxation, just for you.',
+    text: 'Cool off in the pool, framed by sun loungers, lush gardens and the sound of the Nile.',
     primary: {label: 'See the facilities', href: './facilities.html'},
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
     eyebrow: 'STRAIGHT FROM THE GRILL',
     title: 'Pork barbecue, glazed and sticky.',
-    text: 'Marinated overnight, grilled low and slow and finished with a glossy glaze. The dish our guests ask about before they even ask for the menu.',
+    text: 'Marinated overnight, grilled low and slow, then finished with a glossy glaze.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'DINING IN PARADISE',
     title: 'A table set by the river.',
-    text: 'Our dining room and riverside terrace welcome you for breakfast, lunch and dinner, with a kitchen that serves every dish fresh through the day.',
+    text: 'Breakfast, lunch and dinner by the river, every dish served fresh through the day.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'PRESSED AND POURED',
     title: 'Juices and cocktails, made fresh.',
-    text: 'Bright juices pressed to order from ripe local fruit, and the same care shaken into every cocktail at the bar. The freshest way to begin or end your day.',
+    text: 'Juices pressed to order from ripe local fruit, and cocktails shaken with the same care.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'FROM THE GRILL',
     title: 'A steak, cooked just right.',
-    text: 'Char-grilled to your liking and rested until tender, our steaks come to the table hot and sizzling with the sides you choose.',
+    text: 'Char-grilled to your liking and rested until tender, served hot with your choice of sides.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'CRISP AND GOLDEN',
     title: 'Fried chicken, and a glass of wine.',
-    text: 'Our signature fried chicken arrives crisp and golden, served with a chilled glass of wine for a pairing that feels every bit as special as it tastes.',
+    text: 'Crisp, golden fried chicken with a chilled glass of wine, a pairing worth the trip.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'FRESH FROM THE NILE',
     title: 'Catch of the day, served with pride.',
-    text: 'Fresh tilapia and river fish, seasoned and grilled to perfection by our chefs. A true taste of Jinja, straight from the water to your plate.',
+    text: 'Fresh tilapia and river fish, seasoned and grilled by our chefs, from water to plate.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'FROM THE BAR',
     title: 'A spirit, poured with a steady hand.',
-    text: 'Whisky, gin and our own local pours, measured and served the way they should be. Settle in at the bar and let the evening find its own pace.',
+    text: 'Whisky, gin and local pours, measured and served the way they should be.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'FROM THE PIZZA OVEN',
     title: 'A proper margherita.',
-    text: 'Juicy tomato, mozzarella and basil on a thin, floury crust, pulled hot from the oven in the same kitchen that serves the rest of the menu.',
+    text: 'Tomato, mozzarella and basil on a thin, floury crust, pulled hot from the oven.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'THE SUITE',
     title: 'Space to unwind and celebrate.',
-    text: 'Our suites offer room to breathe, a place to gather and a bed that promises deep, restful sleep. Ideal for families and longer stays.',
+    text: 'Room to breathe, a place to gather and a bed for deep, restful sleep.',
     primary: {label: 'See the rooms', href: './rooms.html'},
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
     eyebrow: 'FRESH FROM THE WATER',
     title: 'Golden fish and chunky chips.',
-    text: 'Fresh tilapia, lightly battered and fried to a crisp, with a generous portion of hot chips. A hearty classic served straight from our kitchen.',
+    text: 'Fresh tilapia, lightly battered and fried crisp, with a generous portion of hot chips.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'ROASTED TO PERFECTION',
     title: 'A whole chicken, slow roasted.',
-    text: 'Marinated in our house spices and roasted until the skin is golden and the meat is tender, our whole chicken is made to be shared.',
+    text: 'Marinated in house spices and roasted until golden and tender, made to share.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
     eyebrow: 'FROM THE GRILL AND BAR',
     title: 'A burger, chips and a cold beer.',
-    text: 'A juicy grilled burger stacked high, a basket of hot chips and an ice cold beer. The easy, satisfying combination our guests keep coming back for.',
+    text: 'A juicy grilled burger, a basket of hot chips and an ice cold beer.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   }
@@ -304,6 +359,7 @@ function Hero() {
   }, [i, still, gone, slides]);
 
   const step = (d: number) => setI(v => (v + d + count) % count);
+  const mood = slideMood(slides[i]?.slug || '');
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
@@ -328,7 +384,7 @@ function Hero() {
       const on = n === i;
       // Every slide eases the other way to the one before it, in and out of
       // its own crop, so the eye never sees the same move twice running.
-      const cls = 'heroSlide ' + (n % 2 ? 'zoomIn' : 'zoomOut') + (on ? ' active' : '');
+      const cls = 'heroSlide ' + (n % 2 ? 'zoomIn' : 'zoomOut') + slideMood(shot.slug) + (on ? ' active' : '');
       const box = {objectPosition: heroPosition(shot)};
       if (shot.kind === 'video') {
        return (
@@ -368,6 +424,9 @@ function Hero() {
      })}
     </div>
     <div className="heroShade"/>
+    {/* The mood of the active photograph, laid over it: a drift of smoke for a
+        dish, a faint sheen for a poured drink. It changes with the slide. */}
+    <div className={'heroFx' + (mood === ' isFood' ? ' smoke' : mood === ' isJuice' ? ' sheen' : '')} aria-hidden="true"/>
 
     {/* Every slide's writing is stacked in the same grid cell, so the block
         keeps one height and the carousel never jumps as the words change. */}
@@ -550,13 +609,25 @@ function Home() {
     </a>
     <a className="promo reveal" href="./menu.html">
      <SmartImage group="site" name="wine-hero" alt="Wine poured at the riverside bar" ratio="16 / 10" widths={[480, 960, 1440]} sizes="(max-width:768px) 100vw, 400px" position="50% 50%" zoom/>
-     <span><b>The bar</b><small>Wine and cocktails &rarr;</small></span>
-    </a>
-   </div>
-   <div className="center reveal" style={{marginTop: 40}}>
-    <a className="btn" href="./menu.html">See the full menu and order</a>
-   </div>
-  </section>
+      <span><b>The bar</b><small>Wine and cocktails &rarr;</small></span>
+     </a>
+    </div>
+    <SplitFeature
+     name="Food-1024x1016"
+     alt="A hot dish lifted from the kitchen at Hotel Paradise on the Nile"
+     ratio="1 / 1"
+     eyebrow="FROM OUR KITCHEN"
+     title="Cooked to order, served hot."
+     text="Our chefs work the pass all day, sending every plate out the moment it is ready. Nothing waits under a lamp."
+     cta="Explore the menu"
+     href="./menu.html"
+     mood="smoke"
+    />
+    <div className="center reveal" style={{marginTop: 40}}>
+     <a className="btn" href="./menu.html">See the full menu and order</a>
+    </div>
+   </section>
+
 
   <section className="section hasTint" id="facilities" style={{'--bg': bgUrl('./images/Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover.jpg')} as unknown as React.CSSProperties}>
    <div className="center reveal">
@@ -601,6 +672,17 @@ function Home() {
       <span><b>The bar</b><small>Evenings start here &rarr;</small></span>
      </a>
     </div>
+    <SplitFeature
+     name="paradise-nile-sunset-990x1024"
+     alt="The sun setting over the River Nile beside Hotel Paradise"
+     ratio="4 / 5"
+     eyebrow="EVENINGS BY THE RIVER"
+     title="Sunsets the Nile keeps to itself."
+     text="As the day cools, the garden and the terrace face the water and the light. Bring a drink and stay for the colour."
+     cta="See the facilities"
+     href="./facilities.html"
+     flip
+    />
    </section>
 
   <section className="section hasTint" id="events" style={{'--bg': bgUrl('./images/hero/view-1920.webp')} as unknown as React.CSSProperties}>

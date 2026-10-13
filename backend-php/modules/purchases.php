@@ -1,41 +1,53 @@
 <?php
 declare(strict_types=1);
 $u=current_user();
+require_once __DIR__.'/../app/stock_requests.php';
 
 if($_SERVER['REQUEST_METHOD']==='POST'){
  $act=$_GET['act']??'';
  switch($act){
   case 'req':
+   /* A department raises an inventory request. Every line carries the money it
+      comes to, so the Director sees the full cost on the alert itself. The store
+      manager is rung the moment it is sent, and the Director in the same breath. */
    $dept=(int)($_POST['department_id']??0);
    $items=$_POST['items']??[];
    $clean=[];
-   foreach($items as $iid=>$row){ if($iid===''||!is_array($row)||!(float)($row['qty']??0)>0) continue; $clean[(int)$iid]=(float)$row['qty']; }
-   if(!$dept||!count($clean)){ flash('Choose a department and add at least one item.','bad'); go('purchases');
+   $costs=[]; foreach(rows('SELECT id,unit_cost FROM inventory_items') as $it) $costs[(int)$it['id']]=(float)$it['unit_cost'];
+   foreach($items as $iid=>$row){
+    if($iid===''||!is_array($row)||!(float)($row['qty']??0)>0) continue;
+    $id=(int)$iid;
+    $cost=(float)($row['cost']??0);
+    if($cost<=0) $cost=$costs[$id]??0;
+    $clean[$id]=[(float)$row['qty'],$cost];
    }
+   if(!$dept||!count($clean)){ flash('Choose a department and add at least one item.','bad'); go('purchases'); }
    $num=next_number('REQ','purchase_requisitions','number');
-   q('INSERT INTO purchase_requisitions(hotel_id,number,department_id,requested_by,status,note,created_at) VALUES(1,?,?,?,\'pending\',?,NOW())',[$num,$dept,$u['id'],trim($_POST['note']??'')]);
+   $note=trim($_POST['note']??'');
+   q('INSERT INTO purchase_requisitions(hotel_id,number,department_id,requested_by,status,note,created_at) VALUES(1,?,?,?,\'pending\',?,NOW())',[$num,$dept,$u['id'],$note]);
    $rid=(int)db()->lastInsertId();
-   foreach($clean as $iid=>$qty){ q('INSERT INTO purchase_requisition_items(requisition_id,item_id,requested_qty) VALUES(?,?,?)',[$rid,$iid,$qty]); }
+   foreach($clean as $iid=>$d){ q('INSERT INTO purchase_requisition_items(requisition_id,item_id,requested_qty,est_cost) VALUES(?,?,?,?)',[$rid,$iid,$d[0],$d[1]]); }
    audit('create','requisition',$rid,['number'=>$num]);
    $dname=(string)val('SELECT name FROM departments WHERE id=?',[$dept]);
-   notify_console('req:'.$rid,'incident','Requisition '.$num.' awaiting approval',
-    $dname.' · '.count($clean).' item line(s)'.(trim((string)($_POST['note']??''))!==''?' — '.trim((string)$_POST['note']):''),
-    ['requisition_id'=>$rid,'number'=>$num],['director','general_manager'],'requisition',$rid);
-   flash('Requisition '.$num.' sent for approval.');
+   $list=stock_request_item_list($rid);
+   $total=stock_request_total($rid);
+   notify_console('req:'.$rid,'incident','Stock request '.$num.' awaiting approval',
+    $dname.' needs: '.$list.'. Total '.money($total).'.'.($note!==''?' — '.$note:''),
+    ['requisition_id'=>$rid,'number'=>$num,'amount'=>$total],
+    array_merge(['director','general_manager'],stock_request_manager_roles()),'requisition',$rid);
+   flash('Stock request '.$num.' sent to the store manager and the Director.');
    go('purchases');
    break;
   case 'reqstatus':
    $rid=(int)($_POST['id']??0); $nst=$_POST['nst']??'';
    $r=row('SELECT * FROM purchase_requisitions WHERE id=?',[$rid]); if(!$r) break;
-   if(in_array($nst,['approved','rejected'])){
-     q('UPDATE purchase_requisitions SET status=?,approved_by=?,approved_at=NOW() WHERE id=?',[$nst,$u['id'],$rid]);
-     audit('requisition_'.$nst,'requisition',$rid,['status'=>$r['status']]);
-     notify_console('req-'.$nst.':'.$rid,'communication','Requisition '.$r['number'].' '.$nst,
-      'The request is now '.$nst.'.',
-      ['requisition_id'=>$rid],['director','general_manager','storekeeper'],'requisition',$rid);
-     flash('Requisition '.$r['number'].' '.$nst.'.');
+   $res=stock_request_decide($rid,$nst,(string)($_POST['reason']??''),(int)$u['id']);
+   if(!$res['ok']){
+    flash($res['error']==='reason-required'?'A reason is required when turning down a request.':'That request could not be updated.','bad');
+   }else{
+    flash('Stock request '.$r['number'].' '.$nst.'.');
    }
-   go('purchases');
+   go(($_POST['back']??'')==='inventory'?'inventory':'purchases');
    break;
   case 'reqtopo':
    $rid=(int)($_POST['id']??0);

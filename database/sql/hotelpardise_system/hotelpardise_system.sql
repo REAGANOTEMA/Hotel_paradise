@@ -997,6 +997,7 @@ CREATE TABLE `inventory_items` (
   `name` varchar(190) NOT NULL,
   `unit` varchar(40) NOT NULL DEFAULT 'each',
   `reorder_level` decimal(14,2) DEFAULT 0.00,
+  `unit_cost` decimal(14,2) NOT NULL DEFAULT 0.00,
   `active` tinyint(1) DEFAULT 1,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
@@ -1006,22 +1007,22 @@ CREATE TABLE `inventory_items` (
 -- Dumping data for table `inventory_items`
 --
 
-INSERT INTO `inventory_items` (`id`, `hotel_id`, `category_id`, `code`, `name`, `unit`, `reorder_level`, `active`, `deleted_at`, `deleted_by`) VALUES
-(1, 1, 1, 'NVG-BEV-001', 'Nile Special Beer', 'carton', 6.00, 1, NULL, NULL),
-(2, 1, 1, 'NVG-BEV-002', 'Coca Cola', 'crate', 4.00, 1, NULL, NULL),
-(3, 1, 1, 'NVG-BEV-003', 'Bottled Water 500ml', 'carton', 8.00, 1, NULL, NULL),
-(4, 1, 2, 'NVG-KIT-001', 'Cooking Oil 6L', 'jerry', 3.00, 1, NULL, NULL),
-(5, 1, 2, 'NVG-KIT-002', 'Fresh Tomatoes', 'kg', 10.00, 1, NULL, NULL),
-(6, 1, 2, 'NVG-KIT-003', 'Beef', 'kg', 12.00, 1, NULL, NULL),
-(7, 1, 2, 'NVG-KIT-004', 'Mixing Flour 50kg', 'bag', 2.00, 1, NULL, NULL),
-(8, 1, 2, 'NVG-KIT-005', 'Fresh Eggs', 'tray', 6.00, 1, NULL, NULL),
-(9, 1, 3, 'NVG-HSK-001', 'Laundry Bar Soap', 'bar', 20.00, 1, NULL, NULL),
-(10, 1, 3, 'NVG-HSK-002', 'Toilet Paper', 'roll', 60.00, 1, NULL, NULL),
-(11, 1, 3, 'NVG-HSK-003', 'All Purpose Cleaner', 'litre', 8.00, 1, NULL, NULL),
-(12, 1, 4, 'NVG-MNT-001', 'Electrical Tape', 'roll', 4.00, 1, NULL, NULL),
-(13, 1, 4, 'NVG-MNT-002', 'LED Bulb 9W', 'piece', 10.00, 1, NULL, NULL),
-(14, 1, 5, 'NVG-STN-001', 'A4 Printer Paper', 'ream', 5.00, 1, NULL, NULL),
-(15, 1, 5, 'NVG-STN-002', 'Receipt Roll 80mm', 'roll', 20.00, 1, NULL, NULL);
+INSERT INTO `inventory_items` (`id`, `hotel_id`, `category_id`, `code`, `name`, `unit`, `reorder_level`, `unit_cost`, `active`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 1, 'NVG-BEV-001', 'Nile Special Beer', 'carton', 6.00, 48000.00, 1, NULL, NULL),
+(2, 1, 1, 'NVG-BEV-002', 'Coca Cola', 'crate', 4.00, 30000.00, 1, NULL, NULL),
+(3, 1, 1, 'NVG-BEV-003', 'Bottled Water 500ml', 'carton', 8.00, 18000.00, 1, NULL, NULL),
+(4, 1, 2, 'NVG-KIT-001', 'Cooking Oil 6L', 'jerry', 3.00, 65000.00, 1, NULL, NULL),
+(5, 1, 2, 'NVG-KIT-002', 'Fresh Tomatoes', 'kg', 10.00, 3500.00, 1, NULL, NULL),
+(6, 1, 2, 'NVG-KIT-003', 'Beef', 'kg', 12.00, 18000.00, 1, NULL, NULL),
+(7, 1, 2, 'NVG-KIT-004', 'Mixing Flour 50kg', 'bag', 2.00, 145000.00, 1, NULL, NULL),
+(8, 1, 2, 'NVG-KIT-005', 'Fresh Eggs', 'tray', 6.00, 12000.00, 1, NULL, NULL),
+(9, 1, 3, 'NVG-HSK-001', 'Laundry Bar Soap', 'bar', 20.00, 3500.00, 1, NULL, NULL),
+(10, 1, 3, 'NVG-HSK-002', 'Toilet Paper', 'roll', 60.00, 1500.00, 1, NULL, NULL),
+(11, 1, 3, 'NVG-HSK-003', 'All Purpose Cleaner', 'litre', 8.00, 8000.00, 1, NULL, NULL),
+(12, 1, 4, 'NVG-MNT-001', 'Electrical Tape', 'roll', 4.00, 4000.00, 1, NULL, NULL),
+(13, 1, 4, 'NVG-MNT-002', 'LED Bulb 9W', 'piece', 10.00, 6000.00, 1, NULL, NULL),
+(14, 1, 5, 'NVG-STN-001', 'A4 Printer Paper', 'ream', 5.00, 18000.00, 1, NULL, NULL),
+(15, 1, 5, 'NVG-STN-002', 'Receipt Roll 80mm', 'roll', 20.00, 3000.00, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2286,6 +2287,7 @@ CREATE TABLE `purchase_requisitions` (
   `approved_by` bigint(20) UNSIGNED DEFAULT NULL,
   `approved_at` datetime DEFAULT NULL,
   `note` text DEFAULT NULL,
+  `decision_reason` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
@@ -2302,6 +2304,7 @@ CREATE TABLE `purchase_requisition_items` (
   `requisition_id` bigint(20) UNSIGNED NOT NULL,
   `item_id` bigint(20) UNSIGNED NOT NULL,
   `requested_qty` decimal(14,2) NOT NULL,
+  `est_cost` decimal(14,2) NOT NULL DEFAULT 0.00,
   `notes` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
