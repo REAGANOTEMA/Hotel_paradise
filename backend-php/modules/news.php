@@ -40,6 +40,8 @@ if(!function_exists('ensure_news_table')){
       views INT UNSIGNED NOT NULL DEFAULT 0,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT NULL,
+      deleted_at TIMESTAMP NULL DEFAULT NULL,
+      deleted_by BIGINT UNSIGNED DEFAULT NULL,
       PRIMARY KEY(id),
       UNIQUE KEY uq_news_slug(slug),
       KEY idx_news_cat(category),

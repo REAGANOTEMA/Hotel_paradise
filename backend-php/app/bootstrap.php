@@ -290,6 +290,55 @@ function rows(string $sql,array $p=[]){ return q($sql,$p)->fetchAll(); }
 function row(string $sql,array $p=[]){ $r=q($sql,$p)->fetch(); return $r===false?null:$r; }
 function val(string $sql,array $p=[]){ $r=q($sql,$p)->fetchColumn(); return $r===false?null:$r; }
 
+/** Does this database have the named table? Used only to decide whether a
+ *  repair is worth attempting; a missing information_schema is answered with
+ *  a quiet "no" rather than a fatal. */
+function hp_table_exists(string $table): bool{
+ try{
+  return (int)val('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?',[$table])>0;
+ }catch(Throwable $e){ return false; }
+}
+
+/** Does this database have the named column on that table? */
+function hp_column_exists(string $table,string $col): bool{
+ try{
+  return (int)val('SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND COLUMN_NAME=?',[$table,$col])>0;
+ }catch(Throwable $e){ return false; }
+}
+
+/** Adds a column the running database does not have yet, and does nothing at
+ *  all when it already does. A locked or read-only database is left to the page
+ *  to explain, so this never turns a missing column into a stack trace. */
+function hp_ensure_column(string $table,string $col,string $definition): void{
+ if(!hp_table_exists($table)||hp_column_exists($table,$col)) return;
+ try{ db()->exec('ALTER TABLE `'.$table.'` ADD COLUMN '.$definition); }
+ catch(Throwable $e){ error_log('[hotel repair] could not add '.$table.'.'.$col.': '.$e->getMessage()); }
+}
+
+/**
+ * The soft-delete columns, brought up to date on every console page.
+ *
+ * Every module in the console lists what has not been trashed, and the Trash
+ * page reads who deleted a record. Some of those tables are created by the
+ * modules themselves the first time they are opened, and the earliest installs
+ * were made before deleted_at and deleted_by were part of that definition - so
+ * a table could exist without them and every list on it would fail. Rather than
+ * fail, the column is added, once, when it is found missing. On a table that
+ * already has it this is a single indexed lookup and no change.
+ */
+function hp_ensure_soft_delete_columns(): void{
+ static $done=false;
+ if($done) return;
+ $done=true;
+ $tables=['guests','suppliers','users','inventory_items','inventory_categories','expenses',
+  'event_requests','facility_enquiries','news_posts','reservations','purchase_requisitions',
+  'purchase_orders','rooms','room_types','customers','orders'];
+ foreach($tables as $t){
+  hp_ensure_column($t,'deleted_at','deleted_at TIMESTAMP NULL DEFAULT NULL');
+  hp_ensure_column($t,'deleted_by','deleted_by BIGINT UNSIGNED NULL');
+ }
+}
+
 function e($v=null): string{ return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8'); }
 function money($v): string{ return 'UGX '.number_format((float)$v,0); }
 function num($v): string{ return number_format((float)$v,0); }

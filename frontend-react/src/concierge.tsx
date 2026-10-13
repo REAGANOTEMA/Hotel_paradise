@@ -199,6 +199,7 @@ const TOPICS: {id: string; re: RegExp}[] = [
   {id: 'jobs', re: /\b(job|vacanc|career|hiring|work with us|employment|intern)\b/},
   {id: 'gift', re: /\b(gift|voucher|gift ?card)\b/},
   {id: 'safety', re: /\b(security|safe|secure|surveillance|cctv)\b/},
+  {id: 'founding', re: /\b(when (did|was) (it|you|the hotel)|founded|founder|owner|who (started|owns|built|opened)|established|since when|how old (is|are)|history|story|registration|registered|ursb)\b/},
   {id: 'about', re: /\b(who are you|tell me about|what is (this|your|the hotel)|about (you|the hotel|us)|our story|history)\b/},
   {id: 'prices', re: /\b(price|prices|cost|how much|how expensive|cheap)\b/},
 ];
@@ -269,7 +270,9 @@ const INFO_ANSWERS: Record<string, string> = {
   jobs: `Send your CV to the front desk email on the website, and our Human Resource office will be in touch.`,
   gift: `Call ${PH} and we will arrange a gift card for any amount, valid across the rooms, the restaurant and the bar.`,
   safety: `The entrance and the grounds are watched around the clock, rooms have secure locks, and parking is on site.`,
-  about: `Hotel Paradise on the Nile sits on the banks of the River Nile in Jinja — rooms with a view, a riverside restaurant, a pool, a gym and a bar, welcoming guests in style.`,
+  founding: `Hotel Paradise on the Nile opened its doors on ${HOTEL.founded}, and it is registered with ${HOTEL.registration}. It was founded by ${HOTEL.founders}, who still own it today. The hotel opened with ${HOTEL.roomsAtOpening} rooms and has grown into the ${HOTEL.roomsToday} rooms it has now.`,
+  rooms: `The hotel opened with ${HOTEL.roomsAtOpening} rooms in nineteen ninety eight and has grown to ${HOTEL.roomsToday} today, from cosy singles to full suites with a view of the river. Say a room type, or open the Rooms page, and I will tell you more.`,
+  about: `Hotel Paradise on the Nile sits on the banks of the River Nile in Jinja, on the water since ${HOTEL.founded}. It was founded by ${HOTEL.founders} with just ${HOTEL.roomsAtOpening} rooms, and today it has ${HOTEL.roomsToday} — rooms with a view, a riverside restaurant, a pool, a gym and a bar. It is registered with ${HOTEL.registration}.`,
   prices: `Name the dish and I will read you its price, or name a section and I will point you to it.`,
 };
 

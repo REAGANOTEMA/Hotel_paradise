@@ -294,8 +294,8 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
    rests before it begins again. The animation restarts each time a new slide
    takes the stage, so the offer always opens on the button in view. */
 .heroPanel.on .heroBtns .btn{position:relative}
-.heroPanel.on .heroBtns .btn:nth-child(1){animation:heroAttn 8s ease-in-out .5s infinite}
-.heroPanel.on .heroBtns .btn:nth-child(2){animation:heroAttn 8s ease-in-out 4.5s infinite}
+.heroPanel.on .heroBtns .btn:nth-child(1){animation:heroAttn 4s ease-in-out .3s infinite}
+.heroPanel.on .heroBtns .btn:nth-child(2){animation:heroAttn 4s ease-in-out 2.3s infinite}
 .heroPanel.on .heroBtns .btn:hover{animation-play-state:paused}
 @keyframes heroAttn{
   0%{transform:translateX(0) scale(1)}
@@ -404,24 +404,24 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
 
 /* The dining rates as a small chart. Each card carries its own bar, drawn on
    one shared scale, so the four rates read against each other at a glance. */
-.dineGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:10px}
-.dineCard{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line2);border-radius:calc(var(--r) + 6px);padding:26px 24px 24px;box-shadow:var(--shadow);overflow:hidden}
+.dineGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:10px}
+.dineCard{position:relative;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf8,#fff 46%);border:1px solid var(--line2);border-radius:calc(var(--r) + 5px);padding:22px 22px 20px;box-shadow:0 1px 2px rgba(7,26,51,.04),0 12px 30px rgba(7,26,51,.07);overflow:hidden}
 .dineCard::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-deep))}
 .dineCard.free::before{background:linear-gradient(90deg,var(--nile),#0a5468)}
-.dineTop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.dineIco{width:44px;height:44px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--gold-soft);color:var(--gold-ink)}
-.dineCard.free .dineIco{background:rgba(11,93,120,.1);color:var(--nile)}
-.dineIco svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.dineTag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold-ink);background:var(--gold-soft);border:1px solid #C9A22740;border-radius:999px;padding:5px 10px;white-space:nowrap}
-.dineCard.free .dineTag{color:var(--nile);background:rgba(11,93,120,.08);border-color:rgba(11,93,120,.25)}
-.dineCard h4{margin:0 0 8px;font-family:'Playfair Display',serif;font-size:21px;color:var(--navy)}
-.dineNote{margin:0 0 auto;color:var(--muted);font-size:13.5px;line-height:1.65}
-.dineBar{position:relative;height:8px;border-radius:999px;background:#eef0f3;margin:22px 0 16px;overflow:hidden}
+.dineTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.dineIco{width:42px;height:42px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--gold-soft);color:var(--gold-ink);box-shadow:inset 0 0 0 1px #C9A22726}
+.dineCard.free .dineIco{background:rgba(11,93,120,.1);color:var(--nile);box-shadow:inset 0 0 0 1px rgba(11,93,120,.18)}
+.dineIco svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dineTag{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold-ink);background:var(--gold-soft);border:1px solid #C9A22733;border-radius:999px;padding:5px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+.dineCard.free .dineTag{color:var(--nile);background:rgba(11,93,120,.08);border-color:rgba(11,93,120,.22)}
+.dineCard h4{margin:0 0 7px;font-family:'Playfair Display',serif;font-size:20px;line-height:1.2;color:var(--navy)}
+.dineNote{margin:0 0 auto;color:var(--muted);font-size:13px;line-height:1.6}
+.dineBar{position:relative;height:6px;border-radius:999px;background:#eef0f3;margin:18px 0 14px;overflow:hidden}
 .dineFill{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--gold-deep));min-width:6px}
 .dineCard.free .dineFill{background:linear-gradient(90deg,var(--nile),#0a5468)}
-.dinePrice{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-top:1px solid var(--line2);padding-top:14px}
-.dinePrice b{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-ink)}
-.dinePrice span{font-size:11px;color:var(--faint);letter-spacing:.04em}
+.dinePrice{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-top:1px solid var(--line2);padding-top:13px}
+.dinePrice b{font-family:'Playfair Display',serif;font-size:18.5px;color:var(--gold-ink);line-height:1.2}
+.dinePrice span{font-size:10.5px;color:var(--faint);letter-spacing:.04em;white-space:nowrap}
 .dineCard.free .dinePrice b{color:var(--nile)}
 /* A quiet bar under every room rate, drawn to the same scale as its neighbours. */
 .rateBar{height:6px;border-radius:999px;background:#eef0f3;margin-top:10px;overflow:hidden;max-width:320px}
@@ -500,7 +500,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .footerCredit{padding:22px 7vw;border-top:1px solid #ffffff12;color:#73808f;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 /* The footer's own brand block, kept away from the link columns so its logo,
    wordmark and line can compose on their own. */
-.footerLogo{display:block;width:100%;max-width:340px;height:auto;object-fit:contain;background:none;padding:0;margin:0 0 18px;border:0;image-rendering:auto;filter:drop-shadow(0 6px 20px rgba(212,175,55,.28))}
+.footerLogo{display:block;width:auto;max-width:210px;max-height:210px;height:auto;object-fit:contain;background:none;padding:0;margin:0 0 16px;border:0;image-rendering:auto;filter:drop-shadow(0 8px 26px rgba(212,175,55,.30))}
 .footerTag{color:#b9c7d6;max-width:360px}
 .footerCol p,.footerBrand p{font-size:13.5px;line-height:1.75}
 
@@ -1572,7 +1572,7 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
   .footerMain>div:last-child{border-bottom:0;padding-bottom:2px}
   .footerMain>div:first-child{padding-top:6px}
   .footerBrand{text-align:center;display:flex;flex-direction:column;align-items:center}
-  .footerLogo{max-width:300px;margin:0 auto 16px}
+  .footerLogo{max-width:180px;margin:0 auto 14px}
   .footerTag{margin-left:auto;margin-right:auto}
   .footerPhones{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
   .footerMain h4{position:relative;border-bottom:0;margin-bottom:12px;padding-bottom:0}
@@ -2304,15 +2304,21 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
    the screen is small.
    ================================================================== */
 .explore{background:var(--ivory)}
-.exploreGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:36px}
-.exploreCard{display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:#fff;border:1px solid var(--line2);border-radius:calc(var(--r) + 6px);padding:26px 24px;box-shadow:var(--shadow);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
-.exploreCard:hover{transform:translateY(-4px);box-shadow:0 20px 46px rgba(7,26,51,.14);border-color:#C9A22755}
-.exploreIcon{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:13px;background:var(--gold-soft);color:var(--gold-ink);margin-bottom:8px}
-.exploreIcon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.exploreCard b{font-family:'Playfair Display',serif;font-size:1.18rem;color:var(--navy);line-height:1.25}
-.exploreText{color:var(--muted);font-size:14px;line-height:1.6;flex:1}
-.exploreGo{display:inline-flex;align-items:center;gap:6px;color:var(--nile);font-weight:700;font-size:12.5px;margin-top:2px}
-.exploreGo svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}
+/* A compact directory: two tidy columns of short routes rather than a tall
+   stack of cards, so the band takes little room but every destination is one
+   tap away. */
+.explore{padding-top:clamp(40px,4.5vw,64px);padding-bottom:clamp(40px,4.5vw,64px)}
+.explore .center h2{font-size:clamp(1.45rem,2.2vw,2rem)}
+.exploreGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:26px}
+.exploreCard{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid var(--line2);border-radius:var(--r);padding:12px 15px;box-shadow:0 2px 10px rgba(7,26,51,.05);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.exploreCard:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(7,26,51,.12);border-color:#C9A22755}
+.exploreIcon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;border-radius:11px;background:var(--gold-soft);color:var(--gold-ink)}
+.exploreIcon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.exploreBody{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.exploreCard b{font-family:'Playfair Display',serif;font-size:15.5px;color:var(--navy);line-height:1.2}
+.exploreText{color:var(--muted);font-size:12.5px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.exploreGo{display:inline-flex;flex:none;color:var(--nile)}
+.exploreGo svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}
 .exploreCard:hover .exploreGo svg{transform:translateX(3px)}
 
 /* ==================================================================

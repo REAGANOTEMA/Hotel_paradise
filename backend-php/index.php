@@ -179,6 +179,11 @@ if(!page_allowed($page)){
  page_foot(); exit;
 }
 
+/* A table the console filters by deleted_at may exist on an older install
+   without that column. It is repaired here, once, before any module reads a
+   list, so a missing column can never stop a page from opening. */
+hp_ensure_soft_delete_columns();
+
 /* Moving a record to the Trash, bringing it back, or removing it for good is
    handled here, once, for every module. The button each module prints carries
    only the table, the row and the page to return to, and trash.php checks all

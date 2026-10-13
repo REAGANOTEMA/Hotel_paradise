@@ -203,7 +203,20 @@ export const HOTEL = {
   phones: ['+256 759 504 928', '+256 773 565 668'],
   email: 'frontdesk@hotelparadiseonthenile.info',
   website: 'www.hotelparadiseonthenile.info',
-  certification: 'UNBS Certified, US 130:2017'
+  certification: 'UNBS Certified, US 130:2017',
+
+  /* The hotel's own story, in the few facts a guest may ask for. Written here
+     once so the voice concierge, the newsroom and any page that tells the
+     story cannot drift apart. */
+  /** The day the hotel first opened its doors: Friday, 10 April 1998. */
+  founded: 'Friday, 10 April 1998',
+  /** The couple who founded it, and still own it today. */
+  founders: 'Mr Otile Francis and his wife, Ms. Margrete Otile',
+  /** It opened with ten rooms and has grown into a full hotel since. */
+  roomsAtOpening: '10',
+  roomsToday: '69',
+  /** The office the company is registered with. */
+  registration: 'the Uganda Registration Services Bureau (URSB)'
 } as const;
 
 /** A telephone number written for people to a form a dialler can use. */
@@ -445,15 +458,17 @@ export function ExploreMore({current = ''}: {current?: string}) {
    <div className="center reveal">
     <p className="eyebrow">MORE OF THE HOTEL</p>
     <h2>Where would you like to go next?</h2>
-    <p className="intro">Whichever page you are reading, the rest of the hotel is a tap away.</p>
    </div>
    <div className="exploreGrid">
     {items.map(([href, title, text, icon, cta]) => (
      <a className="exploreCard reveal" href={href} key={href}>
       <span className="exploreIcon" aria-hidden="true"><svg viewBox="0 0 24 24">{EXPLORE_ICONS[icon]}</svg></span>
-      <b>{title}</b>
-      <span className="exploreText">{text}</span>
-      <span className="exploreGo">{cta}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <span className="exploreBody">
+       <b>{title}</b>
+       <span className="exploreText">{text}</span>
+      </span>
+      <span className="exploreGo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <span className="srOnly">{cta}</span>
      </a>
     ))}
    </div>

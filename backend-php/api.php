@@ -1108,6 +1108,8 @@ function ensure_events_tables(): void{
   status VARCHAR(20) NOT NULL DEFAULT \'new\',
   created_at DATETIME NOT NULL,
   updated_at DATETIME NULL,
+  deleted_at TIMESTAMP NULL DEFAULT NULL,
+  deleted_by BIGINT UNSIGNED DEFAULT NULL,
   PRIMARY KEY(id),
   UNIQUE KEY uq_event_number(request_number)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
@@ -1125,6 +1127,8 @@ function ensure_events_tables(): void{
   status VARCHAR(20) NOT NULL DEFAULT \'new\',
   created_at DATETIME NOT NULL,
   updated_at DATETIME NULL,
+  deleted_at TIMESTAMP NULL DEFAULT NULL,
+  deleted_by BIGINT UNSIGNED DEFAULT NULL,
   PRIMARY KEY(id),
   UNIQUE KEY uq_enquiry_number(enquiry_number)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');

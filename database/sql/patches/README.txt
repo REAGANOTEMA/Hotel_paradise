@@ -37,6 +37,16 @@ Patches
     (news.html, read through the API) has something to read. Also seeds a few
     opening posts with INSERT IGNORE, so an edit is never overwritten.
 
+2026-10-13_soft_delete_columns.sql
+    Makes sure every table the console lists or trashes carries deleted_at and
+    deleted_by. A few of those tables are built by the modules themselves on
+    first use, and the earliest installs were made before the pair was part of
+    that definition, which left some lists failing with
+    "Unknown column 'deleted_at' in 'where clause'". The console repairs the
+    column on its own when it is missing, and this patch is the same repair made
+    explicit for anyone who would rather run it by hand. It only ever adds a
+    missing column and never changes a table that already has it.
+
 How to run one
 --------------
 phpMyAdmin: open the system database, "Import", choose the .sql file, then Go.
