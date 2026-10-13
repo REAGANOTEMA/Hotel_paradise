@@ -1301,5 +1301,3 @@ if($act==='testimonials'){
 }
 
 $out(["ok"=>false,"error"=>"Unknown request"],404);
-
-$out(array("ok"=>false,"error"=>"Unknown request"),404);
