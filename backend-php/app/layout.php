@@ -82,6 +82,7 @@ function svg_icon(string $name): string{
   'sound'=>'<path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.6a4.7 4.7 0 0 1 0 6.8"/><path d="M18.4 6a8.4 8.4 0 0 1 0 12"/>',
   'mute'=>'<path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M16 9.5l4 5M20 9.5l-4 5"/>',
   'trash'=>'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14"/><path d="M10 11v6M14 11v6"/>',
+  'help'=>'<circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4.9c0 1.9-2.7 2.4-2.7 3.8"/><path d="M12 17.4v.1"/>',
   ];
  $d=$p[$name]??$p['grid'];
  return '<svg viewBox="0 0 24 24" aria-hidden="true">'.$d.'</svg>';
@@ -204,9 +205,11 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<div class="sideProfile"><a class="avatar" href="'.BASE.'/index.php?page=profile" aria-label="My profile">'.e(initials($me)).'</a>';
  echo '<span class="sideWho"><b>'.e($me).'</b><small>'.e($role).'</small></span>';
  echo '<a class="sideSignOut" href="'.BASE.'/index.php?page=logout" title="Sign out" aria-label="Sign out">'.svg_icon('logout').'</a></div>';
- echo '<div class="sideFoot"><a href="'.SITE_URL.'/" target="_blank" rel="noopener">Open website</a>';
+ echo '<div class="sideFoot">';
+ echo '<label class="sideSize" for="sideSize" title="Menu width"><span class="ssIco" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h11M4 17h7"/></svg></span><input type="range" id="sideSize" min="196" max="340" step="4" value="250" aria-label="Menu width"><span class="ssWide" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span></label>';
+ echo '<div class="sideFootRow"><a href="'.SITE_URL.'/" target="_blank" rel="noopener">Open website</a>';
  echo '<button class="sideShrink" id="sideShrink" type="button" aria-label="Collapse menu" title="Collapse menu"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="13 6 19 12 13 18"/><path d="M5 5v14"/></svg></button>';
- echo '</div></aside>';
+ echo '</div></div></aside>';
 
  /* ---- the header ---- */
  echo '<div class="main" id="mainContent"><div class="ambient" aria-hidden="true"></div><header class="top">';
@@ -226,6 +229,10 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<button class="voiceBtn" id="voiceBtn" type="button" aria-pressed="true" aria-label="Welcome voice" title="Welcome voice" data-text="'.e($voice['text']).'" data-auto="'.($active==='dashboard'?'1':'0').'">';
  echo '<span class="vOn">'.svg_icon('sound').'</span><span class="vOff">'.svg_icon('muted').'</span>';
  echo '</button>';
+ /* The guide: a short, plain walk-through of how the console works, openable
+    from anywhere and offered once on the dashboard so a new member is never
+    left guessing where to press. */
+ echo '<button class="guideBtn" id="guideBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="guideWrap" aria-label="How to use this console" title="How to use this console" data-auto="'.($active==='dashboard'?'1':'0').'">'.svg_icon('help').'<span class="gbText">Guide</span></button>';
  /* The bell is the same feed as the notifications page: a member sees their
     own events, never anyone else's. It is drawn only when the tables exist. */
  if(notify_ready()){
@@ -264,6 +271,22 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<a href="'.SITE_URL.'/" target="_blank" rel="noopener">'.svg_icon('globe').'Open website</a>';
  echo '<a class="danger" href="'.BASE.'/index.php?page=logout">'.svg_icon('logout').'Sign out</a>';
  echo '</div></div></header>';
+
+ /* ---- the guide: where to press, step by step ---- */
+ echo '<div class="guideWrap" id="guideWrap" hidden>';
+ echo '<div class="guideCard" role="dialog" aria-modal="true" aria-labelledby="guideTitle">';
+ echo '<button class="guideX" id="guideX" type="button" aria-label="Close guide">&times;</button>';
+ echo '<h2 id="guideTitle">How to use this console</h2>';
+ echo '<p class="guideIntro">Everything is a tap away. Here is the way around, on a computer or a phone.</p>';
+ echo '<ol class="guideSteps">';
+ echo '<li><b>1</b><span>Pick a module from the menu on the left. On a phone, tap the <em>Menu</em> button at the top to slide it in.</span></li>';
+ echo '<li><b>2</b><span>Each heading is a group that folds. Tap a heading — like <em>Finance &amp; Control</em> — to open or close the modules under it.</span></li>';
+ echo '<li><b>3</b><span>On a phone, drag the <em>width slider</em> at the foot of the menu to make the menu narrower or wider for your hand.</span></li>';
+ echo '<li><b>4</b><span>The bell at the top shows new bookings, orders, payments and messages. <em>Back</em> at the top left returns you to the page you came from.</span></li>';
+ echo '<li><b>5</b><span>Every page does its work with the buttons along the top of it — add, filter, print or export — and every wide table scrolls sideways on a small screen.</span></li>';
+ echo '</ol>';
+ echo '<button class="btn guideDone" id="guideDone" type="button">Got it</button>';
+ echo '</div></div>';
 
  /* ---- what the last action left behind, as a notification ---- */
  if($flash){
@@ -359,6 +382,45 @@ function page_scripts(): void{
       apply(on);
       try{localStorage.setItem('hpn_side',on?'1':'0')}catch(e){}
     });
+  }
+
+  /* the menu width slider: drag it to make the rail narrower or wider. The
+     choice is remembered, and it is what makes the modules comfortable to
+     reach on a phone as well as on a wide screen. */
+  var ss=document.getElementById('sideSize');
+  if(ss){
+    var setW=function(px){
+      px=Math.max(196,Math.min(340,parseInt(px,10)||250));
+      document.documentElement.style.setProperty('--side',px+'px');
+      return px;
+    };
+    var saved=null;try{saved=parseInt(localStorage.getItem('hpn_side_w')||'',10)}catch(e){}
+    if(saved&&saved>=196&&saved<=340){ss.value=String(saved);setW(saved)}
+    ss.addEventListener('input',function(){setW(ss.value)});
+    ss.addEventListener('change',function(){try{localStorage.setItem('hpn_side_w',String(setW(ss.value)))}catch(e){}});
+  }
+
+  /* the guide: opened from the header at any time, and shown once on the
+     dashboard so a new member meets the way around before they need it. */
+  var gb=document.getElementById('guideBtn'),gw=document.getElementById('guideWrap');
+  if(gb&&gw){
+    var setG=function(on){
+      gw.hidden=!on;
+      gb.setAttribute('aria-expanded',on?'true':'false');
+      document.body.classList.toggle('guideOpen',on);
+    };
+    var closeG=function(){setG(false)};
+    gb.addEventListener('click',function(){setG(gw.hidden)});
+    var gx=document.getElementById('guideX'),gd=document.getElementById('guideDone');
+    if(gx)gx.addEventListener('click',closeG);
+    if(gd)gd.addEventListener('click',closeG);
+    gw.addEventListener('click',function(e){if(e.target===gw)closeG()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!gw.hidden)closeG()});
+    if(gb.getAttribute('data-auto')==='1'){
+      var seen=false;try{seen=localStorage.getItem('hpn_guide')==='1'}catch(e){}
+      if(!seen){setTimeout(function(){setG(true)},600)}
+      try{localStorage.setItem('hpn_guide','1')}catch(e){}
+    }
   }
 
    /* notifications: any "ok" note leaves on its own, a warning or an error

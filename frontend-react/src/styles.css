@@ -1562,6 +1562,43 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 .acctBrand b{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);letter-spacing:.04em;display:block;line-height:1.2}
 .acctBrand span{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-ink);font-weight:700}
 
+/* ---------------------------------------------------------------
+   THE GUEST'S PROFILE: a short, calm form.
+   Only the details the hotel genuinely needs are shown; everything
+   else waits behind one optional toggle. The photograph is one tap,
+   shrunk in the browser before it is ever sent, so nothing is refused
+   for being too large.
+   --------------------------------------------------------------- */
+.acctHead{display:flex;align-items:center;gap:16px;margin:6px 0 4px}
+.acctHeadText{min-width:0}
+.acctHeadText h3{margin:2px 0;font-family:'Playfair Display',serif;color:var(--navy)}
+.acctAvatar{flex:none;width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--ivory);border:3px solid var(--gold);overflow:hidden;box-shadow:0 6px 18px rgba(7,26,51,.16)}
+.acctAvatar span{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy)}
+.acctAvatar.hasImg img{width:100%;height:100%;object-fit:cover;display:block}
+.acctPhotoActions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 4px}
+.acctHintPhoto{color:var(--faint);font-size:13px;font-weight:600}
+.acctForm{display:block}
+.acctSection{margin:22px 0 12px;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-ink);border-bottom:1px solid var(--line);padding-bottom:8px}
+.acctGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.acctGrid .acctWide{grid-column:1 / -1}
+.acctMore{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin:20px 0 4px;padding:13px 16px;background:var(--ivory);border:1px solid var(--line2);border-radius:10px;color:var(--navy);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:border-color .18s ease,background .18s ease}
+.acctMore:hover{border-color:var(--gold);background:#fff}
+.acctMoreSign{flex:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--navy);color:#fff;font-size:16px;line-height:1}
+.acctCheck{display:flex;align-items:flex-start;gap:10px;margin:18px 0 4px;color:var(--ink);font-size:14px;line-height:1.6;cursor:pointer}
+.acctCheck input{width:18px;height:18px;margin-top:2px;accent-color:var(--gold)}
+.acctAct{margin-top:6px;display:flex;flex-direction:column;gap:10px}
+.acctActRow{display:grid;grid-template-columns:1fr auto;gap:2px 12px;background:#fff;border:1px solid var(--line2);border-left:3px solid var(--gold);border-radius:10px;padding:13px 16px}
+.acctActRow b{font-family:'Playfair Display',serif;color:var(--navy)}
+.acctActRow span{color:var(--muted);font-size:13.5px;grid-column:1}
+.acctActRow em{grid-row:1 / span 2;grid-column:2;align-self:center;font-style:normal;font-weight:700;color:var(--navy)}
+@media (max-width:560px){
+  .acctGrid{grid-template-columns:1fr}
+  .acctHead{gap:13px}
+  .acctAvatar{width:64px;height:64px}
+  .acctActRow{grid-template-columns:1fr}
+  .acctActRow em{grid-row:auto;grid-column:1}
+}
+
 
 /* ---------------------------------------------------------------
    FOOTER ON A PHONE

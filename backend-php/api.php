@@ -893,7 +893,7 @@ if($act==='account'){
   /** The account tables, which only exist once the upgrade SQL has been run. */
   $ready=(table_columns('customers')!==[] && table_columns('customer_tokens')!==[]);
   if(!$ready && $action!=='config'){
-    error_log('[hotel api] customers table missing - database/sql/upgrade/hotelpardise_upgrade.sql has not been run');
+    error_log('[hotel api] customers table missing - database/sql/hotelpardise_system/customer_accounts.sql has not been run');
     $out(['ok'=>false,'error'=>'Accounts are not available yet on this installation. Please call +256 759 504 928 and the front desk will take your booking.'],503);
   }
 

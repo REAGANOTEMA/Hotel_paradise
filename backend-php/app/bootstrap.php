@@ -433,11 +433,13 @@ function page_caps(): array{
   'dashboard'=>[], // own view
   // The bell is every signed-in member's own: they see only their notifications.
   'notifications'=>[], // own
-  // Director's full view
-  'overview'=>['director'],
-  'integrity'=>['director','auditor'],
+  // Director's full view. The General Manager sits beside the Director on the
+  // whole house so nothing about the hotel is ever hidden from the person who
+  // runs it day to day.
+  'overview'=>['director','general_manager'],
+  'integrity'=>['director','general_manager','auditor'],
   'reservations'=>['director','general_manager','receptionist','events_manager'],
-  'events'=>['director','events_manager','marketing'],
+  'events'=>['director','general_manager','events_manager','marketing'],
   'news'=>array_keys(news_roles()),
   'rooms'=>['director','general_manager','receptionist','housekeeping','maintenance'],
   'guests'=>['director','general_manager','receptionist'],
@@ -456,7 +458,7 @@ function page_caps(): array{
   'finance'=>['director','general_manager','accountant','cashier'],
   'invoices'=>['director','general_manager','accountant','cashier','auditor'],
   'approvals'=>['director','general_manager','accountant'],
-  'audit'=>['director','auditor'],
+  'audit'=>['director','general_manager','auditor'],
   'reports'=>['director','general_manager','accountant','auditor'],
   'users'=>['director','general_manager'],
   'trash'=>['director','general_manager'],

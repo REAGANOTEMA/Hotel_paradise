@@ -208,10 +208,13 @@ export const HOTEL = {
   /* The hotel's own story, in the few facts a guest may ask for. Written here
      once so the voice concierge, the newsroom and any page that tells the
      story cannot drift apart. */
-  /** The day the hotel first opened its doors: Friday, 10 April 1998. */
-  founded: 'Friday, 10 April 1998',
+  /** The day the hotel first opened its doors: Saturday, 18 April 1998. */
+  founded: 'Saturday, 18 April 1998',
   /** The couple who founded it, and still own it today. */
-  founders: 'Mr Otile Francis and his wife, Ms. Margrete Otile',
+  founders: 'Mr. Otile Francis and his wife, Mrs. Magrate Otile',
+  /** The family name as the owner asks it to be spoken, while the written name
+      keeps its correct spelling everywhere it appears. */
+  founderSurnameSpoken: 'Otile, spelled O, T, I, L, E, and said ot-il-le,',
   /** It opened with ten rooms and has grown into a full hotel since. */
   roomsAtOpening: '10',
   roomsToday: '69',
@@ -259,6 +262,9 @@ export const STUDIO = {
   name: 'Reagansoft Innovation Limited',
   url: 'https://reagansoftinnovation.com',
   label: 'reagansoftinnovation.com',
+  /** The person behind the company, and where it is based. */
+  founder: 'Reagan Otema',
+  city: 'Jinja, Uganda',
   /** Uganda country code 256, then 730 314 979, written as 0730 314 979 locally. */
   whatsapp: '256730314979',
   whatsappLabel: 'WhatsApp 0730 314 979'

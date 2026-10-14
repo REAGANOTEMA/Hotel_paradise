@@ -70,6 +70,48 @@ const safeNext = (raw: string): string => {
   return '';
 };
 
+/*
+ * A guest's photograph, made small before it ever leaves the browser.
+ *
+ * A phone camera picture is several megabytes, which is slow to send and much
+ * larger than anything a profile avatar needs. It is drawn onto a canvas at a
+ * modest size and written back as a compact JPEG, so the upload is quick, the
+ * file the hotel keeps is small, and nothing is ever refused for being too big.
+ */
+const shrinkImage = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const max = 512;
+        let width = img.naturalWidth || img.width;
+        let height = img.naturalHeight || img.height;
+        if (!width || !height) throw new Error('empty');
+        if (width > max || height > max) {
+          const scale = max / Math.max(width, height);
+          width = Math.max(1, Math.round(width * scale));
+          height = Math.max(1, Math.round(height * scale));
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('no canvas');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      } catch (e) {
+        reject(e);
+      } finally {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+    img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error('read')); };
+    img.src = objectUrl;
+  });
+
 function AccountPage() {
   const q = new URLSearchParams(window.location.search);
   const next = safeNext(q.get('next') || '');
@@ -90,6 +132,7 @@ function AccountPage() {
   const [photo, setPhoto] = React.useState('');
   const [avatarUrl, setAvatarUrl] = React.useState('');
   const [saved, setSaved] = React.useState('');
+  const [more, setMore] = React.useState(false);
   const [act, setAct] = React.useState<Activity | null>(null);
   const fileRef = React.useRef<HTMLInputElement>(null);
   const btn = React.useRef<HTMLDivElement>(null);
@@ -231,19 +274,30 @@ function AccountPage() {
 
   const setF = (k: keyof Profile, v: any) => setProf(p => ({...p, [k]: v}));
 
-  /** Show the chosen picture straight away, and only send it when saved. */
-  const onPhoto = (file?: File) => {
+  /**
+   * The picture is shrunk in the browser, shown immediately, and saved at once,
+   * so choosing a photo is the whole job: one tap, and it is on the profile.
+   */
+  const onPhoto = async (file?: File) => {
     setErr(''); setSaved('');
     if (!file) return;
     if (!/^image\//.test(file.type)) { setErr('Please choose a picture (JPG, PNG, GIF or WebP).'); return; }
-    if (file.size > 3 * 1024 * 1024) { setErr('That picture is larger than 3MB. Please choose a smaller one.'); return; }
-    const reader = new FileReader();
-    reader.onload = () => { const url = String(reader.result || ''); setPhoto(url); setAvatarUrl(url); };
-    reader.onerror = () => setErr('That picture could not be read. Please choose another one.');
-    reader.readAsDataURL(file);
+    if (file.size > 15 * 1024 * 1024) { setErr('That picture is very large. Please choose one under 15MB.'); return; }
+    setBusy(true);
+    let data = '';
+    try {
+      data = await shrinkImage(file);
+    } catch {
+      setBusy(false);
+      setErr('That picture could not be read. Please choose another one.');
+      return;
+    }
+    setPhoto(data);
+    setAvatarUrl(data);
+    await saveProfile(data);
   };
 
-  const saveProfile = async () => {
+  const saveProfile = async (photoOverride?: string) => {
     setErr(''); setSaved(''); setBusy(true);
     const payload: any = {
       action: 'update', token: customerToken(),
@@ -256,7 +310,8 @@ function AccountPage() {
       emergency_contact_phone: prof.emergency_contact_phone, notes: prof.notes,
       marketing_opt_in: prof.marketing_opt_in
     };
-    if (photo) payload.photo = photo;
+    const pic = photoOverride ?? photo;
+    if (pic) payload.photo = pic;
     const d = await post(payload);
     setBusy(false);
     if (!d.ok) { setErr(d.error || 'Your profile could not be saved. Please try again.'); return; }
@@ -329,10 +384,10 @@ function AccountPage() {
        <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden
         onChange={e => onPhoto(e.target.files ? e.target.files[0] : undefined)}/>
        <div className="acctPhotoActions">
-        <button type="button" className="btn ghost2" onClick={() => fileRef.current && fileRef.current.click()}>
+        <button type="button" className="btn ghost2" onClick={() => fileRef.current && fileRef.current.click()} disabled={busy}>
          {avatarUrl ? 'Change photo' : 'Add your photo'}
         </button>
-        {photo && <span className="acctHintPhoto">New photo chosen — save to keep it</span>}
+        {busy && photo && <span className="acctHintPhoto">Saving your photo…</span>}
        </div>
 
        <form className="acctForm" onSubmit={e => { e.preventDefault(); saveProfile(); }}>
@@ -342,47 +397,45 @@ function AccountPage() {
          <div className="planField"><label>Mobile number</label><input value={phone} onChange={e => setPhone(e.target.value)} type="tel" inputMode="tel" placeholder="0759 504 928" autoComplete="tel"/></div>
          <div className="planField"><label>Email</label><input value={cust.email} readOnly/></div>
          <div className="planField"><label>Date of birth</label><input type="date" value={prof.date_of_birth} onChange={e => setF('date_of_birth', e.target.value)}/></div>
-         <div className="planField"><label>Gender</label>
-          <select value={prof.gender} onChange={e => setF('gender', e.target.value)}>
-           <option value="">Prefer not to say</option>
-           <option value="male">Male</option>
-           <option value="female">Female</option>
-           <option value="other">Other</option>
-           <option value="prefer_not_to_say">Prefer not to say</option>
-          </select>
-         </div>
          <div className="planField"><label>Nationality</label><input value={prof.nationality} onChange={e => setF('nationality', e.target.value)} placeholder="Ugandan"/></div>
-         <div className="planField"><label>ID or passport</label><input value={prof.national_id} onChange={e => setF('national_id', e.target.value)}/></div>
         </div>
 
-        <p className="acctSection">Where we should find you</p>
-        <div className="acctGrid">
-         <div className="planField acctWide"><label>Address</label><input value={prof.address} onChange={e => setF('address', e.target.value)} autoComplete="street-address" placeholder="Plot, street, area"/></div>
-         <div className="planField"><label>City or town</label><input value={prof.city} onChange={e => setF('city', e.target.value)} placeholder="Jinja"/></div>
-         <div className="planField"><label>Postcode</label><input value={prof.postcode} onChange={e => setF('postcode', e.target.value)}/></div>
-         <div className="planField"><label>Country</label><input value={prof.country} onChange={e => setF('country', e.target.value)} placeholder="Uganda"/></div>
-        </div>
+        <button type="button" className="acctMore" aria-expanded={more} onClick={() => setMore(v => !v)}>
+         {more ? 'Hide extra details' : 'Add extra details (optional)'}
+         <span className="acctMoreSign" aria-hidden="true">{more ? '−' : '+'}</span>
+        </button>
 
-        <p className="acctSection">Stay preferences</p>
-        <div className="acctGrid">
-         <div className="planField"><label>Company</label><input value={prof.company} onChange={e => setF('company', e.target.value)}/></div>
-         <div className="planField"><label>Job title</label><input value={prof.job_title} onChange={e => setF('job_title', e.target.value)}/></div>
-         <div className="planField"><label>Preferred language</label><input value={prof.preferred_language} onChange={e => setF('preferred_language', e.target.value)} placeholder="English"/></div>
-         <div className="planField"><label>Room preference</label><input value={prof.room_preferences} onChange={e => setF('room_preferences', e.target.value)} placeholder="High floor, quiet side"/></div>
-         <div className="planField acctWide"><label>Dietary needs</label><input value={prof.dietary_preferences} onChange={e => setF('dietary_preferences', e.target.value)} placeholder="Allergies or dishes to avoid"/></div>
-         <div className="planField acctWide"><label>Anything else we should know</label><input value={prof.notes} onChange={e => setF('notes', e.target.value)} placeholder="Celebrations, mobility needs, arrival time"/></div>
-        </div>
-
-        <p className="acctSection">Someone to reach in an emergency</p>
-        <div className="acctGrid">
-         <div className="planField"><label>Contact name</label><input value={prof.emergency_contact_name} onChange={e => setF('emergency_contact_name', e.target.value)}/></div>
-         <div className="planField"><label>Contact phone</label><input value={prof.emergency_contact_phone} onChange={e => setF('emergency_contact_phone', e.target.value)} type="tel" inputMode="tel"/></div>
-        </div>
-
-        <label className="acctCheck">
-         <input type="checkbox" checked={prof.marketing_opt_in} onChange={e => setF('marketing_opt_in', e.target.checked)}/>
-         <span>Send me offers, news and updates from Hotel Paradise</span>
-        </label>
+        {more && (
+         <>
+          <div className="acctGrid">
+           <div className="planField"><label>Gender</label>
+            <select value={prof.gender} onChange={e => setF('gender', e.target.value)}>
+             <option value="">Prefer not to say</option>
+             <option value="male">Male</option>
+             <option value="female">Female</option>
+             <option value="other">Other</option>
+             <option value="prefer_not_to_say">Prefer not to say</option>
+            </select>
+           </div>
+           <div className="planField"><label>ID or passport</label><input value={prof.national_id} onChange={e => setF('national_id', e.target.value)}/></div>
+           <div className="planField"><label>Company</label><input value={prof.company} onChange={e => setF('company', e.target.value)}/></div>
+           <div className="planField"><label>Job title</label><input value={prof.job_title} onChange={e => setF('job_title', e.target.value)}/></div>
+           <div className="planField"><label>City or town</label><input value={prof.city} onChange={e => setF('city', e.target.value)} placeholder="Jinja"/></div>
+           <div className="planField"><label>Country</label><input value={prof.country} onChange={e => setF('country', e.target.value)} placeholder="Uganda"/></div>
+           <div className="planField acctWide"><label>Address</label><input value={prof.address} onChange={e => setF('address', e.target.value)} autoComplete="street-address" placeholder="Plot, street, area"/></div>
+           <div className="planField"><label>Preferred language</label><input value={prof.preferred_language} onChange={e => setF('preferred_language', e.target.value)} placeholder="English"/></div>
+           <div className="planField"><label>Room preference</label><input value={prof.room_preferences} onChange={e => setF('room_preferences', e.target.value)} placeholder="High floor, quiet side"/></div>
+           <div className="planField acctWide"><label>Dietary needs</label><input value={prof.dietary_preferences} onChange={e => setF('dietary_preferences', e.target.value)} placeholder="Allergies or dishes to avoid"/></div>
+           <div className="planField acctWide"><label>Anything else we should know</label><input value={prof.notes} onChange={e => setF('notes', e.target.value)} placeholder="Celebrations, mobility needs, arrival time"/></div>
+           <div className="planField"><label>Emergency contact name</label><input value={prof.emergency_contact_name} onChange={e => setF('emergency_contact_name', e.target.value)}/></div>
+           <div className="planField"><label>Emergency contact phone</label><input value={prof.emergency_contact_phone} onChange={e => setF('emergency_contact_phone', e.target.value)} type="tel" inputMode="tel"/></div>
+          </div>
+          <label className="acctCheck">
+           <input type="checkbox" checked={prof.marketing_opt_in} onChange={e => setF('marketing_opt_in', e.target.checked)}/>
+           <span>Send me offers, news and updates from Hotel Paradise</span>
+          </label>
+         </>
+        )}
 
         {err && <div className="bookMsg" style={{marginTop: 14}}>{err}</div>}
         {saved && <div className="bookMsg ok" style={{marginTop: 14}}>{saved}</div>}

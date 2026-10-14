@@ -1,5 +1,5 @@
 import React from 'react';
-import {CALL, HOTEL} from './shared';
+import {CALL, HOTEL, STUDIO} from './shared';
 import type {MenuSection} from './menuData';
 
 /* ------------------------------------------------------------------
@@ -271,11 +271,12 @@ const INFO_ANSWERS: Record<string, string> = {
   jobs: `Send your CV to the front desk email on the website, and our Human Resource office will be in touch.`,
   gift: `Call ${PH} and we will arrange a gift card for any amount, valid across the rooms, the restaurant and the bar.`,
   safety: `The entrance and the grounds are watched around the clock, rooms have secure locks, and parking is on site.`,
-  founding: `Hotel Paradise on the Nile is one of the oldest and best loved hotels in Jinja, and one of the most iconic on the river. It opened its doors on ${HOTEL.founded}, and it is registered with ${HOTEL.registration}. It was founded by ${HOTEL.founders}, who still own it today. The hotel opened with ${HOTEL.roomsAtOpening} rooms and has grown into the ${HOTEL.roomsToday} rooms you see now. It is a true Jinja landmark.`,
+  founding: `Hotel Paradise on the Nile is one of the oldest and best loved hotels in Jinja, and one of the most iconic on the river. It opened its doors on ${HOTEL.founded}, and it is registered with ${HOTEL.registration}. It was founded by ${HOTEL.founders}. ${HOTEL.founderSurnameSpoken} that is the family name. With vision, commitment and a great deal of hard work, and by God's grace, they grew the hotel from its first ${HOTEL.roomsAtOpening} rooms into the ${HOTEL.roomsToday} rooms you see today. Mr. Otile Francis and Mrs. Magrate Otile are deeply respected in Jinja, and the hotel they built remains a true landmark on the Nile.`,
   rooms: `The hotel opened with ${HOTEL.roomsAtOpening} rooms in nineteen ninety eight and has grown to ${HOTEL.roomsToday} today, from cosy singles to full suites with a view of the river. Say a room type, or open the Rooms page, and I will tell you more.`,
-  about: `Hotel Paradise on the Nile is one of Jinja's iconic and oldest hotels. It sits on the banks of the River Nile in Jinja, on the water since ${HOTEL.founded}. It was founded by ${HOTEL.founders} with just ${HOTEL.roomsAtOpening} rooms, and today it has ${HOTEL.roomsToday} — rooms with a view, a riverside restaurant, a pool, a gym and a bar. It is registered with ${HOTEL.registration}.`,
-  designer: `This website and the management system were designed and built by Mr Reagan Otema, founder of Reagansoft Innovation Limited here in Uganda. Their office is in Jinja. For more about the company, visit their website, reagansoftinnovation dot com.`,
+  about: `Hotel Paradise on the Nile is one of Jinja's iconic and oldest hotels. It sits on the banks of the River Nile in Jinja, and it has been on the water since ${HOTEL.founded}. It was founded by ${HOTEL.founders}, who still own it today. They opened the doors with just ${HOTEL.roomsAtOpening} rooms, and by their effort and God's grace it has grown to ${HOTEL.roomsToday} today - rooms with a view, a riverside restaurant, a pool, a gym and a bar. It is registered with ${HOTEL.registration}.`,
+  designer: `This website and the management system were developed by ${STUDIO.founder}, founder of ${STUDIO.name}, based in ${STUDIO.city}. Their office is in Jinja. For more about the company, visit their website, reagansoftinnovation dot com. You can also find them by searching Reagansoft Innovation Limited on Google.`,
   prices: `Name the dish and I will read you its price, or name a section and I will point you to it.`,
+  fallback: `I did not quite catch that. I can tell you about the hotel's history and its founders, our rooms, the menu, payment, or the team behind this website. For anything else, please call the front desk on ${PH}, or reach our developers, Reagansoft Innovation, at reagansoftinnovation dot com. I am still listening.`,
 };
 
 export function MenuConcierge({sections}: {sections: MenuSection[]}) {
@@ -424,7 +425,7 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
       speakAll([{who: 'man', text: answer}]);
       return;
     }
-    speakAll([{who: 'man', text: 'I did not quite catch that. Name a dish, or ask when we are open, where we are, or how to pay. I am still listening.'}]);
+    speakAll([{who: 'man', text: INFO_ANSWERS.fallback}]);
   }, [catalog, speakAll]);
 
   handleRef.current = handle;

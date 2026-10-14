@@ -915,3 +915,71 @@ fieldset{background:linear-gradient(180deg,rgba(250,249,245,.6),transparent)}
   .kpi,.panel,.room,.itemCard,.cart,.modalPanel{border:1px solid CanvasText}
   .kpi::after,.kpi::before,.panel h2::before,.sideBrand::after{forced-color-adjust:none}
 }
+
+/* ============================================================================
+   14 · The rail, comfortable everywhere
+
+   The module titles are never hidden: a group heading too long for the rail
+   wraps to a second line instead of being cut off with an ellipsis, so every
+   grouping reads in full on every screen. A width slider at the foot of the
+   rail lets a member make the modules wider or narrower - on a phone as much
+   as on a wide screen - and the choice is remembered on the device.
+   ============================================================================ */
+.groupHead{align-items:flex-start}
+.groupHead .gIco{margin-top:1px}
+.groupHead .gLbl{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.28;letter-spacing:.12em}
+
+.sideFoot{flex-direction:column;align-items:stretch;gap:9px}
+.sideFootRow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sideSize{display:flex;align-items:center;gap:8px;padding:2px 1px}
+.sideSize .ssIco,.sideSize .ssWide{display:flex;flex:none;color:#8ea3b8}
+.sideSize svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sideSize input[type=range]{flex:1;min-width:0;-webkit-appearance:none;appearance:none;height:4px;border-radius:999px;background:rgba(255,255,255,.16);outline:none;cursor:pointer}
+.sideSize input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:linear-gradient(160deg,#e7cd72,var(--gold));border:2px solid #0a1b34;box-shadow:0 2px 6px rgba(0,0,0,.4);cursor:pointer}
+.sideSize input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:linear-gradient(160deg,#e7cd72,var(--gold));border:2px solid #0a1b34;box-shadow:0 2px 6px rgba(0,0,0,.4);cursor:pointer}
+.sideSize input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(201,162,39,.4)}
+body.sideCollapsed .sideSize{display:none}
+
+/* The guide button beside the bell, and the panel it opens. */
+.guideBtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 11px;border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:9px;color:var(--navy);font-size:12.5px;font-weight:600;transition:background var(--t),color var(--t),border-color var(--t)}
+.guideBtn svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.guideBtn:hover{background:#fff;color:var(--gold-deep);border-color:rgba(201,162,39,.55)}
+@media(max-width:560px){.guideBtn .gbText{display:none}.guideBtn{padding:0 9px}}
+
+.guideWrap{position:fixed;inset:0;z-index:66;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(5,13,26,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:fadeIn .2s ease both}
+.guideWrap[hidden]{display:none}
+.guideCard{position:relative;width:min(560px,100%);max-height:88dvh;overflow-y:auto;overscroll-behavior:contain;background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(253,252,248,.97));border:1px solid var(--line);border-radius:16px;box-shadow:var(--e4);padding:22px 22px 18px;animation:panelUp .26s ease both}
+.guideCard::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:16px 16px 0 0}
+.guideCard h2{font-size:19px;color:var(--navy);margin:0 0 4px;font-family:'Playfair Display',serif}
+.guideIntro{color:var(--muted);font-size:13px;margin:0 0 14px}
+.guideSteps{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-direction:column;gap:10px}
+.guideSteps li{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;color:var(--navy);line-height:1.5}
+.guideSteps b{flex:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,var(--gold),#8a6f12);color:#071A33;font-size:12px;font-weight:700}
+.guideSteps em{font-style:normal;font-weight:700;color:var(--gold-deep)}
+.guideX{position:absolute;top:10px;right:10px;width:34px;height:34px;border:0;border-radius:8px;background:rgba(7,26,51,.06);color:var(--navy);font-size:17px;line-height:1;transition:background var(--t),color var(--t),transform var(--t)}
+.guideX:hover{background:rgba(201,162,39,.16);transform:rotate(90deg)}
+.guideDone{align-self:flex-start}
+body.guideOpen{overflow:hidden}
+
+/* On a phone the drawer follows the same slider, with a sane cap so it never
+   swallows the whole screen. */
+@media(max-width:1080px){
+  .side{width:min(88vw,var(--side))}
+}
+
+/* ============================================================================
+   15 · Touch and motion
+
+   No tap delay anywhere, and the KPI tilt is shelved on any touch device or
+   any device without a real hover, so nothing decorative can swallow a tap.
+   Every interactive surface keeps a pointer cursor.
+   ============================================================================ */
+a,button,input,select,textarea,[role=button],label{touch-action:manipulation}
+@media(hover:none){
+  .kpis{perspective:none}
+  .kpi{transform-style:flat}
+  .kpi:hover{transform:none;box-shadow:var(--e2)}
+  .kpiIco{transform:none}
+  .room:hover,.itemCard:hover{transform:none}
+}
+
