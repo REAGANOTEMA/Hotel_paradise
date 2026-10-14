@@ -26,7 +26,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $installed){
   $cols=array_values(NOTIFY_CATEGORIES);
   $vals=[]; foreach($cols as $c){ $vals[]=isset($_POST[$c])?1:0; }
   q('INSERT INTO notification_preferences(user_id,'.implode(',',$cols).',updated_at) VALUES(?,'.rtrim(str_repeat('?,',count($cols)),',').',NOW())'
-    .' ON DUPLICATE KEY UPDATE '.implode(',',array_map(fn($c)=>$c.'='.$c,$cols)).',updated_at=NOW()',array_merge([$uid],$vals));
+    .' ON DUPLICATE KEY UPDATE '.implode(',',array_map(fn($c)=>$c.'=VALUES('.$c.')',$cols)).',updated_at=NOW()',array_merge([$uid],$vals));
   flash('Your notification preferences were saved.');
   go('notifications');
  }

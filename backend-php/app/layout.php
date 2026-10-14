@@ -81,6 +81,8 @@ function svg_icon(string $name): string{
   'chev'=>'<polyline points="6 9 12 15 18 9"/>',
   'sound'=>'<path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.6a4.7 4.7 0 0 1 0 6.8"/><path d="M18.4 6a8.4 8.4 0 0 1 0 12"/>',
   'mute'=>'<path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M16 9.5l4 5M20 9.5l-4 5"/>',
+  'mic'=>'<rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/><path d="M8.5 21h7"/>',
+  'note'=>'<path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
   'trash'=>'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14"/><path d="M10 11v6M14 11v6"/>',
   'help'=>'<circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4.9c0 1.9-2.7 2.4-2.7 3.8"/><path d="M12 17.4v.1"/>',
   ];
@@ -157,11 +159,134 @@ function welcome_voice(): array{
  return ['text'=>$text,'auto'=>true];
 }
 
+/**
+ * The verified public facts the console assistant may speak aloud.
+ *
+ * These are the hotel's own published details. Nothing private is ever placed
+ * here: no staff addresses, no passwords, no guest records. If a question is
+ * not answered by a fact or a piece of guidance, the assistant says so plainly
+ * rather than inventing anything.
+ */
+function assistant_facts(): array{
+ return [
+  'hotel'=>'Hotel Paradise on the Nile',
+  'city'=>'Jinja',
+  'country'=>'Uganda',
+  'address'=>'Plot 12, 19 and 25 Kiira Lane, Jinja, Uganda',
+  'phones'=>['+256 759 504 928','+256 773 565 668'],
+  'email'=>'frontdesk@hotelparadiseonthenile.info',
+  'website'=>'www.hotelparadiseonthenile.info',
+  'established'=>'18 April 1998',
+  'founders'=>['Mr. Otile Francis','Mrs. Magrate Otile'],
+  'founded_rooms'=>'10',
+  'developer'=>'Reagan Otema',
+  'company'=>'Reagansoft Innovation Limited',
+  'company_site'=>'https://reagansoftinnovation.com',
+ ];
+}
+
+/**
+ * The assistant's spoken answers, each matched by the words a person is likely
+ * to use. The first entry whose keywords are found in the question wins, so the
+ * list is ordered from the most specific to the most general.
+ */
+function assistant_knowledge(): array{
+ return [
+  ['k'=>['history','founded','establish','started','began','origin','1998','when was','how old'],'a'=>'Hotel Paradise on the Nile was established on the eighteenth of April, nineteen ninety eight, by Mr. Otile Francis and his wife, Mrs. Magrate Otile. They began with just ten rooms, and through their vision and hard work, and as the owner puts it, by God\'s grace, the hotel has grown into the riverside retreat it is today.'],
+  ['k'=>['founder','owner','francis','magrate','proprietor','who started'],'a'=>'The hotel was founded by Mr. Otile Francis and his wife, Mrs. Magrate Otile. They are warmly respected for their vision and dedication, and their efforts are the reason Hotel Paradise on the Nile stands on the banks of the Nile today.'],
+  ['k'=>['how many rooms did it start','started with','ten rooms','10 rooms','original rooms','first rooms'],'a'=>'The hotel opened with ten rooms in 1998. Over the years it has grown well beyond that beginning, and the current room inventory is listed in the Rooms module and on the public website.'],
+  ['k'=>['who developed','who built','developer','programmer','reagansoft','reagan','otema','who made the system','who made the website'],'a'=>'The hotel\'s website and management system were developed by Reagan Otema, founder of Reagansoft Innovation Limited, Uganda, based in Jinja. You can find the company at reagansoftinnovation dot com.'],
+  ['k'=>['where is','located','location','address','directions','kiira','how do i get'],'a'=>'Hotel Paradise on the Nile is in Jinja, Uganda, at Plot twelve, nineteen and twenty five, Kiira Lane. The front desk can give exact directions on plus two five six, seven five nine, five oh four, nine two eight.'],
+  ['k'=>['contact','phone','telephone','call them','email','reach the hotel'],'a'=>'You can reach the hotel on plus two five six, seven five nine, five oh four, nine two eight, or plus two five six, seven seven three, five six five, six six eight. The front desk email is front desk, at hotel paradise on the nile dot info.'],
+  ['k'=>['website','web address','online','url'],'a'=>'The public website is hotel paradise on the nile dot info. There is also an Open website link in the menu, under your profile on the rail.'],
+  ['k'=>['book a room','make a booking','reserve','reservation','accommodation','how do i book'],'a'=>'To make a booking here, open Reservations, press New reservation, choose the dates and the room type, add the guest, and save. The public website can also take a booking, and it lands in this same Reservations module.'],
+  ['k'=>['room type','deluxe','suite','standard room','room rate','price of a room','available rooms','rooms free'],'a'=>'Room types, their rates and how many are free are all in the Rooms module. Open Rooms to see each room and whether it is available, occupied, dirty or out of service.'],
+  ['k'=>['food','menu','order food','restaurant','something to eat','drink','bar'],'a'=>'Food and drink are managed under Restaurant and Bar. The POS and Orders page takes an order and sends it to the kitchen, and Food and Beverage shows the bills. The public website menu writes into the same kitchen queue.'],
+  ['k'=>['kitchen','cook','prepare the order','ticket','docket','food ready'],'a'=>'The Kitchen module shows the orders waiting to be cooked. Open Kitchen, read the docket, and mark each order preparing and then ready as it is finished.'],
+  ['k'=>['payment','how do i pay','cash','mobile money','mtn','airtel','card','pesapal','gateway'],'a'=>'Payments are recorded in Finance and at the Cashier. A guest may pay by cash, mobile money, card or bank transfer. Online payment through the gateway stays in test mode until the hotel\'s merchant keys are added, so until then the front desk settles online orders.'],
+  ['k'=>['receipt','invoice','bill','statement','print a document'],'a'=>'A receipt or an invoice is printed from the record it belongs to. Open the order, the booking, or the Invoices page and press Print. A receipt is always built from a confirmed payment.'],
+  ['k'=>['stock','inventory','store room','reorder','low stock'],'a'=>'Stock lives under Inventory. Record every movement there, an issue, a waste, a transfer or a count, and the system raises a low stock alert when an item falls to its reorder level.'],
+  ['k'=>['supplier','purchase','procure','requisition','order goods'],'a'=>'Suppliers and purchasing are under Procurement and Stores. Raise a requisition in Purchases, take it through approval, then record the goods received so the stock rises.'],
+  ['k'=>['housekeeping','clean a room','room dirty','task','shift'],'a'=>'Housekeeping work is in the Shifts module, where tasks and the cash up are recorded. On the Rooms page you can set a room to cleaning and then inspected once it is ready.'],
+  ['k'=>['staff','team','employee','add a user','member of staff','role'],'a'=>'The team and their roles are managed under Team and Users. Add a member there and choose the role. Passwords are never shown to anyone, not even to me.'],
+  ['k'=>['notification','alert','bell','unread'],'a'=>'The bell at the top of every page shows your own notifications: new bookings, orders, payments and messages. The Notifications page lists them all and lets you choose which kinds you want to hear about.'],
+  ['k'=>['director','general manager','gm','overview','whole house'],'a'=>'As management you hold the widest view. The Director and General Manager dashboards show the whole house, and the Reports, Audit and Approvals pages give you the numbers and the control you need.'],
+  ['k'=>['report','sales figures','revenue','occupancy','analytics'],'a'=>'Open Reports to see bookings, room nights, occupancy and sales for any date range, and to print the result.'],
+  ['k'=>['check in a guest','check-in','checkin','guest arrived','an arrival'],'a'=>'To check a guest in, open Reservations, find the booking and press Check in. The system allocates a free room of the right type, marks the room occupied and opens the guest folio, so you can post charges and take payments from the same booking.'],
+  ['k'=>['check out','checkout a guest','guest leaving','a departure','leaving the room'],'a'=>'To check a guest out, open their booking in Reservations and press Check out. Any balance is settled first, then the room is freed and set to dirty for housekeeping, and a receipt or statement can be printed.'],
+  ['k'=>['void','reverse a payment','refund','cancel a payment','payment was wrong'],'a'=>'A payment is reversed in Finance: open the payment, press Reverse and give a reason. An order is cancelled from POS and Orders with a reason. Both are recorded in the Audit Trail.'],
+  ['k'=>['invoice','bill a company','invoice number','issue an invoice'],'a'=>'Open Invoices, start a draft, save the customer details and add each line, then issue it. An issued invoice can take a payment, a discount or an adjustment, or be voided, and it can be printed or saved as a PDF from the same page.'],
+  ['k'=>['requisition','purchase order','order goods','receive goods','deliveries'],'a'=>'Purchasing runs in order: raise a requisition in Purchases, send it for approval, and once it is approved create a purchase order from it. When the goods arrive, record them received on the order and the stock rises automatically in Inventory.'],
+  ['k'=>['cash up','close shift','shift close','the till','variance','counted cash'],'a'=>'Close a shift in Shifts: enter the counted cash and the system compares it with what it expects, showing any variance. The closed shift then appears in Approvals for management to see.'],
+  ['k'=>['approval','approve','reject','pending decision','waiting for approval'],'a'=>'The Approvals page gathers everything waiting on a decision: expense requests, stock requests, open shifts and large payments. Approve or reject each one there, and the record updates everywhere it appears.'],
+  ['k'=>['audit','who changed','history of changes','the log','trace a change'],'a'=>'The Audit Trail records every change made in the console, with who made it, when, and what changed. Filter it by action, module or person to trace anything back.'],
+  ['k'=>['restore','deleted','trash','bring back','removed a record'],'a'=>'Anything deleted goes to Trash rather than vanishing. Open Trash, find the record and press Restore to bring it back, or delete it permanently to remove it for good.'],
+  ['k'=>['add a staff','add a user','new account','create a user','member of staff','suspend an account','reset a password'],'a'=>'Team accounts live under Team and Users. Add a member, give them a role and manage their access. You can suspend or reactivate an account and reset a password, but a password is never displayed to anyone, not even to me.'],
+  ['k'=>['change my password','my password','update my details','my profile','my photo'],'a'=>'Open My Profile from your name at the top right to change your password, or to update your name, phone and photo.'],
+  ['k'=>['push notification','phone alert','ring my phone','notifications on my'],'a'=>'Open Notifications to turn on push alerts for this device, send yourself a test, or choose which kinds of event you want to hear about. The bell at the top lists your own notifications at any time.'],
+  ['k'=>['integrity scan','a finding','discrepancy','does not add up','suspect a record'],'a'=>'Integrity and Control runs a scan across the records to find anything that does not add up. Each finding can be reviewed, cleared with a reason or reopened, and the report can be printed, downloaded as a CSV or shared to WhatsApp.'],
+  ['k'=>['publish a news','announce','newsroom','update the website','write an update'],'a'=>'The Newsroom lets you write a news item or an update and publish it to the public website, or keep it as a draft until you are ready.'],
+  ['k'=>['export','download','csv','spreadsheet'],'a'=>'Where a page offers an export, it downloads a CSV you can open in a spreadsheet. The Integrity report has its own download, and reports can be printed from the Reports page.'],
+  ['k'=>['website menu','repair the menu','menu not showing','fix the website menu'],'a'=>'If the website menu and this console ever drift apart, open Food and Beverage and use the repair action to re-sync the website menu from the console.'],
+  ['k'=>['kpi','the figures','revenue today','how are we doing','today at a glance'],'a'=>'The Dashboard shows today at a glance: arrivals, who is in house, available rooms, departures, payments and anything awaiting approval. The CEO and Director overview adds yesterday, this month and this year.'],
+  ['k'=>['who is signed in','which account','am i logged in','current user'],'a'=>'I can tell you only about your own session. Ask me who am I, and I will read back your name and role. Passwords and other people\'s details are never shared.'],
+ ];
+}
+
+/** One plain sentence for the page the member is actually looking at, so the
+ *  assistant can always say what to do next without guessing. */
+function assistant_guides(): array{
+ return [
+  'dashboard'=>'You are on the Dashboard. It shows today\'s arrivals, who is in house, today\'s payments, what is awaiting approval and low stock. Use the rail on the left to open a module, or the bell at the top for notifications.',
+  'reservations'=>'You are on Reservations. Press New reservation, choose the dates and the room type, add the guest and save. Open a booking to check the guest in, post a charge, take a payment, or print the confirmation.',
+  'rooms'=>'You are on Rooms. Each room shows its state. Set a room to Cleaning and then Inspected, mark one Out of service for repairs, or open a room to allocate it to a booking.',
+  'guests'=>'You are on Guests. This is the guest list. Add a guest with their name and telephone, or open a record to see their stays. Use the search box to find someone quickly.',
+  'pos'=>'You are on POS and Orders. Add dishes to the order, then send it. The order goes straight to the kitchen, and the bill is printed here.',
+  'fnb'=>'You are on Food and Beverage. This shows the restaurant and bar bills. Open a bill to take a payment and print the receipt.',
+  'kitchen'=>'You are on Kitchen. Read each docket, then mark the order Preparing and, when it is done, Ready, so the waiting staff are told.',
+  'shifts'=>'You are on Shifts. Housekeeping tasks and the cash up are recorded here. Start a shift, then close it with the counted cash.',
+  'inventory'=>'You are on Inventory. Add items, and record every movement: an issue, a waste, a transfer between stores, or a stock count. Low stock raises an alert on its own.',
+  'suppliers'=>'You are on Suppliers. Keep the supplier list here, with their contacts and what they supply.',
+  'purchases'=>'You are on Purchases. Raise a requisition, take it through approval, then record the goods received so the stock rises.',
+  'invoices'=>'You are on Invoices. This is the billing desk. Create an invoice, add the lines, then print it or record a payment against it.',
+  'expenses'=>'You are on Expenses. Record a cost, and it joins the approval queue for management to sign off.',
+  'finance'=>'You are on Finance. Confirm or reverse payments here, and print the receipt from the record.',
+  'approvals'=>'You are on Approvals. Everything waiting for a decision is listed here: expenses, requisitions, shifts and large payments.',
+  'reports'=>'You are on Reports. Choose a date range from the top, then read or print the bookings, occupancy and sales figures.',
+  'audit'=>'You are on the Audit Trail. Every change is listed here, with who made it and when.',
+  'messages'=>'You are on Guest Messages. Answer what guests have sent to your desk, and mark each one resolved when it is done.',
+  'news'=>'You are on the Newsroom. Write a news item or an update, then publish it to the website.',
+  'users'=>'You are on Team and Users. Add a member, choose their role, and manage access here.',
+  'events'=>'You are on Events and Enquiries. Record a function or a venue enquiry, then follow it through to a booking.',
+  'notifications'=>'You are on Notifications. This lists everything that has happened to you, and the phones that hear about it.',
+  'overview'=>'You are on the CEO and Director overview. It shows the whole house at a glance: today, yesterday, this month and this year, covering revenue, orders, rooms and arrivals, expenses and purchases, voids and unpaid bills. Open a customer to see their stays, orders and payments, and print a receipt or a guest statement from there.',
+  'integrity'=>'You are on Integrity and Control. Run a scan to look for anything that does not add up, then mark each finding reviewed, clear it with a reason, or reopen it. You can print the report, download it as a CSV, or share it to WhatsApp.',
+  'trash'=>'You are on Trash. Everything removed anywhere in the console lands here, with who removed it and when. Restore a record to bring it back, or delete it permanently, and only then is it truly gone.',
+  'profile'=>'You are on My Profile. Update your name, phone and photo here, and change your password. Your role is set by the Administrator under Team and Users.',
+ ];
+}
+
+/** The configuration the assistant script reads on the page. Nothing secret. */
+function assistant_boot(string $active): void{
+ $u=current_user();
+ $cfg=[
+  'name'=>(string)($u['name']??''),
+  'role'=>(string)(roles_of()[0]??''),
+  'roleLabel'=>role_label(roles_of()[0]??''),
+  'page'=>$active,
+  'facts'=>assistant_facts(),
+  'knowledge'=>assistant_knowledge(),
+  'guides'=>assistant_guides(),
+ ];
+ echo '<script>window.HP_ASSIST='.json_encode($cfg,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES).';</script>';
+}
+
 function page_head(string $title,string $active='dashboard',string $sub=''): void{
  $u=current_user();
  $flash=flash_out();
  $me=$u['name']??'';
- $role=role_label(roles_of()[0]??'');
+ $roleKey=roles_of()[0]??'';
+ $role=role_label($roleKey);
  echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">';
  echo '<title>'.e($title).' | Hotel Paradise on the Nile</title>';
  echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
@@ -169,7 +294,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<link rel="stylesheet" href="'.BASE.'/assets/admin.css">';
  echo '<link rel="icon" type="image/png" sizes="64x64" href="'.SITE_URL.'/images/logo-64.png">';
  echo '<link rel="apple-touch-icon" href="'.SITE_URL.'/images/logo-192.png">';
- echo '</head><body><div class="app">';
+ echo '</head><body data-page="'.e($active).'" data-role="'.e($roleKey).'"><div class="app">';
 
  echo '<a class="skipLink" href="#mainContent">Skip to content</a>';
  echo '<div class="sideScrim" id="sideScrim" hidden></div>';
@@ -227,8 +352,20 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
     the moment they land and can mute it for good with one tap. */
  $voice=welcome_voice();
  echo '<button class="voiceBtn" id="voiceBtn" type="button" aria-pressed="true" aria-label="Welcome voice" title="Welcome voice" data-text="'.e($voice['text']).'" data-auto="'.($active==='dashboard'?'1':'0').'">';
- echo '<span class="vOn">'.svg_icon('sound').'</span><span class="vOff">'.svg_icon('muted').'</span>';
+ echo '<span class="vOn">'.svg_icon('sound').'</span><span class="vOff">'.svg_icon('mute').'</span>';
  echo '</button>';
+ /* The ambient instruments: on a dashboard soft, calm music plays behind the
+    page, and this button silences it or brings it back. It only ever appears
+    where the music plays, so no one meets a control that does nothing. */
+ if($active==='dashboard'){
+  echo '<button class="musicBtn" id="musicBtn" type="button" aria-pressed="true" aria-label="Ambient music" title="Ambient music">';
+  echo '<span class="mOn">'.svg_icon('note').'</span><span class="mOff">'.svg_icon('mute').'</span>';
+  echo '</button>';
+ }
+ /* The assistant: press the microphone, speak a question, and Paradise answers
+    from the hotel's verified public facts and this console's own guide. */
+ echo '<button class="askBtn" id="askBtn" type="button" aria-pressed="false" aria-label="Ask the Paradise assistant" title="Ask the assistant">';
+ echo svg_icon('mic').'<span class="abText">Ask</span></button>';
  /* The guide: a short, plain walk-through of how the console works, openable
     from anywhere and offered once on the dashboard so a new member is never
     left guessing where to press. */
@@ -288,11 +425,23 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<button class="btn guideDone" id="guideDone" type="button">Got it</button>';
  echo '</div></div>';
 
+ /* ---- the assistant: what it heard, and what it answered ---- */
+ echo '<div class="assistPanel" id="assistPanel" hidden>';
+ echo '<div class="assistCard" role="dialog" aria-modal="false" aria-live="polite" aria-label="Paradise assistant">';
+ echo '<button class="assistX" id="assistX" type="button" aria-label="Close assistant">&times;</button>';
+ echo '<div class="assistHead"><span class="assistIco">'.svg_icon('spark').'</span><b>Paradise Assistant</b><span class="assistState" id="assistState">Ready</span></div>';
+ echo '<div class="assistText" id="assistText">Ask me about the hotel or about how to use this console.</div>';
+ echo '<div class="assistActions">';
+ echo '<button class="btn sm" id="assistAsk" type="button">'.svg_icon('mic').'<span>Ask a question</span></button>';
+ echo '<button class="btnGhost sm" id="assistStop" type="button">Stop voice</button>';
+ echo '</div></div></div>';
+
  /* ---- what the last action left behind, as a notification ---- */
  if($flash){
   $ico=$flash['type']==='bad'?'!':($flash['type']==='warn'?'!':'✓');
   echo '<div class="toastWrap" id="toasts"><div class="toast '.e($flash['type']).'" role="status"><span class="noteIco">'.$ico.'</span><span>'.e($flash['msg']).'</span><button type="button" aria-label="Dismiss">&times;</button></div></div>';
  }
+ assistant_boot($active);
  echo '<div class="content">';
 }
 
@@ -570,11 +719,243 @@ function page_scripts(): void{
 HTML;
 }
 
+/**
+ * The Paradise assistant: soft, calm instruments behind a dashboard, a warm
+ * spoken welcome, and a microphone that listens to a question and answers from
+ * the hotel's verified facts and this console's own guide.
+ *
+ * The instruments are synthesised in the browser with the Web Audio API, so
+ * there are no sound files to load and nothing leaves the device. Several
+ * timbres rotate as the page sits, and the Director's console uses the calmest
+ * African xylophone voices at a slower pace.
+ *
+ * The music is silenced the instant the assistant speaks or listens, and comes
+ * gently back afterwards, so the two never talk over each other. Nothing here
+ * is automatic except the welcome on the dashboard: after that the assistant
+ * only ever speaks when it is asked.
+ */
+function assistant_scripts(): void{
+ echo <<<'HTML'
+<script>
+(function(){
+  var A=window.HP_ASSIST||{};
+  var page=document.body.getAttribute('data-page')||'dashboard';
+  var isDash=page==='dashboard';
+  var role=A.role||'';
+  var calm=(role==='director'||role==='super_admin');
+  var synth=('speechSynthesis' in window)?window.speechSynthesis:null;
+  var speaking=false,listening=false,ducked=false;
+  var AC=null,master=null,duckG=null,verb=null,musicOn=true,musicTimer=null,bankTimer=null,bankIx=0;
+  var panel=document.getElementById('assistPanel');
+  var ptext=document.getElementById('assistText');
+  var pstate=document.getElementById('assistState');
+
+  function firstName(n){var w=String(n==null?'':n).trim().split(/\s+/);return w[0]||'';}
+  function phon(s){return String(s==null?'':s).replace(/Otile/gi,'Oh-till-eh');}
+  function setState(s){if(pstate)pstate.textContent=s;}
+  function pickVoice(){
+    if(!synth)return null;
+    var vs=synth.getVoices()||[],v=null,i;
+    for(i=0;i<vs.length;i++){if(/^en[-_]?/i.test(vs[i].lang||'')&&/samantha|aria|libby|jenny|michelle|zira|hazel|serena|female|google us english/i.test(vs[i].name)){v=vs[i];break;}}
+    if(!v){for(i=0;i<vs.length;i++){if(/^en[-_]?us/i.test(vs[i].lang||'')){v=vs[i];break;}}}
+    if(!v){for(i=0;i<vs.length;i++){if(/^en[-_]?/i.test(vs[i].lang||'')){v=vs[i];break;}}}
+    return v;
+  }
+  function duck(on){
+    ducked=on;
+    if(!duckG||!AC)return;
+    var t=AC.currentTime;
+    try{duckG.gain.cancelScheduledValues(t);duckG.gain.setValueAtTime(duckG.gain.value,t);duckG.gain.linearRampToValueAtTime(on?0.0001:1,t+(on?0.25:1.1));}catch(e){}
+  }
+  function speak(text,opts){
+    opts=opts||{};
+    if(!synth||!text){if(opts.after)opts.after();return;}
+    try{
+      synth.cancel();
+      speaking=true;duck(true);setState('Speaking');
+      var u=new SpeechSynthesisUtterance(phon(text));
+      u.rate=calm?0.9:0.97;u.pitch=calm?0.97:1.02;u.volume=1;u.lang='en-US';
+      var v=pickVoice();if(v){u.voice=v;u.lang=v.lang||'en-US';}
+      u.onend=u.onerror=function(){speaking=false;duck(listening);setState(listening?'Listening':'Ready');if(opts.after)opts.after();};
+      synth.speak(u);
+    }catch(e){speaking=false;duck(false);if(opts.after)opts.after();}
+  }
+  /* Whatever way a browser reports speech or listening, the music is always
+     silenced while the assistant is talking and always returns afterwards. */
+  setInterval(function(){
+    if(!synth)return;
+    var talk=synth.speaking||speaking;
+    if(talk&&!ducked)duck(true);
+    else if(!talk&&!listening&&ducked)duck(false);
+  },350);
+
+  /* ---------- ambient instruments (synthesised, no files) ---------- */
+  function impulse(dur,decay){
+    var rate=AC.sampleRate,len=Math.max(1,Math.floor(rate*dur)),buf=AC.createBuffer(2,len,rate);
+    for(var c=0;c<2;c++){var d=buf.getChannelData(c);for(var i=0;i<len;i++){d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}}
+    return buf;
+  }
+  function ensureCtx(){
+    if(AC)return AC;
+    var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;
+    AC=new C();
+    master=AC.createGain();master.gain.value=0.0001;master.connect(AC.destination);
+    duckG=AC.createGain();duckG.gain.value=1;duckG.connect(master);
+    try{verb=AC.createConvolver();verb.buffer=impulse(calm?3.4:2.4,calm?2.6:2.2);var wet=AC.createGain();wet.gain.value=calm?0.42:0.34;verb.connect(wet);wet.connect(master);}catch(e){verb=null;}
+    return AC;
+  }
+  function note(freq,when,dur,type,gain,harm){
+    if(!AC)return;
+    try{
+      var o=AC.createOscillator();o.type=type||'sine';o.frequency.value=freq;
+      var g=AC.createGain();g.gain.setValueAtTime(0.0001,when);
+      g.gain.exponentialRampToValueAtTime(Math.max(0.0002,gain),when+0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001,when+dur);
+      o.connect(g);g.connect(duckG);if(verb)g.connect(verb);o.start(when);o.stop(when+dur+0.12);
+      if(harm){
+        var h=AC.createOscillator();h.type='sine';h.frequency.value=freq*2.01;
+        var hg=AC.createGain();hg.gain.setValueAtTime(0.0001,when);
+        hg.gain.exponentialRampToValueAtTime(Math.max(0.0002,gain*harm),when+0.01);
+        hg.gain.exponentialRampToValueAtTime(0.0001,when+dur*0.6);
+        h.connect(hg);hg.connect(duckG);if(verb)hg.connect(verb);h.start(when);h.stop(when+dur);
+      }
+    }catch(e){}
+  }
+  var BANKS=[
+    {name:'Kalimba',type:'sine',harm:0.22,decay:2.8},
+    {name:'Marimba',type:'triangle',harm:0.32,decay:1.7},
+    {name:'Glass',type:'sine',harm:0.12,decay:3.4},
+    {name:'Flute',type:'sine',harm:0.06,decay:2.4},
+    {name:'Ngoma',type:'triangle',harm:0.18,decay:1.2}
+  ];
+  var CALM_BANKS=[0,2,4];
+  var SCALE=[261.63,293.66,329.63,392.00,440.00,523.25,587.33,659.25,783.99];
+  var CALM_SCALE=[196.00,220.00,261.63,293.66,329.63,392.00,440.00];
+  function pickNote(low){
+    var sc=calm?CALM_SCALE:SCALE;
+    if(low)return sc[Math.floor(Math.random()*Math.min(4,sc.length))];
+    return sc[Math.floor(Math.random()*sc.length)];
+  }
+  function tick(){
+    if(!AC||!musicOn||document.hidden)return;
+    var b=BANKS[calm?CALM_BANKS[bankIx%CALM_BANKS.length]:bankIx%BANKS.length];
+    var t=AC.currentTime+0.06;
+    if(Math.random()<(calm?0.55:0.4))note(pickNote(true),t,b.decay*1.6,b.type,calm?0.07:0.06,b.harm*0.5);
+    var n=1+(Math.random()<(calm?0.25:0.45)?1:0);
+    for(var i=0;i<n;i++)note(pickNote(false),t+i*(0.32+Math.random()*0.4),b.decay*(0.8+Math.random()*0.4),b.type,calm?0.05:0.055,b.harm);
+  }
+  function musicState(on){
+    musicOn=on;try{localStorage.setItem('hpn_music',on?'1':'0')}catch(e){}
+    var mb=document.getElementById('musicBtn');
+    if(mb){mb.classList.toggle('off',!on);mb.setAttribute('aria-pressed',on?'true':'false');}
+  }
+  function startMusic(){
+    if(!isDash)return;
+    var ctx=ensureCtx();if(!ctx)return;
+    if(ctx.state==='suspended'){try{ctx.resume()}catch(e){}}
+    if(musicTimer)clearInterval(musicTimer);
+    musicTimer=setInterval(tick,calm?2300:1500);
+    if(bankTimer)clearInterval(bankTimer);
+    bankTimer=setInterval(function(){bankIx=(bankIx+1)%BANKS.length;},26000);
+    var t=ctx.currentTime;
+    try{master.gain.cancelScheduledValues(t);master.gain.setValueAtTime(master.gain.value,t);master.gain.linearRampToValueAtTime(calm?0.9:1,t+4);}catch(e){}
+    tick();
+  }
+  function stopMusic(){
+    if(musicTimer){clearInterval(musicTimer);musicTimer=null;}
+    if(bankTimer){clearInterval(bankTimer);bankTimer=null;}
+    if(master&&AC){var t=AC.currentTime;try{master.gain.cancelScheduledValues(t);master.gain.setValueAtTime(master.gain.value,t);master.gain.linearRampToValueAtTime(0.0001,t+1.2);}catch(e){}}
+  }
+
+  var mb=document.getElementById('musicBtn');
+  if(mb){
+    try{if(localStorage.getItem('hpn_music')==='0')musicOn=false;}catch(e){}
+    mb.classList.toggle('off',!musicOn);mb.setAttribute('aria-pressed',musicOn?'true':'false');
+    mb.addEventListener('click',function(){musicState(!musicOn);if(musicOn)startMusic();else stopMusic();});
+  }
+  /* Start the instruments on the first real interaction (browsers will not
+     allow sound before one), and keep trying quietly until they do. */
+  if(isDash&&musicOn){
+    var begin=function(){if(!musicTimer)startMusic();};
+    document.addEventListener('pointerdown',begin);
+    document.addEventListener('keydown',begin);
+    setTimeout(function(){var c=ensureCtx();if(c&&c.state==='running')begin();},1400);
+  }
+
+  /* ---------- the assistant: listen, then answer ---------- */
+  function showPanel(text){
+    if(panel)panel.hidden=false;
+    if(ptext)ptext.textContent=text;
+  }
+  function guide(){
+    return (A.guides||{})[page]||'Use the rail on the left to open a module. Each heading is a group that folds open, and every page does its work with the buttons along the top.';
+  }
+  function score(q,ks){var s=0;for(var i=0;i<ks.length;i++){if(q.indexOf(ks[i])>=0)s+=ks[i].length+3;}return s;}
+  function answer(q){
+    var t=' '+String(q||'').toLowerCase().replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ')+' ';
+    if(/(^| )(hi|hello|hey)( |$)/.test(t)||/good (morning|afternoon|evening)/.test(t))
+      return 'Hello'+(A.name?', '+firstName(A.name):'')+'. I am here whenever you need me. Ask me about the hotel, or about how to use this console.';
+    if(/thank|thanks|appreciate/.test(t))return 'You are very welcome. It is a pleasure to help.';
+    if(/who am i|my role|my name|signed in as/.test(t))return 'You are signed in as '+(A.name?A.name+', ':'')+(A.roleLabel||'a member of staff')+'.';
+    var gw=['how do i','how can i','what do i do','where am i','what next','what should i','guide me','show me how','how to use','i am stuck','im stuck','help me with'];
+    for(var i=0;i<gw.length;i++){if(t.indexOf(gw[i])>=0)return guide();}
+    var best=null,bs=0,list=A.knowledge||[];
+    for(var j=0;j<list.length;j++){var s=score(t,list[j].k||[]);if(s>bs){bs=s;best=list[j];}}
+    if(best&&bs>=4)return best.a;
+    if(t.indexOf('help')>=0||t.indexOf('what can you')>=0||t.indexOf('who are you')>=0)
+      return 'I am the Paradise assistant. I can help with the hotel\'s history and founders, rooms and rates, dining, bookings, payments, receipts, stock, the team, notifications, and how to use this console. '+guide();
+    return 'I do not have that detail to hand. I can help with the hotel\'s history and founders, rooms and rates, dining, bookings, payments, receipts, stock, the team, notifications, and how to use this console. For anything else, please ask a member of the hotel team.';
+  }
+  function ask(text){
+    if(!text)return;
+    var a=answer(text);
+    showPanel('You: '+text+'\n\nParadise: '+a);
+    speak(a);
+  }
+
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var recog=null;
+  var askBtn=document.getElementById('askBtn'),assistAsk=document.getElementById('assistAsk'),assistStop=document.getElementById('assistStop');
+  function setAskBtn(on){
+    if(!askBtn)return;
+    askBtn.classList.toggle('listening',on);
+    askBtn.setAttribute('aria-pressed',on?'true':'false');
+  }
+  function startListen(){
+    if(!SR){showPanel('Speech recognition is not available in this browser. Please open the console in Chrome or Edge to speak, or read the answers here.');return;}
+    if(!recog){
+      recog=new SR();recog.lang='en-US';recog.interimResults=false;recog.maxAlternatives=1;recog.continuous=false;
+      recog.onstart=function(){listening=true;duck(true);setState('Listening');setAskBtn(true);if(panel)panel.hidden=false;if(ptext&&ptext.textContent.indexOf('You:')<0)ptext.textContent='Listening…';};
+      recog.onresult=function(e){var txt=(e.results&&e.results[0]&&e.results[0][0]&&e.results[0][0].transcript)||'';ask(txt);};
+      recog.onerror=function(e){
+        listening=false;setAskBtn(false);
+        var err=e&&e.error;
+        if(err==='not-allowed'||err==='service-not-allowed')showPanel('Microphone access was declined. Please allow the microphone in your browser settings, or read the answers here.');
+        else if(err==='no-speech')showPanel('I did not hear anything. Please tap Ask and speak again.');
+        else showPanel('I could not use the microphone just now. Please try again, or read the answers here.');
+        setState('Ready');
+      };
+      recog.onend=function(){listening=false;setAskBtn(false);if(!speaking){duck(false);setState('Ready');}};
+    }
+    try{recog.start();}catch(e){/* already starting */}
+  }
+  function toggleListen(){if(listening){try{recog.stop();}catch(e){}}else startListen();}
+  if(askBtn){askBtn.addEventListener('click',function(){if(panel)panel.hidden=false;if(!SR){showPanel('Speech recognition is not available in this browser. Please open the console in Chrome or Edge to speak, or read the answers here.');return;}toggleListen();});}
+  if(assistAsk)assistAsk.addEventListener('click',toggleListen);
+  if(assistStop)assistStop.addEventListener('click',function(){try{if(synth)synth.cancel();}catch(e){}speaking=false;duck(listening);setState(listening?'Listening':'Ready');});
+  var ax=document.getElementById('assistX');
+  if(ax)ax.addEventListener('click',function(){if(panel)panel.hidden=true;if(listening){try{recog.stop();}catch(e){}}try{if(synth)synth.cancel();}catch(e){}speaking=false;duck(false);});
+})();
+</script>
+HTML;
+}
+
 function page_foot(): void{
  echo '</div></div>';
  echo '<button class="toTop" id="toTop" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 11l6-6 6 6"/></svg><span>Top</span></button>';
  echo '</div>';
  page_scripts();
+ assistant_scripts();
  echo '<script src="'.BASE.'/assets/attn.js"></script>';
  echo '</body></html>';
 }

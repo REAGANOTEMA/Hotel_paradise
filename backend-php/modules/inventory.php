@@ -41,7 +41,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    if($type==='count_adjust'){
     $cur=(float)val('SELECT quantity FROM stock_levels WHERE item_id=? AND location=?',[$iid,$loc]);
     $delta=$qty-$cur;
-    q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,NOW())',[$iid,$loc,$type,$delta,'Count adjusted to '.$qty.' '.$note,$u['id']]);
+    q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,$type,$delta,'Count adjusted to '.$qty.' '.$note,$u['id']]);
     q('UPDATE stock_levels SET quantity=? WHERE item_id=? AND location=?',[$qty,$iid,$loc]);
     audit('stock_count_adjust','inventory_item',$iid,['location'=>$loc,'new'=>$qty]);
     $lowStockAlert($iid,$loc);
@@ -49,15 +49,15 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     go('inventory');
    }
    if($type==='transfer_in'){ $dst=trim($_POST['dst']??''); $add=row('SELECT id FROM stock_levels WHERE item_id=? AND location=?',[$iid,$dst]); if(!$add) { q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,0)',[$iid,substr($dst,0,60)]); }
-     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,NOW())',[$iid,$loc,'transfer_out',-$qty,$note,$u['id']]);
-     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,NOW())',[$iid,$dst,'transfer_in',$qty,$note,$u['id']]);
+     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,'transfer_out',-$qty,$note,$u['id']]);
+     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$dst,'transfer_in',$qty,$note,$u['id']]);
      q('UPDATE stock_levels SET quantity=quantity-? WHERE item_id=? AND location=?',[$qty,$iid,$loc]);
      q('UPDATE stock_levels SET quantity=quantity+? WHERE item_id=? AND location=?',[$qty,$iid,$dst]);
      audit('transfer','inventory_item',$iid,['from'=>$loc,'to'=>$dst,'qty'=>$qty]);
      $lowStockAlert($iid,$loc);
      flash('Transferred '.$qty.' from '.$loc.' to '.$dst.'.'); go('inventory');
    }
-   q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,NOW())',[$iid,$loc,$type,$sign*$qty,$note,$u['id']]);
+   q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,$type,$sign*$qty,$note,$u['id']]);
    q('UPDATE stock_levels SET quantity=quantity+? WHERE item_id=? AND location=?',[$sign*$qty,$iid,$loc]);
    audit('stock_movement','inventory_item',$iid,['type'=>$type,'qty'=>$sign*$qty,'location'=>$loc]);
    $lowStockAlert($iid,$loc);
@@ -68,7 +68,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 }
 
 $cats=rows('SELECT * FROM inventory_categories ORDER BY name');
-$items=rows("SELECT i.*,c.name cat,(SELECT COALESCE(SUM(quantity),0) FROM stock_levels sl WHERE sl.item_id=i.id) total_at, i.reorder_level reorder FROM inventory_items i LEFT JOIN inventory_categories c ON c.id=i.category_id WHERE i.deleted_at IS NULL ORDER BY i.name");
+$items=rows("SELECT i.*,c.name cat,COALESCE(sl.total_at,0) total_at, i.reorder_level reorder FROM inventory_items i LEFT JOIN inventory_categories c ON c.id=i.category_id LEFT JOIN (SELECT item_id, COALESCE(SUM(quantity),0) total_at FROM stock_levels GROUP BY item_id) sl ON sl.item_id=i.id WHERE i.deleted_at IS NULL ORDER BY i.name");
 $levels=rows('SELECT sl.*,i.name,i.code,i.unit,i.reorder_level FROM stock_levels sl JOIN inventory_items i ON i.id=sl.item_id WHERE i.deleted_at IS NULL ORDER BY i.name,sl.location');
 $movs=rows('SELECT m.*,i.name FROM stock_movements m JOIN inventory_items i ON i.id=m.item_id WHERE i.deleted_at IS NULL ORDER BY m.id DESC LIMIT 25');
 $editItem=(int)($_GET['edit']??0); $ei=$editItem?row('SELECT * FROM inventory_items WHERE id=?',[$editItem]):null;

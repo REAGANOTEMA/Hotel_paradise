@@ -43,15 +43,17 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 $d1=trim((string)($_GET['from']??''))?:date('Y-m-d');
 $d2=trim((string)($_GET['to']??''))?:date('Y-m-d');
 if($d2<$d1){ $tmp=$d1; $d1=$d2; $d2=$tmp; }
-$payments=rows("SELECT p.*,u.name usr,CASE WHEN p.invoice_id IS NOT NULL THEN 'invoice' WHEN p.order_id IS NOT NULL THEN 'order' WHEN p.reservation_id IS NOT NULL THEN 'reservation' ELSE 'other' END src FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE DATE(p.created_at) BETWEEN ? AND ? ORDER BY p.id DESC",[$d1,$d2]);
+$d2x=date('Y-m-d',strtotime($d2.' +1 day'));
+$tom=date('Y-m-d',strtotime('+1 day'));
+$payments=rows("SELECT p.*,u.name usr,CASE WHEN p.invoice_id IS NOT NULL THEN 'invoice' WHEN p.order_id IS NOT NULL THEN 'order' WHEN p.reservation_id IS NOT NULL THEN 'reservation' ELSE 'other' END src FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE p.created_at>=? AND p.created_at<? ORDER BY p.id DESC",[$d1,$d2x]);
 
 $k=[
- 'today'=>val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND DATE(created_at)=?",[today()]),
+ 'today'=>val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND created_at>=? AND created_at<?",[today(),$tom]),
  'week'=>val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND created_at>=?",[date('Y-m-d',strtotime('monday this week'))]),
  'month'=>val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND created_at>=?",[date('Y-m-01')]),
  'outstanding'=>val('SELECT COALESCE(SUM(total-paid),0) FROM reservations WHERE status IN(\'confirmed\',\'checked_in\') AND total>paid'),
- 'discount'=>val('SELECT COALESCE(SUM(discount),0) FROM orders WHERE DATE(created_at)=?',[today()]),
- 'voids'=>val("SELECT COALESCE(SUM(amount),0) FROM voids WHERE DATE(created_at)=?",[today()])
+ 'discount'=>val('SELECT COALESCE(SUM(discount),0) FROM orders WHERE created_at>=? AND created_at<?',[today(),$tom]),
+ 'voids'=>val("SELECT COALESCE(SUM(amount),0) FROM voids WHERE created_at>=? AND created_at<?",[today(),$tom])
 ];
 
 page_head('Finance','finance','Payments, revenue tracking and controls');

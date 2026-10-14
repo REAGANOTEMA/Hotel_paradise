@@ -12,7 +12,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
  }
 }
 
-$list=rows('SELECT s.*,(SELECT COUNT(*) FROM purchase_orders po WHERE po.supplier_id=s.id) orders FROM suppliers s WHERE s.deleted_at IS NULL ORDER BY s.name');
+$list=rows('SELECT s.*,COALESCE(o.orders,0) orders FROM suppliers s LEFT JOIN (SELECT supplier_id, COUNT(*) orders FROM purchase_orders GROUP BY supplier_id) o ON o.supplier_id=s.id WHERE s.deleted_at IS NULL ORDER BY s.name');
 $edit=(int)($_GET['edit']??0); $es=null; if($edit) $es=row('SELECT * FROM suppliers WHERE id=?',[$edit]);
 
 page_head('Suppliers','suppliers','Approved vendors and purchasing partners');

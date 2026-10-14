@@ -22,7 +22,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 }
 
 $qtext=trim($_GET['q']??'');
-$list=rows("SELECT g.*, (SELECT COUNT(*) FROM reservations r WHERE r.guest_id=g.id) stays FROM guests g WHERE g.deleted_at IS NULL AND (?='' OR g.full_name LIKE ? OR g.phone LIKE ? OR g.email LIKE ?) ORDER BY g.full_name",[$qtext,$qtext===''?'%x%':'%'.$qtext.'%',$qtext===''?'%x%':'%'.$qtext.'%',$qtext===''?'%x%':'%'.$qtext.'%']);
+$list=rows("SELECT g.*, COALESCE(s.stays,0) stays FROM guests g LEFT JOIN (SELECT guest_id, COUNT(*) stays FROM reservations GROUP BY guest_id) s ON s.guest_id=g.id WHERE g.deleted_at IS NULL AND (?='' OR g.full_name LIKE ? OR g.phone LIKE ? OR g.email LIKE ?) ORDER BY g.full_name",[$qtext,$qtext===''?'%x%':'%'.$qtext.'%',$qtext===''?'%x%':'%'.$qtext.'%',$qtext===''?'%x%':'%'.$qtext.'%']);
 
 $edit=$_GET['edit']??0; $eg=null;
 if($edit) $eg=row('SELECT * FROM guests WHERE id=?',[$edit]);

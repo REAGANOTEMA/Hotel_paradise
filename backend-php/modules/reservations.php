@@ -85,8 +85,8 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
     }
    }
    if($st==='checked_out'){
-    $rooms=rows('SELECT room_id FROM reservation_rooms WHERE reservation_id=? AND room_id IS NOT NULL',[$id]);
-    foreach($rooms as $r2){ q('UPDATE rooms SET status=\'dirty\' WHERE id=?',[$r2['room_id']]); }
+    $ids=array_column(rows('SELECT DISTINCT room_id FROM reservation_rooms WHERE reservation_id=? AND room_id IS NOT NULL',[$id]),'room_id');
+    if($ids){ q('UPDATE rooms SET status=\'dirty\' WHERE id IN ('.implode(',',array_fill(0,count($ids),'?')).')',array_values($ids)); }
    }
    $old=['status'=>$r['status']];
    q('UPDATE reservations SET status=?,updated_at=NOW() WHERE id=?',[$st,$id]);
@@ -203,7 +203,7 @@ if($view){
 
 if($act==='new'){
  $types=rows('SELECT * FROM room_types WHERE active=1 ORDER BY base_rate DESC');
- $guests=rows('SELECT * FROM guests ORDER BY full_name');
+ $guests=rows('SELECT id,full_name,phone FROM guests ORDER BY full_name');
  page_head('New reservation','reservations','Create a new booking');
  echo '<div class="panel" style="max-width:820px">';
  form_open('reservations','new');

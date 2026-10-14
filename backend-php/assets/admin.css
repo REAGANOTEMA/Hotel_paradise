@@ -983,3 +983,54 @@ a,button,input,select,textarea,[role=button],label{touch-action:manipulation}
   .room:hover,.itemCard:hover{transform:none}
 }
 
+
+/* ============================================================================
+   16 Paradise assistant and ambient instruments
+
+   Two calm controls in the header: the note toggles the soft instruments that
+   play behind a dashboard, the microphone opens the assistant and listens for
+   a question. Neither ever covers a control, and the music is silenced the
+   moment the assistant speaks.
+   ============================================================================ */
+.musicBtn,.askBtn{position:relative;display:inline-flex;align-items:center;justify-content:center;height:42px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--navy);cursor:pointer;transition:border-color var(--t),color var(--t),box-shadow var(--t)}
+.musicBtn{width:42px}
+.askBtn{width:auto;padding:0 14px;gap:7px}
+.musicBtn svg,.askBtn svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.askBtn .abText{font-size:12.5px;font-weight:600}
+.musicBtn:hover,.askBtn:hover{border-color:rgba(201,162,39,.6);box-shadow:var(--sh1)}
+.musicBtn .mOff{display:none}
+.musicBtn.off{color:#9aa7b4}
+.musicBtn.off .mOn{display:none}
+.musicBtn.off .mOff{display:inline-flex}
+.askBtn.listening{border-color:var(--gold);color:var(--gold);animation:voicePulse 1.4s ease-in-out infinite}
+@media(max-width:560px){.askBtn .abText{display:none}.askBtn{width:42px;padding:0}}
+
+.assistPanel{position:fixed;right:18px;bottom:18px;z-index:70;width:min(360px,calc(100vw - 28px));pointer-events:none}
+.assistPanel[hidden]{display:none}
+.assistCard{position:relative;pointer-events:auto;background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(253,252,248,.98));border:1px solid var(--line);border-radius:14px;box-shadow:var(--e4);padding:14px 15px 12px;animation:panelUp .26s ease both}
+.assistHead{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-right:22px}
+.assistIco{width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--navy),#123a63);color:var(--gold);flex:0 0 auto}
+.assistIco svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.assistHead b{font-size:13.5px;color:var(--navy)}
+.assistState{margin-left:auto;font-size:11px;color:var(--muted);background:#eef2f7;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.assistText{white-space:pre-line;font-size:13px;line-height:1.55;color:#26374a;max-height:40vh;overflow-y:auto;overscroll-behavior:contain}
+.assistActions{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
+.assistActions .btn svg,.assistActions .btnGhost svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-2px;margin-right:4px}
+.assistX{position:absolute;top:7px;right:9px;border:0;background:transparent;font-size:20px;line-height:1;color:#9aa7b4;cursor:pointer;padding:2px 5px;border-radius:6px}
+.assistX:hover{color:var(--navy);background:#eef2f7}
+@media(max-width:560px){.assistPanel{right:10px;bottom:10px;left:10px;width:auto}}
+@media (prefers-reduced-motion: reduce){.assistCard,.askBtn.listening{animation:none}}
+
+/* 17 Touch comfort and the phone rail. Kept last so these win over the
+   earlier rules: on a touch screen every small control grows to a comfortable
+   size, and the rail's collapse button - which only means something on a wide
+   screen - steps aside on phones and tablets where it had nothing to do. */
+@media(pointer:coarse){
+  .btn.sm,.btnGhost.sm{min-height:40px;padding-top:8px;padding-bottom:8px}
+  .sideShrink,.modalX,.guideX,.sideClose{width:44px;height:44px}
+  .guideBtn{min-height:44px}
+  .sideSignOut{width:42px;height:42px}
+  .sideSize input[type=range]::-webkit-slider-thumb{width:22px;height:22px}
+  .sideSize input[type=range]::-moz-range-thumb{width:22px;height:22px}
+}
+@media(max-width:1080px){.sideShrink{display:none}}

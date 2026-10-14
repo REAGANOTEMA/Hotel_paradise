@@ -4,15 +4,19 @@ declare(strict_types=1);
 $d1=trim($_GET['from']??date('Y-m-d',strtotime('-14 days')));
 $d2=trim($_GET['to']??today());
 if($d2<$d1){ $tmp=$d1; $d1=$d2; $d2=$tmp; }
+$d2x=date('Y-m-d',strtotime($d2.' +1 day'));
 
-$nights=rows("SELECT DATE(check_in) d, COUNT(*) b, COALESCE(SUM(nights),0) room_nights FROM reservations WHERE DATE(check_in) BETWEEN ? AND ? AND status NOT IN('cancelled','no_show') GROUP BY DATE(check_in) ORDER BY d",[$d1,$d2]);
+$nights=rows("SELECT DATE(check_in) d, COUNT(*) b, COALESCE(SUM(nights),0) room_nights FROM reservations WHERE check_in>=? AND check_in<? AND status NOT IN('cancelled','no_show') GROUP BY DATE(check_in) ORDER BY d",[$d1,$d2x]);
 $totalNights=array_sum(array_map(fn($r)=>(int)$r['room_nights'],$nights));
-$occupancy=min(100,round($totalNights/(69*count($nights))*100,1));
+$activeDays=count($nights);
+$roomStock=(int)val("SELECT COUNT(*) FROM rooms WHERE COALESCE(status,'')<>'out_of_service'");
+if($roomStock<1) $roomStock=1;
+$occupancy=$activeDays>0?min(100,round($totalNights/($roomStock*$activeDays)*100,1)):0.0;
 
-$byMethod=rows("SELECT method,COUNT(*) cnt,SUM(amount) total FROM payments WHERE status='successful' AND DATE(created_at) BETWEEN ? AND ? GROUP BY method ORDER BY total DESC",[$d1,$d2]);
-$bySource=rows("SELECT r.source,COUNT(*) cnt,SUM(r.total) total FROM reservations r WHERE DATE(r.created_at) BETWEEN ? AND ? AND status NOT IN('cancelled') GROUP BY r.source ORDER BY total DESC",[$d1,$d2]);
-$byDept=rows("SELECT d.name,SUM(e.amount) total FROM expenses e JOIN departments d ON d.id=e.department_id WHERE DATE(e.created_at) BETWEEN ? AND ? AND status IN('paid','approved') GROUP BY d.name ORDER BY total DESC",[$d1,$d2]);
-$sold=rows("SELECT rt.name,COUNT(*) bookings FROM reservations r JOIN reservation_rooms rr ON rr.reservation_id=r.id JOIN room_types rt ON rt.id=rr.room_type_id WHERE DATE(r.created_at) BETWEEN ? AND ? AND r.status NOT IN('cancelled','no_show') GROUP BY rt.name ORDER BY bookings DESC",[$d1,$d2]);
+$byMethod=rows("SELECT method,COUNT(*) cnt,SUM(amount) total FROM payments WHERE status='successful' AND created_at>=? AND created_at<? GROUP BY method ORDER BY total DESC",[$d1,$d2x]);
+$bySource=rows("SELECT r.source,COUNT(*) cnt,SUM(r.total) total FROM reservations r WHERE r.created_at>=? AND r.created_at<? AND status NOT IN('cancelled') GROUP BY r.source ORDER BY total DESC",[$d1,$d2x]);
+$byDept=rows("SELECT d.name,SUM(e.amount) total FROM expenses e JOIN departments d ON d.id=e.department_id WHERE e.created_at>=? AND e.created_at<? AND status IN('paid','approved') GROUP BY d.name ORDER BY total DESC",[$d1,$d2x]);
+$sold=rows("SELECT rt.name,COUNT(*) bookings FROM reservations r JOIN reservation_rooms rr ON rr.reservation_id=r.id JOIN room_types rt ON rt.id=rr.room_type_id WHERE r.created_at>=? AND r.created_at<? AND r.status NOT IN('cancelled','no_show') GROUP BY rt.name ORDER BY bookings DESC",[$d1,$d2x]);
 
 $revTotal=array_sum(array_map(fn($m)=>(float)$m['total'],$byMethod));
 
