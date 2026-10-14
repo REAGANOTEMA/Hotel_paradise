@@ -99,6 +99,12 @@ function BedSlider({slides, alt, ratio, sizes, className, placeholder}: {
   const [i, setI] = React.useState(0);
   const [still, setStill] = React.useState(false);
   const [gone, setGone] = React.useState(false);
+  // The moment the guest takes over - taps an arrow, a dot, presses a key or
+  // swipes the photographs - the automatic turn stops for good, so the bed they
+  // chose stays on screen instead of rolling on to the next one under their hand.
+  const [held, setHeld] = React.useState(false);
+  // A pointer resting on a wide screen simply pauses, then lets it turn again.
+  const [hover, setHover] = React.useState(false);
 
   React.useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -116,15 +122,37 @@ function BedSlider({slides, alt, ratio, sizes, className, placeholder}: {
   }, []);
 
   React.useEffect(() => {
-    if (still || gone || n < 2) return;
+    if (still || gone || held || hover || n < 2) return;
     const t = window.setInterval(() => setI(v => (v + 1) % n), SLIDE_MS);
     return () => window.clearInterval(t);
-  }, [still, gone, n]);
+  }, [still, gone, held, hover, n]);
 
-  const step = (d: number) => setI(v => (v + d + n) % n);
+  const step = (d: number) => { setHeld(true); setI(v => (v + d + n) % n); };
+  const choose = (idx: number) => { setHeld(true); setI(idx); };
+
+  // A finger roll across the photographs: a sideways swipe moves one frame, the
+  // way a guest expects on a phone. A mostly vertical drag is left to the page
+  // so scrolling never catches.
+  const startX = React.useRef<number | null>(null);
+  const startY = React.useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => { const t = e.touches[0]; startX.current = t.clientX; startY.current = t.clientY; };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (startX.current === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX.current;
+    const dy = t.clientY - (startY.current ?? 0);
+    startX.current = null; startY.current = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+  };
 
   return (
-   <div className={'bedSlider' + (className ? ' ' + className : '')} role="group" aria-roledescription="carousel" aria-label={alt + ', ' + n + ' photographs'}>
+   <div className={'bedSlider' + (className ? ' ' + className : '') + (held ? ' held' : '')}
+    role="group" aria-roledescription="carousel" aria-label={alt + ', ' + n + ' photographs'}
+    tabIndex={n > 1 ? 0 : -1}
+    onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+    onFocus={() => setHeld(true)}
+    onKeyDown={e => { if (e.key === 'ArrowRight') { e.preventDefault(); step(1); } else if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); } }}
+    onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
     <div className="bedSliderStage" style={{aspectRatio: ratio}}>
      {slides.map((s, idx) => (
       <div key={s.group + '/' + s.name} className={'bedSlide' + (idx === i ? ' on' : '')} aria-hidden={idx !== i}>
@@ -151,7 +179,7 @@ function BedSlider({slides, alt, ratio, sizes, className, placeholder}: {
        {slides.map((s, idx) => (
         <button key={s.group + '/' + s.name} type="button" role="tab" aria-selected={idx === i}
          aria-label={'Photograph ' + (idx + 1) + ' of ' + n + ' for ' + alt}
-         className={'bedDot' + (idx === i ? ' on' : '')} onClick={() => setI(idx)}/>
+         className={'bedDot' + (idx === i ? ' on' : '')} onClick={() => choose(idx)}/>
        ))}
       </div>
       <button type="button" className="bedArrow" onClick={() => step(1)} aria-label={'Next photograph of ' + alt}>
@@ -332,7 +360,7 @@ if (d.ok) {
      <BackLink label="Back" fallback="./index.html"/>
      <p className="eyebrow">CHOOSE YOUR ROOM</p>
      <h1>Rooms and beds, your way.</h1>
-     <p>Every room type is photographed, so you can see exactly what you are booking. Choose the one you like, and change or drop it as often as you like before you book. Rates are per night, shown in Uganda Shillings and US dollars, and include breakfast and the local hotel tax.</p>
+     <p>Every room is photographed, so you see exactly what you are booking. Pick a bed, check your dates, and continue to payment. Rates are per night and include breakfast and the local hotel tax.</p>
     </div>
    </section>
    <section className="bedsWrap section">
@@ -393,39 +421,31 @@ if (d.ok) {
        <h3>{sel.type}</h3>
        <p className="bedsLine">{sel.beds} &middot; {sel.guests}</p>
 
-       <div className="stepHead"><span className="stepNum">2</span><b>Your details</b></div>
        {signedIn ? (
-        <>
-         {q.resume && <p className="bookMsg ok" style={{marginTop: 0}}>Welcome back. Your name, phone and email are already here.</p>}
-         <div className="planGrid">
-          <div className="planField"><label>Your name</label><input value={form.name} onChange={f('name')} placeholder="Full name"/></div>
-          <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>
-          <div className="planField"><label>Email (optional)</label><input value={form.email} onChange={f('email')} type="email" placeholder="you@email.com"/></div>
-         </div>
-        </>
+        <p className="bookAs">Booking as <b>{form.name || 'you'}</b>{form.phone ? ' · ' + form.phone : ''} <a href="./account.html">change</a></p>
        ) : (
         <AccountGate signupHref={continueUrl('signup')} signinHref={continueUrl('signin')}>
-         One quick account and your name, phone and email come back with you, so the booking and its receipt never ask for them twice. It takes a moment, and you come straight back to this exact bed.
+         One quick account and we bring you straight back to this exact bed.
         </AccountGate>
        )}
 
-       <div className="stepHead"><span className="stepNum">3</span><b>Dates</b></div>
+       <div className="stepHead"><span className="stepNum">2</span><b>Dates</b></div>
        <div className="planGrid">
         <div className="planField"><label>Check in</label><input type="date" value={form.check_in} onChange={f('check_in')}/></div>
         <div className="planField"><label>Check out</label><input type="date" value={form.check_out} onChange={f('check_out')}/></div>
         <div className="planField"><label>Guests</label><select value={form.adults} onChange={f('adults')}><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
        </div>
 
-       <div className="stepHead"><span className="stepNum">4</span><b>Price summary</b></div>
-       <div className="spotTotal"><span>{sel.rate} per night</span><b>{nights ? fmt(total) : 'Pick your dates'}</b><small>{nights ? 'For ' + nights + ' night' + (nights > 1 ? 's' : '') + ', breakfast and hotel tax included. Also US$ ' + sel.usd + ' per night' : 'Choose check in and check out to see your total, quoted in Uganda Shillings'}</small>
+       <div className="stepHead"><span className="stepNum">3</span><b>Price and payment</b></div>
+       <div className="spotTotal"><span>{sel.rate} per night</span><b>{nights ? fmt(total) : 'Pick your dates'}</b><small>{nights ? nights + ' night' + (nights > 1 ? 's' : '') + '. Breakfast and hotel tax included. Also US$ ' + sel.usd + ' per night.' : 'Choose check in and check out to see your total.'}</small>
         {nights && fee.amount > 0 ? <small className="feeLine">{fmtPrice(subtotal)} for the room, plus a {fmt(fee.amount)} {fee.label.toLowerCase()}</small> : null}</div>
 
-      {signedIn && <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={book} disabled={busy}>{busy ? 'Sending your request...' : 'Book this room'}</button>}
-      <button className="linkBtn" onClick={() => setChosen('')}>Choose another room instead</button>
+      {signedIn && <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={book} disabled={busy}>{busy ? 'Opening payment...' : 'Continue to payment'}</button>}
+      <button className="linkBtn" onClick={() => setChosen('')}>Choose another room</button>
      </div>
     )}
     {msg && <div className={msg.ok ? 'bookMsg ok' : 'bookMsg'}>{msg.text}</div>}
-    <p className="plannerNote">You are in full control. Drop your choice and pick any other bed at any time before you book. You will never be charged here.</p>
+    <p className="plannerNote">Change or drop your room any time before you pay. You are never charged here.</p>
    </div>
   </section>
 

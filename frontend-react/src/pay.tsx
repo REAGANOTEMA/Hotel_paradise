@@ -363,9 +363,12 @@ function PayPage() {
  const [method, setMethod] = React.useState<MethodKey>('pesapal');
  const [momo, setMomo] = React.useState('');
  const [card, setCard] = React.useState({holder: '', number: '', exp: '', cvv: ''});
- const [busy, setBusy] = React.useState(false);
- const [err, setErr] = React.useState('');
-  const [done, setDone] = React.useState<{reference: string; message: string; paid: boolean} | null>(null);
+  const [busy, setBusy] = React.useState(false);
+  const [err, setErr] = React.useState('');
+   const [done, setDone] = React.useState<{reference: string; message: string; paid: boolean} | null>(null);
+   // A signed in guest arrives with their details already known, so the receipt
+   // fields stay folded away until they ask to change them.
+   const [editWho, setEditWho] = React.useState(false);
 
   const keep = (patch: object) => setForm(f => {
    const next = {...f, ...patch} as typeof f;
@@ -840,11 +843,18 @@ if (done) {
     <div className="payCard">
      <p className="eyebrow">1 &middot; YOUR DETAILS</p>
      <h3>Receipt details</h3>
-     <div className="planField" style={{marginTop: 14}}><label>Full name</label><input value={form.name} onChange={f('name')} placeholder="Name as it should appear"/></div>
-     <div className="payRow2">
-      <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>
-      <div className="planField"><label>Email (optional)</label><input value={form.email} onChange={f('email')} type="email" placeholder="you@email.com"/></div>
-     </div>
+     {token && !editWho && form.name.trim() && form.phone.trim() ? (
+      <p className="bookAs" style={{marginTop: 14}}>Paying as <b>{form.name.trim()}</b>{form.phone ? ' · ' + normPhone(form.phone) : ''}{form.email.trim() ? ' · ' + form.email.trim() : ''} <button type="button" className="bookAsEdit" onClick={() => setEditWho(true)}>change</button></p>
+     ) : (
+     <>
+      <div className="planField" style={{marginTop: 14}}><label>Full name</label><input value={form.name} onChange={f('name')} placeholder="Name as it should appear"/></div>
+      <div className="payRow2">
+       <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>
+       <div className="planField"><label>Email (optional)</label><input value={form.email} onChange={f('email')} type="email" placeholder="you@email.com"/></div>
+      </div>
+      {token && <button type="button" className="linkBtn" onClick={() => setEditWho(false)}>Done</button>}
+     </>
+     )}
 
      <p className="eyebrow" style={{marginTop: 26}}>2 &middot; PAYMENT METHOD</p>
      <h3>How would you like to pay?</h3>

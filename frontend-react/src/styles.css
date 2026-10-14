@@ -592,6 +592,14 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .planBook{width:100%;margin-top:16px;border:0}
 .linkBtn{background:none;border:0;color:var(--nile);font-size:13px;text-decoration:underline;margin-top:12px;display:block;width:100%;text-align:center}
 .linkBtn:hover{color:var(--gold-ink)}
+/* A signed-in guest is not asked for their name, phone and email again: the
+   account already holds them, so they read as a single quiet line. */
+.bookAs{margin:12px 0 0;padding:11px 14px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;background:var(--ivory);color:var(--navy);font-size:14px;line-height:1.5}
+.bookAs b{font-weight:800}
+.bookAs a{color:var(--gold-ink);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.bookAs a:hover{color:var(--navy)}
+.bookAsEdit{background:none;border:0;padding:0 0 0 8px;font:inherit;color:var(--gold-ink);font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.bookAsEdit:hover{color:var(--navy)}
 .plannerNote{color:var(--faint);font-size:12px;line-height:1.7;margin:16px 0 0;border-top:1px solid var(--line2);padding-top:14px}
 /* The account switch is the easiest line to miss and the one that matters
    most, so it is lifted into its own bold, gold-edged call. */

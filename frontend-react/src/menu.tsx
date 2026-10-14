@@ -785,9 +785,8 @@ if (d.ok) {
         <p className="eyebrow">DINING AND BAR</p>
         <h1>Our menu, your order.</h1>
         <p>
-          Every dish in its own section, with a photograph of each plate. Search for a dish by name, or pick a
-          category above to see only that part of the menu and leave it on All to read the whole thing. Open any
-          dish to see it in full, choose your companion and a salad, and add it to your order. Prices include taxes.
+          Every dish has a photograph. Search by name or pick a category, open a dish to choose
+          your companion and a salad, then add it to your order. Prices include taxes.
         </p>
       </div>
     </section>
@@ -918,7 +917,7 @@ if (d.ok) {
         </section>
       ))}
 
-      <p className="orderNote">Meals are served from the same kitchen for our guests and walk in visitors. Lunch is served until 3 pm and dinner until 11 pm. For orders into your room, mention your room number when we call to confirm. Dishes marked price on request are confirmed by our team before your order is placed.</p>
+      <p className="orderNote">Lunch until 3 pm, dinner until 11 pm. For room service, mention your room number when we confirm. Dishes marked price on request are confirmed before your order is placed.</p>
     </section>
 
     <section className="orderPanelWrap section" id="order">
@@ -933,7 +932,7 @@ if (d.ok) {
 
         {open && <div className="orderPanelBody" id="orderBody">
           {tray.length === 0 ? (
-            <div className="trayEmpty"><p>Your order is empty. Open any dish to see it in full, choose your companion and a salad, and it will appear here. You can drop or change anything freely before you send.</p></div>
+            <div className="trayEmpty"><p>Your order is empty. Open any dish and add it to your order.</p></div>
           ) : (
             <div className="trayList">
               {tray.map(x => {
@@ -963,18 +962,16 @@ if (d.ok) {
             !signedIn ? (
               <div className="trayForm">
                 <AccountGate signupHref={accountUrl('signup')} signinHref={accountUrl('signin')}>
-                  One quick account and your order stays exactly as you built it. Your name, phone and email come back with you, so the kitchen and the receipt have everything they need. You come straight back here to send it.
+                  One quick account and your order stays exactly as you built it. We bring you straight back here.
                 </AccountGate>
                 {tray.length > 0 && <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>}
               </div>
             ) : (
             <div className="trayForm">
-              <div className="planField"><label>Your name</label><input value={name} onChange={e => setName(e.target.value)} placeholder="Full name" autoComplete="name"/></div>
-              <div className="planField"><label>Phone</label><input value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="e.g. 0759504928" autoComplete="tel"/></div>
-              <div className="planField"><label>Email <small>optional</small></label><input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="you@example.com" autoComplete="email"/></div>
-              <div className="planField wide"><label>Delivery address</label><textarea value={address} onChange={e => setAddress(e.target.value)} rows={2} placeholder="Where should we deliver your order? Add the area, street, building and any landmark we should look for."/></div>
-              <div className="planField wide"><label>Notes for the kitchen <small>optional</small></label><textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder="Allergies, how spicy you like it, or a delivery time."/></div>
-              <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={send} disabled={busy || tray.length === 0}>{busy ? 'Sending...' : 'Send my order'}</button>
+              <p className="bookAs">Ordering as <b>{name || 'you'}</b>{phone ? ' · ' + phone : ''} <a href="./account.html">change</a></p>
+              <div className="planField wide"><label>Delivery address</label><textarea value={address} onChange={e => setAddress(e.target.value)} rows={2} placeholder="Area, street, building and a landmark we should look for."/></div>
+              <div className="planField wide"><label>Notes for the kitchen <small>optional</small></label><textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder="Allergies, spice level, or a delivery time."/></div>
+              <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={send} disabled={busy || tray.length === 0}>{busy ? 'Opening payment...' : 'Continue to payment'}</button>
               {tray.length > 0 && <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>}
             </div>
             )
@@ -985,7 +982,7 @@ if (d.ok) {
           )}
 
           {msg && <div className={msg.ok ? 'bookMsg ok' : 'bookMsg'}>{msg.text}</div>}
-          <p className="plannerNote">You are in full control. Open any dish to change its companion or salad, or change quantities and drop any line before you send your order. No payment is taken here.</p>
+          <p className="plannerNote">Change quantities or drop any line before you pay. No payment is taken here.</p>
         </div>}
       </div>
     </section>
