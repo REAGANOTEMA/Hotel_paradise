@@ -51,8 +51,7 @@ function mail_config(): array
  static $cfg=null;
  if($cfg!==null) return $cfg;
 
- $file=__DIR__.'/../config.php';
- $fromFile=is_readable($file)?require $file:[];
+ $fromFile=hp_config();
  if(!is_array($fromFile)) $fromFile=[];
  $m=(isset($fromFile['mail'])&&is_array($fromFile['mail']))?$fromFile['mail']:[];
 

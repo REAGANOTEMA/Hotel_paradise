@@ -495,15 +495,24 @@ function PayPage() {
   if (!form.name.trim()) { setErr('Please add the name that should appear on the receipt.'); return; }
   if (!normPhone(form.phone)) { setErr('Please add a phone number we can confirm the payment on.'); return; }
   setBusy(true);
+  // A checkout that never answers must never leave the guest staring at a
+  // spinner. The request gets a hard ceiling, and whatever comes back is read
+  // as text and only then parsed: a slow or half-written reply can no longer be
+  // mistaken for the service being unreachable, and the server's own sentence is
+  // shown whenever there is one.
+  const ctrl = new AbortController();
+  const timer = window.setTimeout(() => ctrl.abort(), 60000);
   try {
    const body = {
     source: src, reference: ref, name: form.name.trim(), phone: normPhone(form.phone), email: form.email.trim(),
     method, amount: payable,
     ...(token ? {token} : {})
    };
-   const res = await fetch(await apiUrl('payment'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
-   const d = await res.json();
-   if (d.ok) {
+   const res = await fetch(await apiUrl('payment'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body), signal: ctrl.signal});
+   const raw = await res.text();
+   let d: {ok?: boolean; error?: string; redirect_url?: string; amount?: number; status?: string; paid?: boolean; reference?: string; message?: string} | null = null;
+   try { d = raw ? JSON.parse(raw) : null; } catch { d = null; }
+   if (d && d.ok) {
     // The real gateway hands back a secure checkout link. Leaving the page for
     // Pesapal, which is where the money is actually taken; nothing is marked
     // paid here, and the receipt is produced server-side only once Pesapal
@@ -516,10 +525,14 @@ function PayPage() {
     const paid = String(d.status || '').toLowerCase() === 'successful' || d.paid === true;
     setDone({reference: String(d.reference || ref), message: String(d.message || 'The front desk will confirm your request on ' + form.phone + '.'), paid});
    } else {
-    setErr(d.error || 'We could not take the payment right now. Please call ' + CALL + '.');
+    setErr((d && d.error) || 'We could not take the payment right now. Please call ' + CALL + '.');
    }
-  } catch {
-   setErr('Could not reach the payment service. Please call ' + CALL + '.');
+  } catch (e) {
+   setErr((e as {name?: string} | null)?.name === 'AbortError'
+    ? 'The payment service is taking longer than usual. Please try again, or call ' + CALL + ' and the front desk will take your payment.'
+    : 'Could not reach the payment service. Please call ' + CALL + '.');
+  } finally {
+   window.clearTimeout(timer);
   }
   setBusy(false);
  };

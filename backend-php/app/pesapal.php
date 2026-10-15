@@ -35,9 +35,9 @@ function pesapal_config(): array
  static $cfg=null;
  if($cfg!==null) return $cfg;
 
- $file=__DIR__.'/../config.php';
- $fromFile=is_readable($file)?require $file:[];
- if(!is_array($fromFile)) $fromFile=[];
+ // Read through the shared loader, which parses config.php once and discards
+ // any stray byte at the top of the file so it can never reach the JSON reply.
+ $fromFile=hp_config();
  $p=(isset($fromFile['pesapal'])&&is_array($fromFile['pesapal']))?$fromFile['pesapal']:[];
 
  $pick=function(string $key,string $env,string $default) use($p): string {
@@ -136,7 +136,16 @@ function pesapal_store_read(): array
 function pesapal_store_write(array $d): void
 {
  $f=pesapal_store_path();
- @file_put_contents($f,json_encode($d,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES),LOCK_EX);
+ $json=json_encode($d,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+ if($json===false) return;
+ // Write to a scratch file and rename it into place. A rename is atomic, so a
+ // second checkout reading the cache at the very same moment sees either the
+ // whole old file or the whole new one - never the empty half-written file a
+ // plain overwrite can leave behind (which cost every following payment a fresh
+ // token and a fresh IPN registration, and the guest the extra wait).
+ $tmp=$f.'.'.getmypid().'.tmp';
+ if(@file_put_contents($tmp,$json,LOCK_EX)===false){ @unlink($tmp); return; }
+ if(!@rename($tmp,$f)){ @unlink($tmp); @file_put_contents($f,$json,LOCK_EX); }
 }
 
 /**
@@ -164,8 +173,12 @@ function pesapal_http(string $method,string $path,?array $body=null,?string $tok
    CURLOPT_RETURNTRANSFER=>true,
    CURLOPT_CUSTOMREQUEST=>$method,
    CURLOPT_HTTPHEADER=>$headers,
-   CURLOPT_CONNECTTIMEOUT=>15,
-   CURLOPT_TIMEOUT=>45,
+   // A guest is standing at the till while these run, so neither the connect
+   // nor the whole call is allowed to hang for long: better a quick, honest
+   // "try again" than a spinner that runs for a minute. The token and the IPN
+   // are cached, so the only call on the critical path is the order submit.
+   CURLOPT_CONNECTTIMEOUT=>10,
+   CURLOPT_TIMEOUT=>25,
    CURLOPT_SSL_VERIFYPEER=>true,
    CURLOPT_SSL_VERIFYHOST=>2,
   ]);
@@ -179,7 +192,7 @@ function pesapal_http(string $method,string $path,?array $body=null,?string $tok
    'method'=>$method,
    'header'=>implode("\r\n",$headers),
    'content'=>$payload,
-   'timeout'=>45,
+   'timeout'=>25,
    'ignore_errors'=>true,
   ]]);
   $raw=@file_get_contents($url,false,$ctx);
@@ -286,8 +299,7 @@ function pesapal_billing_email(string $given): string
 {
  $given=trim($given);
  if($given!==''&&filter_var($given,FILTER_VALIDATE_EMAIL)) return $given;
- $file=__DIR__.'/../config.php';
- $cfg=is_readable($file)?require $file:[];
+ $cfg=hp_config();
  $m=(is_array($cfg)&&isset($cfg['mail'])&&is_array($cfg['mail']))?$cfg['mail']:[];
  $accts=(isset($m['accounts'])&&is_array($m['accounts']))?$m['accounts']:[];
  foreach(['reservation','bookings','restaurant'] as $k){

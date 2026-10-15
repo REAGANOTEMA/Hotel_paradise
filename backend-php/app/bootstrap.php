@@ -82,6 +82,33 @@ function demo_logins_enabled(): bool{
 }
 
 /**
+ * config.php, read once per request and never a byte of it printed.
+ *
+ * config.php is a plain "return [...]" file, and it is asked for by several
+ * callers in the same request - the database, Pesapal, the mailer. Because it
+ * starts with "<?php" a well formed file prints nothing, but a byte-order mark
+ * or a stray blank line saved at the very top of it by an editor is printed
+ * every single time the file is included. In an API that answers with JSON,
+ * those few bytes are appended in front of the JSON and the browser refuses to
+ * parse it, which the checkout page can only report as the payment service
+ * being unreachable. This reads the file under its own output buffer, throws
+ * that stray output away, and caches the array, so the settings are parsed once
+ * and nothing the file emits can ever reach the response.
+ */
+if(!function_exists('hp_config')){
+ function hp_config(): array{
+  static $cfg=null;
+  if($cfg!==null) return $cfg;
+  $file=__DIR__.'/../config.php';
+  if(!is_readable($file)) return $cfg=[];
+  ob_start();
+  $got=include $file;
+  ob_end_clean();
+  return $cfg=is_array($got)?$got:[];
+ }
+}
+
+/**
  * Where the databases are.
  *
  * The passwords live in config.php, which is never committed, and every value
@@ -93,8 +120,7 @@ function demo_logins_enabled(): bool{
 function db_config(): array{
  static $cfg=null;
  if($cfg!==null) return $cfg;
- $file=__DIR__.'/../config.php';
- $fromFile=is_readable($file)?require $file:[];
+ $fromFile=hp_config();
  if(!is_array($fromFile)) $fromFile=[];
  // config.php nests the website settings under 'web_db', so a dotted name such
  // as "web_db.pass" has to be walked rather than looked up whole

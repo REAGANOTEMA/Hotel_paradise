@@ -1,6 +1,14 @@
 <?php
 declare(strict_types=1);
-declare(strict_types=1);
+// An API answers with JSON and nothing else. Anything a file included below
+// prints by accident - a stray blank line, a byte-order mark left at the top of
+// an edited config.php - would be glued in front of the JSON, and the browser
+// would fail to parse it and tell the guest the whole service is unreachable.
+// Buffering here means the response is emptied of every such byte before the
+// real answer is written, so the body is always clean JSON whatever the
+// includes did. Warnings still reach the error log; they just never corrupt the
+// reply.
+ob_start();
 require __DIR__.'/app/bootstrap.php';
 require_once __DIR__.'/app/guest_comm.php';
 require_once __DIR__.'/app/invoices.php';
@@ -12,13 +20,19 @@ header('Content-Type: application/json; charset=utf-8');
 // as the fault it is. Log the detail, return a shape the site can read.
 set_exception_handler(function(Throwable $e){
  error_log('[hotel api] '.$e->getMessage().' @ '.$e->getFile().':'.$e->getLine());
+ if(ob_get_level()>0) ob_clean();
  if(!headers_sent()) header('Content-Type: application/json; charset=utf-8');
  http_response_code(500);
  echo json_encode(['ok'=>false,'error'=>'The service is temporarily unavailable. Please call +256 759 504 928.'],JSON_UNESCAPED_UNICODE);
  exit;
 });
 
-$out=function(array $data, int $code=200): void{ http_response_code($code); echo json_encode($data,JSON_UNESCAPED_UNICODE); exit; };
+$out=function(array $data, int $code=200): void{
+ if(ob_get_level()>0) ob_clean();
+ http_response_code($code);
+ echo json_encode($data,JSON_UNESCAPED_UNICODE);
+ exit;
+};
 
 /**
  * Tells the console that something real happened. A booking, an order or a
@@ -919,11 +933,8 @@ if($act==='account'){
     if(is_string($v)&&$v!=='') return $v;
     // Read straight from config.php: it is the file the site already trusts with
     // its secrets, and it is not in git.
-    $file=__DIR__.'/config.php';
-    if(is_readable($file)){
-      $c=require $file;
-      if(is_array($c)&&isset($c['google_client_id'])&&is_string($c['google_client_id'])) return trim($c['google_client_id']);
-    }
+    $c=hp_config();
+    if(is_array($c)&&isset($c['google_client_id'])&&is_string($c['google_client_id'])) return trim($c['google_client_id']);
     return '';
   };
 
