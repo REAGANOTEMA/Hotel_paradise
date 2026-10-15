@@ -144,8 +144,8 @@ const normPhone = (p: string) => p.replace(/[^\d+]/g, '');
  * fetched, and falls back to what the url carried if the hotel is slow to
  * answer.
  */
-function PayReceipt({src, ref, charged, amt, form, detail, item, qty, unit, methodLabel}: {
- src: string; ref: string; charged: number; amt: number;
+function PayReceipt({src, receiptRef, charged, amt, form, detail, item, qty, unit, methodLabel}: {
+ src: string; receiptRef: string; charged: number; amt: number;
  form: {name: string; phone: string; email: string};
  detail: PayDetail | null;
  item: string; qty: string; unit: string; methodLabel: string;
@@ -166,7 +166,7 @@ function PayReceipt({src, ref, charged, amt, form, detail, item, qty, unit, meth
     <p>Tel: {HOTEL.phones[0] || CALL} &middot; Email: {HOTEL.email}</p>
    </div>
    <div className="prInfo">
-    <Row k="Receipt No:" v={ref}/>
+    <Row k="Receipt No:" v={receiptRef}/>
     <Row k="Date:" v={dateStr}/>
     <Row k="Time:" v={timeStr}/>
     <Row k="Customer:" v={g.name.trim() || '-'}/>
@@ -271,7 +271,7 @@ function PayReceipt({src, ref, charged, amt, form, detail, item, qty, unit, meth
  * here to pay for, the guide starts only when the guest asks, and it never
  * blocks the page or replaces anything on it.
  */
-function VoiceGuide({src, ref, amount}: {src: string; ref: string; amount: number}) {
+function VoiceGuide({src, reference, amount}: {src: string; reference: string; amount: number}) {
  const supported = typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
  const [playing, setPlaying] = React.useState(false);
  const [stepIndex, setStepIndex] = React.useState(0);
@@ -280,7 +280,7 @@ function VoiceGuide({src, ref, amount}: {src: string; ref: string; amount: numbe
   const what = src === 'booking' ? 'room booking' : src === 'order' ? 'food order' : 'payment';
   const L: string[] = [];
   L.push('Welcome to the secure checkout at Hotel Paradise on the Nile.');
-  if (ref) L.push(`This is for your ${what}, reference ${ref}, for a total of ${fmt(amount || 0)}.`);
+  if (reference) L.push(`This is for your ${what}, reference ${reference}, for a total of ${fmt(amount || 0)}.`);
   else L.push('Once you open this page from a booking or an order, the reference and the amount will appear here.');
   L.push('First, look over the details on the page, so you are happy with what you are paying for.');
   L.push('In the receipt details box, type the full name that should appear on your receipt, then a phone number the hotel can confirm on. An email address is optional.');
@@ -394,6 +394,11 @@ function PayPage() {
    */
   const [detail, setDetail] = React.useState<PayDetail | null>(null);
   const [looking, setLooking] = React.useState(Boolean(src && ref));
+  // A guest coming back from the gateway may arrive a beat before the server-to-
+  // server confirmation does. Each bump re-reads the reference, so the page can
+  // catch the confirmation and turn "confirming" into a receipt without the
+  // guest having to reload.
+  const [poll, setPoll] = React.useState(0);
   React.useEffect(() => {
    if (!src || !ref) { setLooking(false); return; }
    let alive = true;
@@ -409,7 +414,7 @@ function PayPage() {
     if (alive) setLooking(false);
    })();
    return () => { alive = false; };
-  }, [src, ref]);
+  }, [src, ref, poll]);
 
   /**
    * A signed in guest should never retype what the hotel already knows. Any
@@ -439,6 +444,13 @@ function PayPage() {
   const payable = settled ? 0 : owed;
   /** What the receipt will say, once it has been said. */
   const [charged, setCharged] = React.useState(0);
+  /**
+   * The figure to show as paid. The hotel's own total is the truth and wins the
+   * moment it is known - on the way back from the gateway the url carries no
+   * amount, so without this the receipt would read zero. Until then the charged
+   * amount, and the url amount behind it, stand.
+   */
+  const amountNow = (): number => detail ? Math.round(detail.total) : (charged || amt);
 
   /**
    * Back from Pesapal.
@@ -451,15 +463,30 @@ function PayPage() {
    */
   const gatewayReturn = q.get('paid') === '1';
   React.useEffect(() => {
-   if (!gatewayReturn || !detail || done) return;
-   setDone({
-    reference: detail.reference || ref,
-    message: settled
-     ? 'Payment received. Your official receipt is below' + (form.email.trim() ? ', and a copy has been emailed to ' + form.email.trim() : '') + '.'
-     : 'We are confirming this payment with Pesapal. Your receipt will appear here the moment it is confirmed, and is already on its way to your account.',
-    paid: settled,
+   if (!gatewayReturn || !detail) return;
+   // The confirmation may arrive after the guest does. Rather than freeze on the
+   // first reading, the state is allowed to move from "confirming" to paid as
+   // soon as the house says the money is in, so the receipt follows on its own.
+   setDone(prev => {
+    if (prev && prev.paid === settled) return prev;
+    return {
+     reference: detail.reference || ref,
+     message: settled
+      ? 'Payment received. Your official receipt is below' + (form.email.trim() ? ', and a copy has been emailed to ' + form.email.trim() : '') + '.'
+      : 'We are confirming this payment with Pesapal. Your receipt will appear here the moment it is confirmed, and is already on its way to your account.',
+     paid: settled,
+    };
    });
-  }, [gatewayReturn, detail, settled, done]);
+  }, [gatewayReturn, detail, settled, form.email, ref]);
+
+  // While a gateway return is still unconfirmed, ask the house again a few times
+  // over the next half minute. It stops the moment the payment is confirmed, and
+  // gives up quietly rather than polling forever.
+  React.useEffect(() => {
+   if (!gatewayReturn || !detail || settled || poll >= 8) return;
+   const t = window.setTimeout(() => setPoll(p => p + 1), 4000);
+   return () => window.clearTimeout(t);
+  }, [gatewayReturn, detail, settled, poll]);
 
  const pay = async () => {
   setErr('');
@@ -518,7 +545,7 @@ function PayPage() {
    say(src === 'booking' ? 'Booking' : src === 'invoice' ? 'Invoice' : 'Order', ref || '-');
    if (done && done.reference && done.reference !== ref) say('Payment ref', done.reference);
     say('Method', METHOD_TEXT[method] || method);
-    say('Amount', money(charged || amt));
+    say('Amount', money(amountNow()));
     say('Payment status', done ? (done.paid ? 'Paid - receipt issued' : 'Request received - the front desk confirms it on ' + (normPhone(form.phone) || 'the phone given')) : 'Details only - no money has been taken yet');
     L.push('');
 
@@ -580,7 +607,7 @@ function PayPage() {
     L.push(src === 'booking' ? 'ROOM BOOKING' : src === 'invoice' ? 'INVOICE' : 'FOOD ORDER');
     say(src === 'booking' ? 'Room' : 'Items', item || '-');
     if (qty) say('Quantity', qty + (unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''));
-    say('Total', money(charged || amt));
+    say('Total', money(amountNow()));
     L.push('');
    }
 
@@ -633,13 +660,13 @@ if (done) {
      <div className="payCheck"><CheckIcon/></div>
      <p className="eyebrow">{done.paid ? 'PAYMENT RECEIVED' : 'PAYMENT CONFIRMING'}</p>
      <h1 className="payThanks">Thank you, {form.name.trim().split(' ')[0] || 'friend'}.</h1>
-     <p className="payDoneLine">Your <b>{src === 'booking' ? 'room booking ' : src === 'invoice' ? 'invoice payment ' : 'food order '}</b>for <b>{fmt(charged || amt)}</b> {done.paid ? 'is paid in full.' : 'is with the hotel.'}</p>
+      <p className="payDoneLine">Your <b>{src === 'booking' ? 'room booking ' : src === 'invoice' ? 'invoice payment ' : 'food order '}</b>for <b>{fmt(amountNow())}</b> {done.paid ? 'is paid in full.' : 'is with the hotel.'}</p>
      <div className="doneRef"><span>Your reference</span><b>{done.reference}</b></div>
      <p className="payDoneNote">{done.message}</p>
      {done.paid ? (
       <>
        <PayReceipt
-        src={src} ref={done.reference || ref} charged={charged} amt={amt} form={form}
+        src={src} receiptRef={done.reference || ref} charged={charged} amt={amt} form={form}
         detail={detail} item={item} qty={qty} unit={unit} methodLabel={METHOD_TEXT[method] || method}
        />
        <p className="payDoneNote2">This receipt has been emailed to {form.email.trim() || 'the address we have on file'} as well as shown here. To keep a copy, use the <b>Print / Save as PDF</b> button below and your phone will save it as a file.</p>
@@ -679,7 +706,7 @@ if (done) {
    </div>
   </section>
 
-  <VoiceGuide src={src} ref={ref} amount={payable || amt}/>
+  <VoiceGuide src={src} reference={ref} amount={payable || amt}/>
 
   <section className="payWrap section" style={{paddingTop: 56}}>
    {!src || !ref ? (
@@ -786,7 +813,7 @@ if (done) {
        <p style={{margin: 0}}>This reference is settled in full, so there is nothing left to pay on it. Your booking or order stays exactly as it is.</p>
        <p className="payDoneNote2" style={{margin: '8px 0 0'}}>Your official receipt is below, and a copy has been emailed to {form.email.trim() || 'the address we have on file'}.</p>
        <PayReceipt
-        src={src} ref={ref} charged={charged} amt={amt} form={form}
+        src={src} receiptRef={ref} charged={charged} amt={amt} form={form}
         detail={detail} item={item} qty={qty} unit={unit} methodLabel={METHOD_TEXT[method] || method}
        />
         <div style={{display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center',marginTop:10}}>

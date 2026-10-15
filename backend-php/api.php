@@ -1533,15 +1533,29 @@ if($act==='pesapal_callback'){
    error_log('[hotel api] pesapal callback status failed for '.$mref.': '.$st['error']);
   }
  }
- // Which page the guest came from, read from the row rather than trusted from
- // the request, so the return lands on the right one.
- $src='';
+ // Which page the guest came from, and the reference that page understands,
+ // are read from the row rather than trusted from the request. The gateway
+ // round-trips the payment's own reference (PAY-...), but the checkout page
+ // reads the thing that was paid for back by order, booking or invoice number,
+ // so the return has to carry that number - otherwise the guest lands on a
+ // page that cannot find the reference and never sees the receipt.
+ $src=''; $ref=$mref;
  if($pay){
-  if((int)($pay['invoice_id']??0)>0) $src='invoice';
-  elseif((int)($pay['order_id']??0)>0) $src='order';
-  elseif((int)($pay['reservation_id']??0)>0) $src='booking';
+  if((int)($pay['invoice_id']??0)>0){
+   $src='invoice';
+   $hit=row('SELECT invoice_number FROM invoices WHERE id=?',[(int)$pay['invoice_id']]);
+   if($hit) $ref=(string)$hit['invoice_number'];
+  }elseif((int)($pay['order_id']??0)>0){
+   $src='order';
+   $hit=row('SELECT order_number FROM orders WHERE id=?',[(int)$pay['order_id']]);
+   if($hit) $ref=(string)$hit['order_number'];
+  }elseif((int)($pay['reservation_id']??0)>0){
+   $src='booking';
+   $hit=row('SELECT booking_number FROM reservations WHERE id=?',[(int)$pay['reservation_id']]);
+   if($hit) $ref=(string)$hit['booking_number'];
+  }
  }
- $q=http_build_query(array_filter(['src'=>$src,'ref'=>$mref,'gateway'=>'pesapal','paid'=>'1'],fn($v)=>$v!==''));
+ $q=http_build_query(array_filter(['src'=>$src,'ref'=>$ref,'gateway'=>'pesapal','paid'=>'1'],fn($v)=>$v!==''));
  header('Location: '.rtrim(SITE_URL,'/').'/pay.html'.($q!==''?'?'.$q:''),true,302);
  exit;
 }

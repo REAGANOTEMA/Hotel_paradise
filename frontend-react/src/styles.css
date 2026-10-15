@@ -2006,11 +2006,32 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 .prTotal{display:flex;justify-content:space-between;font-size:14px;font-weight:700;border-top:2px solid #171717;padding-top:8px;margin-top:6px}
 .prFoot{margin:14px 0 0;text-align:center;font-size:10.5px;color:#4a5666;border-top:1px dashed #a39b8a;padding-top:10px}
 
-/* only the receipt on paper */
+/* Only the receipt on paper.
+   Everything on the checkout page is taken out of the layout, and then the
+   receipt - together with the boxes it happens to sit inside - is put back.
+   Hiding by `visibility` alone would leave the whole page taking up paper
+   beneath the receipt, so a long order could run onto a second, blank sheet.
+   `display:contents` on the wrappers drops their padding and shadow as well,
+   so the sheet begins at the receipt and holds nothing else. */
 @media print{
-  .payPage *{visibility:hidden}
-  .payPage .payReceipt,.payPage .payReceipt *{visibility:visible}
-  .payPage .payReceipt{position:absolute;left:0;top:0;width:100%;max-width:none;box-shadow:none;border:none;margin:0;border-radius:0}
+  @page{margin:12mm}
+  html,body{background:#fff}
+  .payPage *{display:none!important}
+  .payPage .payWrap,
+  .payPage .payGrid,
+  .payPage .payGrid>div,
+  .payPage .payCard,
+  .payPage .paySettled{display:contents!important}
+  .payPage .payReceipt{
+    display:block!important;max-width:none;width:100%;margin:0;padding:0;
+    border:none;border-radius:0;box-shadow:none;background:#fff;color:#171717;
+  }
+  /* every element inside the receipt takes back its own display value ... */
+  .payPage .payReceipt *{display:revert!important}
+  /* ... except the rows, whose flex layout is what lines the figures up */
+  .payPage .payReceipt .prRow,
+  .payPage .payReceipt .prItem,
+  .payPage .payReceipt .prTotal{display:flex!important}
 }
 
 /* ==================================================================
