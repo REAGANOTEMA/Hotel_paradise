@@ -7988,36 +7988,6 @@
       "h": 576,
       "variants": []
     },
-    "food-1024x1016": {
-      "ext": "webp",
-      "w": 1024,
-      "h": 1016,
-      "variants": []
-    },
-    "hotel-paradise-on-the-nile-conferences-weddings-cover": {
-      "ext": "jpg",
-      "w": 2000,
-      "h": 624,
-      "variants": []
-    },
-    "hotel-paradise": {
-      "ext": "webp",
-      "w": 864,
-      "h": 576,
-      "variants": []
-    },
-    "pool-768x512": {
-      "ext": "webp",
-      "w": 768,
-      "h": 512,
-      "variants": []
-    },
-    "pool-area": {
-      "ext": "webp",
-      "w": 1400,
-      "h": 933,
-      "variants": []
-    },
     "break-fast-hero": {
       "ext": "jpg",
       "w": 596,
@@ -8100,6 +8070,12 @@
       "ext": "jpg",
       "w": 780,
       "h": 438,
+      "variants": []
+    },
+    "food-1024x1016": {
+      "ext": "webp",
+      "w": 1024,
+      "h": 1016,
       "variants": []
     },
     "food-buffe-ready-for-serving-inoutside-cathering": {
@@ -8210,10 +8186,22 @@
       "h": 452,
       "variants": []
     },
+    "hotel-paradise-on-the-nile-conferences-weddings-cover": {
+      "ext": "jpg",
+      "w": 2000,
+      "h": 624,
+      "variants": []
+    },
     "hotel-paradise-on-the-nile-conferences-weddings": {
       "ext": "jpg",
       "w": 715,
       "h": 400,
+      "variants": []
+    },
+    "hotel-paradise": {
+      "ext": "webp",
+      "w": 864,
+      "h": 576,
       "variants": []
     },
     "hotel-pool": {
@@ -8325,6 +8313,18 @@
       "ext": "jpg",
       "w": 1500,
       "h": 1000,
+      "variants": []
+    },
+    "pool-768x512": {
+      "ext": "webp",
+      "w": 768,
+      "h": 512,
+      "variants": []
+    },
+    "pool-area": {
+      "ext": "webp",
+      "w": 1400,
+      "h": 933,
       "variants": []
     },
     "pork-bbq-on-fire": {

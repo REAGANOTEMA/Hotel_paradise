@@ -647,7 +647,7 @@ function Home() {
    </section>
 
 
-  <section className="section hasTint" id="facilities" style={{'--bg': bgUrl('./images/Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover.jpg')} as unknown as React.CSSProperties}>
+  <section className="section hasTint" id="facilities" style={{'--bg': bgUrl('./images/hotel-paradise-on-the-nile-conferences-weddings-cover.jpg')} as unknown as React.CSSProperties}>
    <div className="center reveal">
     <p className="eyebrow">THE HOTEL</p>
     <h2>Everything you need, in one place</h2>
