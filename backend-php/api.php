@@ -60,7 +60,7 @@ function service_charge(float $amount): float{
  * the moment it is made, the receipt is produced, and the reference settles.
  * Turn it off the day the real gateway is live.
  */
-const PAYMENT_DEMO_SETTLE = true;
+const PAYMENT_DEMO_SETTLE = false;
 
 /**
  * Some installations were built before the menu tables grew their optional
@@ -165,6 +165,19 @@ function web_settle_payment(int $pid, string $status, array $raw=[]): array{
  }
  $args[]=$pid;
  q('UPDATE payments SET '.implode(',',$set).' WHERE id=?',$args);
+
+ // What the guest actually paid with is only known from the gateway's own reply,
+ // so the row is corrected to match reality rather than the button that was
+ // tapped before the guest left for Pesapal. A gateway that names no method
+ // changes nothing, so a method is never replaced by a guess.
+ if(($raw['gateway']??'')==='pesapal'&&is_array($raw['raw']??null)){
+  $byGateway=pesapal_payment_method($raw['raw']);
+  $account=pesapal_payer_account($raw['raw']);
+  $fix=[]; $fixArgs=[];
+  if($byGateway!==''){ $fix[]='method=?'; $fixArgs[]=$byGateway; }
+  if($account!==''&&existing_columns('payments',['payer_phone'])!==[]){ $fix[]='payer_phone=?'; $fixArgs[]=$account; }
+  if($fix!==[]){ $fixArgs[]=$pid; q('UPDATE payments SET '.implode(',',$fix).' WHERE id=?',$fixArgs); }
+ }
 
  if($pay['invoice_id']!==null&&function_exists('invoice_recompute')){
   try{ invoice_recompute((int)$pay['invoice_id']); }catch(Throwable $e){ error_log('[hotel api] invoice recompute skipped: '.$e->getMessage()); }
@@ -705,10 +718,10 @@ if($act==='payment'){
   $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'demo','online'=>true,'status'=>'successful','paid'=>true,
    'receipt_sent'=>(bool)($settle['receipt_sent']??false),
    'message'=>'Payment received. Your receipt is ready'.(($settle['receipt_sent']??false)?' and a copy has been emailed to you':'').'.']);
- }
+  }
  $msg=$iid!==null
     ?'The front desk has your payment request and it will be matched to invoice '.$ref.'. Nothing is marked paid until the money is verified.'
-    :'The front desk has your payment request. Pesapal online payment goes live soon - until then nothing is charged here and your '.$label.' is confirmed on '.$phone.'.';
+    :'The front desk has your payment request for the '.$label.' '.$ref.'. It will be confirmed on '.$phone.' and nothing is marked paid until the money is received.';
   $out(['ok'=>true,'reference'=>$payRef,'amount'=>$expected,'method'=>$method,'gateway'=>'pesapal','online'=>false,'status'=>'pending','paid'=>false,
     'message'=>$msg]);
 }

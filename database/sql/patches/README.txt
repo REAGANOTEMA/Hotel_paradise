@@ -47,6 +47,15 @@ Patches
     explicit for anyone who would rather run it by hand. It only ever adds a
     missing column and never changes a table that already has it.
 
+2026-10-15_pesapal_gateway_fields.sql
+    Adds the Pesapal fields to the payments table that an earlier install may
+    be missing: checkout_token (unique, one per checkout), verified_at (the
+    server-owned confirmation stamp), gateway_result (the raw status body Pesapal
+    returned) and payer_phone, plus the provider_reference index. The API guards
+    each of these, so a missing column only loses the gateway detail rather than
+    failing; this patch makes them explicit. Run it once the Pesapal merchant
+    keys are filled in, so every online payment stores its full trail.
+
 How to run one
 --------------
 phpMyAdmin: open the system database, "Import", choose the .sql file, then Go.

@@ -7,10 +7,12 @@ import {SmartImage} from './SmartImage';
 /*
  * Secure checkout. The room booking and the kitchen order both land here with
  * their reference and total in the URL. The guest adds the details the receipt
- * needs, picks a payment method and pays. Pesapal is the gateway; the merchant
- * keys are still pending, so for now the payment is recorded as pending and the
- * front desk confirms it. The moment Pesapal is switched on, this page sends the
- * guest to Pesapal's secure page and the same payment row receives the callback.
+ * needs, says how they intend to pay, and pays. Pesapal is the gateway and is
+ * where the money is actually taken: the guest is sent to Pesapal's own secure
+ * page and chooses the method there - MTN Mobile Money, Airtel Money, Visa or
+ * Mastercard - so no card or mobile-money detail is ever entered here. The same
+ * payment row is then settled by the gateway's server-side callback, never by
+ * the browser.
  *
  * The reference is read back from the database before anything is charged. The
  * url can say whatever it likes - it is edited by hand as often as it is
@@ -107,9 +109,9 @@ const bedOf = (roomType: string): {beds: string; guests: string} | null => {
 
 const METHODS: {key: MethodKey; label: string; hint: string; icon: string}[] = [
  {key: 'pesapal', label: 'Pesapal Pay', hint: 'Pay from a Pesapal account, or a credit or debit card, on Pesapal\u2019s secure page.', icon: 'wallet'},
- {key: 'mtn_momo', label: 'MTN Mobile Money', hint: 'Instant payment from an MTN MoMo number, no account needed.', icon: 'phone'},
- {key: 'airtel_money', label: 'Airtel Money', hint: 'Instant payment from an Airtel Money number, no account needed.', icon: 'phone'},
- {key: 'card', label: 'Visa or Mastercard', hint: 'Card numbers are entered on Pesapal\u2019s secure page, never saved here.', icon: 'card'}
+ {key: 'mtn_momo', label: 'MTN Mobile Money', hint: 'Pay from an MTN MoMo number on Pesapal\u2019s secure page. Your number is entered there, never here.', icon: 'phone'},
+ {key: 'airtel_money', label: 'Airtel Money', hint: 'Pay from an Airtel Money number on Pesapal\u2019s secure page. Your number is entered there, never here.', icon: 'phone'},
+ {key: 'card', label: 'Visa or Mastercard', hint: 'Card details are entered on Pesapal\u2019s secure page, never saved here.', icon: 'card'}
 ];
 
 const ls = (k: string): string => { try { return window.localStorage.getItem(k) || ''; } catch { return ''; } };
@@ -134,16 +136,6 @@ const Icon = ({kind}: {kind: string}) =>
  kind === 'card' ? <CardIcon/> : kind === 'wallet' ? <WalletIcon/> : <PhoneIcon/>;
 
 const normPhone = (p: string) => p.replace(/[^\d+]/g, '');
-const validMomo = (p: string) => /^(\+?256|0)7\d{8}$/.test(normPhone(p));
-const fmtCard = (v: string) => v.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ');
-const fmtExp = (v: string) => { const d = v.replace(/\D/g, '').slice(0, 4); return d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d; };
-const validExp = (v: string) => {
- const m = /^(\d{2})\/(\d{2})$/.exec(v);
- if (!m) return false;
- const mm = parseInt(m[1], 10), yy = parseInt(m[2], 10);
- if (mm < 1 || mm > 12) return false;
- return yy >= (new Date().getFullYear() % 100);
-};
 
 /**
  * The official receipt, shown on the page and printed through the phone's own
@@ -293,7 +285,7 @@ function VoiceGuide({src, ref, amount}: {src: string; ref: string; amount: numbe
   L.push('First, look over the details on the page, so you are happy with what you are paying for.');
   L.push('In the receipt details box, type the full name that should appear on your receipt, then a phone number the hotel can confirm on. An email address is optional.');
   L.push('Next, choose how you would like to pay. You can use Pesapal, MTN Mobile Money, Airtel Money, or a Visa or Mastercard.');
-  L.push('For mobile money, enter your number in the box that opens. For a card, enter the card number, the expiry date, and the CVV from the back of the card.');
+  L.push('You will then be taken to Pesapal\u2019s secure page to finish the payment, where you enter your mobile money number or your card. None of that is entered or saved on this website.');
   L.push('When you are ready, press the pay button. Reviewing your details does not charge you, and you are never charged twice.');
   L.push('Your official receipt is emailed to you and shown here the moment the payment is confirmed.');
   L.push('If you need help at any time, call the front desk on ' + CALL + '. Thank you for choosing Hotel Paradise on the Nile.');
@@ -359,10 +351,8 @@ function PayPage() {
  const qty = q.get('qty') || '';
  const unit = q.get('unit') || '';
 
- const [form, setForm] = React.useState({name: q.get('name') || ls('hpn_name') || '', phone: q.get('phone') || ls('hpn_phone') || '', email: q.get('email') || ls('hpn_email') || ''});
+  const [form, setForm] = React.useState({name: q.get('name') || ls('hpn_name') || '', phone: q.get('phone') || ls('hpn_phone') || '', email: q.get('email') || ls('hpn_email') || ''});
  const [method, setMethod] = React.useState<MethodKey>('pesapal');
- const [momo, setMomo] = React.useState('');
- const [card, setCard] = React.useState({holder: '', number: '', exp: '', cvv: ''});
   const [busy, setBusy] = React.useState(false);
   const [err, setErr] = React.useState('');
    const [done, setDone] = React.useState<{reference: string; message: string; paid: boolean} | null>(null);
@@ -471,22 +461,12 @@ function PayPage() {
    });
   }, [gatewayReturn, detail, settled, done]);
 
-  const momoLabel = method === 'mtn_momo' ? 'MTN' : 'Airtel';
-
  const pay = async () => {
   setErr('');
   if (!src || !ref) { setErr('There is nothing to pay right now. Please start again from the rooms or the menu.'); return; }
   if (settled) { setErr('This reference has already been paid in full. Nothing further is due on it.'); return; }
   if (!form.name.trim()) { setErr('Please add the name that should appear on the receipt.'); return; }
   if (!normPhone(form.phone)) { setErr('Please add a phone number we can confirm the payment on.'); return; }
-  if (method === 'mtn_momo' || method === 'airtel_money') {
-   if (!validMomo(momo)) { setErr('Please enter a valid ' + momoLabel + ' mobile money number, for example 0700 000 000 or +256 700 000 000.'); return; }
-  }
-  if (method === 'card') {
-   if (card.number.replace(/\D/g, '').length < 12) { setErr('Please enter a valid card number.'); return; }
-   if (!validExp(card.exp)) { setErr('Please enter a valid expiry date, for example 09/28.'); return; }
-   if (!/^\d{3,4}$/.test(card.cvv)) { setErr('Please enter the CVV from the back of the card.'); return; }
-  }
   setBusy(true);
   try {
    const body = {
@@ -651,9 +631,9 @@ if (done) {
    <section className="payWrap">
     <div className="payCard panned" style={{maxWidth: 620, margin: '0 auto', textAlign: 'center'}}>
      <div className="payCheck"><CheckIcon/></div>
-     <p className="eyebrow">PAYMENT REQUEST RECEIVED</p>
+     <p className="eyebrow">{done.paid ? 'PAYMENT RECEIVED' : 'PAYMENT CONFIRMING'}</p>
      <h1 className="payThanks">Thank you, {form.name.trim().split(' ')[0] || 'friend'}.</h1>
-     <p className="payDoneLine">Your <b>{src === 'booking' ? 'room booking ' : src === 'invoice' ? 'invoice payment ' : 'food order '}</b>for <b>{fmt(charged || amt)}</b> is with the hotel.</p>
+     <p className="payDoneLine">Your <b>{src === 'booking' ? 'room booking ' : src === 'invoice' ? 'invoice payment ' : 'food order '}</b>for <b>{fmt(charged || amt)}</b> {done.paid ? 'is paid in full.' : 'is with the hotel.'}</p>
      <div className="doneRef"><span>Your reference</span><b>{done.reference}</b></div>
      <p className="payDoneNote">{done.message}</p>
      {done.paid ? (
@@ -665,7 +645,7 @@ if (done) {
        <p className="payDoneNote2">This receipt has been emailed to {form.email.trim() || 'the address we have on file'} as well as shown here. To keep a copy, use the <b>Print / Save as PDF</b> button below and your phone will save it as a file.</p>
       </>
      ) : (
-      <p className="payDoneNote2">Online payment with Pesapal is being switched on. Until it is live, the front desk confirms your payment, and your official receipt is emailed to you and appears here the moment it is confirmed.</p>
+      <p className="payDoneNote2">Your payment is being confirmed with Pesapal. Your official receipt is emailed to you and appears here the moment it is confirmed.</p>
      )}
      <div className="payDoneActions">
        {done.paid && (
@@ -833,9 +813,9 @@ if (done) {
      <div className="payCard paySteps">
       <p className="eyebrow">WHAT HAPPENS NEXT</p>
       <ol>
+       <li>You pay on Pesapal\u2019s secure page, by MTN Mobile Money, Airtel Money, or a Visa or Mastercard.</li>
+       <li>Pesapal confirms the payment and sends us the result, and your official receipt is emailed to you and shown here.</li>
        <li>We confirm your {src === 'booking' ? 'room' : src === 'invoice' ? 'invoice payment' : 'order'} by phone on {form.phone || 'the number you give'}.</li>
-       <li>Pesapal sends a secure payment once online payments are live here.</li>
-       <li>Until then, pay at the front desk in cash, by card or by mobile money.</li>
       </ol>
      </div>
     </div>
@@ -865,19 +845,6 @@ if (done) {
         <span className="payMethodText">
          <b>{m.label}</b>
          <em>{m.hint}</em>
-         {method === m.key && (m.key === 'mtn_momo' || m.key === 'airtel_money') && (
-          <span className="paySub">
-           <input value={momo} onChange={e => setMomo(e.target.value)} inputMode="tel" placeholder={momoLabel + ' number, e.g. 0700000000'} aria-label={momoLabel + ' mobile money number'}/>
-          </span>
-         )}
-         {method === m.key && m.key === 'card' && (
-          <span className="paySub cardGrid">
-           <span className="payCardName"><input value={card.holder} onChange={e => setCard({...card, holder: e.target.value})} placeholder="Name on card"/></span>
-           <span className="payCardNumber"><input value={card.number} onChange={e => setCard({...card, number: fmtCard(e.target.value)})} inputMode="numeric" placeholder="Card number" aria-label="Card number"/></span>
-           <span><input value={card.exp} onChange={e => setCard({...card, exp: fmtExp(e.target.value)})} inputMode="numeric" placeholder="MM/YY" aria-label="Expiry month and year"/></span>
-           <span><input value={card.cvv} onChange={e => setCard({...card, cvv: e.target.value.replace(/\D/g, '').slice(0, 4)})} inputMode="numeric" placeholder="CVV" type="password" aria-label="Card CVV"/></span>
-          </span>
-         )}
         </span>
         <span className="payRadio" aria-hidden="true"><i/></span>
        </button>
@@ -887,9 +854,9 @@ if (done) {
      {err && <div className="bookMsg" style={{marginTop: 16}}>{err}</div>}
 
        <button className={'btn planBook' + (busy ? ' loading' : '')} style={{marginTop: 22}} onClick={pay} disabled={busy || !payable}>
-       {busy ? 'Contacting Pesapal...' : settled ? 'Already paid in full' : method === 'card' || method === 'pesapal' ? 'Pay ' + fmt(payable) : 'Pay ' + fmt(payable) + ' with ' + momoLabel + ' MoMo'}
+       {busy ? 'Contacting Pesapal...' : settled ? 'Already paid in full' : 'Pay ' + fmt(payable) + ' securely'}
       </button>
-     <p className="plannerNote">Pesapal is the merchant of record for online payments. Reviewing your request does not charge you, and you are never charged twice. For help, call <a className="footLink" href={telHref(CALL)}>{CALL}</a> or email {HOTEL.email}.</p>
+     <p className="plannerNote">Pesapal is the merchant of record for online payments. On the next step you pay on Pesapal\u2019s secure page, so no card or mobile money details are entered here. Reviewing your request does not charge you, and you are never charged twice. For help, call <a className="footLink" href={telHref(CALL)}>{CALL}</a> or email {HOTEL.email}.</p>
     </div>
    </div>
    )}

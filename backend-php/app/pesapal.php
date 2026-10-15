@@ -78,8 +78,18 @@ function pesapal_base(): string
 /** Scheme and host of this installation, so Pesapal can call us back. */
 function pesapal_origin(): string
 {
- $scheme=(!empty($_SERVER['HTTPS'])&&strtolower((string)$_SERVER['HTTPS'])!=='off')?'https':'http';
- $host=(string)($_SERVER['HTTP_HOST']??'localhost');
+ $https=(!empty($_SERVER['HTTPS'])&&strtolower((string)$_SERVER['HTTPS'])!=='off');
+ // Behind a load balancer or a proxy the TLS is terminated before the request
+ // reaches PHP, so $_SERVER['HTTPS'] is empty even though the guest is on
+ // https. The forwarded header is the only place that says so, and the live
+ // gateway refuses an http callback, so it is honoured before giving up.
+ if(!$https&&isset($_SERVER['HTTP_X_FORWARDED_PROTO'])){
+  $fwd=explode(',',(string)$_SERVER['HTTP_X_FORWARDED_PROTO']);
+  $https=strtolower(trim($fwd[0]))==='https';
+ }
+ if(!$https&&(string)($_SERVER['SERVER_PORT']??'')==='443') $https=true;
+ $scheme=$https?'https':'http';
+ $host=(string)($_SERVER['HTTP_HOST']??'');
  if($host==='') $host='localhost';
  return $scheme.'://'.$host;
 }
@@ -368,4 +378,37 @@ function pesapal_map_status(string $description,int $code): string
  if($code===3||$d==='reversed') return 'reversed';
  if($d==='invalid') return 'failed';
  return 'pending';
+}
+
+/**
+ * The method the guest actually paid with, read from the gateway's own status
+ * body and mapped onto this system's payment methods.
+ *
+ * The checkout page only lets a guest say how they intend to pay; Pesapal's own
+ * page is where the choice is really made, and only the status reply says which
+ * one was used. A guest who tapped "MTN" and then paid by card is a card payment
+ * in every book that matters, and mapping the gateway's word back means the
+ * receipt, the invoice and Finance all agree with what the money actually was.
+ * Returns '' when Pesapal named no method, so the caller never overwrites a
+ * method with a guess.
+ */
+function pesapal_payment_method(array $raw): string
+{
+ $m=strtolower(trim((string)($raw['payment_method']??$raw['paymentMethod']??'')));
+ if($m==='') return '';
+ if(strpos($m,'mtn')!==false) return 'mtn_momo';
+ if(strpos($m,'airtel')!==false) return 'airtel_money';
+ if(strpos($m,'mpesa')!==false||strpos($m,'m-pesa')!==false) return 'mobile_money';
+ if(strpos($m,'visa')!==false||strpos($m,'master')!==false||strpos($m,'amex')!==false
+    ||strpos($m,'american express')!==false||strpos($m,'card')!==false) return 'card';
+ if(strpos($m,'bank')!==false) return 'bank';
+ if(strpos($m,'pesapal')!==false) return 'pesapal';
+ return '';
+}
+
+/** The number or account the guest paid from, as Pesapal masked it. */
+function pesapal_payer_account(array $raw): string
+{
+ $a=$raw['payment_account']??$raw['paymentAccount']??'';
+ return is_string($a)?trim($a):'';
 }
