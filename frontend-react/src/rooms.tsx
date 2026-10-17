@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms as baseRooms, EndLinks, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, customerToken, BackLink, PageHeroCover, AccountGate, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled, type ImageGroup} from './SmartImage';
+import {MenuConcierge} from './concierge';
 
 /** The photographs each room is still waiting for, shown on request only. */
 const SHOW_FILE_HINTS = photoHintsEnabled();
@@ -453,6 +454,8 @@ if (d.ok) {
     {label: 'Book a room', href: '#planner', primary: true},
     {label: 'Go back home', href: './index.html'}
   ]}/>
+
+  <MenuConcierge sections={[]}/>
 
   <Footer/>
  </div>;

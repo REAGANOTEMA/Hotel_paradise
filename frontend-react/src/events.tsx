@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
 import {SmartImage, type ImageGroup} from './SmartImage';
+import {MenuConcierge} from './concierge';
 
 /**
  * The venues the events page is built from. `group` says where the photograph
@@ -175,6 +176,8 @@ function EventsPage() {
   </section>
 
   <ExploreMore current="events"/>
+
+  <MenuConcierge sections={[]}/>
 
   <Footer/>
  </div>;

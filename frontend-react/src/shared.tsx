@@ -212,9 +212,17 @@ export const HOTEL = {
   founded: 'Saturday, 18 April 1998',
   /** The couple who founded it, and still own it today. */
   founders: 'Mr. Otile Francis and his wife, Mrs. Magrate Otile',
-  /** The family name as the owner asks it to be spoken, while the written name
-      keeps its correct spelling everywhere it appears. */
-  founderSurnameSpoken: 'Otile, spelled O, T, I, L, E, and said ot-il-le,',
+  /** The owner, named on his own. */
+  owner: 'Mr. Otile Francis',
+  /** The owner's wife, named on her own. */
+  ownerWife: 'Mrs. Magrate Otile',
+  /** The family name as the owner asks it to be spoken: the surname "Otile" is
+      said "oh-teh-ah-leh". The written name keeps its correct spelling everywhere
+      it appears, and only the voice respells it. */
+  founderSurnameSpoken: 'spelt O, T, I, L, E, and said oh-teh-ah-leh',
+  /** The surname respelled the way the voice should say it, so the browser
+      pronounces it correctly while the screen keeps the true spelling. */
+  founderSurnameSay: 'Oh-teh-ah-leh',
   /** It opened with ten rooms and has grown into a full hotel since. */
   roomsAtOpening: '10',
   roomsToday: '69',

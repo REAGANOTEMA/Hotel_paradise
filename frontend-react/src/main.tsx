@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms, ExploreMore, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, telHref, bgUrl, useReveal} from './shared';
 import {heroShots, SmartImage, type HeroShot, type ImageGroup} from './SmartImage';
+import {MenuConcierge} from './concierge';
 
 /**
  * What dining costs, worked out from the base figures so that the 3.5% the
@@ -755,6 +756,8 @@ function Home() {
   </section>
 
   <ExploreMore current="index"/>
+
+  <MenuConcierge sections={[]}/>
 
   <Footer/>
  </div>;

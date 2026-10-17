@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal, customerToken} from './shared';
 import {SmartImage} from './SmartImage';
+import {MenuConcierge} from './concierge';
 
 /**
  * Talk to the house: the one page where a guest can write to the hotel.
@@ -160,6 +161,8 @@ function TalkPage() {
   </section>
 
   <ExploreMore current="talk"/>
+
+  <MenuConcierge sections={[]}/>
 
   <Footer/>
  </div>;

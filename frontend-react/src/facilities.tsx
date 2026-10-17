@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
 import {SmartImage, type ImageGroup} from './SmartImage';
+import {MenuConcierge} from './concierge';
 
 /**
  * One facility of the hotel. `group` and `name` address the photograph exactly
@@ -145,6 +146,8 @@ function FacilitiesPage() {
   </section>
 
   <ExploreMore current="facilities"/>
+
+  <MenuConcierge sections={[]}/>
 
   <Footer/>
  </div>;

@@ -2,6 +2,7 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal, type HeroCoverFrame} from './shared';
+import {MenuConcierge} from './concierge';
 
 /*
  * The hotel's newsroom.
@@ -362,6 +363,8 @@ function NewsPage() {
     </section>
 
     <ExploreMore current="news"/>
+
+    <MenuConcierge sections={[]}/>
 
     <Footer/>
   </div>;
