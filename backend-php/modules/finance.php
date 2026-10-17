@@ -11,6 +11,13 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   q('INSERT INTO voids(hotel_id,ref_type,ref_id,reason,amount,user_id,approved_by,created_at) VALUES(1,\'payment\',?,?,?,?,?,NOW())',[$pid,$reason,$p['amount'],$u['id'],$u['id']]);
   if($p['reservation_id']){ q('UPDATE reservations SET paid=GREATEST(paid-?,0) WHERE id=?',[$p['amount'],$p['reservation_id']]); }
    q('UPDATE payments SET status=\'reversed\' WHERE id=?',[$pid]);
+   // An order whose payment is voided is no longer settled: its status is read
+   // back from what actually remains, so it does not stay flagged as paid.
+   if($p['order_id']){
+    $got=(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE order_id=? AND status='successful'",[(int)$p['order_id']]);
+    $odue=(float)val('SELECT total FROM orders WHERE id=?',[(int)$p['order_id']]);
+    if($odue>0){ q('UPDATE orders SET status=? WHERE id=?',[$got+0.001>=$odue?'paid':'partially_paid',(int)$p['order_id']]); }
+   }
    audit('reverse_payment','payment',$pid,['amount'=>$p['amount'],'reason'=>$reason]);
    notify_console('void-payment:'.$pid,'incident','Payment #'.$pid.' reversed',
     money($p['amount']).' voided. Reason: '.$reason.'.',
@@ -26,6 +33,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   $p=row('SELECT * FROM payments WHERE id=?',[$pid]);
   if(!$p||strtolower(trim((string)$p['status']))!=='pending'){ flash('That payment is not awaiting confirmation.','bad'); go('finance'); }
   q('UPDATE payments SET status=\'successful\' WHERE id=?',[$pid]);
+  // The booking's own paid figure moves with the confirmation, so the front desk
+  // balance and the outstanding report count the money the guest settled online.
+  if($p['reservation_id']){ q('UPDATE reservations SET paid=paid+? WHERE id=?',[(float)$p['amount'],(int)$p['reservation_id']]); }
   audit('confirm_payment','payment',$pid,['status'=>$p['status']],['status'=>'successful']);
   notify_console('confirm-payment:'.$pid,'payment','Payment '.money($p['amount']).' confirmed',
    'Confirmed as received and receipted.',

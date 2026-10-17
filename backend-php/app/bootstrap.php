@@ -472,7 +472,7 @@ function page_caps(): array{
   'pos'=>['director','general_manager','cashier','waiter','bar_staff'],
   'fnb'=>['director','general_manager','cashier','waiter','bar_staff'],
   'kitchen'=>['director','general_manager','kitchen'],
-  'shifts'=>['director','general_manager','housekeeping','maintenance'],
+  'shifts'=>['director','general_manager','cashier','waiter','bar_staff','housekeeping','maintenance'],
   'inventory'=>['director','general_manager','storekeeper','inventory_manager'],
   'suppliers'=>['director','general_manager','procurement','storekeeper'],
   'purchases'=>['director','general_manager','procurement','storekeeper','inventory_manager','kitchen','housekeeping','maintenance'],

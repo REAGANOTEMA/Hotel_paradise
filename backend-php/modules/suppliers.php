@@ -35,7 +35,7 @@ echo '<div class="field"><label>Phone</label><input name="phone" value="'.e($es[
 echo '<div class="field"><label>Email</label><input name="email" value="'.e($es['email']??'').'"></div>';
 echo '<div class="field"><label>Address</label><input name="address" value="'.e($es['address']??'').'"></div>';
 echo '<div class="field"><label>Tax ID</label><input name="tax_id" value="'.e($es['tax_id']??'').'"></div>';
-echo '<label style="font-size:13px"><input type="checkbox" name="active"'.($edit&&$es['active']?' checked':' checked').'> Active supplier</label>';
+ echo '<label style="font-size:13px"><input type="checkbox" name="active"'.($edit?($es['active']?' checked':''):' checked').'> Active supplier</label>';
 echo '<div style="margin-top:14px"><button class="btn">Save supplier</button></div>';
 form_close();
 echo '</div></div></div>';

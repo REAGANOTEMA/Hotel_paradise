@@ -195,7 +195,7 @@ echo '</div>';
 
 echo '<div class="toolbar"><div class="bar">';
 echo '<a class="'.($only===''?'btn sm':'btnGhost sm').'" href="'.BASE.'/index.php?page=fnb">All outlets</a>';
-foreach(['restaurant','bar','room_service','front_desk'] as $o){
+ foreach(['restaurant','bar','room_service'] as $o){
  echo '<a class="'.($only===$o?'btn sm':'btnGhost sm').'" href="'.BASE.'/index.php?page=fnb&amp;outlet='.e($o).'">'.e(ucfirst(str_replace('_',' ',$o))).'</a>';
 }
 echo '</div><button class="btn sm" type="button" onclick="location.reload()">Refresh</button>';

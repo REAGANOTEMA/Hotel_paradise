@@ -112,7 +112,7 @@ case 'reqstatus':
     $qty=(float)$newRcv-$poi['received_qty']; if($qty<=0) continue;
     q('UPDATE purchase_order_items SET received_qty=? WHERE id=?',[$newRcv,$poi['id']]);
     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,unit_cost,reference_type,reference_id,note,user_id,created_at) VALUES(1,?,?,\'purchase_in\',?,?,?,?,?,?,NOW())',[$poi['item_id'],$loc,$qty,$poi['unit_cost'],'purchase_order',$oid,'GRN for PO '.$oid,$u['id']]);
-    q('UPDATE stock_levels SET quantity=quantity+? WHERE item_id=? AND location=?',[$qty,$poi['item_id'],$loc]);
+    q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$poi['item_id'],$loc,$qty]);
    }
    $totQty=val('SELECT COALESCE(SUM(quantity),0) FROM purchase_order_items WHERE order_id=?',[$oid]);
    $rcvQty=val('SELECT COALESCE(SUM(received_qty),0) FROM purchase_order_items WHERE order_id=?',[$oid]);

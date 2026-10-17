@@ -203,5 +203,5 @@ function invoice_can(): bool{
 /** Whether a console user may write to an invoice (issue/void/discount/adjust).
  *  Read-anyone, write only the desks management trusts. */
 function invoice_can_write(): bool{
-  return invoice_can() && (bool)array_intersect(roles_of(),['director','general_manager','accountant','cashier']);
+  return invoice_can() && (bool)array_intersect(roles_of(),['director','general_manager','super_admin','accountant','cashier']);
 }

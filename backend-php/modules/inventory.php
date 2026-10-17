@@ -42,23 +42,23 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     $cur=(float)val('SELECT quantity FROM stock_levels WHERE item_id=? AND location=?',[$iid,$loc]);
     $delta=$qty-$cur;
     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,$type,$delta,'Count adjusted to '.$qty.' '.$note,$u['id']]);
-    q('UPDATE stock_levels SET quantity=? WHERE item_id=? AND location=?',[$qty,$iid,$loc]);
+    q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=VALUES(quantity)',[$iid,$loc,$qty]);
     audit('stock_count_adjust','inventory_item',$iid,['location'=>$loc,'new'=>$qty]);
     $lowStockAlert($iid,$loc);
     flash('Stock level set to '.$qty.' at '.$loc.'.');
     go('inventory');
    }
-   if($type==='transfer_in'){ $dst=trim($_POST['dst']??''); $add=row('SELECT id FROM stock_levels WHERE item_id=? AND location=?',[$iid,$dst]); if(!$add) { q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,0)',[$iid,substr($dst,0,60)]); }
+    if($type==='transfer_in'){ $dst=trim($_POST['dst']??''); $dst=substr($dst,0,60)?:'Main Store';
      q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,'transfer_out',-$qty,$note,$u['id']]);
      q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$dst,'transfer_in',$qty,$note,$u['id']]);
-     q('UPDATE stock_levels SET quantity=quantity-? WHERE item_id=? AND location=?',[$qty,$iid,$loc]);
-     q('UPDATE stock_levels SET quantity=quantity+? WHERE item_id=? AND location=?',[$qty,$iid,$dst]);
+     q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$iid,$loc,-$qty]);
+     q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$iid,$dst,$qty]);
      audit('transfer','inventory_item',$iid,['from'=>$loc,'to'=>$dst,'qty'=>$qty]);
      $lowStockAlert($iid,$loc);
      flash('Transferred '.$qty.' from '.$loc.' to '.$dst.'.'); go('inventory');
-   }
-   q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,$type,$sign*$qty,$note,$u['id']]);
-   q('UPDATE stock_levels SET quantity=quantity+? WHERE item_id=? AND location=?',[$sign*$qty,$iid,$loc]);
+    }
+    q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,$type,$sign*$qty,$note,$u['id']]);
+    q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$iid,$loc,$sign*$qty]);
    audit('stock_movement','inventory_item',$iid,['type'=>$type,'qty'=>$sign*$qty,'location'=>$loc]);
    $lowStockAlert($iid,$loc);
    flash(ucfirst(str_replace('_',' ',$type)).' of '.$qty.' recorded at '.$loc.'.');

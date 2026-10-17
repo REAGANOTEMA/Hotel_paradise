@@ -39,15 +39,18 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    }
    q('INSERT INTO orders(hotel_id,user_id,shift_id,order_number,outlet,order_type,table_name,status,subtotal,tax,total,created_at) VALUES(1,?,?,?,?,?,?,\'pending\',?,0,?,NOW())',
      [$u['id'],$shift['id']??null,$num,$outlet,$otype,trim($_POST['table_name']??''),$sub,$sub]);
-   $oid=(int)db()->lastInsertId();
-   foreach($items as $iid=>$qty){
-    if(is_array($qty)){ $qty=array_sum($qty); }
-    if((float)$qty<=0) continue;
-    if(!isset($itemMap[(int)$iid])) continue;
-    $it=$itemMap[(int)$iid];
-    q('INSERT INTO order_items(order_id,menu_item_id,quantity,unit_price,total) VALUES(?,?,?,?,?)',[$oid,(int)$iid,(float)$qty,$it['price'],$it['price']*(float)$qty]);
-    audit('order_item','menu_item',(int)$iid,['order'=>$oid,'qty'=>(float)$qty]);
-   }
+    $oid=(int)db()->lastInsertId();
+    $notes=trim((string)($_POST['notes']??''));
+    $firstLine=true;
+    foreach($items as $iid=>$qty){
+     if(is_array($qty)){ $qty=array_sum($qty); }
+     if((float)$qty<=0) continue;
+     if(!isset($itemMap[(int)$iid])) continue;
+     $it=$itemMap[(int)$iid];
+     q('INSERT INTO order_items(order_id,menu_item_id,quantity,unit_price,total,notes) VALUES(?,?,?,?,?,?)',[$oid,(int)$iid,(float)$qty,$it['price'],$it['price']*(float)$qty,$firstLine?$notes:null]);
+     $firstLine=false;
+     audit('order_item','menu_item',(int)$iid,['order'=>$oid,'qty'=>(float)$qty]);
+    }
    audit('create','order',$oid,['number'=>$num]);
    notify_console('desk-order:'.$oid,'order','New order '.$num,
     ucfirst(str_replace('_',' ',(string)$outlet)).' · '.count($items).' item line(s) · '.money($sub),
@@ -128,7 +131,7 @@ echo '<div class="posWrap"><div>';
 echo '<div class="panel"><h2>Take an order</h2><p class="hint">Pick an outlet, choose items and send to the kitchen.</p>';
 form_open('pos','order');
 echo '<div class="formRow">';
-echo '<div class="field"><label>Outlet</label><select name="outlet" onchange="location.href=\''.BASE.'/index.php?page=pos&outlet=\'+this.value"><option value="restaurant"'.checked($outlet,'restaurant').'>Restaurant</option><option value="bar"'.checked($outlet,'bar').'>Bar</option><option value="front_desk"'.checked($outlet,'front_desk').'>Reception (Front desk)</option><option value="kitchen"'.checked($outlet,'kitchen').'>Kitchen</option><option value="store"'.checked($outlet,'store').'>Store</option></select></div>';
+ echo '<div class="field"><label>Outlet</label><select name="outlet" onchange="location.href=\''.BASE.'/index.php?page=pos&outlet=\'+this.value"><option value="restaurant"'.checked($outlet,'restaurant').'>Restaurant</option><option value="bar"'.checked($outlet,'bar').'>Bar</option><option value="room_service"'.checked($outlet,'room_service').'>Room service</option></select></div>';
 echo '<div class="field"><label>Order type</label><select name="order_type"><option value="table"'.checked('','1').'>Table</option><option value="room">Room service</option><option value="takeaway">Takeaway</option><option value="delivery">Delivery</option></select></div>';
 echo '<div class="field"><label>Table name</label><input name="table_name" placeholder="e.g. Table 4"></div>';
 echo '</div>';

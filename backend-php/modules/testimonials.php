@@ -14,7 +14,7 @@ require_once __DIR__.'/../app/guest_comm.php';
 
 $u=current_user();
 $me=(int)($u['id']??0);
-$scope=guest_message_scope();
+$scope=guest_experience_scope();
 $act=$_GET['act']??'';
 $tones=['new'=>'warn','assigned'=>'blue','resolved'=>'ok','featured'=>'gold'];
 
@@ -68,7 +68,7 @@ $row=null;
 if($view) $row=row('SELECT gm.*,u.name assigned_name FROM guest_messages gm LEFT JOIN users u ON u.id=gm.assigned_to WHERE gm.id=? AND gm.kind=\'experience\'',[$view]);
 if($row&&!in_array($row['department'],$scope,true)){ $row=null; }
 
-$counts=guest_message_counts();
+$counts=guest_message_counts($scope);
 $featured=0;
 if(guest_message_ready()){ try{ $featured=(int)val("SELECT COUNT(*) FROM guest_messages WHERE kind='experience' AND status='featured'"); }catch(\Throwable $e){} }
 page_head('Guest Experiences','testimonials','The stay reviews guests write on the website');

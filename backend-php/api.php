@@ -199,6 +199,18 @@ function web_settle_payment(int $pid, string $status, array $raw=[]): array{
  if((string)($pay['status']??'')!==$status){
   audit('payment_settled','payments',$pid,['provider_reference'=>(string)($pay['provider_reference']??''),'from'=>(string)($pay['status']??''),'to'=>$status]);
  }
+ // A booking's paid figure has to move with its payment, or the front desk's
+ // balance ignores money settled online. It only moves across the border between
+ // successful and not successful, so re-settling the same row changes nothing.
+ if($pay['reservation_id']!==null){
+  $wasSuccessful=(string)($pay['status']??'')==='successful';
+  $nowSuccessful=($status==='successful');
+  if($nowSuccessful&&!$wasSuccessful){
+   q('UPDATE reservations SET paid=paid+? WHERE id=?',[(float)$pay['amount'],(int)$pay['reservation_id']]);
+  }elseif(!$nowSuccessful&&$wasSuccessful){
+   q('UPDATE reservations SET paid=GREATEST(paid-?,0) WHERE id=?',[(float)$pay['amount'],(int)$pay['reservation_id']]);
+  }
+ }
 
  $sent=false;
  // A receipt follows confirmed money only, and only once.
@@ -469,7 +481,8 @@ if($act==='news'){
 
  $slug=trim((string)($body['slug']??''));
  if($slug!==''){
-  $p=row("SELECT * FROM news_posts WHERE slug=? AND status='published' AND publish_at<=NOW()",[$slug]);
+  $newsLive=existing_columns('news_posts',['deleted_at'])!==[]?' AND deleted_at IS NULL':'';
+  $p=row("SELECT * FROM news_posts WHERE slug=? AND status='published' AND publish_at<=NOW()".$newsLive,[$slug]);
   if(!$p){ $out(['ok'=>false,'error'=>'That story could not be found. It may have been removed or not published yet.'],404); }
   q('UPDATE news_posts SET views=views+1 WHERE id=?',[(int)$p['id']]);
   $p['views']=(int)$p['views']+1;
@@ -480,7 +493,7 @@ if($act==='news'){
  if($fcat!==''&&!isset($catLabels[$fcat])) $fcat='';
  $fq=trim((string)($body['q']??''));
  $limit=max(1,min(100,(int)($body['limit']??60)));
- $where=["status='published' AND publish_at<=NOW()"]; $args=[];
+ $where=["status='published' AND publish_at<=NOW()".(existing_columns('news_posts',['deleted_at'])!==[]?' AND deleted_at IS NULL':'')]; $args=[];
  if($fcat!==''){ $where[]='category=?'; $args[]=$fcat; }
  if($fq!==''){ $where[]='(title LIKE ? OR excerpt LIKE ? OR body LIKE ?)'; $like='%'.$fq.'%'; array_push($args,$like,$like,$like); }
  $rows=rows('SELECT * FROM news_posts WHERE '.implode(' AND ',$where)
@@ -661,11 +674,15 @@ if($act==='payment'){
   // figure, so a reference opened twice cannot be charged twice. Only a payment
   // that actually succeeded counts: a request still waiting with the front desk
   // leaves the amount exactly where it was.
-  $already=$atDesk;
-  if($iid!==null){ $already+=(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND invoice_id=?",[$iid]); }
-  else{ $already+=(float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE status=\'successful\' AND '
+  $already=0.0;
+  if($iid!==null){ $already=(float)val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status='successful' AND invoice_id=?",[$iid]); }
+  else{ $already=(float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE status=\'successful\' AND '
     .($oid!==null?'order_id=?':'reservation_id=?'),[$oid!==null?$oid:$rid]);
   }
+  // A desk payment is written twice: once to payments and once to
+  // reservations.paid. Adding the two double counts it and under-charges the
+  // guest, so the larger figure is taken - the same rule the checkout page uses.
+  $already=max($already,$atDesk);
   $expected=round(max(0.0,$expected-$already),2);
   if($expected<=0){ $out(['ok'=>false,'error'=>'There is nothing left to pay on this reference. If you think this is wrong, please call +256 759 504 928.'],422); }
 

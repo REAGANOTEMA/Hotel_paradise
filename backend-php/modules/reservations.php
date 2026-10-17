@@ -67,21 +67,29 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
    $allowed=['confirmed','checked_in','checked_out','cancelled','no_show'];
    if(!in_array($st,$allowed)) break;
    if($st==='checked_in'){
-    $alloc=rows('SELECT rr.id,rr.room_type_id,rr.quantity,rr.room_id FROM reservation_rooms rr WHERE rr.reservation_id=?',[$id]);
+    $alloc=rows('SELECT rr.id,rr.room_type_id,rr.quantity,rr.room_id,rr.nightly_rate FROM reservation_rooms rr WHERE rr.reservation_id=?',[$id]);
     $need=0; foreach($alloc as $a) $need+=(int)$a['quantity'];
     $avail=val('SELECT COUNT(*) FROM rooms WHERE status=\'available\'');
     if($avail<$need){ flash('Not enough available rooms to check in.','bad'); go('reservations',['view'=>$id]); }
     foreach($alloc as $a){
-     $taken=val('SELECT COUNT(*) FROM reservation_rooms WHERE reservation_id=? AND room_id IS NOT NULL',[$id]);
-     for($i=0;$i<(int)$a['quantity'];$i++){
-      $room=row('SELECT id FROM rooms WHERE room_type_id=? AND status=\'available\' ORDER BY room_number LIMIT 1',[$a['room_type_id']]);
-      if(!$room) $room=row('SELECT id FROM rooms WHERE status=\'available\' ORDER BY room_number LIMIT 1',[]);
-      if(!$room) break;
-      q('UPDATE reservation_rooms SET room_id=? WHERE id=?',[$room['id'],$a['id']]);
-      q('UPDATE rooms SET status=\'occupied\' WHERE id=?',[$room['id']]);
-      audit('alloc_room','room',$room['id'],['reservation'=>$id]);
+     if($a['room_id']!==null) continue;                 // this line is already placed
+     $want=max(1,(int)$a['quantity']);
+     // Prefer rooms of the booked type, then any free room, and take one room for
+     // each place. The first keeps this line; the rest are written as their own
+     // lines, so a booking for two rooms records two rooms instead of marking
+     // both occupied while remembering only one.
+     $pool=rows("SELECT id FROM rooms WHERE status='available' ORDER BY (room_type_id=?) DESC,room_number",[(int)$a['room_type_id']]);
+     $take=array_slice($pool,0,$want);
+     if(!$take) continue;
+     $first=array_shift($take);
+     q('UPDATE reservation_rooms SET room_id=?,quantity=1 WHERE id=?',[(int)$first['id'],(int)$a['id']]);
+     q('UPDATE rooms SET status=\'occupied\' WHERE id=?',[(int)$first['id']]);
+     audit('alloc_room','room',(int)$first['id'],['reservation'=>$id]);
+     foreach($take as $rm){
+      q('INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate) VALUES(?,?,?,1,?)',[$id,(int)$a['room_type_id'],(int)$rm['id'],(float)$a['nightly_rate']]);
+      q('UPDATE rooms SET status=\'occupied\' WHERE id=?',[(int)$rm['id']]);
+      audit('alloc_room','room',(int)$rm['id'],['reservation'=>$id]);
      }
-     if($taken>0) break;
     }
    }
    if($st==='checked_out'){

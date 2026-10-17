@@ -29,6 +29,18 @@ function guest_message_scope(): array{
  return [];
 }
 
+/** The desks a stay review (kind=experience) may be read from. Experiences are
+ *  always filed to the front office, so management and the marketing team -
+ *  who curate what the website shows - read every one of them, while a front
+ *  desk member keeps to the house. This is deliberately wider than
+ *  guest_message_scope() so a marketing member can feature a story without
+ *  ever being handed a guest's private correspondence. */
+function guest_experience_scope(): array{
+ $r=roles_of();
+ if(array_intersect($r,['director','general_manager','super_admin','marketing'])) return array_keys(guest_message_departments());
+ return guest_message_scope();
+}
+
 /** How a guest message status reads on a badge and a filter. */
 function guest_message_statuses(): array{
  return ['new'=>'New','assigned'=>'Assigned','resolved'=>'Resolved','featured'=>'Featured'];
@@ -42,11 +54,11 @@ function guest_message_sources(): array{
 /** Counts of guest work the reader's desk may open, shaped for the boards.
  *  Returns zeroed keys when the table is missing, so a dashboard never bursts
  *  while the upgrade has not yet run. */
-function guest_message_counts(): array{
+function guest_message_counts(?array $scope=null): array{
  $z=['total'=>0,'new'=>0,'open'=>0,'message'=>0,'experience'=>0,'front_office'=>0,'kitchen'=>0];
  try{
   if(!guest_message_ready()) return $z;
-  $scope=guest_message_scope();
+  if($scope===null) $scope=guest_message_scope();
   if($scope===[]) return $z;
   $ph=implode(',',array_fill(0,count($scope),'?'));
   $rows=rows("SELECT kind,department,status,COUNT(*) n FROM guest_messages WHERE department IN ($ph) GROUP BY kind,department,status",$scope);
