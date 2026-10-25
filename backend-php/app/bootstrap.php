@@ -365,6 +365,25 @@ function hp_ensure_soft_delete_columns(): void{
  }
 }
 
+/**
+ * The stock and requisition columns a later export left behind.
+ *
+ * The inventory form writes a unit cost, a requisition line keeps the cost it
+ * was raised at, and a refusal keeps its reason. All three columns are used by
+ * the pages that own them, so an install whose schema was imported from a dump
+ * taken before they were added fails the moment Purchases, Inventory or the
+ * Approvals queue opens. They are added once, here, in the same way as the
+ * soft-delete columns, so those pages open on an older database too.
+ */
+function hp_ensure_procurement_columns(): void{
+ static $done=false;
+ if($done) return;
+ $done=true;
+ hp_ensure_column('inventory_items','unit_cost','unit_cost DECIMAL(14,2) NOT NULL DEFAULT 0.00');
+ hp_ensure_column('purchase_requisitions','decision_reason','decision_reason VARCHAR(255) NULL');
+ hp_ensure_column('purchase_requisition_items','est_cost','est_cost DECIMAL(14,2) NOT NULL DEFAULT 0.00');
+}
+
 function e($v=null): string{ return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8'); }
 function money($v): string{ return 'UGX '.number_format((float)$v,0); }
 function num($v): string{ return number_format((float)$v,0); }

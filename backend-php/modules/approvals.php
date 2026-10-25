@@ -3,9 +3,12 @@ declare(strict_types=1);
 require_once __DIR__.'/../app/stock_requests.php';
 
 $exp=rows('SELECT e.*,d.name dept,u.name reqby FROM expenses e JOIN departments d ON d.id=e.department_id JOIN users u ON u.id=e.requested_by WHERE e.status=\'pending\' ORDER BY e.id');
+$amountExpr=hp_column_exists('purchase_requisition_items','est_cost')
+ ?'COALESCE(SUM(requested_qty*est_cost),0)'
+ :'0';
 $reqs=rows('SELECT pr.*,d.name dept,u.name reqby,'
  .'(SELECT COALESCE(SUM(requested_qty),0) FROM purchase_requisition_items ri WHERE ri.requisition_id=pr.id) qty,'
- .'(SELECT COALESCE(SUM(requested_qty*est_cost),0) FROM purchase_requisition_items ri WHERE ri.requisition_id=pr.id) amount'
+ .'(SELECT '.$amountExpr.' FROM purchase_requisition_items ri WHERE ri.requisition_id=pr.id) amount'
  .' FROM purchase_requisitions pr JOIN departments d ON d.id=pr.department_id JOIN users u ON u.id=pr.requested_by WHERE pr.status=\'pending\' ORDER BY pr.id');
 $openShifts=rows("SELECT s.*,u.name uname FROM shifts s JOIN users u ON u.id=s.user_id WHERE s.status='open'");
 $highValPayments=rows("SELECT p.*,u.name usr FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE p.amount>=1000000 AND DATE(p.created_at)=? ORDER BY p.id DESC LIMIT 5",[today()]);
