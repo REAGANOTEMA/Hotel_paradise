@@ -379,9 +379,102 @@ function hp_ensure_procurement_columns(): void{
  static $done=false;
  if($done) return;
  $done=true;
+ hp_ensure_column('inventory_items','unit','unit VARCHAR(40) NOT NULL DEFAULT \'pcs\'');
+ hp_ensure_column('inventory_items','code','code VARCHAR(60) NULL');
  hp_ensure_column('inventory_items','unit_cost','unit_cost DECIMAL(14,2) NOT NULL DEFAULT 0.00');
  hp_ensure_column('purchase_requisitions','decision_reason','decision_reason VARCHAR(255) NULL');
  hp_ensure_column('purchase_requisition_items','est_cost','est_cost DECIMAL(14,2) NOT NULL DEFAULT 0.00');
+ hp_ensure_column('purchase_requisition_items','notes','notes VARCHAR(255) NULL');
+ hp_ensure_column('purchase_orders','requisition_id','requisition_id BIGINT UNSIGNED NULL');
+ hp_ensure_column('purchase_orders','hotel_id','hotel_id BIGINT UNSIGNED NOT NULL DEFAULT 1');
+ hp_ensure_column('purchase_order_items','received_qty','received_qty DECIMAL(14,2) NOT NULL DEFAULT 0.00');
+ hp_ensure_column('payments','user_id','user_id BIGINT UNSIGNED NULL');
+}
+
+/**
+ * The four procurement tables the console writes to.
+ *
+ * Purchases and Approvals assume they exist. On an installation imported from
+ * an early build they may not, and the page would answer with a 500 before it
+ * could draw anything. They are created here once, in the same shape as the
+ * baseline, so a missing table is repaired rather than fatal. Existing tables
+ * are left untouched; hp_ensure_procurement_columns() adds the later columns.
+ */
+function hp_ensure_procurement_tables(): void{
+ static $done=false;
+ if($done) return;
+ $done=true;
+ $tables=[
+  'purchase_requisitions'=>"CREATE TABLE IF NOT EXISTS `purchase_requisitions` (
+   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+   `hotel_id` bigint(20) unsigned NOT NULL DEFAULT 1,
+   `number` varchar(40) NOT NULL,
+   `department_id` bigint(20) unsigned NOT NULL,
+   `requested_by` bigint(20) unsigned NOT NULL,
+   `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+   `approved_by` bigint(20) unsigned DEFAULT NULL,
+   `approved_at` datetime DEFAULT NULL,
+   `note` text DEFAULT NULL,
+   `created_at` datetime DEFAULT NULL,
+   `deleted_at` timestamp NULL DEFAULT NULL,
+   `deleted_by` bigint(20) unsigned DEFAULT NULL,
+   `decision_reason` varchar(255) DEFAULT NULL,
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `number` (`number`),
+   KEY `department_id` (`department_id`),
+   KEY `requested_by` (`requested_by`),
+   KEY `idx_pr_status` (`status`),
+   KEY `idx_deleted_at` (`deleted_at`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+  'purchase_requisition_items'=>"CREATE TABLE IF NOT EXISTS `purchase_requisition_items` (
+   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+   `requisition_id` bigint(20) unsigned NOT NULL,
+   `item_id` bigint(20) unsigned NOT NULL,
+   `requested_qty` decimal(14,2) NOT NULL DEFAULT 0.00,
+   `notes` varchar(255) DEFAULT NULL,
+   `est_cost` decimal(14,2) NOT NULL DEFAULT 0.00,
+   PRIMARY KEY (`id`),
+   KEY `requisition_id` (`requisition_id`),
+   KEY `item_id` (`item_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+  'purchase_orders'=>"CREATE TABLE IF NOT EXISTS `purchase_orders` (
+   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+   `hotel_id` bigint(20) unsigned NOT NULL DEFAULT 1,
+   `number` varchar(40) NOT NULL,
+   `supplier_id` bigint(20) unsigned NOT NULL,
+   `requisition_id` bigint(20) unsigned DEFAULT NULL,
+   `status` enum('draft','sent','partially_received','received','cancelled') NOT NULL DEFAULT 'sent',
+   `expected_date` date DEFAULT NULL,
+   `notes` text DEFAULT NULL,
+   `created_by` bigint(20) unsigned NOT NULL,
+   `created_at` datetime DEFAULT NULL,
+   `deleted_at` timestamp NULL DEFAULT NULL,
+   `deleted_by` bigint(20) unsigned DEFAULT NULL,
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `number` (`number`),
+   KEY `supplier_id` (`supplier_id`),
+   KEY `requisition_id` (`requisition_id`),
+   KEY `created_by` (`created_by`),
+   KEY `idx_deleted_at` (`deleted_at`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+  'purchase_order_items'=>"CREATE TABLE IF NOT EXISTS `purchase_order_items` (
+   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+   `order_id` bigint(20) unsigned NOT NULL,
+   `item_id` bigint(20) unsigned NOT NULL,
+   `quantity` decimal(14,2) NOT NULL DEFAULT 0.00,
+   `unit_cost` decimal(14,2) NOT NULL DEFAULT 0.00,
+   `total` decimal(14,2) NOT NULL DEFAULT 0.00,
+   `received_qty` decimal(14,2) NOT NULL DEFAULT 0.00,
+   PRIMARY KEY (`id`),
+   KEY `order_id` (`order_id`),
+   KEY `item_id` (`item_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+ ];
+ foreach($tables as $name=>$ddl){
+  if(hp_table_exists($name)) continue;
+  try{ db()->exec($ddl); }
+  catch(Throwable $e){ error_log('[hotel repair] could not create '.$name.': '.$e->getMessage()); }
+ }
 }
 
 function e($v=null): string{ return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8'); }

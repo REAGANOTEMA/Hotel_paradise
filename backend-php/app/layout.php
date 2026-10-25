@@ -1274,6 +1274,10 @@ function receipt_print(string $key,string $feed=''): void{
  function go(list){
   if(!list.length)return;
   var s=document.getElementById('printStack');if(!s)return;
+  /* The stack is emitted inside the console layout, but the print stylesheet
+     hides .app while printing. Move it to <body> first so it is not hidden by
+     an ancestor and the sheet actually reaches the paper. */
+  if(s.parentNode!==document.body)document.body.appendChild(s);
   s.innerHTML='';
   list.forEach(function(t){s.appendChild(t.content.cloneNode(true))});
   document.body.classList.add('printing');

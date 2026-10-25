@@ -2,16 +2,40 @@
 declare(strict_types=1);
 require_once __DIR__.'/../app/stock_requests.php';
 
-$exp=rows('SELECT e.*,d.name dept,u.name reqby FROM expenses e JOIN departments d ON d.id=e.department_id JOIN users u ON u.id=e.requested_by WHERE e.status=\'pending\' ORDER BY e.id');
-$amountExpr=hp_column_exists('purchase_requisition_items','est_cost')
- ?'COALESCE(SUM(requested_qty*est_cost),0)'
- :'0';
-$reqs=rows('SELECT pr.*,d.name dept,u.name reqby,'
- .'(SELECT COALESCE(SUM(requested_qty),0) FROM purchase_requisition_items ri WHERE ri.requisition_id=pr.id) qty,'
- .'(SELECT '.$amountExpr.' FROM purchase_requisition_items ri WHERE ri.requisition_id=pr.id) amount'
- .' FROM purchase_requisitions pr JOIN departments d ON d.id=pr.department_id JOIN users u ON u.id=pr.requested_by WHERE pr.status=\'pending\' ORDER BY pr.id');
-$openShifts=rows("SELECT s.*,u.name uname FROM shifts s JOIN users u ON u.id=s.user_id WHERE s.status='open'");
-$highValPayments=rows("SELECT p.*,u.name usr FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE p.amount>=1000000 AND DATE(p.created_at)=? ORDER BY p.id DESC LIMIT 5",[today()]);
+/* Every queue is read on its own, so one older table that has not been upgraded
+   yet cannot take the whole page down with a 500. The missing queue is named in
+   a quiet notice and the rest of the approvals screen still opens. */
+$schemaMissing=[];
+$exp=[];
+if(hp_table_exists('expenses')){
+ try{ $exp=rows('SELECT e.*,d.name dept,u.name reqby FROM expenses e JOIN departments d ON d.id=e.department_id JOIN users u ON u.id=e.requested_by WHERE e.status=\'pending\' ORDER BY e.id'); }
+ catch(Throwable $e){ $schemaMissing[]='expenses'; }
+}else{ $schemaMissing[]='expenses'; }
+
+$reqs=[];
+if(hp_table_exists('purchase_requisitions')&&hp_table_exists('purchase_requisition_items')){
+ $amountExpr=hp_column_exists('purchase_requisition_items','est_cost')
+  ?'COALESCE(SUM(requested_qty*est_cost),0)'
+  :'0';
+ try{
+  $reqs=rows('SELECT pr.*,d.name dept,u.name reqby,'
+   .'(SELECT COALESCE(SUM(requested_qty),0) FROM purchase_requisition_items ri WHERE ri.requisition_id=pr.id) qty,'
+   .'(SELECT '.$amountExpr.' FROM purchase_requisition_items ri WHERE ri.requisition_id=pr.id) amount'
+   .' FROM purchase_requisitions pr JOIN departments d ON d.id=pr.department_id JOIN users u ON u.id=pr.requested_by WHERE pr.status=\'pending\' ORDER BY pr.id');
+ }catch(Throwable $e){ $schemaMissing[]='stock requests'; }
+}else{ $schemaMissing[]='stock requests'; }
+
+$openShifts=[];
+if(hp_table_exists('shifts')){
+ try{ $openShifts=rows("SELECT s.*,u.name uname FROM shifts s JOIN users u ON u.id=s.user_id WHERE s.status='open'"); }
+ catch(Throwable $e){ $schemaMissing[]='shifts'; }
+}else{ $schemaMissing[]='shifts'; }
+
+$highValPayments=[];
+if(hp_table_exists('payments')){
+ try{ $highValPayments=rows("SELECT p.*,u.name usr FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE p.amount>=1000000 AND DATE(p.created_at)=? ORDER BY p.id DESC LIMIT 5",[today()]); }
+ catch(Throwable $e){ $schemaMissing[]='payments'; }
+}else{ $schemaMissing[]='payments'; }
 
 page_head('Approvals','approvals','Queue of items awaiting authorisation');
 echo '<div class="kpis">';
@@ -19,6 +43,13 @@ kpi_card('Pending expenses',(string)count($exp),'Awaiting approval','gold');
 kpi_card('Pending requisitions',(string)count($reqs),'Purchase requests','blue');
 kpi_card('Open shifts',(string)count($openShifts),'To be closed and cashed','warn');
 echo '</div>';
+
+if($schemaMissing){
+ echo '<div class="panel" style="border-left:4px solid var(--warn,#e0a800)">'
+  .'<h2>Some queues could not be read</h2>'
+  .'<p class="hint">This database is missing or has not yet upgraded: '.e(implode(', ',array_unique($schemaMissing))).'. '
+  .'Run the system SQL patches in <code>database/sql/patches</code>, then reload this page. The queues that are available are shown below.</p></div>';
+}
 
 echo '<div class="twoCol"><div>';
 echo '<div class="panel"><h2>Expense requests</h2><p class="hint">Higher level authorisation is required before payment.</p>';

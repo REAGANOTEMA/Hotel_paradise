@@ -42,11 +42,36 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    ['payment_id'=>$pid],['director','general_manager','accountant','cashier'],'payment',$pid);
   require_once __DIR__.'/../app/receipts.php';
   $receipt=receipts_after_payment($pid);
-  $sentNote=($receipt['email_sent']??false)
-   ?' The receipt was emailed to '.$receipt['email_to'].'.'
-   :(($receipt!==null&&($receipt['email_to']??'')==='')?' No email address was on file, so nothing was emailed.':'');
-   flash('Payment #'.$pid.' confirmed as received.'.$sentNote.receipts_copy_note($receipt));
-   go('finance',['receipt'=>$pid]);
+  if($receipt===null){
+   $sentNote=' The receipt could not be prepared. Check the payment and try resending it.';
+  }elseif($receipt['email_sent']??false){
+   $sentNote=' The receipt was emailed to '.$receipt['email_to'].'.';
+  }elseif(($receipt['email_to']??'')===''){
+   $sentNote=' No email address was on file, so nothing was emailed.';
+  }else{
+   $sentNote=' The receipt could not be emailed: '.($receipt['email_error']??'unknown error').' Resend it from the payments list once the mail settings are fixed.';
+  }
+  $sentNote.=($receipt!==null?' '.receipts_copy_note($receipt):'');
+  flash('Payment #'.$pid.' confirmed as received.'.trim($sentNote), ($receipt!==null&&(($receipt['email_sent']??false)||($receipt['email_to']??'')===''))?'ok':'bad');
+  go('finance',['receipt'=>$pid]);
+ }
+ if($act==='resend'){
+  /* A receipt is emailed once, but a failed attempt is never a dead end. This
+     retries the guest copy and any staff copy that has not gone yet, using the
+     same checks and the same delivery log as the original send. */
+  $pid=(int)($_POST['pid']??0);
+  require_once __DIR__.'/../app/receipts.php';
+  $ctx=receipts_context($pid);
+  if($ctx===null){ flash('Only a payment recorded as successful can be receipted.','bad'); go('finance'); }
+  $send=receipts_send_email($ctx);
+  $staff=receipts_send_staff_copies($ctx);
+  if($send['skipped']) $note='The guest copy had already been emailed to '.$send['to'].'.';
+  elseif($send['sent']) $note='The guest receipt was emailed to '.$send['to'].'.';
+  else $note='The guest receipt could not be emailed'.($send['to']!==''?' to '.$send['to']:'').': '.($send['error']??'unknown error').'.';
+  if($staff['sent']>0) $note.=' '.$staff['sent'].' hotel copy/copies sent.';
+  if($staff['failed']>0) $note.=' '.$staff['failed'].' hotel copy/copies failed.';
+  flash($note, ($send['sent']||$send['skipped'])&&$staff['failed']===0?'ok':'bad');
+  go('finance');
  }
 }
 
@@ -111,7 +136,7 @@ echo '<button class="btn sm">Filter</button></form>';
  foreach($payments as $p){
   echo '<tr><td>'.e($p['id']).'</td><td>'.fmtdt($p['created_at']).'</td><td>'.e($p['usr']??'-').'</td><td>'.e(ucfirst($p['src'])).'</td><td class="num">'.money($p['amount']).'</td><td>'.e(str_replace('_',' ',$p['method'])).'</td><td>'.status_badge($p['status']).'</td><td>';
   if($p['status']==='pending'){ form_open('finance','confirm',['pid'=>$p['id']]); echo '<button class="btn sm tick" onclick="return confirm(\'Confirm this payment was received? The guest will be emailed a receipt and the hotel copy will print.\')">Confirm received</button>'; form_close(); }
-  if($p['status']==='successful'){ echo '<details style="font-size:12px"><summary style="cursor:pointer;color:#c62828">Reverse</summary><div style="margin-top:6px">'; form_open('finance','reverse',['pid'=>$p['id']]); echo '<input name="reason" placeholder="Reason for reversal" style="width:100%;padding:7px;border:1px solid var(--line);border-radius:8px"><button class="btn sm danger" style="margin-top:6px">Confirm reversal</button>'; form_close(); echo '</div></details>'; }
+  if($p['status']==='successful'){ echo '<details style="font-size:12px"><summary style="cursor:pointer;color:#c62828">Reverse</summary><div style="margin-top:6px">'; form_open('finance','reverse',['pid'=>$p['id']]); echo '<input name="reason" placeholder="Reason for reversal" style="width:100%;padding:7px;border:1px solid var(--line);border-radius:8px"><button class="btn sm danger" style="margin-top:6px">Confirm reversal</button>'; form_close(); echo '</div></details>'; form_open('finance','resend',['pid'=>$p['id']]); echo '<button class="btnGhost sm" style="margin-top:6px">Resend receipt</button>'; form_close(); }
   echo '</td></tr>';
  }
  echo '</tbody></table></div>';

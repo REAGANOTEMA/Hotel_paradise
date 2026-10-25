@@ -183,6 +183,7 @@ if(!page_allowed($page)){
    without that column. It is repaired here, once, before any module reads a
    list, so a missing column can never stop a page from opening. */
 hp_ensure_soft_delete_columns();
+hp_ensure_procurement_tables();
 hp_ensure_procurement_columns();
 
 /* Moving a record to the Trash, bringing it back, or removing it for good is

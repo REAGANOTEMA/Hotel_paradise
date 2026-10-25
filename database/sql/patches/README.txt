@@ -56,6 +56,16 @@ Patches
     failing; this patch makes them explicit. Run it once the Pesapal merchant
     keys are filled in, so every online payment stores its full trail.
 
+2026-10-25_procurement_repairs.sql
+    Creates any of the four procurement tables an early install is missing
+    (purchase_requisitions, purchase_requisition_items, purchase_orders,
+    purchase_order_items) and adds the later columns the Approvals, Purchases
+    and Inventory screens read, including inventory unit/code and payments.user_id.
+    It also makes sure each id can take the next row and adds the queue indexes.
+    Approvals now guards each queue, so a missing table no longer turns the page
+    into a 500; this patch is the explicit repair for anyone who would rather
+    run it by hand.
+
 How to run one
 --------------
 phpMyAdmin: open the system database, "Import", choose the .sql file, then Go.

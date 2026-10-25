@@ -21,16 +21,26 @@ function stock_request_manager_roles(): array
 /** The line items of a requisition, with the figures the Director is shown. */
 function stock_request_lines(int $rid): array
 {
- return rows(
-  'SELECT ri.*,i.name item_name,i.unit,i.code,(ri.requested_qty*ri.est_cost) line_total'
-  .' FROM purchase_requisition_items ri JOIN inventory_items i ON i.id=ri.item_id'
-  .' WHERE ri.requisition_id=? ORDER BY i.name', [$rid]);
+ try{
+  return rows(
+   'SELECT ri.*,i.name item_name,i.unit,i.code,(ri.requested_qty*ri.est_cost) line_total'
+   .' FROM purchase_requisition_items ri JOIN inventory_items i ON i.id=ri.item_id'
+   .' WHERE ri.requisition_id=? ORDER BY i.name', [$rid]);
+ }catch(Throwable $e){
+  error_log('[hotel stock] could not read requisition '.$rid.': '.$e->getMessage());
+  return [];
+ }
 }
 
 /** What a requisition comes to, in shillings, from the figures frozen on its lines. */
 function stock_request_total(int $rid): float
 {
- return (float)val('SELECT COALESCE(SUM(requested_qty*est_cost),0) FROM purchase_requisition_items WHERE requisition_id=?', [$rid]);
+ try{
+  return (float)val('SELECT COALESCE(SUM(requested_qty*est_cost),0) FROM purchase_requisition_items WHERE requisition_id=?', [$rid]);
+ }catch(Throwable $e){
+  error_log('[hotel stock] could not total requisition '.$rid.': '.$e->getMessage());
+  return 0.0;
+ }
 }
 
 /** One line a person can read: "12 kg of Beef". */
