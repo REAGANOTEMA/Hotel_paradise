@@ -319,7 +319,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
           $ins);
         $id=(int)db()->lastInsertId();
         audit('news_create','news_posts',$id,['slug'=>$slug]);
-        flash('Post published.');
+        flash($status==='published'
+          ?(strtotime($publish_at)>time()?'Post saved and scheduled.':'Post published.')
+          :'Post saved as a draft.');
       }catch(Throwable $e){
         error_log('[hotel news] insert failed: '.$e->getMessage());
         flash('The post could not be saved. Please try again.','bad');

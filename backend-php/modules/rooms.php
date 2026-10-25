@@ -37,7 +37,7 @@ $types_all=rows('SELECT * FROM room_types WHERE deleted_at IS NULL ORDER BY base
 $whereAll=$flt?'WHERE status=? AND deleted_at IS NULL':'WHERE deleted_at IS NULL';
   $all=rows("SELECT * FROM rooms $whereAll".($flt?' ORDER BY status,room_number':' ORDER BY room_number'),$flt?[$flt]:[]);
 $editRt=(int)($_GET['editrt']??0); $ert=$editRt?row('SELECT * FROM room_types WHERE id=?',[$editRt]):null;
-$floors=rows('SELECT DISTINCT floor FROM rooms ORDER BY floor');
+$floors=rows('SELECT DISTINCT floor FROM rooms WHERE deleted_at IS NULL ORDER BY floor');
 // One grouped count and one name lookup, instead of one query per room type
 // and one per room rendered.
 $typeCounts=[];
@@ -70,7 +70,7 @@ if($ert){
  form_close(); echo '</div>';
 }
 
-echo '<div class="panel"><h2>Room status board</h2><p class="hint">69 rooms across 3 floors. Click a room to change its status.</p>';
+echo '<div class="panel"><h2>Room status board</h2><p class="hint">'.(int)val('SELECT COUNT(*) FROM rooms WHERE deleted_at IS NULL').' rooms across '.count($floors).' floors. Click a room to change its status.</p>';
 echo '<div class="rfilter">';
 foreach([''=>'All','available'=>'Available','reserved'=>'Reserved','occupied'=>'Occupied','dirty'=>'Dirty','cleaning'=>'Cleaning','inspected'=>'Inspected','maintenance'=>'Maintenance'] as $k=>$v){
  echo '<a href="'.BASE.'/index.php?page=rooms'.($k?'&st='.$k:'').'"><button class="'.($flt===$k?'on':'').'">'.$v.'</button></a>';

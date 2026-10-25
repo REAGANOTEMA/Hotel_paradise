@@ -84,9 +84,8 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $discount=(float)($_POST['discount']??0);
    $method=$_POST['method']??'cash';
    $due=$r['total']-$discount;
-   $paidNow=(float)($_POST['amount']??$due);
-   $grandPaid=(float)$r['subtotal']>0?0:0;
-    if($paidNow>0){
+    $paidNow=(float)($_POST['amount']??$due);
+     if($paidNow>0){
      q('INSERT INTO payments(hotel_id,user_id,order_id,amount,method,status,created_at) VALUES(1,?,?,?,?,\'successful\',NOW())',[$u['id'],$oid,$paidNow,$method]);
      $payId=(int)db()->lastInsertId();
      audit('payment','order',$oid,['amount'=>$paidNow,'method'=>$method]);

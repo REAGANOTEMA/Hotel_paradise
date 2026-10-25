@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 25, 2026 at 07:48 PM
+-- Generation Time: Oct 25, 2026 at 09:46 PM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.27
 
@@ -214,7 +214,10 @@ INSERT INTO `audit_logs` (`id`, `hotel_id`, `user_id`, `action`, `entity_type`, 
 (131, 1, NULL, 'web_event', 'event_requests', 5, '{\"request_number\":\"EVT-20261025-001\",\"event_type\":\"Wedding\",\"event_date\":\"2026-12-20\",\"guests\":200,\"venue\":\"The Nile Hall\",\"phone\":\"0772514889\"}', NULL, '41.210.141.37', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36', '2026-10-24 23:25:33'),
 (132, 1, NULL, 'web_guest_message', 'guest_messages', 1, '{\"reference\":\"GM-20261025-001\",\"kind\":\"experience\",\"department\":\"front_office\",\"room\":\"\",\"rating\":5,\"phone\":\"0772514889\"}', NULL, '41.210.141.37', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36', '2026-10-24 23:27:42'),
 (133, 1, 2, 'login', 'user', 2, NULL, NULL, '41.210.141.44', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 12:18:20'),
-(134, 1, 4, 'login', 'user', 4, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 15:24:32');
+(134, 1, 4, 'login', 'user', 4, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 15:24:32'),
+(135, 1, 4, 'login', 'user', 4, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 17:26:21'),
+(136, 1, 4, 'logout', 'user', 4, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 17:38:53'),
+(137, 1, 13, 'login', 'user', 13, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 17:39:47');
 
 -- --------------------------------------------------------
 
@@ -2879,50 +2882,18 @@ CREATE TABLE `reservation_rooms` (
 --
 
 INSERT INTO `reservation_rooms` (`id`, `reservation_id`, `room_type_id`, `room_id`, `quantity`, `nightly_rate`) VALUES
-(1, 1, 1, 1, 1, 248000.00),
-(2, 2, 4, 30, 1, 202000.00),
-(3, 3, 3, 15, 1, 213000.00),
-(4, 4, 2, 8, 1, 314000.00),
-(5, 1, 8, 1, 1, 248000.00),
-(6, 2, 11, 30, 1, 202000.00),
-(7, 3, 10, 15, 1, 213000.00),
-(8, 4, 9, 8, 1, 314000.00),
-(9, 1, 15, 1, 1, 248000.00),
-(10, 2, 18, 30, 1, 202000.00),
-(11, 3, 17, 15, 1, 213000.00),
-(12, 4, 16, 8, 1, 314000.00),
-(13, 1, 22, 1, 1, 248000.00),
-(14, 2, 25, 30, 1, 202000.00),
-(15, 3, 24, 15, 1, 213000.00),
-(16, 4, 23, 8, 1, 314000.00),
-(17, 1, 29, 1, 1, 248000.00),
-(18, 2, 32, 30, 1, 202000.00),
-(19, 3, 31, 15, 1, 213000.00),
-(20, 4, 30, 8, 1, 314000.00),
-(21, 1, 36, 1, 1, 248000.00),
-(22, 2, 39, 30, 1, 202000.00),
-(23, 3, 38, 15, 1, 213000.00),
-(24, 4, 37, 8, 1, 314000.00),
-(25, 1, 43, 1, 1, 248000.00),
-(26, 2, 46, 30, 1, 202000.00),
-(27, 3, 45, 15, 1, 213000.00),
-(28, 4, 44, 8, 1, 314000.00),
-(29, 1, 50, 1, 1, 248000.00),
-(30, 2, 53, 30, 1, 202000.00),
-(31, 3, 52, 15, 1, 213000.00),
-(32, 4, 51, 8, 1, 314000.00),
-(33, 1, 57, 1, 1, 248000.00),
-(34, 2, 60, 30, 1, 202000.00),
-(35, 3, 59, 15, 1, 213000.00),
-(36, 4, 58, 8, 1, 314000.00),
-(37, 34, 1, NULL, 1, 248000.00),
-(38, 35, 2, NULL, 1, 314000.00),
-(39, 36, 2, NULL, 1, 314000.00),
-(40, 37, 7, NULL, 1, 128000.00),
-(41, 38, 2, NULL, 1, 314000.00),
-(42, 39, 2, NULL, 1, 314000.00),
-(43, 40, 3, NULL, 1, 213000.00),
-(44, 41, 1, NULL, 1, 248000.00);
+(1, 1, 57, 1, 1, 248000.00),
+(2, 2, 60, 30, 1, 202000.00),
+(3, 3, 59, 15, 1, 213000.00),
+(4, 4, 58, 8, 1, 314000.00),
+(37, 34, 57, NULL, 1, 248000.00),
+(38, 35, 58, NULL, 1, 314000.00),
+(39, 36, 58, NULL, 1, 314000.00),
+(40, 37, 63, NULL, 1, 128000.00),
+(41, 38, 58, NULL, 1, 314000.00),
+(42, 39, 58, NULL, 1, 314000.00),
+(43, 40, 59, NULL, 1, 213000.00),
+(44, 41, 57, NULL, 1, 248000.00);
 
 -- --------------------------------------------------------
 
@@ -2993,7 +2964,7 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`id`, `hotel_id`, `room_type_id`, `room_number`, `floor`, `status`, `deleted_at`, `deleted_by`) VALUES
-(1, 1, 57, 'S101', 'Floor 1', 'available', NULL, NULL),
+(1, 1, 57, 'S101', 'Floor 1', 'occupied', NULL, NULL),
 (2, 1, 57, 'S102', 'Floor 1', 'available', NULL, NULL),
 (3, 1, 57, 'S103', 'Floor 1', 'available', NULL, NULL),
 (4, 1, 57, 'S104', 'Floor 1', 'available', NULL, NULL),
@@ -3102,62 +3073,6 @@ CREATE TABLE `room_types` (
 --
 
 INSERT INTO `room_types` (`id`, `hotel_id`, `name`, `description`, `max_guests`, `base_rate`, `active`, `deleted_at`, `deleted_by`) VALUES
-(1, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
-(2, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
-(3, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
-(4, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
-(5, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
-(6, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
-(7, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
-(8, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
-(9, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
-(10, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
-(11, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
-(12, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
-(13, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
-(14, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
-(15, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
-(16, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
-(17, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
-(18, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
-(19, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
-(20, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
-(21, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
-(22, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
-(23, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
-(24, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
-(25, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
-(26, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
-(27, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
-(28, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
-(29, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
-(30, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
-(31, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
-(32, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
-(33, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
-(34, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
-(35, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
-(36, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
-(37, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
-(38, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
-(39, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
-(40, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
-(41, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
-(42, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
-(43, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
-(44, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
-(45, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
-(46, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
-(47, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
-(48, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
-(49, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
-(50, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
-(51, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
-(52, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
-(53, 1, 'Executive Deluxe', 'An elevated stay with refined touches for business and leisure.', 2, 202000.00, 1, NULL, NULL),
-(54, 1, 'Deluxe Double', 'Elegant double accommodation with a warm, private atmosphere.', 2, 178000.00, 1, NULL, NULL),
-(55, 1, 'Standard Twin', 'A neatly kept room with two comfortable beds.', 2, 142000.00, 1, NULL, NULL),
-(56, 1, 'Standard Single', 'A simple, well equipped single room.', 1, 128000.00, 1, NULL, NULL),
 (57, 1, 'Suite', 'The most spacious option at the hotel, ideal for a memorable stay.', 3, 248000.00, 1, NULL, NULL),
 (58, 1, 'Family Room', 'A spacious room made for families travelling together.', 4, 314000.00, 1, NULL, NULL),
 (59, 1, 'Triple Room', 'A comfortable setting for three guests.', 3, 213000.00, 1, NULL, NULL),
@@ -4784,7 +4699,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
 
 --
 -- AUTO_INCREMENT for table `beds`

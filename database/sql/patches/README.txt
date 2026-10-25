@@ -56,6 +56,15 @@ Patches
     failing; this patch makes them explicit. Run it once the Pesapal merchant
     keys are filled in, so every online payment stores its full trail.
 
+2026-10-25_seed_data_repair.sql
+    Repairs the room types copied nine times in the baseline dump (ids 1-63 for
+    seven names). Remaps every room and reservation allocation to the canonical
+    copy (the one the physical rooms use, ids 57-63), removes the duplicate
+    allocations and the eight extra copies of each type, then marks rooms
+    occupied for checked-in bookings and reserved for current or future
+    confirmed/pending bookings. Without it the rate editor lists 63 room types
+    and the dashboard repeats the in-house guest once per duplicate copy.
+
 2026-10-25_procurement_repairs.sql
     Creates any of the four procurement tables an early install is missing
     (purchase_requisitions, purchase_requisition_items, purchase_orders,
