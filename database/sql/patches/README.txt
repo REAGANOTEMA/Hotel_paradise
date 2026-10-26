@@ -25,10 +25,11 @@ Patches
 
 2026-10-10_perf-indexes.sql
     Performance indexes for the console and the website API: payments by order,
-    reservation or customer; reservations by status and by check-in/check-out;
+    reservation or creation day; reservations by status and by check-in/check-out;
     orders by status, outlet or day; guests by email or phone; the audit trail
     by entity or day; expenses and active inventory. The requisition index lives
-    in the procurement patch because that table may not exist yet.
+    in the procurement patch and the payments.customer_id index lives in the
+    customer accounts patch, because those columns may not exist yet.
 
 2026-10-10_receipt_department_copies.sql
     A settled payment can now also email a receipt to the department that took
@@ -37,11 +38,12 @@ Patches
     channel and recipient.
 
 2026-10-11_news_careers.sql
-    News & Careers. Makes sure the news_posts table and its indexes are present
-    and that the human_resource role exists, so Human Resource can publish
-    vacancies and the employee of the month, and so the website newsroom
-    (news.html, read through the API) has something to read. Also seeds a few
-    opening posts with INSERT IGNORE, so an edit is never overwritten.
+    News & Careers. Makes sure the news_posts table and its indexes are present,
+    adds any later column a partial copy is missing, and makes sure the
+    human_resource role exists, so Human Resource can publish vacancies and the
+    employee of the month, and so the website newsroom (news.html, read through
+    the API) has something to read. Also seeds a few opening posts with INSERT
+    IGNORE, so an edit is never overwritten.
 
 2026-10-12_guest_messages.sql
     Creates guest_messages, the one table behind Guest Messages and Guest
@@ -49,20 +51,23 @@ Patches
     gains the columns it is missing.
 
 2026-10-13_soft_delete_columns.sql
-    Makes sure every table the console lists or trashes carries deleted_at and
-    deleted_by. A few of those tables are built by the modules themselves on
-    first use, and the earliest installs were made before the pair was part of
-    that definition, which left some lists failing with
+    Makes sure the long-standing console tables the lists and Trash screen use
+    carry deleted_at and deleted_by. A few of those tables are built by the
+    modules themselves on first use, and the earliest installs were made before
+    the pair was part of that definition, which left some lists failing with
     "Unknown column 'deleted_at' in 'where clause'". The console repairs the
     column on its own when it is missing, and this patch is the same repair made
-    explicit for anyone who would rather run it by hand. The two procurement
-    tables are handled by the procurement patch.
+    explicit for anyone who would rather run it by hand. Tables introduced after
+    this patch (events, news, customers) are created with the pair by their own
+    patches; the two procurement tables are handled by the procurement patch.
 
 2026-10-14_customer_accounts.sql
     Creates customers, customer_tokens, customer_addresses, customer_documents
     and customer_signin_attempts, so a guest can create an account on the
-    website, sign in, keep addresses and documents, and reset a password. The
-    API guards the missing table, but this is the explicit repair.
+    website, sign in, keep addresses and documents, and reset a password. It
+    also adds payments.customer_id and its index, which links a payment back to
+    the account that made it. The API guards the missing table, but this is the
+    explicit repair.
 
 2026-10-15_pesapal_gateway_fields.sql
     Adds the Pesapal fields to the payments table that an earlier install may
@@ -85,15 +90,6 @@ Patches
     invoice. Without it the Invoices page shows "Invoicing upgrade not
     installed".
 
-2026-10-25_seed_data_repair.sql
-    Repairs the room types copied nine times in the baseline dump (ids 1-63 for
-    seven names). Remaps every room and reservation allocation to the canonical
-    copy (the one the physical rooms use, ids 57-63), removes the duplicate
-    allocations and the eight extra copies of each type, then marks rooms
-    occupied for checked-in bookings and reserved for current or future
-    confirmed/pending bookings. Without it the rate editor lists 63 room types
-    and the dashboard repeats the in-house guest once per duplicate copy.
-
 2026-10-25_procurement_repairs.sql
     Creates any of the four procurement tables an early install is missing
     (purchase_requisitions, purchase_requisition_items, purchase_orders,
@@ -103,6 +99,15 @@ Patches
     Approvals now guards each queue, so a missing table no longer turns the page
     into a 500; this patch is the explicit repair for anyone who would rather
     run it by hand.
+
+2026-10-25_seed_data_repair.sql
+    Repairs the room types copied nine times in the baseline dump (ids 1-63 for
+    seven names). Remaps every room and reservation allocation to the canonical
+    copy (the one the physical rooms use, ids 57-63), removes the duplicate
+    allocations and the eight extra copies of each type, then marks rooms
+    occupied for checked-in bookings and reserved for current or future
+    confirmed/pending bookings. Without it the rate editor lists 63 room types
+    and the dashboard repeats the in-house guest once per duplicate copy.
 
 2026-10-26_role_seed_repair.sql
     Adds any role name the console uses but the roles table is missing, such as

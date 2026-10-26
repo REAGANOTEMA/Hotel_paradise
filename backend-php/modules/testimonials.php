@@ -94,7 +94,7 @@ foreach(guest_message_statuses() as $k=>$v){ echo '<option value="'.e($k).'"'.($
 echo '</select></form></div>';
 
 if(!guest_message_ready()){
- echo '<div class="panel"><h2>Guest Experiences</h2><p class="hint">The guest communications upgrade has not been installed on this database yet.</p><p>Run <code>database/sql/patches/2026-10-12_guest_messages.sql</code> (or the installer) and refresh this page.</p></div>';
+ echo '<div class="panel"><h2>Guest Experiences</h2><p class="hint">The guest communications upgrade has not been installed on this database yet.</p><p>Run <code>database/sql/patches/2026-10-12_guest_messages.sql</code> and refresh this page.</p></div>';
  page_foot(); return;
 }
 
