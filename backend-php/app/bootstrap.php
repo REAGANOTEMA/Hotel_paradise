@@ -317,18 +317,25 @@ function row(string $sql,array $p=[]){ $r=q($sql,$p)->fetch(); return $r===false
 function val(string $sql,array $p=[]){ $r=q($sql,$p)->fetchColumn(); return $r===false?null:$r; }
 
 /** Does this database have the named table? Used only to decide whether a
- *  repair is worth attempting; a missing information_schema is answered with
- *  a quiet "no" rather than a fatal. */
+ *  repair is worth attempting. SHOW TABLES reads the current database only, so
+ *  this works on shared hosting where the account cannot open
+ *  information_schema. A failure is answered with a quiet "no", never a fatal. */
 function hp_table_exists(string $table): bool{
+ if(!preg_match('/^[A-Za-z0-9_]+$/',$table)) return false;
  try{
-  return (int)val('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?',[$table])>0;
+  $pattern=str_replace(['\\','_','%'],['\\\\','\\_','\\%'],$table);
+  $st=db()->query('SHOW TABLES LIKE '.db()->quote($pattern));
+  return (bool)$st->fetchColumn();
  }catch(Throwable $e){ return false; }
 }
 
 /** Does this database have the named column on that table? */
 function hp_column_exists(string $table,string $col): bool{
+ if(!preg_match('/^[A-Za-z0-9_]+$/',$table)||!preg_match('/^[A-Za-z0-9_]+$/',$col)) return false;
  try{
-  return (int)val('SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND COLUMN_NAME=?',[$table,$col])>0;
+  $pattern=str_replace(['\\','_','%'],['\\\\','\\_','\\%'],$col);
+  $st=db()->query('SHOW COLUMNS FROM `'.$table.'` LIKE '.db()->quote($pattern));
+  return (bool)$st->fetch();
  }catch(Throwable $e){ return false; }
 }
 
@@ -581,6 +588,7 @@ function page_caps(): array{
   'news'=>array_keys(news_roles()),
   'rooms'=>['director','general_manager','receptionist','housekeeping','maintenance'],
   'guests'=>['director','general_manager','receptionist'],
+  'bar'=>['director','general_manager','cashier','waiter','bar_staff'],
   'pos'=>['director','general_manager','cashier','waiter','bar_staff'],
   'fnb'=>['director','general_manager','cashier','waiter','bar_staff'],
   'kitchen'=>['director','general_manager','kitchen'],

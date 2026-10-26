@@ -15,7 +15,11 @@ function pagelogin(): void{
    $_SESSION['roles']=array_column($rs,'name');
    audit('login','user',$u['id']);
    flash('Welcome back, '.$u['name']);
-   go('dashboard');
+   // A bar hand lands on the bar's own board. Anyone who also holds a wider
+   // role keeps the ordinary dashboard, so management is never narrowed.
+   $wide=array_intersect($_SESSION['roles'],['super_admin','director','general_manager','accountant','cashier','waiter','receptionist','events_manager']);
+   $land=(in_array('bar_staff',$_SESSION['roles'],true)&&$wide===[])?'bar':'dashboard';
+   go($land);
   }
   flash('Incorrect email or password. Please try again.','bad');
  }

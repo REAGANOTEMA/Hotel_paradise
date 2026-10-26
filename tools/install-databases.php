@@ -4,11 +4,13 @@
  * the order they have to happen in, and then checks the result the way the site
  * checks it.
  *
- * The site is installed from exactly two files, and they are the only SQL in
- * the project: database/sql/hotelpardise_system/hotelpardise_system.sql and
+ * The site is installed from two clean dumps:
+ * database/sql/hotelpardise_system/hotelpardise_system.sql and
  * database/sql/hotelpardise_website/hotelpardise_website.sql. Each is a
  * complete phpMyAdmin dump - schema and data together - and neither names the
  * database it belongs to, so this points the connection at each in turn.
+ * Post-install upgrades live in database/sql/patches/ and
+ * database/sql/hotelpardise_website/patches/ and are not loaded here.
  *
  * The accounts and the grants are not in the dumps, and a GRANT naming a table
  * cannot be granted before the table exists. So the order still matters:
@@ -79,19 +81,19 @@ if(!is_readable($dbFile)){
 }
 $cfg=require $dbFile;
 
-/** The only two SQL files there are: [label, path, database, tables, what it holds]. */
+/** The two clean installs: [label, path, database, base tables, what it holds]. */
 $dumps=[
  ['database/sql/hotelpardise_system/hotelpardise_system.sql',
   $root.'/database/sql/hotelpardise_system/hotelpardise_system.sql',
-  (string)($cfg['db']['name']??''),109,'the hotel system'],
+  (string)($cfg['db']['name']??''),118,'the hotel system'],
  ['database/sql/hotelpardise_website/hotelpardise_website.sql',
   $root.'/database/sql/hotelpardise_website/hotelpardise_website.sql',
-  (string)($cfg['web_db']['name']??''),41,'the public website'],
+  (string)($cfg['web_db']['name']??''),45,'the public website'],
 ];
 foreach($dumps as [$rel,$file]){
  if(!is_readable($file)){
   fwrite(STDERR,"Cannot read $rel.\n".
-   "Those two dumps are the whole database install; nothing else in the project is SQL.\n");
+   "Those two dumps are the clean install; the dated upgrade patches are in database/sql/patches/.\n");
   exit(1);
  }
 }
@@ -117,13 +119,21 @@ $admin->set_charset('utf8mb4');
 $sysName=$cfg['db']['name'];      $sysUser=$cfg['db']['user'];   $sysPass=$cfg['db']['pass'];
 $webName=$cfg['web_db']['name'];  $webUser=$cfg['web_db']['user']; $webPass=$cfg['web_db']['pass'];
 
+/** Count base tables with SHOW TABLES. Unlike information_schema this needs
+ *  only the database the account was granted, which is all a host usually
+ *  gives it. */
+function table_count(mysqli $c,string $db): int{
+ $r=@$c->query('SHOW TABLES FROM `'.str_replace('`','``',$db).'`');
+ return $r?$r->num_rows:0;
+}
+
 /** The site connects from config.php; this connects as the site does. */
 function site_can_open(string $host,int $port,string $user,string $pass,string $db,string $label): array{
  $c=@new mysqli($host,$user,$pass,$db,$port);
  if($c->connect_errno) return [false,$c->connect_error];
- $n=@$c->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()")->fetch_row()[0];
+ $n=table_count($c,$db);
  $err=$c->error; $c->close();
- return [(int)$n>0,$err!==''?$err:$label.' is open'];
+ return [$n>0,$err!==''?$err:$label.' is open'];
 }
 
 /**
@@ -302,8 +312,7 @@ if(!$priv['createDb']){
 echo "\ndumps\n";
 foreach($dumps as [$rel,$file,$dbName,$expected,$what]){
  if($dbName===''){ step("load $rel",false,'no database name for it in backend-php/config.php'); continue; }
- $t=(int)@$admin->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema="
-  .lit($admin,$dbName)." AND table_type='BASE TABLE'")->fetch_row()[0];
+ $t=table_count($admin,$dbName);
  if($t>=$expected){ note("load $rel","$dbName already has $t tables"); continue; }
  if($t>0){
   step("load $rel",false,"$dbName has only $t of the $expected tables, so a load now would stop half way. ".
@@ -313,8 +322,7 @@ foreach($dumps as [$rel,$file,$dbName,$expected,$what]){
  if(!@$admin->select_db($dbName)){ step("load $rel",false,$admin->error); continue; }
  try{
   run_file($admin,$file);
-  $t=(int)@$admin->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema="
-   .lit($admin,$dbName)." AND table_type='BASE TABLE'")->fetch_row()[0];
+  $t=table_count($admin,$dbName);
   step("load $rel",$t>=$expected,"$t tables in $dbName");
  }catch(RuntimeException $e){ step("load $rel",false,$e->getMessage()); }
 }

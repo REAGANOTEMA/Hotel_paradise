@@ -13,7 +13,7 @@ function guest_message_departments(): array{
 
 /** Whether the guest communications tables have been installed. */
 function guest_message_ready(): bool{
- try{ return (int)val('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?',['guest_messages'])>0; }
+ try{ return hp_table_exists('guest_messages'); }
  catch(\Throwable $e){ return false; }
 }
 

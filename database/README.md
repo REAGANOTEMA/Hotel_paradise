@@ -1,12 +1,16 @@
 # The database
 
-There are exactly two SQL files in this project, and everything else in the
-folder is documentation about them:
+The two SQL files below are the clean installs. Everything else in the folder is
+either documentation about them or a dated upgrade patch:
 
 | File | Database | Holds |
 |---|---|---|
-| `sql/hotelpardise_system/hotelpardise_system.sql` | `hotelpardise_system` | the hotel and its management system: 102 tables, schema and data together |
-| `sql/hotelpardise_website/hotelpardise_website.sql` | `hotelpardise_website` | the public site: 38 tables, schema and data together |
+| `sql/hotelpardise_system/hotelpardise_system.sql` | `hotelpardise_system` | the hotel and its management system: 118 tables, schema and data together |
+| `sql/hotelpardise_website/hotelpardise_website.sql` | `hotelpardise_website` | the public site: 45 tables, schema and data together |
+
+Changes made after those dumps were cut live in `sql/patches/` (system database)
+and `sql/hotelpardise_website/patches/` (website database). The system patch list
+and run order are in `sql/patches/README.txt`.
 
 Both are plain phpMyAdmin dumps. Neither one says which database it belongs to,
 so whichever tool loads them has to point the connection at the right one first.

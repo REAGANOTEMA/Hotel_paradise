@@ -32,7 +32,7 @@ if($method==='POST'){
 }
 
 if(!notify_ready()){
- $out(['ok'=>false,'error'=>'Notifications are not installed yet. Run database/sql/hotelpardise_system/notifications_push.sql.','installed'=>false],503);
+ $out(['ok'=>false,'error'=>'Notifications are not installed yet. Run database/sql/patches/2026-10-16_notifications_push.sql.','installed'=>false],503);
 }
 
 /* ---- the bell: unread count and the latest few ---------------------------- */

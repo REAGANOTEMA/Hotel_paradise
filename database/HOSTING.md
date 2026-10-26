@@ -65,7 +65,7 @@ database/sql/hotelpardise_system/hotelpardise_system.sql
 
 Character set: `utf8mb4`. Press **Go**.
 
-When it finishes you should have **102 tables**, and it should end without an
+When it finishes you should have **118 tables**, and it should end without an
 error. This file carries the tables *and* the rows together: the hotel, the
 staff, the rooms, the reservations, and the whole menu — 1,932 dishes in 119
 categories across the restaurant, the bar and room service, of which 644 are
@@ -79,7 +79,7 @@ Switch to `hotelpardise_website` and import
 database/sql/hotelpardise_website/hotelpardise_website.sql
 ```
 
-**38 tables**, including `website_settings`, which holds the site's own
+**45 tables**, including `website_settings`, which holds the site's own
 settings.
 
 The menu the guest reads and the order the kitchen receives live in

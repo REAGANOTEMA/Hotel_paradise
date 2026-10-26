@@ -13,7 +13,7 @@ require_once __DIR__.'/../app/invoices.php';
    ===================================================================== */
 
 if(!invoice_can()){ page_head('Invoices'); echo '<div class="panel"><p class="hint">Access restricted to finance and management.</p></div>'; page_foot(); return; }
-if(!invoice_ready()){ page_head('Invoices','','Invoicing is not on this installation yet'); echo '<div class="panel" style="border-left:4px solid var(--warn,#e0a800)"><h2>Invoicing upgrade not installed</h2><p class="hint">Run the three files in <b>database/invoice_module_sql/</b> against the MAIN database before the billing desk goes live. They are idempotent and safe to re-run.</p></div>'; page_foot(); return; }
+if(!invoice_ready()){ page_head('Invoices','','Invoicing is not on this installation yet'); echo '<div class="panel" style="border-left:4px solid var(--warn,#e0a800)"><h2>Invoicing upgrade not installed</h2><p class="hint">Run <code>database/sql/patches/2026-10-17_invoice_module.sql</code> against the MAIN database before the billing desk goes live. It is idempotent and safe to re-run.</p></div>'; page_foot(); return; }
 
 /* ---------------- shared painters ---------------- */
 
@@ -125,25 +125,40 @@ function invoice_print(array $inv,array $lines,float $paid,float $due): void{
 /* ---------------- actions ---------------- */
 if($_SERVER['REQUEST_METHOD']==='POST'){
  $act=$_GET['act']??'';
- $id=(int)($_POST['id']??0);
+ $id=(int)($_GET['id']??$_POST['id']??0);
 
  if($act==='draft'){
   // A fresh draft from the front desk. Held open so lines can be added at the
-  // clerk's own pace; only issue() numbers it.
+  // clerk's own pace; only issue() numbers it. The same action also saves the
+  // billing details of an existing draft, which arrives with its id on the URL.
   $bname=trim($_POST['bname']??'');
   if($bname===''){ flash('A billing name is required.','bad'); go('invoices'); }
   $bemail=filter_var(trim($_POST['bemail']??''),FILTER_VALIDATE_EMAIL)?:null;
   $bphone=trim($_POST['bphone']??'');
   $cols=invoice_columns()['invoice'];
+  $details=[];
+  if($cols['billing_name']!=='')  $details['billing_name']=$bname;
+  if($cols['billing_email']!=='') $details['billing_email']=$bemail;
+  if($cols['billing_phone']!=='') $details['billing_phone']=$bphone;
+  if($cols['notes']!=='')         $details['notes']=trim($_POST['notes']??'');
+  if($id){
+   $inv=row('SELECT * FROM invoices WHERE id=?',[$id]);
+   if(!$inv||$inv['status']!=='draft'){ flash('That invoice is not an open draft.','bad'); go('invoices'); }
+   if($details){
+    $parts=[]; $v=[];
+    foreach($details as $col=>$value){ $parts[]=$col.'=?'; $v[]=$value; }
+    $v[]=$id;
+    q('UPDATE invoices SET '.implode(',',$parts).',updated_at=NOW() WHERE id=?',$v);
+   }
+   audit('invoice_draft','invoice',$id,[],$details);
+   flash('Draft details saved.');
+   go('invoices',['view'=>$id]);
+  }
   // A draft still needs a number: the column is NOT NULL and UNIQUE on this
   // installation. It gets a provisional tag now and the real INV number when it
   // is issued, so no draft can ever collide with another or with an invoice.
   $provisional=next_number('DRF','invoices','invoice_number');
-  $set=['hotel_id'=>1,'invoice_number'=>$provisional,'status'=>'draft','subtotal'=>0.0,'tax'=>0.0,'total'=>0.0];
-  if($cols['billing_name']!=='')  $set['billing_name']=$bname;
-  if($cols['billing_email']!=='') $set['billing_email']=$bemail;
-  if($cols['billing_phone']!=='') $set['billing_phone']=$bphone;
-  if($cols['notes']!=='')         $set['notes']=trim($_POST['notes']??'');
+  $set=array_merge(['hotel_id'=>1,'invoice_number'=>$provisional,'status'=>'draft','subtotal'=>0.0,'tax'=>0.0,'total'=>0.0],$details);
   $c=array_keys($set); $v=array_values($set);
   // created_at comes from NOW(), never from PHP.
   $sql='INSERT INTO invoices('.implode(',',$c).',created_at) VALUES('.implode(',',array_fill(0,count($c),'?')).',NOW())';

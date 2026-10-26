@@ -40,7 +40,7 @@ if($act==='feed'){
 if($_SERVER['REQUEST_METHOD']==='POST'){
  switch($act){
   case 'settle':
-   $oid=(int)($_POST['oid']??0);
+   $oid=(int)($_GET['oid']??$_POST['oid']??0);
    $r=row('SELECT * FROM orders WHERE id=?',[$oid]);
    if(!$r){ flash('That order is no longer open.','bad'); go('fnb'); }
    $discount=max(0.0,(float)($_POST['discount']??0));

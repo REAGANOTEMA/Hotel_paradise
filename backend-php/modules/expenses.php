@@ -12,7 +12,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $cat=trim($_POST['category']??'General');
    if(!$dept||!$desc||$amount<=0){ flash('Complete the department, description and amount.','bad'); go('expenses'); }
    $num=next_number('EXP','expenses','number');
-   q('INSERT INTO expenses(hotel_id,number,department_id,requested_by,category,description,amount,status,references_txt,created_at) VALUES(1,?,?,?,?,?,?,\'pending\',?,NOW())',[$num,$dept,$u['id'],$cat,$desc,$amount,trim($_POST['references_txt'])]);
+   q('INSERT INTO expenses(hotel_id,number,department_id,requested_by,category,description,amount,status,references_txt,created_at) VALUES(1,?,?,?,?,?,?,\'pending\',?,NOW())',[$num,$dept,$u['id'],$cat,$desc,$amount,trim($_POST['references_txt']??'')]);
    $eid=(int)db()->lastInsertId();
    audit('create','expense',$eid,['number'=>$num]);
    $dname=(string)val('SELECT name FROM departments WHERE id=?',[$dept]);
@@ -23,7 +23,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    go('expenses');
    break;
   case 'status':
-   $id=(int)($_POST['id']??0); $nst=$_POST['nst']??'';
+   $id=(int)($_GET['id']??$_POST['id']??0); $nst=$_POST['nst']??'';
    $r=row('SELECT * FROM expenses WHERE id=?',[$id]); if(!$r) break;
    if(in_array($nst,['approved','rejected'])){
      q('UPDATE expenses SET status=?,approved_by=?,approved_at=NOW() WHERE id=?',[$nst,$u['id'],$id]);
@@ -36,7 +36,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    go('expenses');
    break;
   case 'pay':
-   $id=(int)($_POST['id']??0);
+   $id=(int)($_GET['id']??$_POST['id']??0);
    $r=row('SELECT * FROM expenses WHERE id=? AND status=\'approved\'',[$id]);
    if(!$r){ flash('Only approved expenses can be paid.','bad'); go('expenses'); }
    q('UPDATE expenses SET status=\'paid\',paid_at=NOW(),payment_method=? WHERE id=?',[$_POST['method']??'cash',$id]);

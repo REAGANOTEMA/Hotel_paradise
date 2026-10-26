@@ -12,8 +12,8 @@ declare(strict_types=1);
        with the gateway (idempotent checkout token, verification stamp);
      - every issue / void / discount / adjust is written to invoice_events
        by the user who did it, before the page that shows it is drawn;
-     - the SQL upgrades in database/invoice_module_sql/ may or may not
-       have run yet, so every column read here is guarded the same way
+     - the SQL upgrade in database/sql/patches/2026-10-17_invoice_module.sql
+       may or may not have run yet, so every column read here is guarded the same way
        the rest of the console guards upgrades: missing means "absent",
        never a stack trace.
 
@@ -176,7 +176,7 @@ function invoice_adjust(int $id,float $delta,string $reason): void{
   $delta=round($delta,2);
   $n=(int)val('SELECT COALESCE(MAX(item_no),0)+1 FROM invoice_items WHERE invoice_id=?',[$id]);
   q('INSERT INTO invoice_items(invoice_id,item_no,description,quantity,unit_price,tax,discount,total)
-     VALUES(?,?,?,1,?,0,0,?)',[$id,$n,$reason!==''?$reason:'Adjustment',$delta,max(0.0,$delta)]);
+     VALUES(?,?,?,1,?,0,0,?)',[$id,$n,$reason!==''?$reason:'Adjustment',$delta,$delta]);
   invoice_recompute($id);
   invoice_event($id,'adjust',$delta,$reason);
   audit('invoice_adjust','invoice',$id,['line'=>$n],['delta'=>$delta,'reason'=>$reason]);

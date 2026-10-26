@@ -61,7 +61,7 @@ if(!$installed){
  echo '<div class="panel"><h2>Notifications are not switched on yet</h2>';
  echo '<p class="hint">The notification tables are not in the database. This is safe to fix: the migration only adds tables and one column, and it leaves every existing record exactly as it is.</p>';
  echo '<p class="hint">Run this once, then reload:</p>';
- echo '<pre style="background:#0f172a;color:#e2e8f0;padding:12px 14px;border-radius:6px;overflow:auto">C:\\xampp\\mysql\\bin\\mysql.exe -u root hotelpardise_system &lt; database\\sql\\patches\\2026_notifications_push.sql</pre>';
+ echo '<pre style="background:#0f172a;color:#e2e8f0;padding:12px 14px;border-radius:6px;overflow:auto">C:\\xampp\\mysql\\bin\\mysql.exe -u root hotelpardise_system &lt; database\\sql\\patches\\2026-10-16_notifications_push.sql</pre>';
  echo '<p class="hint">Push delivery and the in-app list are the same system, so once this runs, both work.</p></div>';
  page_foot();
  exit;

@@ -32,12 +32,12 @@ C:\xampp\php\php.exe tools\install-databases.php --check
 
 ## The files
 
-Two, and they are the only SQL in the project:
+Two clean-install dumps, plus the dated upgrade patches described below:
 
 | Step | File | Database | Tables |
 |---|---|---|---|
-| Hotel | `sql/hotelpardise_system/hotelpardise_system.sql` | `hotelpardise_system` | 102 |
-| Website | `sql/hotelpardise_website/hotelpardise_website.sql` | `hotelpardise_website` | 38 |
+| Hotel | `sql/hotelpardise_system/hotelpardise_system.sql` | `hotelpardise_system` | 118 |
+| Website | `sql/hotelpardise_website/hotelpardise_website.sql` | `hotelpardise_website` | 45 |
 
 Each dump carries its schema and its data together, and neither one names the
 database it belongs to — the loader selects the database first and then runs the
@@ -47,10 +47,12 @@ tables is a site being used, and its rows are not this install's to touch; the
 installer says so and stops rather than doubling everything.
 
 New features that arrive after a fresh install are small standalone patches in
-`sql/hotelpardise_system/` (named by date, e.g.
-`2026-10-10_events_enquiries.sql`). Each is `CREATE TABLE IF NOT EXISTS`-safe to
-re-run, never edits existing tables, and does not belong in the dumps — the
-dumps are the blank slate, the patches are the upgrades shipped on top.
+`sql/patches/` (named by date, e.g.
+`2026-10-10_events_enquiries.sql`). Each is safe to re-run: it checks what is
+already present and changes only what is missing. They do not belong in the
+dumps - the dumps are the blank slate, the patches are the upgrades shipped on
+top. The full order and purpose of every patch is listed in
+`sql/patches/README.txt`.
 
 Order still matters, and not because of the dumps: the accounts and the grants
 are not in them, and a `GRANT` naming a table cannot be granted before that

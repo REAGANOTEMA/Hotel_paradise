@@ -128,7 +128,7 @@ echo '<input name="q" value="'.e($q).'" placeholder="Search guest, phone or subj
 echo '<button class="btn sm">Search</button></form></div>';
 
 if(!guest_message_ready()){
- echo '<div class="panel"><h2>Guest Messages</h2><p class="hint">The guest communications upgrade has not been installed on this database yet.</p><p>Run <code>database/sql/hotelpardise_system/guest_messages.sql</code> (or the installer) and refresh this page.</p></div>';
+ echo '<div class="panel"><h2>Guest Messages</h2><p class="hint">The guest communications upgrade has not been installed on this database yet.</p><p>Run <code>database/sql/patches/2026-10-12_guest_messages.sql</code> (or the installer) and refresh this page.</p></div>';
  page_foot(); return;
 }
 

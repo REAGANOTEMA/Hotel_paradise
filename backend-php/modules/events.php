@@ -79,8 +79,8 @@ $STATUSES=[
 if($_SERVER['REQUEST_METHOD']==='POST'){
  $act=$_GET['act']??'';
  if($act==='status'){
-  $id=(int)($_POST['id']??0);
-  $kind=(string)($_POST['kind']??'');
+  $id=(int)($_GET['id']??$_POST['id']??0);
+  $kind=(string)($_GET['kind']??$_POST['kind']??'');
   $nst=(string)($_POST['nst']??'');
   if(!isset($KINDS[$kind])||!isset($STATUSES[$nst])){ flash('Nothing to change.','bad'); go('events'); }
   $K=$KINDS[$kind];
@@ -96,8 +96,8 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   flash($K['label'].' '.$r[$K['num']].' marked '.$STATUSES[$nst]['label'].'.');
  }
 if($act==='edit'){
-   $id=(int)($_POST['id']??0);
-   $kind=(string)($_POST['kind']??'');
+   $id=(int)($_GET['id']??$_POST['id']??0);
+   $kind=(string)($_GET['kind']??$_POST['kind']??'');
    if(!isset($KINDS[$kind])){ flash('Nothing to save.','bad'); go('events'); }
    $K=$KINDS[$kind];
    $fn=trim($_POST['full_name']??''); $ph=trim($_POST['phone']??''); $em=trim($_POST['email']??'');

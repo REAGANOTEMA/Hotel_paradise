@@ -50,10 +50,12 @@ function menu_sync_has(PDO $pdo,string $table,string $col): bool{
  static $cache=[];
  if(!isset($cache[$table])){
   $cache[$table]=[];
+  if(!preg_match('/^[A-Za-z0-9_]+$/',$table)) return false;
   try{
-   $st=$pdo->prepare('SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?');
-   $st->execute([$table]);
-   foreach($st->fetchAll(PDO::FETCH_COLUMN) as $c){ $cache[$table][strtolower((string)$c)]=true; }
+   $st=$pdo->query('SHOW COLUMNS FROM `'.$table.'`');
+   foreach($st->fetchAll(PDO::FETCH_ASSOC) as $c){
+    $cache[$table][strtolower((string)($c['Field']??''))]=true;
+   }
   }catch(Throwable $e){ /* a database that cannot answer is treated as bare */ }
  }
  return isset($cache[$table][strtolower($col)]);

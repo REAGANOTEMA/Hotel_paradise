@@ -5,12 +5,18 @@ $u=current_user();
 if($_SERVER['REQUEST_METHOD']==='POST'){
  $act=$_GET['act']??'';
  if($act==='reverse'){
-  $pid=(int)($_POST['pid']??0); $reason=trim($_POST['reason']??'');
+  $pid=(int)($_GET['pid']??$_POST['pid']??0); $reason=trim($_POST['reason']??'');
   $p=row('SELECT * FROM payments WHERE id=?',[$pid]);
   if(!$p||!$reason){ flash('Select a valid payment and give a reason.','bad'); go('finance'); }
   q('INSERT INTO voids(hotel_id,ref_type,ref_id,reason,amount,user_id,approved_by,created_at) VALUES(1,\'payment\',?,?,?,?,?,NOW())',[$pid,$reason,$p['amount'],$u['id'],$u['id']]);
   if($p['reservation_id']){ q('UPDATE reservations SET paid=GREATEST(paid-?,0) WHERE id=?',[$p['amount'],$p['reservation_id']]); }
    q('UPDATE payments SET status=\'reversed\' WHERE id=?',[$pid]);
+   // An invoice whose payment is voided is no longer settled either. Recompute
+   // from the lines and the money that is still successful, so it reopens.
+   if($p['invoice_id']){
+    require_once __DIR__.'/../app/invoices.php';
+    if(function_exists('invoice_recompute')) invoice_recompute((int)$p['invoice_id']);
+   }
    // An order whose payment is voided is no longer settled: its status is read
    // back from what actually remains, so it does not stay flagged as paid.
    if($p['order_id']){
@@ -29,13 +35,17 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   // A guest's online request lands here as pending until the money is actually
   // seen. This is the moment the front desk says it has - and the only moment
   // the guest's receipt is emailed and the hotel's copy is printed.
-  $pid=(int)($_POST['pid']??0);
+  $pid=(int)($_GET['pid']??$_POST['pid']??0);
   $p=row('SELECT * FROM payments WHERE id=?',[$pid]);
   if(!$p||strtolower(trim((string)$p['status']))!=='pending'){ flash('That payment is not awaiting confirmation.','bad'); go('finance'); }
-  q('UPDATE payments SET status=\'successful\' WHERE id=?',[$pid]);
-  // The booking's own paid figure moves with the confirmation, so the front desk
-  // balance and the outstanding report count the money the guest settled online.
-  if($p['reservation_id']){ q('UPDATE reservations SET paid=paid+? WHERE id=?',[(float)$p['amount'],(int)$p['reservation_id']]); }
+   q('UPDATE payments SET status=\'successful\' WHERE id=?',[$pid]);
+   // The booking's own paid figure moves with the confirmation, so the front desk
+   // balance and the outstanding report count the money the guest settled online.
+   if($p['reservation_id']){ q('UPDATE reservations SET paid=paid+? WHERE id=?',[(float)$p['amount'],(int)$p['reservation_id']]); }
+   if($p['invoice_id']){
+    require_once __DIR__.'/../app/invoices.php';
+    if(function_exists('invoice_recompute')) invoice_recompute((int)$p['invoice_id']);
+   }
   audit('confirm_payment','payment',$pid,['status'=>$p['status']],['status'=>'successful']);
   notify_console('confirm-payment:'.$pid,'payment','Payment '.money($p['amount']).' confirmed',
    'Confirmed as received and receipted.',
@@ -59,7 +69,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   /* A receipt is emailed once, but a failed attempt is never a dead end. This
      retries the guest copy and any staff copy that has not gone yet, using the
      same checks and the same delivery log as the original send. */
-  $pid=(int)($_POST['pid']??0);
+  $pid=(int)($_GET['pid']??$_POST['pid']??0);
   require_once __DIR__.'/../app/receipts.php';
   $ctx=receipts_context($pid);
   if($ctx===null){ flash('Only a payment recorded as successful can be receipted.','bad'); go('finance'); }

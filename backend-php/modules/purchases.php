@@ -39,7 +39,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    go('purchases');
    break;
 case 'reqstatus':
-    $rid=(int)($_POST['id']??0); $nst=$_POST['nst']??'';
+    $rid=(int)($_GET['id']??$_POST['id']??0); $nst=$_POST['nst']??'';
     $r=row('SELECT * FROM purchase_requisitions WHERE id=?',[$rid]); if(!$r) break;
     /* Approving or turning down a request is a director or general manager
        decision. Anyone may open the page, but only these roles may change a
@@ -60,17 +60,20 @@ case 'reqstatus':
    $rid=(int)($_POST['id']??0);
    $r=row('SELECT * FROM purchase_requisitions WHERE id=? AND status=\'approved\'',[$rid]);
    if(!$r){ flash('Only approved requisitions can become purchase orders.','bad'); go('purchases'); }
+   $sup=(int)($_POST['supplier_id']??0);
+   if(!$sup||!val('SELECT id FROM suppliers WHERE id=? AND active=1',[$sup])){ flash('Choose an active supplier for this purchase order.','bad'); go('purchases'); }
    $rows=rows('SELECT * FROM purchase_requisition_items WHERE requisition_id=?',[$rid]);
+   if(!count($rows)){ flash('That requisition has no items to order.','bad'); go('purchases'); }
    $num=next_number('PO','purchase_orders','number');
-   q('INSERT INTO purchase_orders(hotel_id,number,supplier_id,requisition_id,status,notes,created_by,created_at) VALUES(1,?,?,?,\'sent\',?,?,NOW())',[$num,(int)($_POST['supplier_id']??0),$rid,trim($_POST['notes']??''),$u['id']]);
+   q('INSERT INTO purchase_orders(hotel_id,number,supplier_id,requisition_id,status,notes,created_by,created_at) VALUES(1,?,?,?,\'sent\',?,?,NOW())',[$num,$sup,$rid,trim($_POST['notes']??''),$u['id']]);
    $oid=(int)db()->lastInsertId();
-   foreach($rows as $it){ q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$it['item_id'],$it['requested_qty'],0,0]); }
+   foreach($rows as $it){ $qty=(float)$it['requested_qty']; $cost=(float)$it['est_cost']; q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$it['item_id'],$qty,$cost,round($qty*$cost,2)]); }
    audit('create','purchase_order',$oid,['number'=>$num,'from_requisition'=>$rid]);
    $supName=(string)val('SELECT name FROM suppliers WHERE id=?',[(int)($_POST['supplier_id']??0)]);
    notify_console('po-from-req:'.$oid,'order','Purchase order '.$num.' created',
     'Raised from requisition '.$r['number'].' to supplier '.$supName.'.',
     ['purchase_order_id'=>$oid,'number'=>$num],['director','general_manager','storekeeper'],'purchase_order',$oid);
-   flash('Purchase order '.$num.' created from requisition. Enter unit costs on the order.');
+   flash('Purchase order '.$num.' created from requisition with its estimated unit costs.');
    go('purchases',['view'=>$oid]);
    break;
   case 'po':
@@ -92,7 +95,7 @@ case 'reqstatus':
    go('purchases',['view'=>$oid]);
    break;
   case 'poitems':
-   $oid=(int)($_POST['oid']??0);
+   $oid=(int)($_GET['oid']??$_POST['oid']??0);
    $iid=(int)($_POST['additem']??0); $qty=(float)($_POST['addqty']??0); $cost=(float)($_POST['addcost']??0);
    if(!$iid||$qty<=0){ flash('Choose an item and quantity.','bad'); go('purchases',['view'=>$oid]); }
    q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$iid,$qty,$cost,$qty*$cost]);
@@ -101,7 +104,7 @@ case 'reqstatus':
    go('purchases',['view'=>$oid]);
    break;
   case 'receive':
-   $oid=(int)($_POST['oid']??0);
+   $oid=(int)($_GET['oid']??$_POST['oid']??0);
    $items=$_POST['items']??[];
    $loc=trim($_POST['loc']??'')?:'Main Store';
    foreach($items as $piid=>$row){

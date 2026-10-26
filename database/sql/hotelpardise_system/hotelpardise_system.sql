@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 25, 2026 at 09:51 PM
+-- Generation Time: Oct 26, 2026 at 07:19 PM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.27
 
@@ -217,7 +217,8 @@ INSERT INTO `audit_logs` (`id`, `hotel_id`, `user_id`, `action`, `entity_type`, 
 (134, 1, 4, 'login', 'user', 4, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 15:24:32'),
 (135, 1, 4, 'login', 'user', 4, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 17:26:21'),
 (136, 1, 4, 'logout', 'user', 4, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 17:38:53'),
-(137, 1, 13, 'login', 'user', 13, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 17:39:47');
+(137, 1, 13, 'login', 'user', 13, NULL, NULL, '102.86.25.65', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-25 17:39:47'),
+(138, 1, 8, 'login', 'user', 8, NULL, NULL, '102.86.25.144', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-26 14:37:14');
 
 -- --------------------------------------------------------
 
@@ -1902,7 +1903,9 @@ INSERT INTO `news_posts` (`id`, `hotel_id`, `slug`, `title`, `category`, `excerp
 (5, 1, 'welcome-to-our-newsroom', 'Welcome to the Hotel Paradise newsroom', 'news', 'A single place for hotel news, updates, opportunities and the people behind Paradise.', 'This is the hotel telling its own story: announcements, service updates, the opportunities we open to our community, and the people who make Paradise what it is.\n\nKeep this page close. When there is something worth knowing - a new menu, a role we are hiring for, an opportunity for a student, or a colleague worth celebrating - it will be posted here first.', NULL, 'Management', 'Hotel Paradise, Jinja', '', '', NULL, 'frontdesk@hotelparadiseonthenile.info', NULL, 'Management Team', 'Hotel Paradise on the Nile', NULL, 0, 'published', '2026-10-11 07:49:03', 0, '2026-10-11 07:49:03', NULL, NULL, NULL),
 (11, 1, 'fundraising-meeting', 'fundraising meeting', 'news', '📢🔥 **OFFICIAL ANNOUNCEMENT: FUNDRAISING MEETING AHEAD OF THE NOVEMBER CONFERENCE** 🔥🙏\r\n\r\n**THE ALTAR AT THE GATES MINISTRIES**\r\n\r\n✨ *Together in Faith. United in Purpose. Building for God\'s Glory.* ✨\r\n\r\nThe Altar at the Gates Ministries warmly invites all believers, ministry partners, friends, well-wishers, and everyon', '', '', '', '', '', '', NULL, '', '', 'Hotel Director', 'Director', 2, 0, 'published', '2026-10-15 20:00:00', 0, '2026-10-15 20:04:47', NULL, NULL, NULL),
 (12, 1, 'riverside-terrace-reopens', 'Riverside terrace reopens at Hotel Paradise on the Nile', 'news', 'The terrace is open again for breakfast, sunset drinks and private dinners beside the Nile.', '<p>Our riverside terrace has reopened for guests and visitors. Breakfast is served from 7am, and the terrace stays open through the evening for drinks and private dinners beside the Nile.</p><p>Reservations are recommended for sunset seating. Please speak to the front desk or call the hotel.</p>', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Hotel Paradise on the Nile', 'Front Office', NULL, 0, 'published', '2026-10-25 19:45:49', 0, '2026-10-25 19:45:49', NULL, NULL, NULL),
-(13, 1, 'front-desk-agent-2026', 'We are hiring: Front Desk Agent', 'recruitment', 'Join the front office team at Hotel Paradise on the Nile in Jinja.', '<p>We are looking for a welcoming, organised Front Desk Agent to look after arrivals, departures and guest requests. Experience in hospitality is an advantage, but a warm manner and careful record-keeping matter more.</p><p>Send your application to the address below before the closing date.</p>', NULL, 'Front Office', 'Jinja, Uganda', 'Full-time', NULL, '2026-12-31', 'frontdesk@hotelparadiseonthenile.info', NULL, 'Hotel Paradise on the Nile', 'Human Resource', NULL, 0, 'published', '2026-10-25 19:45:49', 0, '2026-10-25 19:45:49', NULL, NULL, NULL);
+(13, 1, 'front-desk-agent-2026', 'We are hiring: Front Desk Agent', 'recruitment', 'Join the front office team at Hotel Paradise on the Nile in Jinja.', '<p>We are looking for a welcoming, organised Front Desk Agent to look after arrivals, departures and guest requests. Experience in hospitality is an advantage, but a warm manner and careful record-keeping matter more.</p><p>Send your application to the address below before the closing date.</p>', NULL, 'Front Office', 'Jinja, Uganda', 'Full-time', NULL, '2026-12-31', 'frontdesk@hotelparadiseonthenile.info', NULL, 'Hotel Paradise on the Nile', 'Human Resource', NULL, 0, 'published', '2026-10-25 19:45:49', 0, '2026-10-25 19:45:49', NULL, NULL, NULL),
+(14, 1, 'welcome-to-the-paradise-newsroom', 'Welcome to the Paradise newsroom', 'news', 'Stories, service updates and opportunities from Hotel Paradise on the Nile.', 'Welcome to our newsroom. This is where the hotel shares what is happening on the Nile: new services, team news, seasonal offers and the people who make a stay at Paradise memorable.\n\nCheck back for updates, or follow the links on the website to plan your next visit.', NULL, 'Management', NULL, NULL, NULL, NULL, NULL, NULL, 'Hotel Paradise on the Nile', 'Management', NULL, 0, 'published', '2026-10-26 18:43:14', 0, '2026-10-26 18:43:14', NULL, NULL, NULL),
+(15, 1, 'join-the-paradise-team', 'Join the Paradise team', 'recruitment', 'We are always looking for warm, careful people to join the hotel.', 'Hotel Paradise on the Nile is built on people who care about the small details. We welcome applications from experienced hospitality professionals and from people starting their first role in the industry.\n\nSend your application to the front desk or use the contact details on the website. Please tell us the role you are interested in and a little about yourself.', NULL, 'Human Resource', NULL, NULL, NULL, NULL, NULL, NULL, 'Hotel Paradise on the Nile', 'Human Resource', NULL, 0, 'published', '2026-10-26 18:43:14', 0, '2026-10-26 18:43:14', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3696,7 +3699,9 @@ ALTER TABLE `audit_logs`
   ADD KEY `idx_audit_entity` (`entity_type`,`entity_id`),
   ADD KEY `idx_audit_action_created` (`action`,`created_at`),
   ADD KEY `idx_audit_created` (`created_at`),
-  ADD KEY `idx_audit_day` (`created_at`);
+  ADD KEY `idx_audit_day` (`created_at`),
+  ADD KEY `hp_perf_audit_entity` (`entity_type`,`entity_id`),
+  ADD KEY `hp_perf_audit_created` (`created_at`);
 
 --
 -- Indexes for table `beds`
@@ -3867,7 +3872,8 @@ ALTER TABLE `expenses`
   ADD KEY `requested_by` (`requested_by`),
   ADD KEY `idx_exp_status` (`status`),
   ADD KEY `idx_expenses_status` (`status`),
-  ADD KEY `idx_deleted_at` (`deleted_at`);
+  ADD KEY `idx_deleted_at` (`deleted_at`),
+  ADD KEY `hp_perf_expense_status` (`status`);
 
 --
 -- Indexes for table `facility_enquiries`
@@ -3932,7 +3938,9 @@ ALTER TABLE `guests`
   ADD KEY `idx_guest_phone` (`phone`),
   ADD KEY `idx_guests_email` (`email`),
   ADD KEY `idx_guests_phone` (`phone`),
-  ADD KEY `idx_deleted_at` (`deleted_at`);
+  ADD KEY `idx_deleted_at` (`deleted_at`),
+  ADD KEY `hp_perf_guest_email` (`email`),
+  ADD KEY `hp_perf_guest_phone` (`phone`);
 
 --
 -- Indexes for table `guest_accounts`
@@ -4016,7 +4024,8 @@ ALTER TABLE `inventory_items`
   ADD KEY `category_id` (`category_id`),
   ADD KEY `idx_inv_active` (`active`),
   ADD KEY `idx_inventory_active` (`active`),
-  ADD KEY `idx_deleted_at` (`deleted_at`);
+  ADD KEY `idx_deleted_at` (`deleted_at`),
+  ADD KEY `hp_perf_inventory_active` (`active`);
 
 --
 -- Indexes for table `inventory_movements`
@@ -4233,7 +4242,10 @@ ALTER TABLE `orders`
   ADD KEY `idx_ord_outlet` (`outlet`),
   ADD KEY `idx_orders_status` (`status`),
   ADD KEY `idx_orders_outlet` (`outlet`),
-  ADD KEY `idx_orders_day` (`created_at`);
+  ADD KEY `idx_orders_day` (`created_at`),
+  ADD KEY `hp_perf_ord_status` (`status`),
+  ADD KEY `hp_perf_ord_outlet` (`outlet`),
+  ADD KEY `hp_perf_ord_created` (`created_at`);
 
 --
 -- Indexes for table `order_items`
@@ -4275,7 +4287,11 @@ ALTER TABLE `payments`
   ADD KEY `idx_payments_reservation` (`reservation_id`),
   ADD KEY `idx_payments_customer` (`customer_id`),
   ADD KEY `idx_payments_invoice` (`invoice_id`),
-  ADD KEY `idx_pay_user` (`user_id`);
+  ADD KEY `idx_pay_user` (`user_id`),
+  ADD KEY `hp_perf_pay_order` (`order_id`),
+  ADD KEY `hp_perf_pay_reservation` (`reservation_id`),
+  ADD KEY `hp_perf_pay_created` (`created_at`),
+  ADD KEY `hp_perf_pay_customer` (`customer_id`);
 
 --
 -- Indexes for table `permissions`
@@ -4364,7 +4380,8 @@ ALTER TABLE `purchase_orders`
 ALTER TABLE `purchase_order_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `item_id` (`item_id`),
-  ADD KEY `idx_poi_order` (`order_id`);
+  ADD KEY `idx_poi_order` (`order_id`),
+  ADD KEY `order_id` (`order_id`);
 
 --
 -- Indexes for table `purchase_requisitions`
@@ -4376,7 +4393,8 @@ ALTER TABLE `purchase_requisitions`
   ADD KEY `requested_by` (`requested_by`),
   ADD KEY `idx_pr_status` (`status`),
   ADD KEY `idx_requisitions_status` (`status`),
-  ADD KEY `idx_deleted_at` (`deleted_at`);
+  ADD KEY `idx_deleted_at` (`deleted_at`),
+  ADD KEY `hp_perf_requisition_status` (`status`);
 
 --
 -- Indexes for table `purchase_requisition_items`
@@ -4384,7 +4402,8 @@ ALTER TABLE `purchase_requisitions`
 ALTER TABLE `purchase_requisition_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_pri_req` (`requisition_id`),
-  ADD KEY `idx_pri_item` (`item_id`);
+  ADD KEY `idx_pri_item` (`item_id`),
+  ADD KEY `requisition_id` (`requisition_id`);
 
 --
 -- Indexes for table `receipt_deliveries`
@@ -4429,7 +4448,10 @@ ALTER TABLE `reservations`
   ADD KEY `idx_res_created` (`created_at`),
   ADD KEY `idx_reservations_status` (`status`),
   ADD KEY `idx_reservations_dates` (`check_in`,`check_out`),
-  ADD KEY `idx_deleted_at` (`deleted_at`);
+  ADD KEY `idx_deleted_at` (`deleted_at`),
+  ADD KEY `hp_perf_res_status` (`status`),
+  ADD KEY `hp_perf_res_checkin` (`check_in`),
+  ADD KEY `hp_perf_res_checkout` (`check_out`);
 
 --
 -- Indexes for table `reservation_rooms`
@@ -4699,7 +4721,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
 
 --
 -- AUTO_INCREMENT for table `beds`
@@ -5035,7 +5057,7 @@ ALTER TABLE `menu_items`
 -- AUTO_INCREMENT for table `news_posts`
 --
 ALTER TABLE `news_posts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `notifications`

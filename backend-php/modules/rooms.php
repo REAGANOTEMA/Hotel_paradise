@@ -21,11 +21,15 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   go('rooms');
  }
 if($act==='rate'){
-   $t=(int)($_POST['type_id']??0); $rate=(float)($_POST['rate']??0); $active=isset($_POST['active'])?1:0;
+   $t=(int)($_GET['type_id']??$_POST['type_id']??0); $rate=(float)($_POST['rate']??0); $active=isset($_POST['active'])?1:0;
    if($t&&$rate>0){
-    $old=row('SELECT base_rate,active FROM room_types WHERE id=?',[$t]);
-    q('UPDATE room_types SET base_rate=?,active=?,name=?,description=? WHERE id=?',[$rate,$active,trim($_POST['name']??''),trim($_POST['description']??''),$t]);
-    audit('room_rate','room_type',$t,$old,['base_rate'=>$rate,'active'=>$active]);
+    $old=row('SELECT base_rate,active,name,description FROM room_types WHERE id=?',[$t]);
+    if(!$old){ flash('Room type not found.','bad'); go('rooms'); }
+    $name=array_key_exists('name',$_POST)?trim((string)$_POST['name']):(string)$old['name'];
+    $desc=array_key_exists('description',$_POST)?trim((string)$_POST['description']):(string)($old['description']??'');
+    if($name===''){ flash('Room type name is required.','bad'); go('rooms',['editrt'=>$t]); }
+    q('UPDATE room_types SET base_rate=?,active=?,name=?,description=? WHERE id=?',[$rate,$active,$name,$desc,$t]);
+    audit('room_rate','room_type',$t,$old,['base_rate'=>$rate,'active'=>$active,'name'=>$name,'description'=>$desc]);
     flash('Room type updated.');
    }
    go('rooms');
@@ -84,7 +88,10 @@ foreach($floors as $f){
    echo '<form method="post" action="'.BASE.'/index.php?page=rooms&amp;act=status" style="margin-top:10px">';
    echo '<input type="hidden" name="room_id" value="'.(int)$r['id'].'">';
    echo '<select name="status" onchange="this.form.submit()" style="width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:11.5px">';
-   foreach(['available'=>'Available','dirty'=>'Dirty','cleaning'=>'Cleaning','inspected'=>'Inspected','maintenance'=>'Maintenance','out_of_service'=>'Out of service'] as $k2=>$v2)
+   $states=['available'=>'Available','dirty'=>'Dirty','cleaning'=>'Cleaning','inspected'=>'Inspected','maintenance'=>'Maintenance','out_of_service'=>'Out of service'];
+   if($r['status']==='occupied') $states=['occupied'=>'Occupied']+$states;
+   if($r['status']==='reserved') $states=['reserved'=>'Reserved']+$states;
+   foreach($states as $k2=>$v2)
     echo '<option value="'.$k2.'"'.checked($r['status'],$k2).'>'.$v2.'</option>';
    echo '</select></form>';
    echo '<div style="margin-top:8px;text-align:right">'; echo trash_button('rooms',(int)$r['id'],'rooms'); echo '</div>';

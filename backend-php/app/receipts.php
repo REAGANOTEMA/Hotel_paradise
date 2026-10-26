@@ -63,8 +63,8 @@ function receipts_ready(): bool
  static $ready=null;
  if($ready!==null) return $ready;
  try{
-  $have=(int)val('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?',['receipt_deliveries']);
-  if($have===0){
+  $have=hp_table_exists('receipt_deliveries');
+  if(!$have){
    q("CREATE TABLE IF NOT EXISTS receipt_deliveries (
      id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
      payment_id BIGINT UNSIGNED NOT NULL,
@@ -111,8 +111,8 @@ function receipt_upgrade_schema(): void
  $done=true;
 
  try{
-  $col=row("SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='receipt_deliveries' AND COLUMN_NAME='channel'");
-  $type=strtolower((string)($col['COLUMN_TYPE']??''));
+  $col=row("SHOW COLUMNS FROM receipt_deliveries LIKE 'channel'");
+  $type=strtolower((string)($col['Type']??''));
   if($type!==''&&strpos($type,"'staff'")===false){
    q("ALTER TABLE receipt_deliveries MODIFY channel ENUM('email','print','staff') NOT NULL DEFAULT 'email'");
   }
@@ -121,8 +121,9 @@ function receipt_upgrade_schema(): void
  }
 
  try{
-  $cols=rows("SELECT COLUMN_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='receipt_deliveries' AND INDEX_NAME='uq_receipt_payment_channel' ORDER BY SEQ_IN_INDEX");
-  $names=array_map(fn($r)=>strtolower((string)$r['COLUMN_NAME']),$cols);
+  $cols=rows("SHOW INDEX FROM receipt_deliveries WHERE Key_name='uq_receipt_payment_channel'");
+  usort($cols,static fn(array $a,array $b): int=>(int)($a['Seq_in_index']??0)<=>(int)($b['Seq_in_index']??0));
+  $names=array_map(fn($r)=>strtolower((string)($r['Column_name']??'')),$cols);
   if($names===[]){
    q("ALTER TABLE receipt_deliveries ADD UNIQUE KEY uq_receipt_payment_channel (payment_id, channel, recipient(160))");
   }elseif($names!==['payment_id','channel','recipient']){

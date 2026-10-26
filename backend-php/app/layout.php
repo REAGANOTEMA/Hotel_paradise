@@ -22,7 +22,7 @@ function nav_groups(): array{
    ['label'=>'Guest Communications','items'=>[
      'messages'=>'Guest Messages','testimonials'=>'Guest Experiences']],
    ['label'=>'Restaurant & Bar','items'=>[
-     'pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
+     'bar'=>'Bar Dashboard','pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
    ['label'=>'Kitchen','items'=>[
      'kitchen'=>'Kitchen']],
    ['label'=>'Housekeeping & Maintenance','items'=>[
@@ -241,7 +241,7 @@ function assistant_guides(): array{
   'reservations'=>'You are on Reservations. Press New reservation, choose the dates and the room type, add the guest and save. Open a booking to check the guest in, post a charge, take a payment, or print the confirmation.',
   'rooms'=>'You are on Rooms. Each room shows its state. Set a room to Cleaning and then Inspected, mark one Out of service for repairs, or open a room to allocate it to a booking.',
   'guests'=>'You are on Guests. This is the guest list. Add a guest with their name and telephone, or open a record to see their stays. Use the search box to find someone quickly.',
-  'pos'=>'You are on POS and Orders. Add dishes to the order, then send it. The order goes straight to the kitchen, and the bill is printed here.',
+  'bar'=>'You are on the Bar Dashboard. It shows the bar orders waiting, what the bar has sold today, the bar list and your shift. Use Take a bar order to open the till at the bar, or Bar bills to take a payment.',
   'fnb'=>'You are on Food and Beverage. This shows the restaurant and bar bills. Open a bill to take a payment and print the receipt.',
   'kitchen'=>'You are on Kitchen. Read each docket, then mark the order Preparing and, when it is done, Ready, so the waiting staff are told.',
   'shifts'=>'You are on Shifts. Housekeeping tasks and the cash up are recorded here. Start a shift, then close it with the counted cash.',
@@ -448,7 +448,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 /** The icon a module carries in the rail. */
 function nav_icon_key(string $page): string{
 $map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations'=>'calendar','rooms'=>'bed','guests'=>'users','events'=>'event',
-   'pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
+   'bar'=>'fork','pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
    'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
    'reports'=>'bars','users'=>'users','notifications'=>'bell','trash'=>'trash','profile'=>'user',
    'invoices'=>'file',

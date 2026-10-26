@@ -302,7 +302,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
  }
 
  if($act==='review' || $act==='clear'){
-  $fid=(int)($_POST['fid']??0);
+  $fid=(int)($_GET['fid']??$_POST['fid']??0);
   $f=row('SELECT * FROM integrity_flags WHERE id=? AND hotel_id=1',[$fid]);
   if(!$f){ flash('Finding not found.','bad'); go('integrity'); }
   $to=$act==='clear'?'cleared':'reviewed';
@@ -314,7 +314,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
  }
 
  if($act==='reopen'){
-  $fid=(int)($_POST['fid']??0);
+  $fid=(int)($_GET['fid']??$_POST['fid']??0);
   q('UPDATE integrity_flags SET status=\'open\',resolved_by=NULL,resolved_at=NULL WHERE id=? AND hotel_id=1',[$fid]);
   audit('integrity_reopen','integrity_flag',$fid);
   flash('Finding reopened.');
@@ -322,7 +322,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
  }
 
  if($act==='delete'){
-  $fid=(int)($_POST['fid']??0);
+  $fid=(int)($_GET['fid']??$_POST['fid']??0);
   $f=row('SELECT flag_key FROM integrity_flags WHERE id=? AND hotel_id=1',[$fid]);
   if($f){ q('DELETE FROM integrity_flags WHERE id=?',[$fid]); audit('integrity_delete','integrity_flag',$fid,['flag_key'=>$f['flag_key']]); flash('Finding deleted.'); }
   go('integrity');

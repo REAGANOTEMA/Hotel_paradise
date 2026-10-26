@@ -59,13 +59,13 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    go('pos');
    break;
   case 'status':
-   $oid=(int)($_POST['oid']??0); $nst=$_POST['nst']??'';
+   $oid=(int)($_GET['oid']??$_POST['oid']??0); $nst=$_POST['nst']??'';
    $r=row('SELECT status,order_number FROM orders WHERE id=?',[$oid]); if(!$r) break;
    $map=['accepted','preparing','ready','served','cancelled'];
    if(in_array($nst,$map)){
     if($nst==='cancelled' && !trim($_POST['reason']??'')){ flash('A reason is required to cancel an order.','bad'); go('pos'); }
     if($nst==='cancelled'){
-     q('INSERT INTO voids(hotel_id,ref_type,ref_id,reason,amount,user_id,created_at) VALUES(1,\'order\',?,?,?,?,NOW())',[$oid,trim($_POST['reason']),abs($r['status']==='pending'?0:val('SELECT SUM(total) FROM order_items WHERE order_id=?',[$oid])),$u['id']]);
+     q('INSERT INTO voids(hotel_id,ref_type,ref_id,reason,amount,user_id,created_at) VALUES(1,\'order\',?,?,?,?,NOW())',[$oid,trim($_POST['reason']),abs((float)($r['status']==='pending'?0:val('SELECT SUM(total) FROM order_items WHERE order_id=?',[$oid]))),$u['id']]);
     }
      q('UPDATE orders SET status=? WHERE id=?',[$nst,$oid]);
      audit('order_status','order',$oid,['status'=>$r['status']],['status'=>$nst]);
@@ -79,7 +79,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    go('pos');
    break;
   case 'settle':
-   $oid=(int)($_POST['oid']??0);
+   $oid=(int)($_GET['oid']??$_POST['oid']??0);
    $r=row('SELECT * FROM orders WHERE id=?',[$oid]); if(!$r) break;
    $discount=(float)($_POST['discount']??0);
    $method=$_POST['method']??'cash';

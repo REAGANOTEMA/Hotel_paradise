@@ -49,7 +49,7 @@ const NOTIFY_DEFAULT_ROLES = [
 
 function notify_table(string $t): bool
 {
- try{ return (int)val('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?',[$t])>0; }
+ try{ return hp_table_exists($t); }
  catch(\Throwable $e){ return false; }
 }
 
@@ -58,12 +58,12 @@ function notify_ready(): bool
 {
  static $r=null;
  if($r!==null) return $r;
- try{
-  // One lookup instead of five: the header bell asks this on every page.
-  $n=(int)val("SELECT COUNT(DISTINCT TABLE_NAME) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE()
-   AND TABLE_NAME IN('notification_events','notification_deliveries','notifications','notification_devices','notification_preferences')");
- }catch(\Throwable $e){ $n=0; }
- return $r=($n===5);
+ $tables=['notification_events','notification_deliveries','notifications',
+  'notification_devices','notification_preferences'];
+ foreach($tables as $t){
+  if(!notify_table($t)) return $r=false;
+ }
+ return $r=true;
 }
 
 /** Active members holding any of the named roles. */

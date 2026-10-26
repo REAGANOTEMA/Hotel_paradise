@@ -86,9 +86,10 @@ function table_columns(string $table): array{
  static $cache=[];
  if(isset($cache[$table])) return $cache[$table];
  $have=[];
+ if(!preg_match('/^[A-Za-z0-9_]+$/',$table)) return $cache[$table]=$have;
  try{
-  foreach(rows('SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?',[$table]) as $r){
-   $have[strtolower((string)$r['COLUMN_NAME'])]=true;
+  foreach(rows('SHOW COLUMNS FROM `'.$table.'`') as $r){
+   $have[strtolower((string)($r['Field']??''))]=true;
   }
  }catch(Throwable $e){ $have=[]; }
  return $cache[$table]=$have;
@@ -937,7 +938,7 @@ if($act==='account'){
   /** The account tables, which only exist once the upgrade SQL has been run. */
   $ready=(table_columns('customers')!==[] && table_columns('customer_tokens')!==[]);
   if(!$ready && $action!=='config'){
-    error_log('[hotel api] customers table missing - database/sql/hotelpardise_system/customer_accounts.sql has not been run');
+    error_log('[hotel api] customers table missing - database/sql/patches/2026-10-14_customer_accounts.sql has not been run');
     $out(['ok'=>false,'error'=>'Accounts are not available yet on this installation. Please call +256 759 504 928 and the front desk will take your booking.'],503);
   }
 
@@ -1331,7 +1332,7 @@ function ensure_events_tables(): void{
 
 /** The one table behind guest messages and written experiences. It is created
  *  eagerly on first contact so the site and the console agree about it; the
- *  migration in database/sql/hotelpardise_system/guest_messages.sql is the
+ *  migration in database/sql/patches/2026-10-12_guest_messages.sql is the
  *  source of truth and running it first is always fine. */
 function ensure_guest_tables(): void{
  db()->exec('CREATE TABLE IF NOT EXISTS guest_messages(
