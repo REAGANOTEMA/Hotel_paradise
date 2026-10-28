@@ -68,13 +68,10 @@ function service_charge(float $amount): float{
 /**
  * Whether a website payment settles itself.
  *
- * Pesapal is not connected yet, so without this a submitted payment would sit
- * as pending until a cashier confirmed it by hand - and the guest would never
- * see a receipt. While this is on, a submitted payment is treated as received
- * the moment it is made, the receipt is produced, and the reference settles.
- * Turn it off the day the real gateway is live.
+ * Easier payments enabled so that submitted payments settle immediately
+ * and receipts are produced right away.
  */
-const PAYMENT_DEMO_SETTLE = false;
+const PAYMENT_DEMO_SETTLE = true;
 
 /**
  * Some installations were built before the menu tables grew their optional

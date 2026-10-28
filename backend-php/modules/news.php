@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 declare(strict_types=1);
 
 /**
@@ -430,7 +430,7 @@ if($act==='list'){
     echo '<td>'.news_badge((string)$r['category'],$CATS).'</td>';
     echo '<td>'.news_status((string)$r['status'],$STATS).'</td>';
     echo '<td>'.((int)$r['pinned']?badge('Pinned','gold'):'').(($r['category']==='recruitment'&&(string)($r['deadline']??'')!=='')?' '.badge('Closes '.fmtdate($r['deadline']),'warn'):'').'</td>';
-    echo '<td>'.e($r['author_name']?:'—').($r['author_role']?'<br><small>'.e($r['author_role']).'</small>':'').'</td>';
+    echo '<td>'.e($r['author_name']?:'â€”').($r['author_role']?'<br><small>'.e($r['author_role']).'</small>':'').'</td>';
     echo '<td>'.e(fmtdt($r['publish_at'])).'</td>';
     echo '<td>'.(int)$r['views'].'</td>';
     echo '<td style="white-space:nowrap">';
@@ -503,7 +503,7 @@ if($act==='edit'||$act==='new'){
   /* ---- the photograph ---- */
   echo '<div class="field"><label for="f_image_file">Main photograph</label>';
   echo '<div style="display:flex;gap:14px;align-items:flex-start">';
-  echo '<img id="newsPrev" src="'.($imageSrc?e($imageSrc):SITE_URL.'/images/paradise-logo.png').'" alt="" style="width:120px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--line2);background:#f1ede2;flex:none"/>';
+  echo '<img id="newsPrev" src="'.($imageSrc?e($imageSrc):SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp').'" alt="" style="width:120px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--line2);background:#f1ede2;flex:none"/>';
   echo '<div style="flex:1"><input id="f_image_file" type="file" name="image_file" accept="image/*"/>';
   echo '<small class="hint" style="display:block;margin-top:6px">Upload a JPG, PNG, GIF or WebP up to 4MB. Shown at the head of the post.</small>';
   if($imageSrc){

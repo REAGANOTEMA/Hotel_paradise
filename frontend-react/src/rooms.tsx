@@ -23,52 +23,33 @@ type BedSlide = {group: ImageGroup; name: string; position?: string};
  */
 const ROOM_SLIDES: Record<string, BedSlide[]> = {
   'Suite': [
-   {group: 'rooms', name: 'suite', position: '50% 45%'},
-   {group: 'beds-suit', name: 'suit1', position: '50% 40%'},
-   {group: 'beds-suit', name: 'suit2', position: '50% 45%'},
-   {group: 'beds-suit', name: 'suit3', position: '50% 45%'},
-   {group: 'beds-suit', name: 'suit4', position: '50% 40%'},
-   {group: 'beds-suit', name: 'bathroom-suit-room', position: '50% 35%'},
-   {group: 'beds-suit', name: 'toilet-suit-room', position: '50% 50%'}
+   {group: 'site', name: 'Suite-768x511', position: '50% 45%'},
+   {group: 'beds-suit', name: 'suit1', position: '50% 45%'},
+   {group: 'beds-suit', name: 'suit2', position: '50% 45%'}
   ],
   'Family Room': [
-   {group: 'rooms', name: 'family-room', position: '50% 45%'},
-   {group: 'rooms', name: 'family-room-2', position: '50% 45%'},
-   {group: 'rooms', name: 'family-room-3', position: '50% 45%'}
+   {group: 'site', name: 'DSC_5418-768x512', position: '50% 45%'},
+   {group: 'rooms', name: 'family-room', position: '50% 45%'}
   ],
   'Triple Room': [
-   {group: 'site', name: 'tripple-room', position: '50% 45%'},
    {group: 'rooms', name: 'triple-room', position: '50% 45%'},
-   {group: 'rooms', name: 'triple-room-2', position: '50% 45%'},
-   {group: 'rooms', name: 'triple-room-3', position: '50% 40%'},
-   {group: 'beds-triple', name: 'triple-bed', position: '50% 45%'},
-   {group: 'beds-triple', name: 'toilet-bathroom', position: '50% 45%'}
+   {group: 'beds-triple', name: 'triple-bed', position: '50% 45%'}
   ],
   'Executive Deluxe': [
    {group: 'site', name: 'executive-deluxe-room', position: '50% 45%'},
-   {group: 'beds-exec', name: 'executive-bed1', position: '50% 45%'},
-   {group: 'beds-exec', name: 'executive-bed2', position: '50% 45%'},
-   {group: 'beds-exec', name: 'executive-bed3', position: '50% 40%'},
-   {group: 'beds-exec', name: 'executive-room-window-view', position: '50% 50%'},
-   {group: 'beds-exec', name: 'bathroom', position: '50% 40%'},
-   {group: 'beds-exec', name: 'toilet', position: '50% 45%'}
+   {group: 'beds-exec', name: 'executive-bed1', position: '50% 45%'}
   ],
   'Deluxe Double': [
    {group: 'rooms', name: 'deluxe-double', position: '50% 45%'},
-   {group: 'rooms', name: 'deluxe-double-2', position: '50% 45%'},
-   {group: 'rooms', name: 'deluxe-double-3', position: '50% 40%'},
-   {group: 'rooms', name: 'deluxe-double-4', position: '50% 45%'}
+   {group: 'rooms', name: 'deluxe-double-2', position: '50% 45%'}
   ],
   'Standard Double': [
    {group: 'rooms', name: 'standard-double', position: '50% 45%'},
-   {group: 'site', name: 'double-deluxe-bed', position: '50% 45%'},
-   {group: 'rooms', name: 'standard-double-2', position: '50% 45%'}
+   {group: 'site', name: 'double-deluxe-bed', position: '50% 45%'}
   ],
   'Standard Twin': [
    {group: 'rooms', name: 'standard-twin', position: '50% 45%'},
-   {group: 'rooms', name: 'standard-twin-2', position: '50% 45%'},
-   {group: 'beds-twin', name: 'bed1', position: '50% 45%'},
-   {group: 'beds-twin', name: 'tv-readingspace', position: '50% 50%'}
+   {group: 'rooms', name: 'standard-twin-2', position: '50% 45%'}
   ],
   'Standard Single': [
    {group: 'site', name: 'single-room', position: '50% 45%'},
@@ -462,3 +443,9 @@ if (d.ok) {
 }
 
 createRoot(document.getElementById('root')!).render(<RoomsPage/>);
+
+
+
+
+
+

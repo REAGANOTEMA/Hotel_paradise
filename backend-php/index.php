@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 declare(strict_types=1);
 require __DIR__.'/app/bootstrap.php';
 require __DIR__.'/app/layout.php';
@@ -25,7 +25,7 @@ function pagelogin(): void{
  }
 
  $flashHtml='';
- if($f=flash_out()){ $flashHtml='<div class="flash '.e($f['type']).'"><span class="noteIco">'.($f['type']==='bad'?'!':'✓').'</span><span>'.e($f['msg']).'</span></div>'; }
+ if($f=flash_out()){ $flashHtml='<div class="flash '.e($f['type']).'"><span class="noteIco">'.($f['type']==='bad'?'!':'âœ“').'</span><span>'.e($f['msg']).'</span></div>'; }
 
  $tpl=<<<'HTML'
 <!doctype html>
@@ -39,8 +39,8 @@ function pagelogin(): void{
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="%%BASE%%/assets/admin.css">
-<link rel="icon" type="image/png" sizes="64x64" href="%%SITE%%/images/logo-64.png">
-<link rel="apple-touch-icon" href="%%SITE%%/images/logo-192.png">
+<link rel="icon" type="image/png" sizes="64x64" href="%%SITE%%/images/Hotel-Paradise-on-the-Nile-Logo.webp">
+<link rel="apple-touch-icon" href="%%SITE%%/images/Hotel-Paradise-on-the-Nile-Logo.webp">
 </head>
 <body class="loginBody">
 <div class="loginWrap">
@@ -49,7 +49,7 @@ function pagelogin(): void{
 
   <header class="loginTop">
     <a class="loginBrandTop" href="%%HOME%%" aria-label="Hotel Paradise on the Nile website">
-      <img src="%%LOGO%%" alt="Hotel Paradise on the Nile logo">
+      <img src="%%LOGO%%" alt="Hotel-Paradise-on-the-Nile-Logo">
       <span class="lbtText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span>
     </a>
     <a class="loginBack" href="%%HOME%%">
@@ -62,7 +62,7 @@ function pagelogin(): void{
     <aside class="loginShowcase">
       <div class="lsTop">
         <span class="lsKicker">Jinja &middot; Uganda</span>
-        <img class="lsLogo" src="%%LOGO%%" alt="Hotel Paradise on the Nile logo">
+        <img class="lsLogo" src="%%LOGO%%" alt="Hotel-Paradise-on-the-Nile-Logo">
         <h2 class="lsName">Hotel Paradise<small>ON THE NILE</small></h2>
         <p class="lsBlurb">A riverside retreat on the banks of the Nile, where warm Ugandan hospitality meets quiet luxury.</p>
         <div class="lsStars" aria-label="Five star standard"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
@@ -156,7 +156,7 @@ HTML;
 
  echo str_replace(
   ['%%BASE%%','%%SITE%%','%%HOME%%','%%LOGO%%','%%FLASH%%','%%YEAR%%'],
-  [e(BASE),e(SITE_URL),e(SITE_URL.'/'),e(SITE_URL.'/images/paradise-logo.png'),$flashHtml,date('Y')],
+  [e(BASE),e(SITE_URL),e(SITE_URL.'/'),e(SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp'),$flashHtml,date('Y')],
   $tpl
  );
 }
@@ -198,3 +198,4 @@ trash_handle();
 
 $mod=__DIR__.'/modules/'.$page.'.php';
 if(is_file($mod)){ require $mod; }else{ page_head('Page not found'); echo '<div class="panel"><p>Module not found.</p></div>'; page_foot(); }
+

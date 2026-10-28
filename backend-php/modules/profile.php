@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 declare(strict_types=1);
 $u = current_user();
 $uid = (int)($u["id"] ?? 0);
@@ -78,7 +78,7 @@ $profImg = $me['profile_image'] ?? '';
 if ($profImg) {
   $imgSrc = BASE . '/download.php?type=profile&id=' . $uid;
 } else {
-  $imgSrc = SITE_URL . '/images/paradise-logo.png';
+  $imgSrc = SITE_URL . '/images/Hotel-Paradise-on-the-Nile-Logo.webp';
 }
 echo "<img id=\"profPrev\" src=\"" . $imgSrc . "\" style=\"width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #d4af37;cursor:pointer\" onclick=\"document.getElementById('profImg').click()\">";
 echo "<p style=\"margin-top:8px;font-size:12px;color:#666\">Click to change profile picture</p>";

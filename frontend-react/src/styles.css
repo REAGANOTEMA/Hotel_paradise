@@ -1,4 +1,4 @@
-/* Web fonts (DM Sans + Playfair Display) are loaded from the page <head> with
+﻿/* Web fonts (DM Sans + Playfair Display) are loaded from the page <head> with
    a preconnect, not with @import here. A CSS @import cannot start the font
    request until this whole sheet has arrived, which serialises the critical
    path; the <link> in the HTML starts it immediately. */
@@ -510,8 +510,8 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 
 /* brand with logo */
 .brandL{display:flex;align-items:center;gap:13px;min-width:0}
-.brandLogo{width:76px;height:76px;object-fit:contain;flex:none;background:none;border:0;padding:0;image-rendering:auto;filter:drop-shadow(0 2px 8px #071A3340)}
-.brandL.light .brandLogo{border:0;filter:drop-shadow(0 2px 12px #00000059)}
+.brandLogo{height:110px;width:auto;display:block;object-fit:contain}
+.brandL.light .brandLogo{height:110px;width:auto;display:block;object-fit:contain}
 .brandWord{display:flex;flex-direction:column;line-height:1.1;color:var(--navy);font-family:'Playfair Display',serif;letter-spacing:3px}
 .brandWord span{font-size:21px}
 .brandWord small{font-family:'DM Sans';letter-spacing:4px;color:var(--gold-ink);font-size:9px}
@@ -519,7 +519,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 .nav.dark .brandWord small,.brandL.light .brandWord small,.heroLogo .brandWord small{color:var(--gold)}
 .brandL.light .brandWord{color:#fff}
 .heroLogo{margin-bottom:22px}
-.heroLogo img{width:210px;height:210px;object-fit:contain;background:none;border:0;padding:0;image-rendering:auto;filter:drop-shadow(0 8px 26px rgba(0,0,0,.6))}
+.heroLogo img{height:150px;width:auto;max-width:90vw;object-fit:contain;background:transparent;border-radius:0;box-shadow:none}
 .stripNote{max-width:1100px;margin:20px auto 0;padding:14px 20px;color:#5b6675;font-size:14px;background:#fff;border-left:3px solid var(--gold);border-radius:0 var(--r) var(--r) 0;box-shadow:var(--shadow)}
 
 /* subpage hero: drawn under the header, exactly as the home hero is */
@@ -1006,7 +1006,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .nav nav{gap:4px}
   .nav nav a{font-size:12.5px;padding:7px 10px;gap:6px}
   .brandL{gap:10px}
-  .brandLogo{width:64px;height:64px}
+  .brandLogo{height:110px;width:auto;display:block;object-fit:contain}
   .brandWord span{font-size:18.5px;letter-spacing:2.4px}
   .brandWord small{font-size:8.5px;letter-spacing:3.2px}
   .nav .btn{padding:11px 16px;font-size:12.5px}
@@ -1021,7 +1021,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .nav nav{display:none}
   .burger{display:block}
   .brandL{gap:10px}
-  .brandLogo{width:56px;height:56px}
+  .brandLogo{height:110px;width:auto;display:block;object-fit:contain}
   .brandWord span{font-size:17px;letter-spacing:2.2px;line-height:1.05}
   .brandWord small{font-size:8px;letter-spacing:3px}
   .nav .btn{padding:10px 15px;min-height:38px;font-size:12.5px}
@@ -1153,7 +1153,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .hero{min-height:600px}
   .heroCopy{padding:calc(var(--navh) + 16px) 5.5vw 112px}
   .heroLogo{margin-bottom:16px}
-  .heroLogo img{width:144px;height:144px}
+  .heroLogo img{height:150px;width:auto;max-width:90vw;object-fit:contain;background:transparent;border-radius:0;box-shadow:none}
   .hero h1{font-size:clamp(34px,9.6vw,46px)}
   .heroText{font-size:16.5px}
   .heroBtns{flex-direction:column;gap:10px;margin-top:26px}
@@ -1172,7 +1172,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   .mapBox iframe{min-height:260px}
   .footerMain{padding:46px 6vw}
   .footerCredit{flex-direction:column;align-items:center;text-align:center;gap:10px}
-  .brandLogo{width:60px;height:60px}
+  .brandLogo{height:110px;width:auto;display:block;object-fit:contain}
   .brandWord span{font-size:18px;letter-spacing:2.2px}
   .brandWord small{font-size:8px;letter-spacing:3px}
   .stripNote{font-size:13px;margin:14px 12px 0;padding:12px 14px}
@@ -1209,7 +1209,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
 @media(max-width:420px){
   .nav{padding:0 3.5vw}
   .brandL{gap:10px}
-  .brandLogo{width:54px;height:54px}
+  .brandLogo{height:110px;width:auto;display:block;object-fit:contain}
   .brandWord span{font-size:15px;letter-spacing:1.4px}
   .brandWord small{font-size:7.5px;letter-spacing:2.4px}
   .section{padding:48px 5vw}
@@ -1404,7 +1404,7 @@ footer{background:var(--navy);color:#dbe4ee;overflow-wrap:anywhere;border-top:1p
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 
-/* Management system bridge — the drawer it sits in is navy, so the gold passes */
+/* Management system bridge â€” the drawer it sits in is navy, so the gold passes */
 .systemLink{color:var(--gold)!important;font-weight:700;border-top:1px solid #C9A22733;padding-top:14px;margin-top:6px}
 @media(max-width:720px){.navRight .navCta{display:none}}
 /* Before the drawer takes over, the header is at its most crowded: drop the
@@ -1537,7 +1537,7 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
    SHARED PIECES: a status badge, a resting message, the password
    field and the account mark. Written once, used by every page.
    --------------------------------------------------------------- */
-/* One badge shape, four tones — never colour alone: the label carries the
+/* One badge shape, four tones â€” never colour alone: the label carries the
    meaning, the tint only reinforces it. */
 .badge{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;line-height:1.4;white-space:nowrap}
 .badge::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
@@ -1806,7 +1806,7 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 }
 
 /* ---------------------------------------------------------------
-   TACTILE DEPTH — THE HOUSE BUTTON SYSTEM
+   TACTILE DEPTH â€” THE HOUSE BUTTON SYSTEM
 
    Every solid control is built as one physical key: a brushed cap
    with a soft highlight along its top edge, a shaded underside, and
@@ -2314,7 +2314,7 @@ footer .flag{position:relative;z-index:1;box-shadow:0 6px 16px rgba(0,0,0,.32)}
 .newsArticleHead h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.2vw,2.5rem);color:var(--navy);line-height:1.14;margin:14px 0}
 .newsMeta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--faint);font-size:13px;margin:0}
 .newsMeta span{position:relative}
-.newsMeta span + span::before{content:'·';margin-right:18px;color:var(--line)}
+.newsMeta span + span::before{content:'Â·';margin-right:18px;color:var(--line)}
 .newsArticleFig{margin:0;aspect-ratio:16 / 9;background:#f1ede2}
 .newsArticleFig img{width:100%;height:100%;object-fit:cover}
 .newsArticleBody{padding:clamp(24px,4vw,44px) clamp(24px,4vw,54px);max-width:74ch;margin:0 auto}
@@ -2567,3 +2567,9 @@ body.hpn-concierge .installApp{bottom:calc(28px + 156px)}
 @media(prefers-reduced-motion:reduce){
   .concierge,.conBtn,.catChip.catGuide{transition:none!important;animation:none!important}
 }
+
+
+
+
+
+

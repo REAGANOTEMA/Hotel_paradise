@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms, ExploreMore, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, telHref, bgUrl, useReveal} from './shared';
@@ -40,7 +40,7 @@ const dining: DineRate[] = [
   photo: 'buffet'},
  {name: 'A la carte menu', tag: '251 dishes', icon: 'fork',
   note: 'From light bites to full platters, served through the day and into the evening.',
-  from: withService(6000), to: DINING_TOP, priceText: fmtPrice(6000) + ' – ' + withService(100000).toLocaleString(), unit: 'per dish',
+  from: withService(6000), to: DINING_TOP, priceText: fmtPrice(6000) + ' â€“ ' + withService(100000).toLocaleString(), unit: 'per dish',
   photo: 'steak-with-wedges'},
  {name: 'Baby cots', tag: 'On the house', icon: 'moon',
   note: 'Available on request for your little one, set up in your room before you arrive.',
@@ -455,7 +455,7 @@ function Hero() {
       const on = n === i;
       return (
        <div className={'heroPanel' + (on ? ' on' : '')} key={n} aria-hidden={!on}>
-        <div className="heroLogo"><img src={LOGO} alt="Hotel Paradise on the Nile logo"/></div>
+        <div className="heroLogo"><img src={LOGO} alt="Hotel-Paradise-on-the-Nile-Logo" style={{height:"150px",width:"auto"}}/></div>
         <p className="eyebrow">{c.eyebrow}</p>
         <h1 className="heroTitle">{c.title}</h1>
         <p className="heroText">{c.text}</p>
@@ -764,3 +764,5 @@ function Home() {
 }
 
 createRoot(document.getElementById('root')!).render(<Home/>);
+
+

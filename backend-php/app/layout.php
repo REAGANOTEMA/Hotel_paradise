@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 declare(strict_types=1);
 
 require_once __DIR__.'/notify.php';
@@ -292,8 +292,8 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
  echo '<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">';
  echo '<link rel="stylesheet" href="'.BASE.'/assets/admin.css">';
- echo '<link rel="icon" type="image/png" sizes="64x64" href="'.SITE_URL.'/images/logo-64.png">';
- echo '<link rel="apple-touch-icon" href="'.SITE_URL.'/images/logo-192.png">';
+ echo '<link rel="icon" type="image/png" sizes="64x64" href="'.SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp">';
+ echo '<link rel="apple-touch-icon" href="'.SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp">';
  echo '</head><body data-page="'.e($active).'" data-role="'.e($roleKey).'"><div class="app">';
 
  echo '<a class="skipLink" href="#mainContent">Skip to content</a>';
@@ -301,7 +301,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 
  /* ---- the rail ---- */
  echo '<aside class="side" id="side">';
- echo '<a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/paradise-logo.png" alt="Hotel Paradise on the Nile logo"><span class="sbText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span></a>';
+ echo '<a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel-Paradise-on-the-Nile-Logo"></a>';
  echo '<button class="sideClose" id="sideClose" type="button" aria-label="Close menu"><span></span><span></span></button>';
   echo '<nav class="sideNav" id="sideNav" aria-label="Modules">';
   foreach(nav_groups() as $group){
@@ -417,10 +417,10 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<p class="guideIntro">Everything is a tap away. Here is the way around, on a computer or a phone.</p>';
  echo '<ol class="guideSteps">';
  echo '<li><b>1</b><span>Pick a module from the menu on the left. On a phone, tap the <em>Menu</em> button at the top to slide it in.</span></li>';
- echo '<li><b>2</b><span>Each heading is a group that folds. Tap a heading — like <em>Finance &amp; Control</em> — to open or close the modules under it.</span></li>';
+ echo '<li><b>2</b><span>Each heading is a group that folds. Tap a heading â€” like <em>Finance &amp; Control</em> â€” to open or close the modules under it.</span></li>';
  echo '<li><b>3</b><span>On a phone, drag the <em>width slider</em> at the foot of the menu to make the menu narrower or wider for your hand.</span></li>';
  echo '<li><b>4</b><span>The bell at the top shows new bookings, orders, payments and messages. <em>Back</em> at the top left returns you to the page you came from.</span></li>';
- echo '<li><b>5</b><span>Every page does its work with the buttons along the top of it — add, filter, print or export — and every wide table scrolls sideways on a small screen.</span></li>';
+ echo '<li><b>5</b><span>Every page does its work with the buttons along the top of it â€” add, filter, print or export â€” and every wide table scrolls sideways on a small screen.</span></li>';
  echo '</ol>';
  echo '<button class="btn guideDone" id="guideDone" type="button">Got it</button>';
  echo '</div></div>';
@@ -438,7 +438,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 
  /* ---- what the last action left behind, as a notification ---- */
  if($flash){
-  $ico=$flash['type']==='bad'?'!':($flash['type']==='warn'?'!':'✓');
+  $ico=$flash['type']==='bad'?'!':($flash['type']==='warn'?'!':'âœ“');
   echo '<div class="toastWrap" id="toasts"><div class="toast '.e($flash['type']).'" role="status"><span class="noteIco">'.$ico.'</span><span>'.e($flash['msg']).'</span><button type="button" aria-label="Dismiss">&times;</button></div></div>';
  }
  assistant_boot($active);
@@ -925,7 +925,7 @@ function assistant_scripts(): void{
     if(!SR){showPanel('Speech recognition is not available in this browser. Please open the console in Chrome or Edge to speak, or read the answers here.');return;}
     if(!recog){
       recog=new SR();recog.lang='en-US';recog.interimResults=false;recog.maxAlternatives=1;recog.continuous=false;
-      recog.onstart=function(){listening=true;duck(true);setState('Listening');setAskBtn(true);if(panel)panel.hidden=false;if(ptext&&ptext.textContent.indexOf('You:')<0)ptext.textContent='Listening…';};
+      recog.onstart=function(){listening=true;duck(true);setState('Listening');setAskBtn(true);if(panel)panel.hidden=false;if(ptext&&ptext.textContent.indexOf('You:')<0)ptext.textContent='Listeningâ€¦';};
       recog.onresult=function(e){var txt=(e.results&&e.results[0]&&e.results[0][0]&&e.results[0][0].transcript)||'';ask(txt);};
       recog.onerror=function(e){
         listening=false;setAskBtn(false);
@@ -1111,8 +1111,8 @@ function hotel_brand(): array{
   'email'=>'frontdesk@hotelparadiseonthenile.info',
   'website'=>'www.hotelparadiseonthenile.info',
   'certification'=>'UNBS Certified, US 130:2017',
-  'logo'=>$site.'/images/logo-256.png',
-  'crest'=>$site.'/images/logo-64.png',
+  'logo'=>$site.'/images/Hotel-Paradise-on-the-Nile-Logo.webp',
+  'crest'=>$site.'/images/Hotel-Paradise-on-the-Nile-Logo.webp',
  ];
 }
 
@@ -1309,4 +1309,6 @@ HTML;
 function nav_profile_item(): string {
   return '';
 }
+
+
 

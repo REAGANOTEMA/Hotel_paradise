@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 declare(strict_types=1);
 
 /**
@@ -130,7 +130,7 @@ function mail_encode(string $text): string
  */
 function mail_html(string $title,string $bodyHtml,string $preheader='',bool $staffCopy=false): string
 {
- $logo=mail_public_url('/images/paradise-logo.png');
+ $logo=mail_public_url('/images/Hotel-Paradise-on-the-Nile-Logo.webp');
  $pre=$preheader!==''?'<span style="display:none;visibility:hidden;opacity:0;height:0;width:0;overflow:hidden">'.e($preheader).'</span>':'';
  return '<!doctype html><html lang="en"><head><meta charset="utf-8">'
   .'<meta name="viewport" content="width=device-width,initial-scale=1">'
@@ -141,7 +141,7 @@ function mail_html(string $title,string $bodyHtml,string $preheader='',bool $sta
   .'<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(7,26,51,.08)">'
   .'<tr><td style="height:6px;background:linear-gradient(90deg,#b8860b,#e0b53a,#b8860b)"></td></tr>'
   .'<tr><td style="padding:26px 34px 6px;text-align:center;background:#071A33">'
-  .($logo?'<img src="'.e($logo).'" alt="'.e(MAIL_HOTEL_NAME).'" width="72" height="72" style="display:inline-block;border:0;outline:none">':'')
+  .($logo?'<img src="'.e($logo).'" alt=\"Hotel-Paradise-on-the-Nile-Logo\" width="72" height="72" style="display:inline-block;border:0;outline:none">':'')
   .'<div style="font-family:Georgia,\'Times New Roman\',serif;color:#ffffff;font-size:20px;letter-spacing:.14em;margin-top:12px">HOTEL PARADISE</div>'
   .'<div style="font-family:Arial,Helvetica,sans-serif;color:#e0b53a;font-size:10px;letter-spacing:.42em;margin-top:5px">ON THE NILE</div>'
   .'</td></tr>'
@@ -470,3 +470,4 @@ function mail_dot_stuff(string $raw): string
  $raw=preg_replace('/^\./m','..',$raw)??$raw;
  return $raw;
 }
+

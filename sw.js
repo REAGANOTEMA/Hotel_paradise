@@ -1,4 +1,4 @@
-/* Hotel Paradise on the Nile - service worker.
+﻿/* Hotel Paradise on the Nile - service worker.
  *
  * What it is allowed to keep, and what it must never keep:
  *
@@ -25,9 +25,9 @@ const PRECACHE = [
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-512.png',
-  './logo-64.png',
-  './logo-192.png',
-  './logo-256.png'
+  './Hotel-Paradise-on-the-Nile-Logo.webp',
+  './Hotel-Paradise-on-the-Nile-Logo.webp',
+  './Hotel-Paradise-on-the-Nile-Logo.webp'
 ];
 
 self.addEventListener('install', event => {

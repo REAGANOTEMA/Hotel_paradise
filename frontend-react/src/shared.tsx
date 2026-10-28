@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import './buttonShake';
 
 /**
@@ -44,7 +44,7 @@ export const apiUrl = async (act: string): Promise<string> => {
   return `${apiBase}?act=${act}`;
 };
 
-export const LOGO = './logo-512.webp';
+export const LOGO = './Hotel-Paradise-on-the-Nile-Logo.webp';
 
 /* A background photograph handed to CSS through a custom property.
  *
@@ -238,8 +238,8 @@ export const CALL = HOTEL.phones[0];
 export function Brand({light = false}: {light?: boolean}) {
   return (
    <a className={light ? 'brandL light' : 'brandL'} href="./index.html">
-    <img className="brandLogo" src={LOGO} alt="Hotel Paradise on the Nile logo"/>
-    <span className="brandWord"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span>
+    <img className="brandLogo" src={LOGO} alt="Hotel-Paradise-on-the-Nile-Logo"/>
+    
    </a>
   );
 }
@@ -248,7 +248,7 @@ export function TopBar() {
  return (
   <div className="topbar">
    <span>HOTEL PARADISE ON THE NILE, PLOT 12, 19 &amp; 25 KIIRA LANE, JINJA, UGANDA</span>
-   <span className="right">{HOTEL.phones.join('  ·  ')}</span>
+   <span className="right">{HOTEL.phones.join('  Â·  ')}</span>
   </div>
  );
 }
@@ -398,7 +398,7 @@ export function Footer() {
      <div className="footerCol"><h4>STAY</h4><p>Check in from 12 noon</p><p>Check out by 10 am</p><p>Breakfast included</p></div>
      <div className="footerCol"><h4>CONTACT</h4>
       <p className="footerPhones">{HOTEL.phones.map((p, i) => (
-       <React.Fragment key={p}>{i > 0 && '  ·  '}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>
+       <React.Fragment key={p}>{i > 0 && '  Â·  '}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>
       ))}</p>
       <p><a className="footLink" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a></p>
       <p><a className="footLink" href="./talk.html">Message the hotel</a></p>
@@ -423,9 +423,9 @@ export function Footer() {
     </div>
     <nav className="footerLegal" aria-label="Legal">
      <a href="./terms.html">Terms &amp; Conditions</a>
-     <span className="dot" aria-hidden="true">·</span>
+     <span className="dot" aria-hidden="true">Â·</span>
      <a href="./privacy.html">Privacy Policy</a>
-     <span className="dot" aria-hidden="true">·</span>
+     <span className="dot" aria-hidden="true">Â·</span>
      <a href="./cookies.html">Cookie Policy</a>
     </nav>
     <InstallApp/>
@@ -677,7 +677,7 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
      </div>
       <div className="drawerFoot">
        <a className="btn" href="./rooms.html" onClick={close}>Book now</a>
-       <a className="drawerCall systemLink" href="./account.html" onClick={close}>{customerFirstName() ? 'My account · ' + customerFirstName() : 'Sign in or create an account'}</a>
+       <a className="drawerCall systemLink" href="./account.html" onClick={close}>{customerFirstName() ? 'My account Â· ' + customerFirstName() : 'Sign in or create an account'}</a>
        <a className="drawerCall systemLink" href="./system/" onClick={close}><LockIcon/> Staffs Logins</a>
        <a className="drawerCall" href={telHref(CALL)}>Call {CALL}</a>
        <p className="drawerNote">{HOTEL.address}</p>
@@ -792,3 +792,8 @@ export function useReveal() {
 /* Every page imports this module, so the service worker is offered once,
    from one place, rather than each page having to remember to ask. */
 registerServiceWorker();
+
+
+
+
+

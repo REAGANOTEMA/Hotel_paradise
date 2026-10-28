@@ -8009,6 +8009,30 @@
     }
   },
   "site": {
+    "dsc-5418-768x512": {
+      "ext": "webp",
+      "w": 768,
+      "h": 512,
+      "variants": []
+    },
+    "hotel-paradise-on-the-nile-logo": {
+      "ext": "webp",
+      "w": 1532,
+      "h": 442,
+      "variants": []
+    },
+    "single-room-768x512": {
+      "ext": "webp",
+      "w": 768,
+      "h": 512,
+      "variants": []
+    },
+    "suite-768x511": {
+      "ext": "webp",
+      "w": 768,
+      "h": 511,
+      "variants": []
+    },
     "bar": {
       "ext": "webp",
       "w": 864,
@@ -8280,24 +8304,39 @@
       "variants": []
     },
     "logo": {
-      "ext": "png",
+      "ext": "webp",
       "w": 0,
       "h": 0,
       "variants": [
         {
           "w": 64,
           "ext": "png",
-          "h": 64
+          "h": 442
         },
         {
           "w": 192,
           "ext": "png",
-          "h": 192
+          "h": 442
         },
         {
           "w": 256,
           "ext": "png",
-          "h": 256
+          "h": 442
+        },
+        {
+          "w": 512,
+          "ext": "png",
+          "h": 442
+        },
+        {
+          "w": 512,
+          "ext": "webp",
+          "h": 442
+        },
+        {
+          "w": 1024,
+          "ext": "webp",
+          "h": 442
         }
       ]
     },
@@ -8321,8 +8360,8 @@
     },
     "paradise-logo": {
       "ext": "png",
-      "w": 1254,
-      "h": 1254,
+      "w": 1532,
+      "h": 442,
       "variants": [
         {
           "w": 480,
