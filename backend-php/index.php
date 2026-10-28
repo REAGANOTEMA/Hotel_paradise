@@ -1,5 +1,19 @@
-﻿<?php
+<?php
 declare(strict_types=1);
+error_reporting(E_ALL);
+@ini_set('display_errors','0');
+@ini_set('log_errors','1');
+@ini_set('error_log', __DIR__.'/php_errors.log');
+register_shutdown_function(function(){
+  $e = error_get_last();
+  if($e && in_array($e['type'], [E_ERROR,E_PARSE,E_CORE_ERROR,E_COMPILE_ERROR,E_USER_ERROR], true)){
+    @file_put_contents(__DIR__.'/php_fatal.log', date('c')."\t".$e['message']." in ".$e['file'].':'.$e['line']."\n", FILE_APPEND);
+    if(!headers_sent()){
+      http_response_code(500);
+      echo 'Server error';
+    }
+  }
+});
 require __DIR__.'/app/bootstrap.php';
 require __DIR__.'/app/layout.php';
 

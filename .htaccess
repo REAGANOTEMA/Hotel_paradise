@@ -13,6 +13,7 @@ RewriteRule ^backend/?$ backend-php/index.php [R,L]
 # Compress the text files the site serves. Cuts the stylesheet and the scripts
 # to roughly a quarter of their size on the wire. Images are already compressed
 # and are deliberately left alone.
+<IfModule mod_filter.c>
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
     AddOutputFilterByType DEFLATE application/javascript text/javascript application/json
@@ -20,6 +21,7 @@ RewriteRule ^backend/?$ backend-php/index.php [R,L]
     AddOutputFilterByType DEFLATE application/rss+xml application/xhtml+xml
     # Do not double-compress files that are already compressed.
     SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|avif|ico|zip|gz|bz2|7z|rar|mp4|woff2?)$ no-gzip dont-vary
+</IfModule>
 </IfModule>
 
 # Caching. The scripts and stylesheet keep the same file name across deploys, so
