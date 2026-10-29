@@ -333,7 +333,7 @@ echo '</div></div>';
 
 echo '<div class="panel"><h2>Bank reconciliation</h2><p class="hint">Configure bank and mobile money accounts, record statement lines, then prepare a reconciliation. The auditor reviews the saved snapshot.</p>';
 if(!$bankReady){
- finance_ui_alert('Bank reconciliation tables are not installed. Review and run database/sql/patches/2026-10-30_finance_workspace.sql.');
+ finance_ui_alert('Bank reconciliation tables are not installed. Review and run database/sql/patches/2026-10-31_finance_workspace.sql.');
 }else{
  echo '<div class="finSplit"><div>';
  echo '<h3>Add account</h3>';

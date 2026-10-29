@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__.'/../app/finance.php';
+
 $d1=trim($_GET['from']??date('Y-m-d',strtotime('-14 days')));
 $d2=trim($_GET['to']??today());
 if($d2<$d1){ $tmp=$d1; $d1=$d2; $d2=$tmp; }
@@ -20,12 +22,25 @@ $sold=rows("SELECT rt.name,COUNT(*) bookings FROM reservations r JOIN reservatio
 
 $revTotal=array_sum(array_map(fn($m)=>(float)$m['total'],$byMethod));
 
+if(($_GET['export']??'')==='csv'){
+ $out=[];
+ $out[]=['Summary','Bookings in period',$nights?array_sum(array_map(fn($n)=>(int)$n['b'],$nights)):0,''];
+ $out[]=['Summary','Room nights',$totalNights,''];
+ $out[]=['Summary','Occupancy percent',$occupancy,''];
+ $out[]=['Summary','Sales value','',$revTotal];
+ foreach($byMethod as $m) $out[]=['Revenue by method',ucfirst(str_replace('_',' ',(string)$m['method'])),(int)$m['cnt'],(float)$m['total']];
+ foreach($bySource as $s) $out[]=['Bookings by source',ucfirst((string)$s['source']),(int)$s['cnt'],(float)$s['total']];
+ foreach($byDept as $d) $out[]=['Expenses by department',(string)$d['name'],'',$d['total']];
+ foreach($sold as $s) $out[]=['Bookings by room type',(string)$s['name'],(int)$s['bookings'],''];
+ finance_csv_download('management-report-'.$d1.'_'.$d2.'.csv',['Section','Measure','Count','Amount'],$out);
+}
+
 page_head('Reports','reports','Management reporting and export');
 echo '<div class="panel reports"><h2>Report period</h2><p class="hint">Choose a date range and the figures regenerate below.</p>';
 echo '<form method="get" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end"><input type="hidden" name="page" value="reports">';
 echo '<label style="font-size:12px;color:var(--muted)">From <input type="date" name="from" value="'.e($d1).'" style="display:block;margin-top:5px;padding:9px;border:1px solid var(--line);border-radius:9px"></label>';
 echo '<label style="font-size:12px;color:var(--muted)">To <input type="date" name="to" value="'.e($d2).'" style="display:block;margin-top:5px;padding:9px;border:1px solid var(--line);border-radius:9px"></label>';
-echo '<button class="btn">Run report</button> <button class="btnGhost" onclick="window.print();return false">Print</button></form></div>';
+echo '<button class="btn">Run report</button> <a class="btnGhost" href="'.e(finance_export_url('reports',['from'=>$d1,'to'=>$d2])).'">Export CSV</a> <button class="btnGhost" onclick="window.print();return false">Print</button></form></div>';
 
 echo '<div class="kpis">';
 kpi_card('Bookings made',$nights?(string)array_sum(array_map(fn($n)=>(int)$n['b'],$nights)):'0','In selected period','blue');

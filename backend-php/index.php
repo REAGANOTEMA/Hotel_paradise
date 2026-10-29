@@ -19,6 +19,10 @@ require __DIR__.'/app/layout.php';
 
 function pagelogin(): void{
  if($_SERVER['REQUEST_METHOD']==='POST'){
+  if(!csrf_valid()){
+   flash('The security token for the sign in form expired. Please try again.','bad');
+   go('login');
+  }
   $email=trim($_POST['email']??'');
   $pass=$_POST['password']??'';
   $u=row('SELECT * FROM users WHERE email=? AND status=\'active\'',[$email]);
@@ -94,6 +98,7 @@ function pagelogin(): void{
       <p class="loginSub">Sign in to the Hotel Paradise on the Nile management system.</p>
       %%FLASH%%
       <form method="post" id="loginForm" novalidate>
+        %%CSRF%%
         <div id="emailStep">
           <div class="field">
             <label for="emailInput">Email address</label>
@@ -169,8 +174,8 @@ function pagelogin(): void{
 HTML;
 
  echo str_replace(
-  ['%%BASE%%','%%SITE%%','%%HOME%%','%%LOGO%%','%%FLASH%%','%%YEAR%%'],
-  [e(BASE),e(SITE_URL),e(SITE_URL.'/'),e(SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp'),$flashHtml,date('Y')],
+  ['%%BASE%%','%%SITE%%','%%HOME%%','%%LOGO%%','%%FLASH%%','%%CSRF%%','%%YEAR%%'],
+  [e(BASE),e(SITE_URL),e(SITE_URL.'/'),e(SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp'),$flashHtml,csrf_field(),date('Y')],
   $tpl
  );
 }

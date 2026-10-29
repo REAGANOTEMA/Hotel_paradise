@@ -125,7 +125,7 @@ echo '</div>';
 
 echo '<div class="panel"><h2>Bank reconciliation review</h2><p class="hint">Book balance comes from successful payments and paid expenses. Statement balance comes from imported bank lines. A difference is a review trigger, not an automatic correction.</p>';
 if(!$bankReady){
- finance_ui_alert('Bank reconciliation tables are not installed. Review and run the finance workspace patch before using bank matching.');
+ finance_ui_alert('Bank reconciliation tables are not installed. Review and run database/sql/patches/2026-10-31_finance_workspace.sql before using bank matching.');
 }elseif(!$banks){
  finance_ui_alert('No bank accounts have been configured yet.');
 }else{

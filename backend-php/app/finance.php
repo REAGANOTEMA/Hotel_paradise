@@ -341,7 +341,7 @@ function finance_shift_close(int $shiftId, int $userId, float $counted, bool $ma
 function finance_cash_movement(int $shiftId, int $userId, string $type, string $direction, float $amount, string $reason, string $reference='', bool $manager=false): array
 {
     if (!finance_table_exists('finance_cash_movements')) {
-        return ['ok' => false, 'error' => 'Run database/sql/patches/2026-10-30_finance_workspace.sql before recording drawer movements.'];
+        return ['ok' => false, 'error' => 'Run database/sql/patches/2026-10-31_finance_workspace.sql before recording drawer movements.'];
     }
     $types = ['float', 'cash_in', 'cash_out', 'drop', 'payout', 'refund', 'correction'];
     if (!in_array($type, $types, true)) return ['ok' => false, 'error' => 'Choose a valid drawer movement type.'];
@@ -1116,15 +1116,17 @@ function finance_findings(string $from, string $toEx, int $limit=250): array
         'Duplicate successful reference', 'Reference '.$d['provider_reference'].' appears on '.$d['n'].' successful payments totalling '.money($d['total']).'.',
         ['ref_type' => 'payment', 'ref_id' => (int)$d['first_id'], 'amount' => (float)$d['total']]));
 
-    $cashNoShift = rows(
-        "SELECT id,amount,created_at,user_id FROM payments
-         WHERE status='successful' AND method='cash' AND created_at>=? AND created_at<? AND shift_id IS NULL
-         ORDER BY id DESC LIMIT 50",
-        [$from, $toEx]
-    );
-    foreach ($cashNoShift as $p) $add(finance_finding('shift_integrity', 'low', 'finance:payment:no-shift:'.(int)$p['id'],
-        'Cash payment not linked to a shift', 'Payment #'.(int)$p['id'].' ('.money($p['amount']).') has no shift reference.', 
-        ['ref_type' => 'payment', 'ref_id' => (int)$p['id'], 'amount' => (float)$p['amount']]));
+    if (finance_column_exists('payments', 'shift_id')) {
+        $cashNoShift = rows(
+            "SELECT id,amount,created_at,user_id FROM payments
+             WHERE status='successful' AND method='cash' AND created_at>=? AND created_at<? AND shift_id IS NULL
+             ORDER BY id DESC LIMIT 50",
+            [$from, $toEx]
+        );
+        foreach ($cashNoShift as $p) $add(finance_finding('shift_integrity', 'low', 'finance:payment:no-shift:'.(int)$p['id'],
+            'Cash payment not linked to a shift', 'Payment #'.(int)$p['id'].' ('.money($p['amount']).') has no shift reference.',
+            ['ref_type' => 'payment', 'ref_id' => (int)$p['id'], 'amount' => (float)$p['amount']]));
+    }
 
     $invoiceShort = rows(
         "SELECT i.id,i.invoice_number,i.total,i.status,

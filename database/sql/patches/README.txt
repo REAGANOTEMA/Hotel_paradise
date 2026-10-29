@@ -150,6 +150,13 @@ Patches
     F&B till, receipts and reports read it beside ordinary menu lines. Existing
     menu lines keep their menu_item_id and no menu item is created or changed.
 
+2026-10-31_finance_workspace.sql
+    Creates finance_cash_movements, finance_bank_accounts,
+    finance_bank_transactions and finance_reconciliations; adds the journal
+    source, approval and reversal columns and their index; seeds the standard
+    chart of accounts. Every statement checks first, so the patch is safe to run
+    more than once and never rewrites a transaction.
+
 How to run one
 --------------
 phpMyAdmin: open the system database, "Import", choose the .sql file, then Go.

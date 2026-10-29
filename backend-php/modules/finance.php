@@ -1,9 +1,21 @@
 <?php
 declare(strict_types=1);
 $u=current_user();
+require_once __DIR__.'/../app/finance.php';
+require_once __DIR__.'/../app/finance_ui.php';
+$act=$_GET['act']??'';
+
+if(($_GET['export']??'')==='csv'){
+ $d1=trim((string)($_GET['from']??''))?:date('Y-m-d');
+ $d2=trim((string)($_GET['to']??''))?:date('Y-m-d');
+ if($d2<$d1){ $tmp=$d1; $d1=$d2; $d2=$tmp; }
+ $export=finance_payment_rows(['from'=>$d1.' 00:00:00','to_excl'=>date('Y-m-d',strtotime($d2.' +1 day')).' 00:00:00','limit'=>5000]);
+ $out=[];
+ foreach($export as $p) $out[]=[$p['id'],$p['created_at'],$p['source'],$p['order_number']??$p['invoice_number']??$p['booking_number']??'',$p['method'],$p['status'],$p['amount'],$p['provider_reference']??'',$p['payer_phone']??'',$p['recorded_by']??''];
+ finance_csv_download('finance-payments-'.$d1.'_'.$d2.'.csv',['Payment','Time','Source','Reference','Method','Status','Amount','Provider reference','Payer phone','Recorded by'],$out);
+}
 
 if($_SERVER['REQUEST_METHOD']==='POST'){
- $act=$_GET['act']??'';
  if($act==='reverse'){
   $pid=(int)($_GET['pid']??$_POST['pid']??0); $reason=trim($_POST['reason']??'');
   $p=row('SELECT * FROM payments WHERE id=?',[$pid]);
@@ -102,6 +114,7 @@ $k=[
 ];
 
 page_head('Finance','finance','Payments, revenue tracking and controls');
+echo '<div class="toolbar"><a class="btnGhost" href="'.e(finance_page_link('cashier')).'">Cashier workspace</a><a class="btnGhost" href="'.e(finance_page_link('accountant')).'">Accountant workspace</a><a class="btnGhost" href="'.e(finance_page_link('auditor')).'">Auditor workspace</a></div>';
 echo '<div class="kpis">';
 kpi_card('Revenue today',money($k['today']),'Successful payments','ok');
 kpi_card('This week',money($k['week']),'From Monday','blue');
@@ -137,7 +150,7 @@ if($pending){
  echo '</tbody></table></div>';
 }
 
-echo '<div class="panel"><h2>Payments and reconciliation</h2><p class="hint">Cash up, monitor unusual activity and reverse erroneous payments with a recorded reason.</p>';
+echo '<div class="panel"><div class="panelHead"><div><h2>Payments and reconciliation</h2><p class="hint">Cash up, monitor unusual activity and reverse erroneous payments with a recorded reason.</p></div><div class="finTools">'.finance_ui_export_buttons('finance',['from'=>$d1,'to'=>$d2]).'</div></div>';
 echo '<form method="get" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"><input type="hidden" name="page" value="finance">';
 echo '<label>From <input type="date" name="from" value="'.e($d1).'" style="padding:8px;border:1px solid var(--line);border-radius:8px"></label>';
 echo '<label>To <input type="date" name="to" value="'.e($d2).'" style="padding:8px;border:1px solid var(--line);border-radius:8px"></label>';
