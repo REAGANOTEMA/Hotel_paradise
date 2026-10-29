@@ -119,7 +119,7 @@ function order_full(int $id): ?array{
   u.name taken_by
   FROM orders o LEFT JOIN users u ON u.id=o.user_id WHERE o.id=?",[$id]);
  if(!$o) return null;
- $o['lines']=rows('SELECT oi.quantity,oi.unit_price,oi.total,oi.notes,mi.name FROM order_items oi LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id=? ORDER BY oi.id',[$id]);
+ $o['lines']=rows('SELECT oi.quantity,oi.unit_price,oi.total,oi.notes,'.hp_order_item_name_sql().' FROM order_items oi LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id=? ORDER BY oi.id',[$id]);
  $o['payments']=rows("SELECT p.amount,p.method,p.status,p.created_at,u.name who FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE p.order_id=? ORDER BY p.id",[$id]);
  return $o;
 }

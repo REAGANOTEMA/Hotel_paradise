@@ -197,6 +197,13 @@ if(!page_allowed($page)){
  page_foot(); exit;
 }
 
+if($_SERVER['REQUEST_METHOD']==='POST' && !csrf_valid()){
+ http_response_code(419);
+ page_head('Session expired','dashboard');
+ echo '<div class="panel"><h2>Please try that again</h2><p class="hint">The security token for this form has expired or was not supplied. Reload the page and repeat the action.</p><a class="btn" href="'.BASE.'/index.php?page='.e($page).'">Reload page</a></div>';
+ page_foot(); exit;
+}
+
 /* A table the console filters by deleted_at may exist on an older install
    without that column. It is repaired here, once, before any module reads a
    list, so a missing column can never stop a page from opening. */

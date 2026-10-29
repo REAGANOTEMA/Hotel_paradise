@@ -59,7 +59,7 @@ $done=rows("SELECT o.* FROM orders o WHERE o.status IN('served','cancelled') AND
 $lines=[];
 $ids=array_map(static fn(array $r): int=>(int)$r['id'],array_merge($active,$done));
 if($ids){
- foreach(rows('SELECT oi.order_id,oi.quantity,oi.notes,mi.name FROM order_items oi LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id IN('.implode(',',array_map('intval',$ids)).') ORDER BY oi.id',[]) as $l){
+ foreach(rows('SELECT oi.order_id,oi.quantity,oi.notes,'.hp_order_item_name_sql().' FROM order_items oi LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id IN('.implode(',',array_map('intval',$ids)).') ORDER BY oi.id',[]) as $l){
   $lines[(int)$l['order_id']][]=$l;
  }
 }
@@ -144,10 +144,10 @@ foreach($active as $o){
  echo '</ul>';
  echo '<footer>';
  echo '<button class="btn sm" type="button" onclick="printReceipt('.$oid.')">Print docket</button>';
- if($o['status']==='pending') echo '<form method="post" action="'.BASE.'/index.php?page=kitchen"><input type="hidden" name="oid" value="'.$oid.'"><input type="hidden" name="do" value="accept"><button class="btn sm blue">Accept</button></form>';
- if($o['status']==='accepted') echo '<form method="post" action="'.BASE.'/index.php?page=kitchen"><input type="hidden" name="oid" value="'.$oid.'"><input type="hidden" name="do" value="start"><button class="btn sm blue">Start cooking</button></form>';
- if($o['status']==='preparing') echo '<form method="post" action="'.BASE.'/index.php?page=kitchen"><input type="hidden" name="oid" value="'.$oid.'"><input type="hidden" name="do" value="ready"><button class="btn sm tick">Ready</button></form>';
- if($o['status']==='ready') echo '<form method="post" action="'.BASE.'/index.php?page=kitchen"><input type="hidden" name="oid" value="'.$oid.'"><input type="hidden" name="do" value="serve"><button class="btn sm tick">Served</button></form>';
+ if($o['status']==='pending') echo '<form method="post" action="'.BASE.'/index.php?page=kitchen">'.csrf_field().'<input type="hidden" name="oid" value="'.$oid.'"><input type="hidden" name="do" value="accept"><button class="btn sm blue">Accept</button></form>';
+ if($o['status']==='accepted') echo '<form method="post" action="'.BASE.'/index.php?page=kitchen">'.csrf_field().'<input type="hidden" name="oid" value="'.$oid.'"><input type="hidden" name="do" value="start"><button class="btn sm blue">Start cooking</button></form>';
+ if($o['status']==='preparing') echo '<form method="post" action="'.BASE.'/index.php?page=kitchen">'.csrf_field().'<input type="hidden" name="oid" value="'.$oid.'"><input type="hidden" name="do" value="ready"><button class="btn sm tick">Ready</button></form>';
+ if($o['status']==='ready') echo '<form method="post" action="'.BASE.'/index.php?page=kitchen">'.csrf_field().'<input type="hidden" name="oid" value="'.$oid.'"><input type="hidden" name="do" value="serve"><button class="btn sm tick">Served</button></form>';
  echo '</footer></article>';
 }
 echo '</div>';

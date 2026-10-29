@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 $u=current_user();
+require_once __DIR__.'/../app/pos.php';
 
 if($_SERVER['REQUEST_METHOD']==='POST'){
  $act=$_GET['act']??'';
@@ -8,10 +9,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
   $sid=(int)($_POST['sid']??0);
   $sh=row('SELECT * FROM shifts WHERE id=? AND user_id=? AND status=\'open\'',[$sid,$u['id']]);
   if(!$sh){ flash('Find your open shift to close it.','bad'); go('shifts'); }
-  $counted=(float)($_POST['counted']??0);
-  $paySum=val("SELECT COALESCE(SUM(amount),0) FROM payments WHERE user_id=? AND status='successful' AND created_at BETWEEN ? AND NOW()",[$u['id'],$sh['opened_at']]);
-  $expected=$sh['opening_cash']+$paySum;
-  $variance=$counted-$expected;
+  $counted=round(max(0.0,(float)($_POST['counted']??0)),2);
+  $expected=pos_shift_expected_cash($sh);
+  $variance=round($counted-$expected,2);
   q('UPDATE shifts SET closed_at=NOW(),expected_cash=?,counted_cash=?,variance=?,status=\'closed\' WHERE id=?',[$expected,$counted,$variance,$sid]);
    audit('close_shift','shift',$sid,['expected'=>$expected,'counted'=>$counted,'variance'=>$variance]);
    if(abs($variance)>0.01){
@@ -30,7 +30,8 @@ $list=rows("SELECT s.*,u.name uname FROM shifts s LEFT JOIN users u ON u.id=s.us
 page_head('Shifts','shifts','Cashier and waiter shifts with cash up');
 
 if($mine){
- echo '<div class="panel" style="max-width:520px"><h2>Close your open shift</h2><p class="hint">'.e(ucfirst($mine['outlet'])).' shift opened '.fmtdt($mine['opened_at']).', opening cash '.money($mine['opening_cash']).'.</p>';
+ $expectedNow=pos_shift_expected_cash($mine);
+ echo '<div class="panel" style="max-width:520px"><h2>Close your open shift</h2><p class="hint">'.e(ucfirst($mine['outlet'])).' shift opened '.fmtdt($mine['opened_at']).', opening cash '.money($mine['opening_cash']).'. Cash payments recorded so far put expected cash at <b>'.money($expectedNow).'</b>.</p>';
  form_open('shifts','close');
  echo '<input type="hidden" name="sid" value="'.(int)$mine['id'].'">';
  echo '<div class="field"><label>Cash counted at close (UGX)</label><input type="number" name="counted" step="100" min="0" required></div>';
@@ -38,7 +39,7 @@ if($mine){
  echo '</div>';
 }
 
-echo '<div class="panel"><h2>Shift history</h2><p class="hint">Expected cash is opening cash plus payments recorded during the shift.</p>';
+echo '<div class="panel"><h2>Shift history</h2><p class="hint">Expected cash is opening cash plus cash payments recorded during the shift. Mobile money, card and bank payments are not counted as cash.</p>';
 echo '<table class="tbl"><thead><tr><th>User</th><th>Outlet</th><th>Opened</th><th>Closed</th><th class="num">Opening cash</th><th class="num">Expected</th><th class="num">Counted</th><th class="num">Variance</th><th>Status</th></tr></thead><tbody>';
 foreach($list as $s){
  $v=(float)$s['variance'];

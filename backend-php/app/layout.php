@@ -22,7 +22,7 @@ function nav_groups(): array{
    ['label'=>'Guest Communications','items'=>[
      'messages'=>'Guest Messages','testimonials'=>'Guest Experiences']],
    ['label'=>'Restaurant & Bar','items'=>[
-     'bar'=>'Bar Dashboard','pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
+     'restaurant'=>'Restaurant Dashboard','bar'=>'Bar Dashboard','pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
    ['label'=>'Kitchen','items'=>[
      'kitchen'=>'Kitchen']],
    ['label'=>'Housekeeping & Maintenance','items'=>[
@@ -30,7 +30,7 @@ function nav_groups(): array{
    ['label'=>'Procurement & Stores','items'=>[
      'inventory'=>'Inventory','suppliers'=>'Suppliers','purchases'=>'Purchases']],
 ['label'=>'Finance & Control','items'=>[
-      'invoices'=>'Invoices','expenses'=>'Expenses','finance'=>'Finance','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
+      'cashier'=>'Cashier Workspace','accountant'=>'Accountant Workspace','auditor'=>'Auditor Workspace','finance'=>'Finance','invoices'=>'Invoices','expenses'=>'Expenses','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
    ['label'=>'Administration','items'=>[
      'users'=>'Team and Users','notifications'=>'Notifications','trash'=>'Trash','profile'=>'My Profile']],
   ];
@@ -242,6 +242,7 @@ function assistant_guides(): array{
   'rooms'=>'You are on Rooms. Each room shows its state. Set a room to Cleaning and then Inspected, mark one Out of service for repairs, or open a room to allocate it to a booking.',
   'guests'=>'You are on Guests. This is the guest list. Add a guest with their name and telephone, or open a record to see their stays. Use the search box to find someone quickly.',
   'bar'=>'You are on the Bar Dashboard. It shows the bar orders waiting, what the bar has sold today, the bar list and your shift. Use Take a bar order to open the till at the bar, or Bar bills to take a payment.',
+  'restaurant'=>'You are on the Restaurant Dashboard. It shows the restaurant orders waiting, what the restaurant has sold today, custom requests written off menu, the restaurant list and your shift. Use Take a restaurant order to open the till, or Restaurant bills to take a payment.',
   'fnb'=>'You are on Food and Beverage. This shows the restaurant and bar bills. Open a bill to take a payment and print the receipt.',
   'kitchen'=>'You are on Kitchen. Read each docket, then mark the order Preparing and, when it is done, Ready, so the waiting staff are told.',
   'shifts'=>'You are on Shifts. Housekeeping tasks and the cash up are recorded here. Start a shift, then close it with the counted cash.',
@@ -251,6 +252,9 @@ function assistant_guides(): array{
   'invoices'=>'You are on Invoices. This is the billing desk. Create an invoice, add the lines, then print it or record a payment against it.',
   'expenses'=>'You are on Expenses. Record a cost, and it joins the approval queue for management to sign off.',
   'finance'=>'You are on Finance. Confirm or reverse payments here, and print the receipt from the record.',
+  'cashier'=>'You are on the Cashier Workspace. Open your shift, take payments, record drawer movements, count cash and close the shift.',
+  'accountant'=>'You are on the Accountant Workspace. Post payments and expenses to the ledger, manage journals, periods and financial statements.',
+  'auditor'=>'You are on the Auditor Workspace. Scan for finance exceptions, review findings, inspect journals, bank reconciliation and the audit trail.',
   'approvals'=>'You are on Approvals. Everything waiting for a decision is listed here: expenses, requisitions, shifts and large payments.',
   'reports'=>'You are on Reports. Choose a date range from the top, then read or print the bookings, occupancy and sales figures.',
   'audit'=>'You are on the Audit Trail. Every change is listed here, with who made it and when.',
@@ -448,8 +452,9 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 /** The icon a module carries in the rail. */
 function nav_icon_key(string $page): string{
 $map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations'=>'calendar','rooms'=>'bed','guests'=>'users','events'=>'event',
-   'bar'=>'fork','pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
+   'restaurant'=>'fork','bar'=>'fork','pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
    'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
+   'cashier'=>'wallet','accountant'=>'bars','auditor'=>'alert',
    'reports'=>'bars','users'=>'users','notifications'=>'bell','trash'=>'trash','profile'=>'user',
    'invoices'=>'file',
    'messages'=>'bell','testimonials'=>'spark'];
@@ -993,7 +998,7 @@ function form_open(string $page,string $action='',array $extra=[],array $attrs=[
  $qs=array_merge(['page'=>$page,'act'=>$action?:''],$extra);
  $attr='';
  foreach($attrs as $k=>$v){ $attr.=' '.e((string)$k).'="'.e((string)$v).'"'; }
- echo '<form method="post"'.$attr.' action="'.BASE.'/index.php?'.http_build_query($qs).'">';
+ echo '<form method="post"'.$attr.' action="'.BASE.'/index.php?'.http_build_query($qs).'">'.csrf_field();
 }
 function form_close(): void{ echo '</form>'; }
 

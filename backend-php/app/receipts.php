@@ -205,7 +205,7 @@ function receipts_context(int $paymentId): ?array
    $ctx['kind']='order';
    $ctx['ref']=(string)$o['order_number'];
 
-   $rows=rows('SELECT oi.quantity,oi.unit_price,oi.total,oi.notes,mi.name'
+   $rows=rows('SELECT oi.quantity,oi.unit_price,oi.total,oi.notes,'.hp_order_item_name_sql()
     .' FROM order_items oi LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id'
     .' WHERE oi.order_id=? ORDER BY oi.id',[(int)$p['order_id']]);
    foreach($rows as $l){

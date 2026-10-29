@@ -1036,3 +1036,68 @@ a,button,input,select,textarea,[role=button],label{touch-action:manipulation}
 @media(max-width:1080px){.sideShrink{display:none}}
 
 
+
+/* Finance workspaces */
+.finFilter{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 16px}
+.finFilter label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.finFilter input[type=date]{padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--navy);font:inherit;font-size:13px}
+.finRangeText{font-size:12.5px;color:var(--muted);margin-left:auto}
+.finTools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+.finSearch{display:flex;align-items:center;gap:9px;margin:0 0 12px;padding:9px 11px;border:1px solid var(--line2);border-radius:10px;background:#fbfaf6}
+.finSearch label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.finSearch input{border:0;background:transparent;outline:0;flex:1;min-width:140px;font:inherit;font-size:13.5px;color:var(--navy)}
+.finCount{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.finTable th[data-sort]{cursor:pointer;user-select:none}
+.finTable th[data-sort]::after{content:' \2195';opacity:.35;font-size:10px}
+.finTable th[aria-sort=ascending]::after{content:' \2191';opacity:.9;color:var(--gold)}
+.finTable th[aria-sort=descending]::after{content:' \2193';opacity:.9;color:var(--gold)}
+.finTable tfoot td{background:#f7f5ee;border-top:1px solid var(--line);font-weight:700;color:var(--navy);padding:11px 12px}
+.finTotal{white-space:nowrap}
+.finNoRows{margin:12px 0 0;text-align:center;color:var(--muted);font-size:13px}
+.finAlert{max-width:none}
+.finPrintHead{display:none}
+.finPanel .panelHead{border-bottom:1px solid var(--line2);padding-bottom:12px;margin-bottom:14px}
+.finPanel .panelHead .hint{margin-bottom:0}
+.finSplit{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+.finStack{display:grid;gap:18px}
+.finMiniTable{width:100%;border-collapse:collapse}
+.finMiniTable td,.finMiniTable th{padding:8px 4px;border-bottom:1px solid var(--line2);font-size:13px;text-align:left}
+.finMiniTable th{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.finMiniTable td:last-child,.finMiniTable th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.finNote{font-size:12.5px;color:var(--muted);line-height:1.55}
+.finBadgeRow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.finFormGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.finFormGrid .field{margin:0}
+.finFormGrid .field.wide{grid-column:1/-1}
+.finLines{width:100%;border-collapse:collapse;margin:10px 0}
+.finLines th,.finLines td{padding:7px 6px;border-bottom:1px solid var(--line2);font-size:12.5px;text-align:left}
+.finLines th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.finLines input,.finLines select{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:7px;font:inherit;font-size:12.5px;background:#fff}
+.finLines .amt{text-align:right}
+.finAccountCard{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line2)}
+.finAccountCard:last-child{border-bottom:0}
+.finAccountCard b{color:var(--navy)}
+.finAccountCard small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+.finAccountCard .finAcctVal{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy);white-space:nowrap}
+.finPeriod{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line2)}
+.finPeriod:last-child{border-bottom:0}
+.finPeriod small{display:block;color:var(--muted);font-size:11.5px}
+@media(max-width:900px){.finSplit{grid-template-columns:1fr}.finFormGrid{grid-template-columns:1fr}}
+@media print{
+  .finTools,.finSearch,.finFilter,.finNoRows{display:none!important}
+  .finPrintHead{display:flex!important;position:fixed;top:0;left:0;right:0;height:22mm;align-items:center;gap:5mm;padding:0 0 3mm;border-bottom:1.4pt solid #0b2545;background:#fff;z-index:99}
+  .finPrintHead img{height:15mm;width:auto}
+  .finPrintHouse{display:flex;flex-direction:column;font-size:8pt;line-height:1.45;color:#123}
+  .finPrintHouse b{font-size:11pt;color:#0b2545;letter-spacing:.03em}
+  .finPrintMeta{margin-left:auto;text-align:right;display:flex;flex-direction:column;font-size:8pt;line-height:1.45;color:#123}
+  .finPrintMeta b{font-size:11pt;color:#0b2545}
+  .content{padding-top:26mm!important}
+  .finPanel .panelHead{border-bottom:1pt solid #bbb;padding-bottom:2mm;margin-bottom:3mm}
+  .finTable{font-size:8.2pt}
+  .finTable th,.finTable td{padding:2.6mm 2mm}
+  .finTable tfoot td{background:#f1eee4!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .finPanel{break-inside:auto;page-break-inside:auto}
+  .finTable tr{break-inside:avoid;page-break-inside:avoid}
+  .badge{border:1px solid #999;color:#000!important;background:#fff!important}
+  .kpi{break-inside:avoid;page-break-inside:avoid}
+}

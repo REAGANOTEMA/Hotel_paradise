@@ -94,7 +94,7 @@ echo '</div>';
 echo '<div>';
  echo '<div class="panel"><h2>What to notify me about</h2>';
  echo '<p class="hint">A switch off means the event still appears in the list, but no phone is rung for it.</p>';
- echo '<form method="post" action="'.BASE.'/index.php?page=notifications&act=prefs">';
+ echo '<form method="post" action="'.BASE.'/index.php?page=notifications&act=prefs">'.csrf_field();
  foreach(NOTIFY_CATEGORIES as $cat=>$col){
   echo '<label class="toggleRow"><span>'.e($catLabel[$cat]??ucfirst($cat)).'</span>';
   echo '<input type="checkbox" name="'.e($col).'"'.($prefs[$cat]?' checked':'').'><span class="switch" aria-hidden="true"></span></label>';
@@ -125,7 +125,7 @@ $hasRead=false; foreach($items as $n){ if($n['read_at']!==null){ $hasRead=true; 
 echo '<div class="panel"><div class="panelHead"><h2>Notifications</h2>';
 echo '<div class="bar">';
 if($unread>0){
- echo '<form method="post" action="'.BASE.'/index.php?page=notifications&act=read_all"><button class="btnGhost sm">Mark all read</button></form>';
+ echo '<form method="post" action="'.BASE.'/index.php?page=notifications&act=read_all">'.csrf_field().'<button class="btnGhost sm">Mark all read</button></form>';
 }
 if($hasRead){
  echo '<button type="button" class="btnGhost sm" id="clearRead" title="Remove the notifications you have already read from your list">Clear read</button>';

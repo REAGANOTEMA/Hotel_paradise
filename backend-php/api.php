@@ -887,7 +887,7 @@ if($act==='checkout'){
   $oid=(int)$o['id'];
   $payments=$paymentsFor($oid,null);
   $total=(float)$o['total'];
-  $lines=rows('SELECT oi.quantity,oi.unit_price,oi.total,oi.notes,mi.name'
+  $lines=rows('SELECT oi.quantity,oi.unit_price,oi.total,oi.notes,'.hp_order_item_name_sql()
     .', '.nullable_column('menu_items','image','image','mi')
     .' FROM order_items oi'
     .' LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id=? ORDER BY oi.id',[$oid]);

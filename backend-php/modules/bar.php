@@ -48,7 +48,7 @@ $allIds=array_values(array_unique(array_merge(
 )));
 if($allIds){
  $ph=implode(',',array_fill(0,count($allIds),'?'));
- foreach(rows("SELECT oi.order_id,oi.quantity,mi.name FROM order_items oi LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id IN($ph) ORDER BY oi.id",$allIds) as $ln){
+ foreach(rows("SELECT oi.order_id,oi.quantity,".hp_order_item_name_sql()." FROM order_items oi LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id IN($ph) ORDER BY oi.id",$allIds) as $ln){
   $linesBy[(int)$ln['order_id']][]=$ln;
  }
 }

@@ -122,6 +122,34 @@ Patches
     password a member has already changed is never overwritten. The repaired
     accounts sign in with Paradise2026 and should change it from My Profile.
 
+2026-10-27_fix_missing.sql
+    WARNING: do not run this on a live database that can hold pending gateway
+    payments. Besides creating missing enquiry/news tables and columns, it ends
+    with UPDATE payments SET status='successful' WHERE status='pending'. That
+    confirms every pending payment without a provider check, so it can turn an
+    unpaid booking into a paid one and allow a receipt. It is not part of the
+    safe repair chain. If it has already run, review payments that were changed
+    by that statement and reconcile them against the provider before trusting
+    their receipts.
+
+2026-10-29_pos_payment_shift_integrity.sql
+    Adds payments.shift_id and backfills it from orders.shift_id, so a POS or
+    F&B payment is tied to the shift that took it. Adds the POS, order, payment,
+    shift and table indexes used by the live screens. Creates read-only views
+    hp_pos_order_balances, hp_pos_daily_sales, hp_payment_mix_daily,
+    hp_shift_reconciliation and hp_pos_integrity_issues for reporting and for
+    spotting mismatched totals, cancelled or unpaid orders that already carry
+    payments, payments with no date, or a closed shift whose linked cash no
+    longer matches its stored expected cash. It does not rewrite old totals or
+    payments.
+
+2026-10-29_pos_custom_items.sql
+    Adds order_items.custom_name and makes order_items.menu_item_id nullable, so
+    the bar or restaurant can add a dish a guest asks for when it is not on the
+    menu. The line keeps its own name, price, quantity and note; the kitchen,
+    F&B till, receipts and reports read it beside ordinary menu lines. Existing
+    menu lines keep their menu_item_id and no menu item is created or changed.
+
 How to run one
 --------------
 phpMyAdmin: open the system database, "Import", choose the .sql file, then Go.

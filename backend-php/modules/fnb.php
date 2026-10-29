@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 $act=$_GET['act']??'';
 $u=current_user();
+require_once __DIR__.'/../app/pos.php';
 
 /*
  * The window during which a settled order payment is still "fresh" on the F&B
@@ -43,37 +44,35 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    $oid=(int)($_GET['oid']??$_POST['oid']??0);
    $r=row('SELECT * FROM orders WHERE id=?',[$oid]);
    if(!$r){ flash('That order is no longer open.','bad'); go('fnb'); }
-   $discount=max(0.0,(float)($_POST['discount']??0));
-   $method=$_POST['method']??'cash';
-   $due=max(0.0,(float)$r['total']-$discount);
-   $paidNow=max(0.0,(float)($_POST['amount']??$due));
-   if($paidNow<=0){ flash('Enter the amount collected.','bad'); go('fnb',['view'=>$oid]); }
-   q('INSERT INTO payments(hotel_id,user_id,order_id,amount,method,status,created_at) VALUES(1,?,?,?,?,\'successful\',NOW())',
-     [$u['id'],$oid,$paidNow,$method]);
-   $payId=(int)db()->lastInsertId();
-   audit('payment','order',$oid,['amount'=>$paidNow,'method'=>$method]);
-   if($discount>0) q('UPDATE orders SET discount=?,total=? WHERE id=?',[$discount,$due,$oid]);
-   $got=(float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE order_id=? AND status=\'successful\'',[$oid]);
-   q('UPDATE orders SET status=? WHERE id=?',[$got+0.001>=$due?'paid':'partially_paid',$oid]);
-   notify_console('desk-fnb-payment:'.$payId,'payment','F&B payment '.money($paidNow),
-    'Received by '.str_replace('_',' ',(string)$method).' for order '.$r['order_number'].'.',
+   $settled=pos_settle_order($r,(float)($_POST['amount']??0),(string)($_POST['method']??'cash'),(float)($_POST['discount']??0),(int)$u['id'],[
+    'reference'=>(string)($_POST['reference']??''),
+    'payer_phone'=>(string)($_POST['payer_phone']??''),
+   ]);
+   if(!$settled['ok']){ flash((string)$settled['error'],'bad'); go('fnb',['view'=>$oid]); }
+   $payId=(int)$settled['payment_id'];
+   notify_console('desk-fnb-payment:'.$payId,'payment','F&B payment '.money($settled['amount']),
+    'Received by '.str_replace('_',' ',(string)$settled['method']).' for order '.$r['order_number'].'.',
     ['order_id'=>$oid,'payment_id'=>$payId],['director','general_manager','accountant','cashier'],'payment',$payId);
-   // The money is in, so the guest's copy goes to their email at once. The bill
-   // below prints itself as the hotel's copy. Neither happens on a request that
-   // was not paid, because this call only ever sees a settled payment.
    require_once __DIR__.'/../app/receipts.php';
    $receipt=receipts_after_payment($payId);
    $sentNote=($receipt['email_sent']??false)
     ?' The receipt was emailed to '.$receipt['email_to'].'.'
     :(($receipt!==null&&($receipt['email_to']??'')==='')?' No email address was on file, so nothing was emailed.':'');
-   flash('Payment of '.money($paidNow).' recorded for order '.$r['order_number'].'.'.$sentNote.receipts_copy_note($receipt));
+   flash('Payment of '.money($settled['amount']).' recorded for order '.$r['order_number'].'.'.$sentNote.($receipt?receipts_copy_note($receipt):''));
    go('fnb',['view'=>$oid,'printed'=>1]);
    break;
   case 'status':
-   $oid=(int)($_POST['oid']??0); $nst=$_POST['nst']??'';
-   $r=row('SELECT status,order_number FROM orders WHERE id=?',[$oid]);
+   $oid=(int)($_POST['oid']??0); $nst=(string)($_POST['nst']??'');
+   $r=row('SELECT status,order_number,total FROM orders WHERE id=?',[$oid]);
    if(!$r){ flash('That order is no longer open.','bad'); go('fnb'); }
+   if($r['status']==='cancelled'){ flash('That order is already cancelled.','warn'); go('fnb',['view'=>$oid]); }
    if(in_array($nst,['accepted','preparing','ready','served','cancelled'],true)){
+    if($nst==='cancelled' && pos_order_paid($oid)>0.001){
+     flash('This order has money against it. Reverse the payment before cancelling it.','bad'); go('fnb',['view'=>$oid]);
+    }
+    if($nst==='cancelled'){
+     q('INSERT INTO voids(hotel_id,ref_type,ref_id,reason,amount,user_id,created_at) VALUES(1,\'order\',?,?,?,?,NOW())',[$oid,'Cancelled from Food and Beverage',(float)$r['total'],$u['id']]);
+    }
     q('UPDATE orders SET status=? WHERE id=?',[$nst,$oid]);
     audit('order_status','order',$oid,['status'=>$r['status']],['status'=>$nst]);
     if($nst==='cancelled'){
@@ -121,7 +120,7 @@ $orders=rows("SELECT o.*,(SELECT oi.notes FROM order_items oi WHERE oi.order_id=
 $lines=[];
 $ids=array_map(static fn(array $r): int=>(int)$r['id'],$orders);
 if($ids){
- foreach(rows('SELECT oi.order_id,oi.quantity,oi.unit_price,oi.total,oi.notes,mi.name FROM order_items oi LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id IN('.implode(',',array_map('intval',$ids)).') ORDER BY oi.id',[]) as $l){
+ foreach(rows('SELECT oi.order_id,oi.quantity,oi.unit_price,oi.total,oi.notes,'.hp_order_item_name_sql().' FROM order_items oi LEFT JOIN menu_items mi ON mi.id=oi.menu_item_id WHERE oi.order_id IN('.implode(',',array_map('intval',$ids)).') ORDER BY oi.id',[]) as $l){
   $lines[(int)$l['order_id']][]=$l;
  }
 }
@@ -241,16 +240,36 @@ if($view){
  if((float)$view['paid']>0) echo '<div class="tt" style="font-size:13px;color:#2e7d32"><span>Paid</span><b>'.money($view['paid']).'</b></div>';
  echo '</div>';
 
+ $viewPays=rows("SELECT p.amount,p.method,p.provider_reference,p.payer_phone,p.created_at,u.name who
+  FROM payments p LEFT JOIN users u ON u.id=p.user_id
+  WHERE p.order_id=? AND p.status='successful' ORDER BY p.id",[$view['id']]);
+ if($viewPays){
+  echo '<h3 style="margin-top:20px">Payments received</h3>';
+  echo '<table class="tbl"><thead><tr><th>Time</th><th>Method</th><th>Reference</th><th>Payer phone</th><th>Taken by</th><th class="num">Amount</th></tr></thead><tbody>';
+  foreach($viewPays as $vp){
+   echo '<tr><td>'.fmtdt($vp['created_at']).'</td>';
+   echo '<td>'.e(ucwords(str_replace('_',' ',(string)$vp['method']))).'</td>';
+   echo '<td>'.e((string)($vp['provider_reference']??'')).'</td>';
+   echo '<td>'.e((string)($vp['payer_phone']??'')).'</td>';
+   echo '<td>'.e((string)($vp['who']??'')).'</td>';
+   echo '<td class="num">'.money($vp['amount']).'</td></tr>';
+  }
+  echo '</tbody></table>';
+ }
+
  $due=max(0.0,(float)$view['total']-(float)$view['paid']);
  if($due>0.001){
   echo '<h3 style="margin-top:20px">Take a payment</h3>';
   form_open('fnb','settle',['oid'=>$view['id']]);
   echo '<div class="formRow">';
-  echo '<div class="field"><label>Amount collected</label><input type="number" name="amount" value="'.(int)round($due).'" step="100" min="0"></div>';
-  echo '<div class="field"><label>Discount</label><input type="number" name="discount" value="0" step="100" min="0"></div>';
+  echo '<div class="field"><label>Amount collected</label><input type="number" name="amount" value="'.number_format($due,2,'.','').'" step="0.01" min="0.01" required></div>';
+  echo '<div class="field"><label>Discount</label><input type="number" name="discount" value="0" step="0.01" min="0"'.((float)$view['paid']>0?' disabled':'').'></div>';
   echo '<div class="field"><label>Method</label><select name="method">';
   foreach(payment_methods() as $mk=>$mv) echo '<option value="'.e($mk).'">'.e($mv).'</option>';
-  echo '</select></div></div>';
+  echo '</select></div>';
+  echo '<div class="field"><label>Payment reference</label><input name="reference" maxlength="190" placeholder="MoMo, card or bank reference"></div>';
+  echo '<div class="field"><label>Payer phone</label><input name="payer_phone" maxlength="50" placeholder="Optional, for mobile money"></div>';
+  echo '</div>';
   echo '<button class="btn tick">Record payment and print</button>';
   echo '<p class="hint" style="margin:10px 0 0">The receipt prints by itself as soon as it is recorded.</p>';
   form_close();

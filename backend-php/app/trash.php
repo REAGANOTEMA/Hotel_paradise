@@ -87,6 +87,7 @@ function trash_button(string $table,int $id,string $back=''): string{
  $what=strtolower($meta['label']);
  $msg='Move this '.$meta['label'].' to the Trash? You can restore it later from the Trash page.';
  return '<form method="post" class="actForm" onsubmit="return confirm('.json_encode($msg,JSON_UNESCAPED_SLASHES|JSON_HEX_APOS).')">'
+  .csrf_field()
   .'<input type="hidden" name="trash_action" value="trash">'
   .'<input type="hidden" name="table" value="'.e($table).'">'
   .'<input type="hidden" name="id" value="'.(int)$id.'">'

@@ -339,6 +339,35 @@ function hp_column_exists(string $table,string $col): bool{
  }catch(Throwable $e){ return false; }
 }
 
+/**
+ * The name a till or kitchen should print for an order line.
+ *
+ * A menu line reads its menu item. A line the bar or restaurant wrote by hand
+ * reads custom_name instead. The expression falls back to "Custom item" so a
+ * database that has not run the custom-items patch still answers with a usable
+ * name rather than an error.
+ */
+function hp_order_item_name_sql(string $itemAlias='oi',string $menuAlias='mi'): string{
+ $item=preg_replace('/[^A-Za-z0-9_]/','',(string)$itemAlias) ?: 'oi';
+ $menu=preg_replace('/[^A-Za-z0-9_]/','',(string)$menuAlias) ?: 'mi';
+ $custom=hp_column_exists('order_items','custom_name')?"NULLIF($item.custom_name,'')":'NULL';
+ return "COALESCE($menu.name,$custom,'Custom item') AS name";
+}
+
+/** Whether this database can store a custom order line: the name column exists
+ *  and menu_item_id accepts NULL for a line with no menu item behind it. */
+function hp_order_items_allow_custom(): bool{
+ static $ok=null;
+ if($ok!==null) return $ok;
+ $ok=false;
+ if(!hp_column_exists('order_items','custom_name')) return false;
+ try{
+  $col=row("SHOW COLUMNS FROM order_items LIKE 'menu_item_id'");
+  $ok=strtoupper((string)($col['Null']??''))==='YES';
+ }catch(Throwable $e){ $ok=false; }
+ return $ok;
+}
+
 /** Adds a column the running database does not have yet, and does nothing at
  *  all when it already does. A locked or read-only database is left to the page
  *  to explain, so this never turns a missing column into a stack trace. */
@@ -589,6 +618,7 @@ function page_caps(): array{
   'rooms'=>['director','general_manager','receptionist','housekeeping','maintenance'],
   'guests'=>['director','general_manager','receptionist'],
   'bar'=>['director','general_manager','cashier','waiter','bar_staff'],
+  'restaurant'=>['director','general_manager','cashier','waiter','bar_staff'],
   'pos'=>['director','general_manager','cashier','waiter','bar_staff'],
   'fnb'=>['director','general_manager','cashier','waiter','bar_staff'],
   'kitchen'=>['director','general_manager','kitchen'],
@@ -601,7 +631,10 @@ function page_caps(): array{
   'messages'=>['director','general_manager','receptionist','kitchen'],
   'testimonials'=>['director','general_manager','marketing'],
   'expenses'=>['director','general_manager','accountant'],
-  'finance'=>['director','general_manager','accountant','cashier'],
+  'cashier'=>['director','general_manager','accountant','cashier','auditor'],
+  'accountant'=>['director','general_manager','accountant'],
+  'auditor'=>['director','general_manager','accountant','auditor'],
+  'finance'=>['director','general_manager','accountant','cashier','auditor'],
   'invoices'=>['director','general_manager','accountant','cashier','auditor'],
   'approvals'=>['director','general_manager','accountant'],
   'audit'=>['director','general_manager','auditor'],
@@ -626,6 +659,20 @@ function page_allowed(string $page): bool{
  $allowed=$map[$page];
  if($allowed===[]) return true;
  return (bool)array_intersect($r,$allowed);
+}
+
+function csrf_token(): string{
+ if(empty($_SESSION['csrf_token'])||!is_string($_SESSION['csrf_token'])) $_SESSION['csrf_token']=bin2hex(random_bytes(32));
+ return $_SESSION['csrf_token'];
+}
+
+function csrf_field(): string{
+ return '<input type="hidden" name="_csrf" value="'.e(csrf_token()).'">';
+}
+
+function csrf_valid(): bool{
+ $sent=$_POST['_csrf']??'';
+ return is_string($sent)&&$sent!==''&&hash_equals(csrf_token(),$sent);
 }
 
 function flash(string $msg,string $type='ok'): void{ $_SESSION['flash']=['msg'=>$msg,'type'=>$type]; }

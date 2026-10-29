@@ -49,10 +49,10 @@ foreach($registry as $table=>$meta){
   echo '<td>'.e(fmtdt($r['deleted_at'])).'</td>';
   echo '<td>'.e($r['del_by']??($who[(int)($r['deleted_by']??0)]??'—')).'</td>';
   echo '<td style="text-align:right;white-space:nowrap">';
-  echo '<form method="post" class="actForm" onsubmit="return confirm(\'Put this record back where it came from?\');">';
+  echo '<form method="post" class="actForm" onsubmit="return confirm(\'Put this record back where it came from?\');">'.csrf_field();
   echo '<input type="hidden" name="trash_action" value="restore"><input type="hidden" name="table" value="'.e($table).'"><input type="hidden" name="id" value="'.(int)$r['id'].'">';
   echo '<button class="btn sm" type="submit">Restore</button></form> ';
-  echo '<form method="post" class="actForm" onsubmit="return confirm(\'Delete this record for good? This cannot be undone.\');">';
+  echo '<form method="post" class="actForm" onsubmit="return confirm(\'Delete this record for good? This cannot be undone.\');">'.csrf_field();
   echo '<input type="hidden" name="trash_action" value="purge"><input type="hidden" name="table" value="'.e($table).'"><input type="hidden" name="id" value="'.(int)$r['id'].'">';
   echo '<button class="btn sm danger" type="submit">Delete permanently</button></form>';
   echo '</td></tr>';

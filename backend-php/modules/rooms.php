@@ -85,7 +85,7 @@ foreach($floors as $f){
   foreach($all as $r) if($r['floor']===$f['floor']){
    $tname=$typeNames[(int)$r['room_type_id']]??'';
    echo '<div class="room '.e($r['status']).'"><div class="rno">'.e($r['room_number']).'</div><div class="rtype">'.e($tname).'</div>';
-   echo '<form method="post" action="'.BASE.'/index.php?page=rooms&amp;act=status" style="margin-top:10px">';
+   echo '<form method="post" action="'.BASE.'/index.php?page=rooms&amp;act=status" style="margin-top:10px">'.csrf_field();
    echo '<input type="hidden" name="room_id" value="'.(int)$r['id'].'">';
    echo '<select name="status" onchange="this.form.submit()" style="width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:11.5px">';
    $states=['available'=>'Available','dirty'=>'Dirty','cleaning'=>'Cleaning','inspected'=>'Inspected','maintenance'=>'Maintenance','out_of_service'=>'Out of service'];
