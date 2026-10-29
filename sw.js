@@ -1,4 +1,4 @@
-﻿/* Hotel Paradise on the Nile - service worker.
+/* Hotel Paradise on the Nile - service worker.
  *
  * What it is allowed to keep, and what it must never keep:
  *
@@ -14,7 +14,7 @@
  *     a booking, an order or a payment look as though it was submitted
  *     when the server has not confirmed it: those pages are network-only.
  */
-const VERSION = 'hpn-2026-15';
+const VERSION = 'hpn-2026-16';
 const STATIC_CACHE = VERSION + '-static';
 const RUNTIME_CACHE = VERSION + '-runtime';
 const OFFLINE_URL = './offline.html';
@@ -25,8 +25,11 @@ const PRECACHE = [
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-512.png',
-  './Hotel-Paradise-on-the-Nile-Logo.webp',
-  './Hotel-Paradise-on-the-Nile-Logo.webp',
+  './logo-64.png',
+  './logo-192.png',
+  './logo-256.png',
+  './apple-touch-icon.png',
+  './favicon.ico',
   './Hotel-Paradise-on-the-Nile-Logo.webp'
 ];
 

@@ -50,4 +50,7 @@ foreach($list as $s){
 }
 if(!count($list)) echo '<tr><td colspan="9" style="text-align:center;color:var(--muted)">No shifts yet.</td></tr>';
 echo '</tbody></table></div>';
+
+stock_request_dashboard_panel('shifts');
+
 page_foot();

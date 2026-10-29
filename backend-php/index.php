@@ -57,8 +57,15 @@ function pagelogin(): void{
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="%%BASE%%/assets/admin.css">
-<link rel="icon" type="image/png" sizes="64x64" href="%%SITE%%/images/Hotel-Paradise-on-the-Nile-Logo.webp">
-<link rel="apple-touch-icon" href="%%SITE%%/images/Hotel-Paradise-on-the-Nile-Logo.webp">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Paradise Staff">
+<link rel="manifest" href="%%BASE%%/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="%%BASE%%/logo-64.png">
+<link rel="icon" href="%%BASE%%/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="%%BASE%%/apple-touch-icon.png">
+<script>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("%%BASE%%/sw.js",{scope:"%%BASE%%/"}).catch(function(){})})}</script>
 </head>
 <body class="loginBody">
 <div class="loginWrap">
@@ -209,12 +216,20 @@ if($_SERVER['REQUEST_METHOD']==='POST' && !csrf_valid()){
  page_foot(); exit;
 }
 
-/* A table the console filters by deleted_at may exist on an older install
+ /* A table the console filters by deleted_at may exist on an older install
    without that column. It is repaired here, once, before any module reads a
    list, so a missing column can never stop a page from opening. */
 hp_ensure_soft_delete_columns();
 hp_ensure_procurement_tables();
 hp_ensure_procurement_columns();
+
+/* The department dashboards raise their own stock requests. The page decides
+   which department the member speaks for, and the store and Director are
+   notified in the same breath as the request is written. */
+require_once __DIR__.'/app/stock_requests.php';
+if($_SERVER['REQUEST_METHOD']==='POST' && in_array($page,['dashboard','overview','restaurant','bar','kitchen','shifts'],true)){
+ stock_request_handle_widget($page,current_user());
+}
 
 /* Moving a record to the Trash, bringing it back, or removing it for good is
    handled here, once, for every module. The button each module prints carries

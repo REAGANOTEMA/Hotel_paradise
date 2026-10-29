@@ -143,4 +143,6 @@ if($cap!==null){
   echo '</div></div>';
 }
 
+stock_request_dashboard_panel('dashboard');
+
 page_foot();

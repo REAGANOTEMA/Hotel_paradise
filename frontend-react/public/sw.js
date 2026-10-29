@@ -14,7 +14,7 @@
  *     a booking, an order or a payment look as though it was submitted
  *     when the server has not confirmed it: those pages are network-only.
  */
-const VERSION = 'hpn-2026-15';
+const VERSION = 'hpn-2026-16';
 const STATIC_CACHE = VERSION + '-static';
 const RUNTIME_CACHE = VERSION + '-runtime';
 const OFFLINE_URL = './offline.html';
@@ -27,7 +27,10 @@ const PRECACHE = [
   './icon-maskable-512.png',
   './logo-64.png',
   './logo-192.png',
-  './logo-256.png'
+  './logo-256.png',
+  './apple-touch-icon.png',
+  './favicon.ico',
+  './Hotel-Paradise-on-the-Nile-Logo.webp'
 ];
 
 self.addEventListener('install', event => {

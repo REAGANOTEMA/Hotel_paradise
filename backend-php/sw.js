@@ -1,4 +1,4 @@
-﻿/*
+/*
  * The console's service worker. Its only job is to receive a Browser Web Push
  * message and show it as a notification, and to open the notifications page
  * when the notification is tapped. It deliberately does NOT cache anything:
@@ -15,6 +15,8 @@ self.addEventListener('activate', function(event){
   event.waitUntil(self.clients.claim());
 });
 
+self.addEventListener('fetch', function(){});
+
 self.addEventListener('push', function(event){
   var payload = {};
   try { payload = event.data ? event.data.json() : {}; }
@@ -23,8 +25,8 @@ self.addEventListener('push', function(event){
   var title = payload.title || 'Hotel Paradise on the Nile';
   var options = {
     body: payload.body || 'You have a new notification.',
-    icon: '../images/Hotel-Paradise-on-the-Nile-Logo.webp',
-    badge: '../images/Hotel-Paradise-on-the-Nile-Logo.webp',
+    icon: 'icon-192.png',
+    badge: 'icon-192.png',
     tag: payload.tag || 'hpn-notification',
     renotify: true,
     data: payload.data || {}

@@ -152,4 +152,7 @@ if(!$menuCats){
 echo '</div>';
 echo '</div></div>';
 
+$reqDept=stock_request_department_by_code('RT');
+if($reqDept) stock_request_department_panel($reqDept,'restaurant','Restaurant stock request');
+
 page_foot();

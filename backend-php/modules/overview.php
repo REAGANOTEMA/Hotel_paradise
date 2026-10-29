@@ -618,5 +618,7 @@ function formatBytes($bytes, $decimals = 2) {
   return round($bytes / pow($k, $i), $dm) . ' ' . $sizes[$i];
 }
 
+stock_request_oversight_panel('overview','Requests awaiting the Director');
+
 receipt_print('overview');
 page_foot();

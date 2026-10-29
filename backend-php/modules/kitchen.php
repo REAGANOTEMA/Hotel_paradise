@@ -187,5 +187,8 @@ echo '<style>
 @media(max-width:720px){.board{grid-template-columns:1fr}}
 </style>';
 
+$reqDept=stock_request_department_by_code('KC');
+if($reqDept) stock_request_department_panel($reqDept,'kitchen','Kitchen stock request');
+
 receipt_print('kitchen',BASE.'/index.php?page=kitchen&act=feed');
 page_foot();

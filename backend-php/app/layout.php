@@ -296,8 +296,16 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
  echo '<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">';
  echo '<link rel="stylesheet" href="'.BASE.'/assets/admin.css">';
- echo '<link rel="icon" type="image/png" sizes="64x64" href="'.SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp">';
- echo '<link rel="apple-touch-icon" href="'.SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp">';
+ echo '<meta name="theme-color" content="#071A33">';
+ echo '<meta name="mobile-web-app-capable" content="yes">';
+ echo '<meta name="apple-mobile-web-app-capable" content="yes">';
+ echo '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">';
+ echo '<meta name="apple-mobile-web-app-title" content="Paradise Staff">';
+ echo '<link rel="manifest" href="'.BASE.'/manifest.webmanifest">';
+ echo '<link rel="icon" type="image/png" sizes="64x64" href="'.BASE.'/logo-64.png">';
+ echo '<link rel="icon" href="'.BASE.'/favicon.ico" sizes="any">';
+ echo '<link rel="apple-touch-icon" href="'.BASE.'/apple-touch-icon.png">';
+ echo '<script>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("'.BASE.'/sw.js",{scope:"'.BASE.'/"}).catch(function(){})})}</script>';
  echo '</head><body data-page="'.e($active).'" data-role="'.e($roleKey).'"><div class="app">';
 
  echo '<a class="skipLink" href="#mainContent">Skip to content</a>';
@@ -1116,8 +1124,8 @@ function hotel_brand(): array{
   'email'=>'frontdesk@hotelparadiseonthenile.info',
   'website'=>'www.hotelparadiseonthenile.info',
   'certification'=>'UNBS Certified, US 130:2017',
-  'logo'=>$site.'/images/Hotel-Paradise-on-the-Nile-Logo.webp',
-  'crest'=>$site.'/images/Hotel-Paradise-on-the-Nile-Logo.webp',
+  'logo'=>$site.'/images/paradise-logo.png',
+  'crest'=>$site.'/images/paradise-logo.png',
  ];
 }
 
@@ -1135,7 +1143,7 @@ function document_css(): string{
  .doc{max-width:760px;margin:0 auto;background:#fff;position:relative;overflow:hidden;padding:38px 42px 30px;border-top:6px solid #0b2545;box-shadow:0 18px 50px rgba(11,37,69,.14)}
  .docHead{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid #e2e6ec}
  .docBrand{display:flex;gap:14px;align-items:center}
- .docLogo{width:62px;height:62px;object-fit:contain}
+ .docLogo{width:auto;height:52px;max-width:190px;object-fit:contain}
  .docName{font:700 21px 'Playfair Display',Georgia,serif;letter-spacing:.02em;line-height:1.05;color:#0b2545}
  .docName span{display:block;font-size:10.5px;letter-spacing:.34em;color:#c9a227;font-weight:700;margin-top:4px}
  .docTag{font-size:10.5px;color:#5b6b7f;margin-top:5px;letter-spacing:.06em}

@@ -143,4 +143,7 @@ if(!$menuCats){
 echo '</div>';
 echo '</div></div>';
 
+$reqDept=stock_request_department_by_code('BB');
+if($reqDept) stock_request_department_panel($reqDept,'bar','Bar stock request');
+
 page_foot();
