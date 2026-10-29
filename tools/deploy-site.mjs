@@ -31,6 +31,7 @@ mkdirSync(site, {recursive: true});
 for (const name of readdirSync(dist)) cpSync(join(dist, name), join(site, name), {recursive: true});
 
 const kept = new Set([...referenced].map(p => p.replace('assets/', '')));
+kept.add('Hotel-Paradise-on-the-Nile-Logo.webp');
 const assets = join(site, 'assets');
 const removed = [];
 for (const name of readdirSync(assets)) {

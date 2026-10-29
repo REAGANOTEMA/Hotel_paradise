@@ -80,7 +80,10 @@ if ($profImg) {
 } else {
   $imgSrc = SITE_URL . '/images/Hotel-Paradise-on-the-Nile-Logo.webp';
 }
-echo "<img id=\"profPrev\" src=\"" . $imgSrc . "\" style=\"width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #d4af37;cursor:pointer\" onclick=\"document.getElementById('profImg').click()\">";
+$profStyle = $profImg
+  ? "width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #d4af37;cursor:pointer"
+  : "width:auto;height:64px;max-width:260px;object-fit:contain;border-radius:0;background:transparent;border:0;padding:0;cursor:pointer";
+echo "<img id=\"profPrev\" src=\"" . $imgSrc . "\" style=\"" . $profStyle . "\" onclick=\"document.getElementById('profImg').click()\">";
 echo "<p style=\"margin-top:8px;font-size:12px;color:#666\">Click to change profile picture</p>";
 echo "</div>";
 echo "<div class=\"field\"><label>Full Name</label><input name=\"name\" value=\"" . e($me["name"] ?? "") . "\" required></div>";
@@ -92,7 +95,7 @@ echo "<script>
 document.getElementById('profImg').addEventListener('change', function(e){
   if(e.target.files && e.target.files[0]){
     const reader = new FileReader();
-    reader.onload = function(ev){ document.getElementById('profPrev').src = ev.target.result; }
+    reader.onload = function(ev){ var p=document.getElementById('profPrev'); p.src = ev.target.result; p.style.width='120px'; p.style.height='120px'; p.style.maxWidth='none'; p.style.borderRadius='50%'; p.style.objectFit='cover'; p.style.border='3px solid #d4af37'; }
     reader.readAsDataURL(e.target.files[0]);
   }
 });

@@ -503,7 +503,10 @@ if($act==='edit'||$act==='new'){
   /* ---- the photograph ---- */
   echo '<div class="field"><label for="f_image_file">Main photograph</label>';
   echo '<div style="display:flex;gap:14px;align-items:flex-start">';
-  echo '<img id="newsPrev" src="'.($imageSrc?e($imageSrc):SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp').'" alt="" style="width:120px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--line2);background:#f1ede2;flex:none"/>';
+  $prevStyle = $imageSrc
+    ? 'width:120px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--line2);background:#f1ede2;flex:none'
+    : 'width:160px;height:90px;object-fit:contain;border-radius:0;border:0;background:transparent;flex:none';
+  echo '<img id="newsPrev" src="'.($imageSrc?e($imageSrc):SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp').'" alt="" style="'.$prevStyle.'"/>';
   echo '<div style="flex:1"><input id="f_image_file" type="file" name="image_file" accept="image/*"/>';
   echo '<small class="hint" style="display:block;margin-top:6px">Upload a JPG, PNG, GIF or WebP up to 4MB. Shown at the head of the post.</small>';
   if($imageSrc){

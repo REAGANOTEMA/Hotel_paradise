@@ -130,7 +130,7 @@ function mail_encode(string $text): string
  */
 function mail_html(string $title,string $bodyHtml,string $preheader='',bool $staffCopy=false): string
 {
- $logo=mail_public_url('/images/paradise-logo.png');
+ $logo=mail_public_url('/images/Hotel-Paradise-on-the-Nile-Logo.webp');
  $pre=$preheader!==''?'<span style="display:none;visibility:hidden;opacity:0;height:0;width:0;overflow:hidden">'.e($preheader).'</span>':'';
  return '<!doctype html><html lang="en"><head><meta charset="utf-8">'
   .'<meta name="viewport" content="width=device-width,initial-scale=1">'
