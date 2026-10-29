@@ -46,6 +46,15 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    flash($r['ok']?'Finding updated.':(string)$r['error'],$r['ok']?'ok':'bad');
    go('auditor');
    break;
+  case 'recon-review':
+   if(!$canReview){
+    flash('Only the auditor, director or general manager may review reconciliations.','bad');
+    go('auditor');
+   }
+   $r=finance_reconciliation_review((int)($_POST['recon_id']??0),(int)$u['id']);
+   flash($r['ok']?'Reconciliation reviewed.':(string)$r['error'],$r['ok']?'ok':'bad');
+   go('auditor');
+   break;
  }
 }
 
@@ -147,6 +156,21 @@ foreach($reconciliations as $r){
 }
 finance_ui_close(6,[],'No reconciliations.');
 echo '</div>';
+
+if($canReview){
+ $drafts=array_values(array_filter($reconciliations,static fn(array $r): bool=>($r['status']??'')==='draft'));
+ if($drafts){
+  echo '<div class="panel"><h2>Review a reconciliation</h2><p class="hint">The reviewer must be a different person from the preparer. Review does not alter the snapshot.</p>';
+  form_open('auditor','recon-review');
+  echo '<div class="formGrid">';
+  echo '<div class="field"><label>Draft reconciliation</label><select name="recon_id" required><option value="">Choose draft</option>';
+  foreach($drafts as $d) echo '<option value="'.(int)$d['id'].'">'.e(($d['account_name']??'-').' - '.fmtdate($d['period_end']).' - difference '.money(abs((float)$d['difference']))).'</option>';
+  echo '</select></div>';
+  echo '</div><button class="btn blue">Mark reviewed</button>';
+  form_close();
+  echo '</div>';
+ }
+}
 echo '</div><div class="finStack">';
 
 if($canReview && $findings){

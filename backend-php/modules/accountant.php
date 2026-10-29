@@ -94,6 +94,30 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    flash($r['ok']?'Financial period reopened.':(string)$r['error'],$r['ok']?'ok':'bad');
    go('accountant');
    break;
+  case 'bank-account':
+   $r=finance_bank_account_create($_POST,(int)$u['id']);
+   flash($r['ok']?'Bank account added.':(string)$r['error'],$r['ok']?'ok':'bad');
+   go('accountant');
+   break;
+  case 'bank-transaction':
+   $r=finance_bank_transaction_add($_POST,(int)$u['id']);
+   flash($r['ok']?'Statement line recorded.':(string)$r['error'],$r['ok']?'ok':'bad');
+   go('accountant');
+   break;
+  case 'reconciliation':
+   $r=finance_reconciliation_save(
+    (int)($_POST['account_id']??0),
+    (string)($_POST['period_start']??''),
+    (string)($_POST['period_end']??''),
+    (float)($_POST['statement_in']??0),
+    (float)($_POST['statement_out']??0),
+    (float)($_POST['statement_closing']??0),
+    (string)($_POST['notes']??''),
+    (int)$u['id']
+   );
+   flash($r['ok']?'Reconciliation prepared with a difference of '.money(abs((float)$r['difference'])).'.':(string)$r['error'],$r['ok']?'ok':'bad');
+   go('accountant');
+   break;
  }
 }
 
@@ -109,6 +133,9 @@ $receivable=finance_receivables();
 $payables=finance_payables();
 $tax=finance_tax_summary($range['from'],$range['to_excl']);
 $efris=finance_efris_summary();
+$bankReady=finance_bank_ready();
+$banks=$bankReady?finance_bank_accounts():[];
+$reconciliations=$bankReady?finance_reconciliations(0,30):[];
 $tbDebit=array_sum(array_map(static fn(array $r): float=>(float)$r['debit'],$tb));
 $tbCredit=array_sum(array_map(static fn(array $r): float=>(float)$r['credit'],$tb));
 
@@ -303,6 +330,92 @@ if(!$efris['ready']){
 }
 echo '</div>';
 echo '</div></div>';
+
+echo '<div class="panel"><h2>Bank reconciliation</h2><p class="hint">Configure bank and mobile money accounts, record statement lines, then prepare a reconciliation. The auditor reviews the saved snapshot.</p>';
+if(!$bankReady){
+ finance_ui_alert('Bank reconciliation tables are not installed. Review and run database/sql/patches/2026-10-30_finance_workspace.sql.');
+}else{
+ echo '<div class="finSplit"><div>';
+ echo '<h3>Add account</h3>';
+ form_open('accountant','bank-account');
+ echo '<div class="formGrid">';
+ echo '<div class="field"><label>Account name</label><input type="text" name="name" maxlength="150" required></div>';
+ echo '<div class="field"><label>Bank or provider</label><input type="text" name="bank_name" maxlength="150"></div>';
+ echo '<div class="field"><label>Account holder</label><input type="text" name="account_name" maxlength="190"></div>';
+ echo '<div class="field"><label>Last four digits</label><input type="text" name="last4" maxlength="12"></div>';
+ echo '<div class="field"><label>Payment method</label><select name="method" required>';
+ foreach(payment_methods() as $k=>$v) echo '<option value="'.e($k).'">'.e($v).'</option>';
+ echo '</select></div>';
+ echo '<div class="field"><label>Opening balance</label><input type="number" name="opening_balance" step="0.01" value="0" required></div>';
+ echo '<div class="field"><label>Currency</label><input type="text" name="currency" value="UGX" maxlength="8" required></div>';
+ echo '</div><button class="btn">Add account</button>';
+ form_close();
+
+ echo '<h3 style="margin-top:18px">Record statement line</h3>';
+ form_open('accountant','bank-transaction');
+ echo '<div class="formGrid">';
+ echo '<div class="field"><label>Bank account</label><select name="account_id" required><option value="">Choose account</option>';
+ foreach($banks as $b) echo '<option value="'.(int)$b['id'].'">'.e((string)$b['name']).'</option>';
+ echo '</select></div>';
+ echo '<div class="field"><label>Statement date</label><input type="date" name="transaction_date" value="'.e(today()).'" required></div>';
+ echo '<div class="field"><label>Direction</label><select name="direction" required><option value="in">Money in</option><option value="out">Money out</option></select></div>';
+ echo '<div class="field"><label>Amount</label><input type="number" name="amount" min="0.01" step="0.01" required></div>';
+ echo '<div class="field"><label>Reference</label><input type="text" name="reference" maxlength="190"></div>';
+ echo '</div>';
+ echo '<div class="field"><label>Description</label><input type="text" name="description" maxlength="255" required></div>';
+ echo '<button class="btn blue">Record statement line</button>';
+ form_close();
+ echo '</div><div>';
+ echo '<h3>Prepare reconciliation</h3>';
+ form_open('accountant','reconciliation');
+ echo '<div class="formGrid">';
+ echo '<div class="field"><label>Bank account</label><select name="account_id" required><option value="">Choose account</option>';
+ foreach($banks as $b) echo '<option value="'.(int)$b['id'].'">'.e((string)$b['name']).'</option>';
+ echo '</select></div>';
+ echo '<div class="field"><label>Period start</label><input type="date" name="period_start" value="'.e(date('Y-m-01')).'" required></div>';
+ echo '<div class="field"><label>Period end</label><input type="date" name="period_end" value="'.e(date('Y-m-t')).'" required></div>';
+ echo '<div class="field"><label>Statement money in</label><input type="number" name="statement_in" step="0.01" value="0" required></div>';
+ echo '<div class="field"><label>Statement money out</label><input type="number" name="statement_out" step="0.01" value="0" required></div>';
+ echo '<div class="field"><label>Statement closing</label><input type="number" name="statement_closing" step="0.01" value="0" required></div>';
+ echo '</div>';
+ echo '<div class="field"><label>Notes</label><input type="text" name="notes" maxlength="500"></div>';
+ echo '<button class="btn">Prepare reconciliation</button>';
+ form_close();
+ echo '</div></div>';
+
+ finance_ui_open('accountantBanks','Bank accounts',['account'=>'Account','method'=>'Method','number'=>'Last four','num:book'=>'Book to date','num:statement'=>'Statement to date','num:gap'=>'Difference'],'','',true);
+ if(!$banks) finance_ui_empty(6,'No bank accounts yet.');
+ foreach($banks as $b){
+  $book=finance_bank_book_balance($b,'1970-01-01',date('Y-m-d',strtotime($range['to'].' +1 day')));
+  $statement=finance_bank_statement_balance($b,'1970-01-01',date('Y-m-d',strtotime($range['to'].' +1 day')));
+  $gap=$statement-$book;
+  echo '<tr><td>'.e((string)$b['name']).'</td><td>'.e(finance_method_label((string)$b['method'])).'</td><td>'.e((string)($b['account_number_last4']??'-')).'</td>';
+  echo '<td class="num">'.money($book).'</td><td class="num">'.money($statement).'</td><td class="num" style="color:'.(abs($gap)>0.009?'#c62828':'#2e7d32').'">'.($gap<0?'-':'').money(abs($gap)).'</td></tr>';
+ }
+ finance_ui_close(6,[],'No bank accounts.');
+ echo '</div>';
+
+ echo '<div class="panel"><h2>Recent statement lines</h2><p class="hint">Imported statement lines are evidence for reconciliation. They do not post to the ledger automatically.</p>';
+ $statementLines=$bankReady?rows("SELECT t.*,a.name account_name FROM finance_bank_transactions t JOIN finance_bank_accounts a ON a.id=t.account_id ORDER BY t.transaction_date DESC,t.id DESC LIMIT 120",[]):[];
+ finance_ui_open('accountantBankLines','Statement lines',['date'=>'Date','account'=>'Account','description'=>'Description','reference'=>'Reference','direction'=>'Direction','num:amount'=>'Amount','status'=>'Status'],'','',true);
+ if(!$statementLines) finance_ui_empty(7,'No statement lines recorded.');
+ foreach($statementLines as $t) echo '<tr><td>'.e(fmtdate($t['transaction_date'])).'</td><td>'.e((string)$t['account_name']).'</td><td>'.e((string)$t['description']).'</td><td>'.e((string)($t['reference']??'-')).'</td><td>'.e(ucfirst((string)$t['direction'])).'</td><td class="num">'.money((float)$t['amount']).'</td><td>'.finance_ui_status((string)$t['status']).'</td></tr>';
+ finance_ui_close(7,[],'No statement lines.');
+ echo '</div>';
+
+ echo '<div class="panel"><h2>Saved reconciliations</h2><p class="hint">A reconciliation is a snapshot of the book balance and statement balance at the period end.</p>';
+ finance_ui_open('accountantRecons','Reconciliations',['account'=>'Account','period'=>'Period','status'=>'Status','num:book'=>'Book','num:statement'=>'Statement','num:difference'=>'Difference','prepared'=>'Prepared by'],'','',true);
+ if(!$reconciliations) finance_ui_empty(7,'No reconciliations saved.');
+ foreach($reconciliations as $r){
+  $diff=(float)($r['difference']??0);
+  echo '<tr><td>'.e((string)($r['account_name']??'-')).'</td><td>'.e(fmtdate($r['period_start']).' - '.fmtdate($r['period_end'])).'</td><td>'.finance_ui_status((string)$r['status']).'</td>';
+  echo '<td class="num">'.money((float)($r['book_balance']??0)).'</td><td class="num">'.money((float)($r['statement_closing']??0)).'</td>';
+  echo '<td class="num" style="color:'.(abs($diff)>0.009?'#c62828':'#2e7d32').'">'.($diff<0?'-':'').money(abs($diff)).'</td><td>'.e((string)($r['prepared_name']??'-')).'</td></tr>';
+ }
+ finance_ui_close(7,[],'No reconciliations.');
+ echo '</div>';
+}
+echo '</div>';
 
 echo '<div class="toolbar"><a class="btnGhost" href="'.e(finance_page_link('cashier')).'">Cashier workspace</a><a class="btnGhost" href="'.e(finance_page_link('auditor')).'">Auditor workspace</a><a class="btnGhost" href="'.e(finance_page_link('expenses')).'">Expenses</a></div>';
 
