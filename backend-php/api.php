@@ -13,6 +13,7 @@ require __DIR__.'/app/bootstrap.php';
 require_once __DIR__.'/app/guest_comm.php';
 require_once __DIR__.'/app/invoices.php';
 require_once __DIR__.'/app/pesapal.php';
+require_once __DIR__.'/app/news_social.php';
 header('Content-Type: application/json; charset=utf-8');
 
 // A public endpoint must never answer with a PHP error page. The website reads
@@ -441,7 +442,13 @@ if($act==='menu'){
 if($act==='news'){
  $catLabels=['news'=>'News & announcements','update'=>'Updates & notices','opportunity'=>'Opportunities',
   'recruitment'=>'Recruitment','employee'=>'Employee of the month'];
+ ensure_news_social_tables();
  if(table_columns('news_posts')===[]){ $out(['ok'=>true,'posts'=>[],'categories'=>$catLabels,'count'=>0]); }
+
+ $visitorHash=news_visitor_hash((string)($body['token']??''),(string)($body['visitor']??''));
+ $reactionTotals=news_reaction_totals_all();
+ $commentCounts=news_comment_counts_all();
+ $myReactions=news_my_reactions($visitorHash);
 
  // A stored photograph may be one of ours (a path) or a full address elsewhere,
  // so it is handed back as something a browser can load from any page.
@@ -451,9 +458,10 @@ if($act==='news'){
   if(preg_match('#^https?://#i',$image)) return $image;
   return rtrim(SITE_URL,'/').'/'.ltrim(preg_replace('#^\.?/#','',$image),'/');
  };
- $shape=function(array $p) use($catLabels,$photo): array{
+ $shape=function(array $p) use($catLabels,$photo,$reactionTotals,$commentCounts,$myReactions): array{
+  $id=(int)$p['id'];
   return [
-   'id'=>(int)$p['id'],
+   'id'=>$id,
    'slug'=>(string)$p['slug'],
    'title'=>(string)$p['title'],
    'category'=>(string)$p['category'],
@@ -474,6 +482,9 @@ if($act==='news'){
    'views'=>(int)($p['views']??0),
    'published'=>substr((string)($p['publish_at']??''),0,16),
    'updated'=>substr((string)($p['updated_at']??''),0,16),
+   'reactions'=>$reactionTotals[$id]??news_empty_reaction_totals(),
+   'my_reaction'=>$myReactions[$id]??'',
+   'comment_count'=>$commentCounts[$id]??0
   ];
  };
 
@@ -484,7 +495,10 @@ if($act==='news'){
   if(!$p){ $out(['ok'=>false,'error'=>'That story could not be found. It may have been removed or not published yet.'],404); }
   q('UPDATE news_posts SET views=views+1 WHERE id=?',[(int)$p['id']]);
   $p['views']=(int)$p['views']+1;
-  $out(['ok'=>true,'post'=>$shape($p),'categories'=>$catLabels]);
+  $post=$shape($p);
+  $post['comments']=news_published_comments((int)$p['id']);
+  $post['comment_count']=count($post['comments']);
+  $out(['ok'=>true,'post'=>$post,'categories'=>$catLabels]);
  }
 
  $fcat=trim((string)($body['category']??''));
@@ -497,6 +511,89 @@ if($act==='news'){
  $rows=rows('SELECT * FROM news_posts WHERE '.implode(' AND ',$where)
   .' ORDER BY pinned DESC, publish_at DESC, id DESC LIMIT '.$limit,$args);
  $out(['ok'=>true,'posts'=>array_map($shape,$rows),'categories'=>$catLabels,'count'=>count($rows)]);
+}
+
+/**
+ * A reaction on a published story.
+ *
+ * The story is found by its slug, never by an id sent from the browser, and
+ * only while it is published and its moment has arrived. Pressing the same
+ * reaction again takes it back; pressing a different one replaces it, so one
+ * visitor leaves one reaction on a story, exactly as the unique key says.
+ */
+if($act==='news_react'){
+ if($method!=='POST'){ $out(['ok'=>false,'error'=>'Use POST to react to a story.'],405); }
+ ensure_news_social_tables();
+ $slug=trim((string)($body['slug']??''));
+ $reaction=strtolower(trim((string)($body['reaction']??'')));
+ if($slug==='' || !in_array($reaction,news_reaction_kinds(),true)){
+  $out(['ok'=>false,'error'=>'Please choose Like, Love or Applause.'],422);
+ }
+ $visitorHash=news_visitor_hash((string)($body['token']??''),(string)($body['visitor']??''));
+ if($visitorHash===''){
+  $out(['ok'=>false,'error'=>'We could not identify this browser. Please refresh the page and try again.'],422);
+ }
+ $newsLive=existing_columns('news_posts',['deleted_at'])!==[]?' AND deleted_at IS NULL':'';
+ $p=row("SELECT id FROM news_posts WHERE slug=? AND status='published' AND publish_at<=NOW()".$newsLive,[$slug]);
+ if(!$p){ $out(['ok'=>false,'error'=>'That story is no longer available.'],404); }
+ $newsId=(int)$p['id'];
+ $existing=row('SELECT id,reaction FROM news_reactions WHERE news_id=? AND visitor_hash=? LIMIT 1',[$newsId,$visitorHash]);
+ $mine=$reaction;
+ if($existing){
+  if((string)$existing['reaction']===$reaction){
+   q('DELETE FROM news_reactions WHERE id=?',[(int)$existing['id']]);
+   $mine='';
+  }else{
+   q('UPDATE news_reactions SET reaction=?,created_at=NOW() WHERE id=?',[$reaction,(int)$existing['id']]);
+  }
+ }else{
+  q('INSERT INTO news_reactions(news_id,reaction,visitor_hash,created_at) VALUES(?,?,?,NOW())',[$newsId,$reaction,$visitorHash]);
+ }
+ $out(['ok'=>true,'reactions'=>news_reaction_totals($newsId),'my_reaction'=>$mine]);
+}
+
+/**
+ * A comment on a published story.
+ *
+ * The honeypot is checked before anything is written, every field is trimmed
+ * and stripped of markup, and the lengths are the same ones the form shows.
+ * The comment is published at once, as the brief asks, and the thread is
+ * rate limited per visitor so one browser cannot fill it in a minute.
+ */
+if($act==='news_comment'){
+ if($method!=='POST'){ $out(['ok'=>false,'error'=>'Use POST to leave a comment.'],405); }
+ ensure_news_social_tables();
+ if(trim((string)($body['website']??''))!==''){
+  $out(['ok'=>false,'error'=>'Your comment could not be sent.'],400);
+ }
+ $slug=trim((string)($body['slug']??''));
+ $name=trim(strip_tags((string)($body['name']??'')));
+ $email=trim(strip_tags((string)($body['email']??'')));
+ $text=trim(strip_tags((string)($body['body']??'')));
+ if($slug===''){ $out(['ok'=>false,'error'=>'Please open a story before commenting.'],422); }
+ if(mb_strlen($name)<2 || mb_strlen($name)>80){
+  $out(['ok'=>false,'error'=>'Please write your name (2 to 80 characters).'],422);
+ }
+ if($email!=='' && (mb_strlen($email)>160 || filter_var($email,FILTER_VALIDATE_EMAIL)===false)){
+  $out(['ok'=>false,'error'=>'That email address does not look right. You can also leave it blank.'],422);
+ }
+ if(mb_strlen($text)<2 || mb_strlen($text)>4000){
+  $out(['ok'=>false,'error'=>'Please write a comment of 2 to 4000 characters.'],422);
+ }
+ $visitorHash=news_visitor_hash((string)($body['token']??''),(string)($body['visitor']??''));
+ if($visitorHash===''){
+  $out(['ok'=>false,'error'=>'We could not identify this browser. Please refresh the page and try again.'],422);
+ }
+ $ipHash=news_ip_hash();
+ if(news_comment_rate_limited($visitorHash,$ipHash)){
+  $out(['ok'=>false,'error'=>'That is a few comments in a short time. Please wait a little and try again.'],429);
+ }
+ $newsLive=existing_columns('news_posts',['deleted_at'])!==[]?' AND deleted_at IS NULL':'';
+ $p=row("SELECT id FROM news_posts WHERE slug=? AND status='published' AND publish_at<=NOW()".$newsLive,[$slug]);
+ if(!$p){ $out(['ok'=>false,'error'=>'That story is no longer available.'],404); }
+ $newsId=(int)$p['id'];
+ $comment=news_insert_comment($newsId,$name,$email,$text,$visitorHash,$ipHash);
+ $out(['ok'=>true,'comment'=>$comment,'comment_count'=>news_comment_count($newsId)]);
 }
 
 if($act==='order'){

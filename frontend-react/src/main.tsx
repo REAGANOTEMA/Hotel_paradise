@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms, ExploreMore, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, telHref, bgUrl, useReveal} from './shared';
@@ -40,7 +40,7 @@ const dining: DineRate[] = [
   photo: 'buffet'},
  {name: 'A la carte menu', tag: '251 dishes', icon: 'fork',
   note: 'From light bites to full platters, served through the day and into the evening.',
-  from: withService(6000), to: DINING_TOP, priceText: fmtPrice(6000) + ' â€“ ' + withService(100000).toLocaleString(), unit: 'per dish',
+  from: withService(6000), to: DINING_TOP, priceText: fmtPrice(6000) + ' – ' + withService(100000).toLocaleString(), unit: 'per dish',
   photo: 'steak-with-wedges'},
  {name: 'Baby cots', tag: 'On the house', icon: 'moon',
   note: 'Available on request for your little one, set up in your room before you arrive.',
@@ -155,10 +155,36 @@ const MAP_QUERY = HOTEL.shortName + ', ' + HOTEL.addressForMap;
 const MAP_EMBED = 'https://www.google.com/maps?q=' + encodeURIComponent(MAP_QUERY) + '&output=embed';
 const MAP_LINK = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(MAP_QUERY);
 
+/*
+ * A gentle tilt for the concierge desk, moved by the pointer and nothing else.
+ * Touch devices never set the values, and a reader who has asked for less
+ * motion keeps the desk flat, so the card still works exactly as before.
+ */
+const tiltDesk = (e: React.PointerEvent<HTMLDivElement>) => {
+  if (e.pointerType !== 'mouse') return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const el = e.currentTarget;
+  const r = el.getBoundingClientRect();
+  const x = (e.clientX - r.left) / Math.max(1, r.width) - 0.5;
+  const y = (e.clientY - r.top) / Math.max(1, r.height) - 0.5;
+  el.style.setProperty('--tiltX', (x * 4.2).toFixed(2) + 'deg');
+  el.style.setProperty('--tiltY', (-y * 3.2).toFixed(2) + 'deg');
+  el.style.setProperty('--spotX', ((x + 0.5) * 100).toFixed(1) + '%');
+  el.style.setProperty('--spotY', ((y + 0.5) * 100).toFixed(1) + '%');
+};
+
+const untiltDesk = (e: React.PointerEvent<HTMLDivElement>) => {
+  const el = e.currentTarget;
+  el.style.removeProperty('--tiltX');
+  el.style.removeProperty('--tiltY');
+  el.style.removeProperty('--spotX');
+  el.style.removeProperty('--spotY');
+};
+
 const HERO_WIDTHS = [640, 1024, 1440, 1920, 2560];
 
 /** The carousel turns over on this, and so does the zoom on each slide. */
-const SLIDE_MS = 6000;
+const SLIDE_MS = 4000;
 
 /**
  * What a slide is a photograph of, so the frame can dress it to suit: a dish
@@ -736,20 +762,55 @@ function Home() {
     <h2>How to reach us</h2>
      <p className="intro">We are at Plot 12, 19 &amp; 25 Kiira Lane, a few minutes from the river. Call, write or email the front desk to confirm availability, check in times and current rates.</p>
     </div>
-    <div className="contactWrap">
-     <div className="contactCard reveal">
-      <div className="contactRow"><b>HOTEL</b><span>{HOTEL.legalName}</span></div>
-      <div className="contactRow"><b>ADDRESS</b><span>{HOTEL.address}</span></div>
-      <div className="contactRow"><b>POST</b><span>{HOTEL.poBox}</span></div>
-      <div className="contactRow"><b>TELEPHONE</b><span>{HOTEL.phones.map((p, i) => <React.Fragment key={p}>{i > 0 && <><br/></>}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>)}</span></div>
-      <div className="contactRow"><b>EMAIL</b><span><a className="footLink" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a></span></div>
-      <div className="contactRow"><b>WEBSITE</b><span><a className="footLink" href={'https://' + HOTEL.website} target="_blank" rel="noopener noreferrer">{HOTEL.website}</a></span></div>
-      <div className="contactRow"><b>STANDARD</b><span>{HOTEL.certification}</span></div>
-      <div className="contactRow"><b>FRONT DESK</b><span>Open every day, 24 hours</span></div>
+    <div className="contactWrap contactDesk" onPointerMove={tiltDesk} onPointerLeave={untiltDesk} onPointerCancel={untiltDesk}>
+     <span className="deskGlow" aria-hidden="true"/>
+     <div className="contactCard deskCard reveal">
+      <div className="deskHead">
+       <span className="deskKicker"><i aria-hidden="true"/> Front desk, open every day, 24 hours</span>
+       <h3>Speak to the concierge</h3>
+       <p>A room, a table by the river or a question before you travel: the front desk answers all day and all night.</p>
+      </div>
+      <div className="deskRows">
+       <a className="deskRow" href={telHref(HOTEL.phones[0])}>
+        <span className="deskIcon" aria-hidden="true">
+         <svg viewBox="0 0 24 24"><path d="M5 4h3l1.6 4-2 1.4a13 13 0 0 0 5 5L14 12.4 18 14v3a2 2 0 0 1-2.2 2A15 15 0 0 1 3 6.2 2 2 0 0 1 5 4z"/></svg>
+        </span>
+        <span className="deskText"><b>Call the front desk</b><span>{HOTEL.phones[0]}</span><em>Reservations: {HOTEL.phones[1]}</em></span>
+        <span className="deskGo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+       </a>
+       <a className="deskRow" href={'mailto:' + HOTEL.email}>
+        <span className="deskIcon" aria-hidden="true">
+         <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg>
+        </span>
+        <span className="deskText"><b>Write to the hotel</b><span>{HOTEL.email}</span><em>We reply from Jinja, usually the same day.</em></span>
+        <span className="deskGo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+       </a>
+       <a className="deskRow" href={MAP_LINK} target="_blank" rel="noopener noreferrer">
+        <span className="deskIcon" aria-hidden="true">
+         <svg viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        </span>
+        <span className="deskText"><b>Find the hotel</b><span>{HOTEL.address}</span><em>Open directions in Google Maps</em></span>
+        <span className="deskGo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+       </a>
+      </div>
+      <div className="deskFacts">
+       <span><b>Hotel</b>{HOTEL.legalName}</span>
+       <span><b>Post</b>{HOTEL.poBox}</span>
+       <span><b>Web</b><a className="footLink" href={'https://' + HOTEL.website} target="_blank" rel="noopener noreferrer">{HOTEL.website}</a></span>
+      </div>
+      <div className="deskFoot">
+       <span className="deskCert">{HOTEL.certification}</span>
+       <span>Check in from 12 noon · check out by 10 am</span>
+      </div>
      </div>
-     <div className="mapBox reveal">
+     <div className="mapBox mapPlaque reveal">
       <iframe title="Hotel Paradise on the Nile on Google Maps" src={MAP_EMBED} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen/>
-      <p>{HOTEL.address}. <a href={MAP_LINK} target="_blank" rel="noreferrer">Open in Google Maps</a></p>
+      <div className="mapPlaqueFoot">
+       <p><b>On the banks of the Nile</b><span>{HOTEL.addressShort}</span></p>
+       <a href={MAP_LINK} target="_blank" rel="noopener noreferrer">Directions
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+       </a>
+      </div>
      </div>
     </div>
    </div>

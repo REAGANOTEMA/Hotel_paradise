@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import './buttonShake';
 
 /**
@@ -248,7 +248,7 @@ export function TopBar() {
  return (
   <div className="topbar">
    <span>HOTEL PARADISE ON THE NILE, PLOT 12, 19 &amp; 25 KIIRA LANE, JINJA, UGANDA</span>
-   <span className="right">{HOTEL.phones.join('  Â·  ')}</span>
+   <span className="right">{HOTEL.phones.join('  ·  ')}</span>
   </div>
  );
 }
@@ -393,12 +393,16 @@ export function Footer() {
        <span>Sixty nine rooms and suites, riverside dining, a swimming pool and gardens for every occasion, all within one calm address.</span>
        <span>From a restful night to a wedding for two hundred guests, our team carries the details so you can simply arrive.</span>
       </div>
+      <div className="footerTrust">
+       <span className="footerCert">{HOTEL.certification}</span>
+       <span>Est. {HOTEL.founded.slice(-4)}</span>
+      </div>
      </div>
      <div className="footerCol"><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p><a className="footLink" href="./news.html">News &amp; Careers</a></p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>
      <div className="footerCol"><h4>STAY</h4><p>Check in from 12 noon</p><p>Check out by 10 am</p><p>Breakfast included</p></div>
      <div className="footerCol"><h4>CONTACT</h4>
       <p className="footerPhones">{HOTEL.phones.map((p, i) => (
-       <React.Fragment key={p}>{i > 0 && '  Â·  '}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>
+       <React.Fragment key={p}>{i > 0 && '  ·  '}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>
       ))}</p>
       <p><a className="footLink" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a></p>
       <p><a className="footLink" href="./talk.html">Message the hotel</a></p>
@@ -423,9 +427,9 @@ export function Footer() {
     </div>
     <nav className="footerLegal" aria-label="Legal">
      <a href="./terms.html">Terms &amp; Conditions</a>
-     <span className="dot" aria-hidden="true">Â·</span>
+     <span className="dot" aria-hidden="true">·</span>
      <a href="./privacy.html">Privacy Policy</a>
-     <span className="dot" aria-hidden="true">Â·</span>
+     <span className="dot" aria-hidden="true">·</span>
      <a href="./cookies.html">Cookie Policy</a>
     </nav>
     <InstallApp/>
@@ -570,7 +574,7 @@ const coverSrc = (f: HeroCoverFrame) => {
 const coverSrcSet = (f: HeroCoverFrame) =>
  f.widths.map(w => f.base + '-' + w + '.' + f.ext + ' ' + w + 'w').join(', ');
 
-const COVER_MS = 7000;
+const COVER_MS = 4000;
 
 export function PageHeroCover({frames}: {frames: HeroCoverFrame[]}) {
  const [i, setI] = React.useState(0);
@@ -677,7 +681,7 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
      </div>
       <div className="drawerFoot">
        <a className="btn" href="./rooms.html" onClick={close}>Book now</a>
-       <a className="drawerCall systemLink" href="./account.html" onClick={close}>{customerFirstName() ? 'My account Â· ' + customerFirstName() : 'Sign in or create an account'}</a>
+       <a className="drawerCall systemLink" href="./account.html" onClick={close}>{customerFirstName() ? 'My account · ' + customerFirstName() : 'Sign in or create an account'}</a>
        <a className="drawerCall systemLink" href="./system/" onClick={close}><LockIcon/> Staffs Logins</a>
        <a className="drawerCall" href={telHref(CALL)}>Call {CALL}</a>
        <p className="drawerNote">{HOTEL.address}</p>

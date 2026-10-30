@@ -14,12 +14,20 @@ import {MenuConcierge} from './concierge';
  * the console's own "View on site" button and a colleague's email both reach it.
  */
 
+type Reaction = 'like' | 'love' | 'applause';
+type ReactionCounts = {like: number; love: number; applause: number};
+type StoryComment = {
+  id: number; parent_id: number | null; name: string; body: string; created_at: string;
+};
+
 type Post = {
   id: number; slug: string; title: string; category: string; category_label: string;
   excerpt: string; body: string; image: string; department: string; location: string;
   employment_type: string; salary: string; deadline: string; apply_email: string;
   apply_url: string; author_name: string; author_role: string; pinned: boolean;
   views: number; published: string; updated: string;
+  reactions?: ReactionCounts; my_reaction?: string; comment_count?: number;
+  comments?: StoryComment[];
 };
 
 type State = {posts: Post[]; cats: Record<string, string>} | null;
@@ -89,7 +97,7 @@ const slugFromUrl = (): string => {
 /** Reads the published news, or one story when a slug is given. */
 const getNews = async (params: Record<string, string> = {}): Promise<any> => {
   const base = await apiUrl('news');
-  const qs = new URLSearchParams(params).toString();
+  const qs = new URLSearchParams({...params, visitor: newsVisitor()}).toString();
   try {
     const res = await fetch(qs ? `${base}&${qs}` : base, {headers: {Accept: 'application/json'}});
     return await res.json();
@@ -98,7 +106,330 @@ const getNews = async (params: Record<string, string> = {}): Promise<any> => {
   }
 };
 
+/**
+ * A random name for this browser, kept so a reaction or comment can be tied to
+ * the same visitor without asking anyone to sign in. It carries no personal
+ * detail, and the hotel stores only a hash of it. If storage is blocked the id
+ * lasts for the visit instead.
+ */
+const VISITOR_KEY = 'hpn_news_visitor';
+let fallbackVisitor = '';
+const newsVisitor = (): string => {
+  try {
+    const saved = window.localStorage.getItem(VISITOR_KEY);
+    if (saved) return saved;
+    const c = window.crypto as Crypto & {randomUUID?: () => string};
+    const id = c && typeof c.randomUUID === 'function'
+      ? c.randomUUID()
+      : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+    window.localStorage.setItem(VISITOR_KEY, id);
+    return id;
+  } catch {
+    if (!fallbackVisitor) {
+      fallbackVisitor = 'visit-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+    }
+    return fallbackVisitor;
+  }
+};
+
+/** Sends a reaction or a comment to the newsroom and reads the answer back. */
+const newsPost = async (act: 'news_react' | 'news_comment', payload: Record<string, unknown>): Promise<any> => {
+  const base = await apiUrl(act);
+  try {
+    const res = await fetch(base, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', Accept: 'application/json'},
+      body: JSON.stringify({...payload, visitor: newsVisitor()})
+    });
+    return await res.json();
+  } catch {
+    return {ok: false, error: 'We could not reach the hotel. Please check your connection and try again.'};
+  }
+};
+
 const Tag = ({children}: {children: React.ReactNode}) => <span className="newsTag">{children}</span>;
+
+const REACTION_LABELS: {key: Reaction; label: string}[] = [
+  {key: 'like', label: 'Like'},
+  {key: 'love', label: 'Love'},
+  {key: 'applause', label: 'Applause'}
+];
+
+const EMPTY_REACTIONS: ReactionCounts = {like: 0, love: 0, applause: 0};
+
+/** A small line icon for each reaction. */
+function ReactionIcon({kind}: {kind: Reaction}) {
+  if (kind === 'love') {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.2S4.4 15.6 4.4 10.3A4.1 4.1 0 0 1 12 7.6a4.1 4.1 0 0 1 7.6 2.7c0 5.3-7.6 9.9-7.6 9.9z"/></svg>;
+  }
+  if (kind === 'applause') {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12V7M12 11V5M16 12V7"/><path d="M6 15c1.6 2.2 3.6 3.3 6 3.3s4.4-1.1 6-3.3"/><path d="M4 9l1.4-.8M20 9l-1.4-.8"/></svg>;
+  }
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10.5V20H4a1 1 0 0 1-1-1v-7.5a1 1 0 0 1 1-1h3zM7 10.5l3.6-6.1A1.6 1.6 0 0 1 13.2 5v3.8h5.2a1.8 1.8 0 0 1 1.8 2.1l-1 6.3a1.8 1.8 0 0 1-1.8 1.5H7"/></svg>;
+}
+
+/**
+ * The spotlight above the newsroom.
+ *
+ * The first three or four stories - pinned ones first, then the newest - turn
+ * every four seconds. Every slide is already in the page as a real button, so
+ * nothing is rebuilt as the turn happens and a slow photograph never leaves a
+ * blank frame. It stops while a pointer or keyboard is on it, while the tab is
+ * hidden, and entirely for a reader who has asked for less motion. The dots
+ * and arrows are ordinary buttons, so it works without a mouse.
+ */
+function NewsSpotlight({posts, onOpen}: {posts: Post[]; onOpen: (p: Post) => void}) {
+  const slides = React.useMemo(() => {
+    const pinned = posts.filter(p => p.pinned).slice(0, 4);
+    const rest = posts.filter(p => !p.pinned);
+    return [...pinned, ...rest].slice(0, 4);
+  }, [posts]);
+  const [index, setIndex] = React.useState(0);
+  const [hover, setHover] = React.useState(false);
+  const [focus, setFocus] = React.useState(false);
+  const [gone, setGone] = React.useState(false);
+  const [still, setStill] = React.useState(false);
+
+  React.useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setStill(mq.matches);
+    sync();
+    mq.addEventListener?.('change', sync);
+    return () => mq.removeEventListener?.('change', sync);
+  }, []);
+
+  React.useEffect(() => {
+    const sync = () => setGone(document.hidden);
+    sync();
+    document.addEventListener('visibilitychange', sync);
+    return () => document.removeEventListener('visibilitychange', sync);
+  }, []);
+
+  React.useEffect(() => {
+    if (index >= slides.length) setIndex(0);
+  }, [index, slides.length]);
+
+  const paused = hover || focus || gone || still;
+  React.useEffect(() => {
+    if (paused || slides.length < 2) return;
+    const timer = window.setInterval(() => setIndex(n => (n + 1) % slides.length), 4000);
+    return () => window.clearInterval(timer);
+  }, [paused, slides.length]);
+
+  if (slides.length === 0) return null;
+
+  const step = (by: number) => setIndex(n => (n + by + slides.length) % slides.length);
+
+  return <section className="spotlight reveal" aria-roledescription="carousel"
+    aria-label="Featured stories" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+    onFocus={() => setFocus(true)} onBlur={() => setFocus(false)}>
+    <div className="spotStage">
+      {slides.map((p, n) => (
+        <button type="button" key={p.slug} className={'spotSlide' + (n === index ? ' on' : '')}
+          onClick={() => onOpen(p)} aria-hidden={n !== index} tabIndex={n === index ? 0 : -1}>
+          <img src={storyImage(p)} alt="" loading={n === 0 ? 'eager' : 'lazy'} decoding="async"
+            onError={e => {
+              const img = e.currentTarget;
+              if (img.dataset.fallback !== '1') { img.dataset.fallback = '1'; img.src = FALLBACK_IMAGE; }
+            }}/>
+          <span className="spotScrim" aria-hidden="true"/>
+          <span className="spotBody">
+            <Tag>{p.category_label}</Tag>
+            <b>{p.title}</b>
+            <span className="spotText">{p.excerpt}</span>
+            <span className="spotMeta">
+              <span>{niceDate(p.published)}</span>
+              <span className="spotRead">Read the story
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </span>
+          </span>
+        </button>
+      ))}
+
+      <div className="spotRail">
+        <button type="button" className="spotArrow" onClick={() => step(-1)} aria-label="Previous featured story">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div className="spotDots" role="group" aria-label="Choose a featured story">
+          {slides.map((p, n) => (
+            <button type="button" key={p.slug} className={'spotDot' + (n === index ? ' on' : '')}
+              aria-label={'Story ' + (n + 1) + ' of ' + slides.length + ': ' + p.title}
+              aria-current={n === index ? 'true' : undefined} onClick={() => setIndex(n)}/>
+          ))}
+        </div>
+        <button type="button" className="spotArrow" onClick={() => step(1)} aria-label="Next featured story">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      {slides.length > 1 && !still && (
+        <div className="spotProgress" aria-hidden="true">
+          <span key={index} style={{animationPlayState: paused ? 'paused' : 'running'}}/>
+        </div>
+      )}
+    </div>
+    <span className="srOnly" aria-live="polite">Story {index + 1} of {slides.length}: {slides[index].title}</span>
+  </section>;
+}
+
+/** Reactions and the comment thread under one story. */
+function ArticleSocial({post}: {post: Post}) {
+  const [counts, setCounts] = React.useState<ReactionCounts>(post.reactions || EMPTY_REACTIONS);
+  const [mine, setMine] = React.useState(post.my_reaction || '');
+  const [busy, setBusy] = React.useState<Reaction | ''>('');
+  const [note, setNote] = React.useState('');
+
+  React.useEffect(() => {
+    setCounts(post.reactions || EMPTY_REACTIONS);
+    setMine(post.my_reaction || '');
+    setNote('');
+  }, [post.slug, post.reactions, post.my_reaction]);
+
+  const react = async (kind: Reaction) => {
+    if (busy) return;
+    const before = {counts, mine};
+    const next = {...counts};
+    if (mine === kind) {
+      next[kind] = Math.max(0, next[kind] - 1);
+      setMine('');
+    } else {
+      if (mine) next[mine as Reaction] = Math.max(0, next[mine as Reaction] - 1);
+      next[kind] += 1;
+      setMine(kind);
+    }
+    setCounts(next);
+    setBusy(kind);
+    setNote('');
+    const d = await newsPost('news_react', {slug: post.slug, reaction: kind});
+    setBusy('');
+    if (d && d.ok) {
+      setCounts(d.reactions || next);
+      setMine(d.my_reaction || '');
+    } else {
+      setCounts(before.counts);
+      setMine(before.mine);
+      setNote((d && d.error) || 'Your reaction could not be saved. Please try again.');
+    }
+  };
+
+  const [thread, setThread] = React.useState<StoryComment[]>(post.comments || []);
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [text, setText] = React.useState('');
+  const [trap, setTrap] = React.useState('');
+  const [sending, setSending] = React.useState(false);
+  const [formNote, setFormNote] = React.useState('');
+  const [formError, setFormError] = React.useState('');
+
+  React.useEffect(() => {
+    setThread(post.comments || []);
+  }, [post.slug, post.comments]);
+
+  const send = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (sending) return;
+    setFormError('');
+    setFormNote('');
+    const cleanName = name.trim();
+    const cleanText = text.trim();
+    if (cleanName.length < 2) { setFormError('Please write your name (2 to 80 characters).'); return; }
+    if (cleanText.length < 2) { setFormError('Please write a comment before sending.'); return; }
+    setSending(true);
+    const d = await newsPost('news_comment', {
+      slug: post.slug, name: cleanName, email: email.trim(), body: cleanText, website: trap
+    });
+    setSending(false);
+    if (!d || !d.ok) {
+      setFormError((d && d.error) || 'Your comment could not be sent. Please try again.');
+      return;
+    }
+    setThread(prev => [...prev, d.comment as StoryComment]);
+    setName('');
+    setEmail('');
+    setText('');
+    setTrap('');
+    setFormNote('Thank you. Your comment is now on the story.');
+  };
+
+  return <section className="articleSocial" aria-label="Reactions and comments">
+    <div className="reactionBar">
+      <div className="reactionLead">
+        <b>A word from you</b>
+        <span>Let the hotel know this story landed. One reaction each; tap again to take it back.</span>
+      </div>
+      <div className="reactionBtns" role="group" aria-label="React to this story">
+        {REACTION_LABELS.map(r => (
+          <button type="button" key={r.key} className={'reactBtn' + (mine === r.key ? ' on' : '')}
+            aria-pressed={mine === r.key} aria-label={r.label + ', ' + counts[r.key]}
+            title={r.label} onClick={() => react(r.key)} disabled={!!busy}>
+            <ReactionIcon kind={r.key}/>
+            <span>{r.label}</span>
+            <em>{counts[r.key]}</em>
+          </button>
+        ))}
+      </div>
+      {note && <p className="reactNote" role="status">{note}</p>}
+    </div>
+
+    <div className="commentsBlock">
+      <div className="commentsHead">
+        <h2>Comments <span>{thread.length}</span></h2>
+        <p>Thoughts are welcome from guests and neighbours alike. Keep them kind and on topic; comments appear as they are sent.</p>
+      </div>
+
+      {thread.length > 0 ? (
+        <ol className="commentsList">
+          {thread.map(c => (
+            <li key={c.id}>
+              <div className="commentWho">
+                <b>{c.name}</b>
+                <time dateTime={c.created_at}>{niceDate(c.created_at)}</time>
+              </div>
+              <p>{c.body}</p>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <div className="commentsEmpty">
+          <p>No comments yet. Be the first to write one.</p>
+        </div>
+      )}
+
+      <form className="commentForm" onSubmit={send} noValidate>
+        <div className="commentFields">
+          <label>
+            <span>Name</span>
+            <input value={name} onChange={e => setName(e.target.value)} maxLength={80}
+              autoComplete="name" required placeholder="Your name"/>
+          </label>
+          <label>
+            <span>Email <em>optional, never shown</em></span>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} maxLength={160}
+              autoComplete="email" placeholder="you@example.com"/>
+          </label>
+        </div>
+        <label className="commentBody">
+          <span>Comment</span>
+          <textarea value={text} onChange={e => setText(e.target.value)} rows={5} maxLength={4000}
+            required placeholder="Share a thought about this story…"/>
+        </label>
+        <div className="commentHoney" aria-hidden="true">
+          <label>Website<input value={trap} onChange={e => setTrap(e.target.value)}
+            tabIndex={-1} autoComplete="off"/></label>
+        </div>
+        {formError && <p className="commentError" role="alert">{formError}</p>}
+        {formNote && <p className="commentSent" role="status">{formNote}</p>}
+        <div className="commentFoot">
+          <button type="submit" className={'btn' + (sending ? ' loading' : '')} disabled={sending}>
+            {sending ? 'Sending…' : 'Post comment'}
+          </button>
+          <span>Your address is kept privately by the hotel and is never printed.</span>
+        </div>
+      </form>
+    </div>
+  </section>;
+}
 
 function NewsPage() {
   const [data, setData] = React.useState<State>(null);
@@ -194,20 +525,23 @@ function NewsPage() {
 
     <section className="section newsWrap">
       {!open && (
-        <div className="newsBar reveal">
-          <div className="newsSearch">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg>
-            <input type="search" value={q} onChange={e => setQ(e.target.value)}
-              placeholder="Search news, notices, vacancies…" aria-label="Search the newsroom"/>
+        <>
+          {!loading && !error && <NewsSpotlight posts={posts} onOpen={show}/>}
+          <div className="newsBar reveal">
+            <div className="newsSearch">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg>
+              <input type="search" value={q} onChange={e => setQ(e.target.value)}
+                placeholder="Search news, notices, vacancies…" aria-label="Search the newsroom"/>
+            </div>
+            <div className="newsChips" role="tablist" aria-label="Filter by category">
+              <button type="button" className={'newsChip' + (cat === '' ? ' on' : '')} onClick={() => setCat('')}>All</button>
+              {Object.entries(cats).map(([key, label]) => (
+                <button type="button" key={key} className={'newsChip' + (cat === key ? ' on' : '')}
+                  onClick={() => setCat(key)}>{label}</button>
+              ))}
+            </div>
           </div>
-          <div className="newsChips" role="tablist" aria-label="Filter by category">
-            <button type="button" className={'newsChip' + (cat === '' ? ' on' : '')} onClick={() => setCat('')}>All</button>
-            {Object.entries(cats).map(([key, label]) => (
-              <button type="button" key={key} className={'newsChip' + (cat === key ? ' on' : '')}
-                onClick={() => setCat(key)}>{label}</button>
-            ))}
-          </div>
-        </div>
+        </>
       )}
 
       {loading && (
@@ -267,6 +601,8 @@ function NewsPage() {
                 </div>
               </aside>
             )}
+
+            <ArticleSocial post={open}/>
 
             {rest.length > 0 && (
               <div className="newsMore">
