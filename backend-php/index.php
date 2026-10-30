@@ -74,7 +74,7 @@ function pagelogin(): void{
 
   <header class="loginTop">
     <a class="loginBrandTop" href="%%HOME%%" aria-label="Hotel Paradise on the Nile website">
-      <img src="%%LOGO%%" alt="Hotel-Paradise-on-the-Nile-Logo">
+      <img src="%%LOGO%%" alt="Hotel Paradise on the Nile" width="1532" height="442" decoding="async" fetchpriority="high" draggable="false">
       <span class="lbtText"><span>HOTEL PARADISE</span><small>ON THE NILE</small></span>
     </a>
     <a class="loginBack" href="%%HOME%%">
@@ -87,7 +87,7 @@ function pagelogin(): void{
     <aside class="loginShowcase">
       <div class="lsTop">
         <span class="lsKicker">Jinja &middot; Uganda</span>
-        <img class="lsLogo" src="%%LOGO%%" alt="Hotel-Paradise-on-the-Nile-Logo">
+        <img class="lsLogo" src="%%LOGO%%" alt="Hotel Paradise on the Nile" width="1532" height="442" decoding="async" draggable="false">
         <h2 class="lsName">Hotel Paradise<small>ON THE NILE</small></h2>
         <p class="lsBlurb">A riverside retreat on the banks of the Nile, where warm Ugandan hospitality meets quiet luxury.</p>
         <div class="lsStars" aria-label="Five star standard"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
@@ -227,7 +227,7 @@ hp_ensure_procurement_columns();
    which department the member speaks for, and the store and Director are
    notified in the same breath as the request is written. */
 require_once __DIR__.'/app/stock_requests.php';
-if($_SERVER['REQUEST_METHOD']==='POST' && in_array($page,['dashboard','overview','restaurant','bar','kitchen','shifts'],true)){
+if($_SERVER['REQUEST_METHOD']==='POST' && in_array($page,['dashboard','overview','restaurant','bar','kitchen','shifts','approvals'],true)){
  stock_request_handle_widget($page,current_user());
 }
 

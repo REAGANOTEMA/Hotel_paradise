@@ -160,7 +160,7 @@ function PayReceipt({src, receiptRef, charged, amt, form, detail, item, qty, uni
  return (
   <div className="payReceipt">
    <div className="prHead">
-    <img src="./images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel-Paradise-on-the-Nile-Logo" onError={e => {e.currentTarget.style.display = 'none';}}/>
+    <img src="./images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel Paradise on the Nile" width={1532} height={442} decoding="async" draggable={false} onError={e => {e.currentTarget.style.display = 'none';}}/>
     <h3>HOTEL PARADISE ON THE NILE</h3>
     <p>Jinja, Uganda</p>
     <p>Tel: {HOTEL.phones[0] || CALL} &middot; Email: {HOTEL.email}</p>

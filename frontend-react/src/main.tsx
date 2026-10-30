@@ -455,7 +455,7 @@ function Hero() {
       const on = n === i;
       return (
        <div className={'heroPanel' + (on ? ' on' : '')} key={n} aria-hidden={!on}>
-        <div className="heroLogo"><img src={LOGO} alt="Hotel-Paradise-on-the-Nile-Logo" style={{height:"150px",width:"auto"}}/></div>
+        <div className="heroLogo"><img src={LOGO} alt="Hotel Paradise on the Nile" width={1532} height={442} decoding="async" draggable={false} style={{height:"150px",width:"auto"}}/></div>
         <p className="eyebrow">{c.eyebrow}</p>
         <h1 className="heroTitle">{c.title}</h1>
         <p className="heroText">{c.text}</p>

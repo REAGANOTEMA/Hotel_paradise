@@ -238,7 +238,7 @@ export const CALL = HOTEL.phones[0];
 export function Brand({light = false}: {light?: boolean}) {
   return (
    <a className={light ? 'brandL light' : 'brandL'} href="./index.html">
-    <img className="brandLogo" src={LOGO} alt="Hotel-Paradise-on-the-Nile-Logo"/>
+    <img className="brandLogo" src={LOGO} alt="Hotel Paradise on the Nile" width={1532} height={442} decoding="async" draggable={false}/>
     
    </a>
   );

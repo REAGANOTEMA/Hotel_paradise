@@ -11,36 +11,49 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
       comes to, so the Director sees the full cost on the alert itself. The store
       manager is rung the moment it is sent, and the Director in the same breath. */
    $dept=(int)($_POST['department_id']??0);
+   $deptRow=$dept?row('SELECT * FROM departments WHERE id=? AND active=1',[$dept]):null;
+   if(!$deptRow){ flash('Choose an active department.','bad'); go('purchases'); }
    $items=$_POST['items']??[];
    $clean=[];
-   $costs=[]; foreach(rows('SELECT id,unit_cost FROM inventory_items') as $it) $costs[(int)$it['id']]=(float)$it['unit_cost'];
+   $costs=[]; foreach(rows('SELECT id,unit_cost FROM inventory_items WHERE active=1 AND deleted_at IS NULL') as $it) $costs[(int)$it['id']]=(float)$it['unit_cost'];
    foreach($items as $iid=>$row){
     if($iid===''||!is_array($row)||!(float)($row['qty']??0)>0) continue;
     $id=(int)$iid;
+    if(!isset($costs[$id])) continue;
     $cost=(float)($row['cost']??0);
-    if($cost<=0) $cost=$costs[$id]??0;
+    if($cost<=0) $cost=$costs[$id];
     $clean[$id]=[(float)$row['qty'],$cost];
    }
-   if(!$dept||!count($clean)){ flash('Choose a department and add at least one item.','bad'); go('purchases'); }
+   if(!count($clean)){ flash('Choose a department and add at least one item.','bad'); go('purchases'); }
    $num=next_number('REQ','purchase_requisitions','number');
    $note=trim($_POST['note']??'');
-   q('INSERT INTO purchase_requisitions(hotel_id,number,department_id,requested_by,status,note,created_at) VALUES(1,?,?,?,\'pending\',?,NOW())',[$num,$dept,$u['id'],$note]);
-   $rid=(int)db()->lastInsertId();
-   foreach($clean as $iid=>$d){ q('INSERT INTO purchase_requisition_items(requisition_id,item_id,requested_qty,est_cost) VALUES(?,?,?,?)',[$rid,$iid,$d[0],$d[1]]); }
+   $pdo=db();
+   $pdo->beginTransaction();
+   try{
+    q('INSERT INTO purchase_requisitions(hotel_id,number,department_id,requested_by,status,note,created_at) VALUES(1,?,?,?,\'pending\',?,NOW())',[$num,$dept,$u['id'],$note]);
+    $rid=(int)$pdo->lastInsertId();
+    foreach($clean as $iid=>$d){ q('INSERT INTO purchase_requisition_items(requisition_id,item_id,requested_qty,est_cost) VALUES(?,?,?,?)',[$rid,$iid,$d[0],$d[1]]); }
+    $pdo->commit();
+   }catch(Throwable $e){
+    if($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[hotel purchases] could not raise requisition: '.$e->getMessage());
+    flash('The stock request could not be saved. Please try again.','bad');
+    go('purchases');
+   }
    audit('create','requisition',$rid,['number'=>$num]);
-   $dname=(string)val('SELECT name FROM departments WHERE id=?',[$dept]);
+   $dname=(string)$deptRow['name'];
    $list=stock_request_item_list($rid);
    $total=stock_request_total($rid);
    notify_console('req:'.$rid,'incident','Stock request '.$num.' awaiting approval',
-    $dname.' needs: '.$list.'. Total '.money($total).'.'.($note!==''?' — '.$note:''),
+    $dname.' needs: '.$list.'. Total '.money($total).'.'.($note!==''?' - '.$note:''),
     ['requisition_id'=>$rid,'number'=>$num,'amount'=>$total],
-    array_merge(['director','general_manager'],stock_request_manager_roles()),'requisition',$rid);
+    array_merge(stock_request_decision_roles(),stock_request_manager_roles()),'requisition',$rid);
    flash('Stock request '.$num.' sent to the store manager and the Director.');
    go('purchases');
    break;
 case 'reqstatus':
     $rid=(int)($_GET['id']??$_POST['id']??0); $nst=$_POST['nst']??'';
-    $r=row('SELECT * FROM purchase_requisitions WHERE id=?',[$rid]); if(!$r) break;
+    $r=row('SELECT * FROM purchase_requisitions WHERE id=? AND deleted_at IS NULL',[$rid]); if(!$r) break;
     /* Approving or turning down a request is a director or general manager
        decision. Anyone may open the page, but only these roles may change a
        decision: the store keeps its inbox separate from who may act on it. */
@@ -50,7 +63,13 @@ case 'reqstatus':
     }
     $res=stock_request_decide($rid,$nst,(string)($_POST['reason']??''),(int)$u['id']);
    if(!$res['ok']){
-    flash($res['error']==='reason-required'?'A reason is required when turning down a request.':'That request could not be updated.','bad');
+    $msg=match($res['error']){
+     'reason-required'=>'A reason is required when turning down a request.',
+     'already-decided'=>'That request has already been decided.',
+     'not-allowed'=>'Only the Director or General Manager may decide a stock request.',
+     default=>'That request could not be updated.',
+    };
+    flash($msg,'bad');
    }else{
     flash('Stock request '.$r['number'].' '.$nst.'.');
    }
@@ -58,46 +77,75 @@ case 'reqstatus':
    break;
   case 'reqtopo':
    $rid=(int)($_POST['id']??0);
-   $r=row('SELECT * FROM purchase_requisitions WHERE id=? AND status=\'approved\'',[$rid]);
+   $r=row('SELECT * FROM purchase_requisitions WHERE id=? AND status=\'approved\' AND deleted_at IS NULL',[$rid]);
    if(!$r){ flash('Only approved requisitions can become purchase orders.','bad'); go('purchases'); }
+   if(val('SELECT id FROM purchase_orders WHERE requisition_id=? AND deleted_at IS NULL',[$rid])){ flash('That requisition already has a purchase order.','bad'); go('purchases'); }
    $sup=(int)($_POST['supplier_id']??0);
-   if(!$sup||!val('SELECT id FROM suppliers WHERE id=? AND active=1',[$sup])){ flash('Choose an active supplier for this purchase order.','bad'); go('purchases'); }
+   $supRow=$sup?row('SELECT * FROM suppliers WHERE id=? AND active=1',[$sup]):null;
+   if(!$supRow){ flash('Choose an active supplier for this purchase order.','bad'); go('purchases'); }
    $rows=rows('SELECT * FROM purchase_requisition_items WHERE requisition_id=?',[$rid]);
    if(!count($rows)){ flash('That requisition has no items to order.','bad'); go('purchases'); }
    $num=next_number('PO','purchase_orders','number');
-   q('INSERT INTO purchase_orders(hotel_id,number,supplier_id,requisition_id,status,notes,created_by,created_at) VALUES(1,?,?,?,\'sent\',?,?,NOW())',[$num,$sup,$rid,trim($_POST['notes']??''),$u['id']]);
-   $oid=(int)db()->lastInsertId();
-   foreach($rows as $it){ $qty=(float)$it['requested_qty']; $cost=(float)$it['est_cost']; q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$it['item_id'],$qty,$cost,round($qty*$cost,2)]); }
+   $pdo=db();
+   $pdo->beginTransaction();
+   try{
+    q('INSERT INTO purchase_orders(hotel_id,number,supplier_id,requisition_id,status,notes,created_by,created_at) VALUES(1,?,?,?,\'sent\',?,?,NOW())',[$num,$sup,$rid,trim($_POST['notes']??''),$u['id']]);
+    $oid=(int)$pdo->lastInsertId();
+    foreach($rows as $it){ $qty=(float)$it['requested_qty']; $cost=(float)$it['est_cost']; q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$it['item_id'],$qty,$cost,round($qty*$cost,2)]); }
+    $pdo->commit();
+   }catch(Throwable $e){
+    if($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[hotel purchases] could not create PO from requisition: '.$e->getMessage());
+    flash('The purchase order could not be created. Please try again.','bad');
+    go('purchases');
+   }
    audit('create','purchase_order',$oid,['number'=>$num,'from_requisition'=>$rid]);
-   $supName=(string)val('SELECT name FROM suppliers WHERE id=?',[(int)($_POST['supplier_id']??0)]);
    notify_console('po-from-req:'.$oid,'order','Purchase order '.$num.' created',
-    'Raised from requisition '.$r['number'].' to supplier '.$supName.'.',
+    'Raised from requisition '.$r['number'].' to supplier '.$supRow['name'].'.',
     ['purchase_order_id'=>$oid,'number'=>$num],['director','general_manager','storekeeper'],'purchase_order',$oid);
    flash('Purchase order '.$num.' created from requisition with its estimated unit costs.');
    go('purchases',['view'=>$oid]);
    break;
   case 'po':
    $sup=(int)($_POST['supplier_id']??0);
+   $supRow=$sup?row('SELECT * FROM suppliers WHERE id=? AND active=1',[$sup]):null;
+   if(!$supRow){ flash('Choose an active supplier.','bad'); go('purchases'); }
    $items=$_POST['items']??[];
+   $valid=[]; foreach(rows('SELECT id FROM inventory_items WHERE active=1 AND deleted_at IS NULL') as $it) $valid[(int)$it['id']]=true;
    $clean=[];
-   foreach($items as $iid=>$row){ if($iid===''||!is_array($row)||!(float)($row['qty']??0)>0) continue; $clean[(int)$iid]=[(float)$row['qty'],(float)($row['cost']??0)]; }
-   if(!$sup||!count($clean)){ flash('Choose a supplier and add at least one item.','bad'); go('purchases'); }
+   foreach($items as $iid=>$row){
+    if($iid===''||!is_array($row)||!(float)($row['qty']??0)>0) continue;
+    $id=(int)$iid; if(!isset($valid[$id])) continue;
+    $clean[$id]=[(float)$row['qty'],max(0.0,(float)($row['cost']??0))];
+   }
+   if(!count($clean)){ flash('Choose a supplier and add at least one item.','bad'); go('purchases'); }
    $num=next_number('PO','purchase_orders','number');
-   q('INSERT INTO purchase_orders(hotel_id,number,supplier_id,status,expected_date,notes,created_by,created_at) VALUES(1,?,?,\'sent\',?,?,?,NOW())',[$num,$sup,trim($_POST['expected_date']??''),trim($_POST['notes']??''),$u['id']]);
-   $oid=(int)db()->lastInsertId();
-   foreach($clean as $iid=>$d){ $tot=$d[0]*$d[1]; q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$iid,$d[0],$d[1],$tot]); }
+   $pdo=db();
+   $pdo->beginTransaction();
+   try{
+    q('INSERT INTO purchase_orders(hotel_id,number,supplier_id,status,expected_date,notes,created_by,created_at) VALUES(1,?,?,\'sent\',?,?,?,NOW())',[$num,$sup,trim($_POST['expected_date']??''),trim($_POST['notes']??''),$u['id']]);
+    $oid=(int)$pdo->lastInsertId();
+    foreach($clean as $iid=>$d){ $tot=$d[0]*$d[1]; q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$iid,$d[0],$d[1],$tot]); }
+    $pdo->commit();
+   }catch(Throwable $e){
+    if($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[hotel purchases] could not create purchase order: '.$e->getMessage());
+    flash('The purchase order could not be created. Please try again.','bad');
+    go('purchases');
+   }
    audit('create','purchase_order',$oid,['number'=>$num]);
-   $supName=(string)val('SELECT name FROM suppliers WHERE id=?',[$sup]);
    notify_console('po:'.$oid,'order','Purchase order '.$num.' created',
-    'Sent to supplier '.$supName.' with '.count($clean).' item line(s).',
+    'Sent to supplier '.$supRow['name'].' with '.count($clean).' item line(s).',
     ['purchase_order_id'=>$oid,'number'=>$num],['director','general_manager','storekeeper'],'purchase_order',$oid);
    flash('Purchase order '.$num.' created.');
    go('purchases',['view'=>$oid]);
    break;
   case 'poitems':
    $oid=(int)($_GET['oid']??$_POST['oid']??0);
-   $iid=(int)($_POST['additem']??0); $qty=(float)($_POST['addqty']??0); $cost=(float)($_POST['addcost']??0);
-   if(!$iid||$qty<=0){ flash('Choose an item and quantity.','bad'); go('purchases',['view'=>$oid]); }
+   $o=row('SELECT * FROM purchase_orders WHERE id=? AND deleted_at IS NULL',[$oid]);
+   if(!$o||!in_array($o['status'],['draft','sent','partially_received'],true)){ flash('That purchase order cannot take more items.','bad'); go('purchases'); }
+   $iid=(int)($_POST['additem']??0); $qty=(float)($_POST['addqty']??0); $cost=max(0.0,(float)($_POST['addcost']??0));
+   if(!$iid||$qty<=0||!val('SELECT id FROM inventory_items WHERE id=? AND active=1 AND deleted_at IS NULL',[$iid])){ flash('Choose an active item and quantity.','bad'); go('purchases',['view'=>$oid]); }
    q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$iid,$qty,$cost,$qty*$cost]);
    audit('update','purchase_order',$oid,['action'=>'add_items']);
    flash('Item added to the purchase order.');
@@ -107,19 +155,34 @@ case 'reqstatus':
    $oid=(int)($_GET['oid']??$_POST['oid']??0);
    $items=$_POST['items']??[];
    $loc=trim($_POST['loc']??'')?:'Main Store';
-   foreach($items as $piid=>$row){
-    if(!is_array($row)) continue;
-    $rcv=(float)($row['qty']??0); if($rcv<=0) continue;
-    $poi=row('SELECT * FROM purchase_order_items WHERE id=? AND order_id=?',[(int)$piid,$oid]); if(!$poi) continue;
-    $newRcv=$poi['received_qty']+$rcv; if($newRcv>$poi['quantity']) $newRcv=$poi['quantity'];
-    $qty=(float)$newRcv-$poi['received_qty']; if($qty<=0) continue;
-    q('UPDATE purchase_order_items SET received_qty=? WHERE id=?',[$newRcv,$poi['id']]);
-    q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,unit_cost,reference_type,reference_id,note,user_id,created_at) VALUES(1,?,?,\'purchase_in\',?,?,?,?,?,?,NOW())',[$poi['item_id'],$loc,$qty,$poi['unit_cost'],'purchase_order',$oid,'GRN for PO '.$oid,$u['id']]);
-    q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$poi['item_id'],$loc,$qty]);
+   $pdo=db();
+   $pdo->beginTransaction();
+   try{
+    $o=row('SELECT * FROM purchase_orders WHERE id=? AND deleted_at IS NULL FOR UPDATE',[$oid]);
+    if(!$o||!in_array($o['status'],['sent','partially_received'],true)){
+     if($pdo->inTransaction()) $pdo->rollBack();
+     flash('That purchase order cannot receive goods.','bad'); go('purchases');
+    }
+    foreach($items as $piid=>$row){
+     if(!is_array($row)) continue;
+     $rcv=(float)($row['qty']??0); if($rcv<=0) continue;
+     $poi=row('SELECT * FROM purchase_order_items WHERE id=? AND order_id=? FOR UPDATE',[(int)$piid,$oid]); if(!$poi) continue;
+     $newRcv=$poi['received_qty']+$rcv; if($newRcv>$poi['quantity']) $newRcv=$poi['quantity'];
+     $qty=(float)$newRcv-$poi['received_qty']; if($qty<=0) continue;
+     q('UPDATE purchase_order_items SET received_qty=? WHERE id=?',[$newRcv,$poi['id']]);
+     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,unit_cost,reference_type,reference_id,note,user_id,created_at) VALUES(1,?,?,\'purchase_in\',?,?,?,?,?,?,NOW())',[$poi['item_id'],$loc,$qty,$poi['unit_cost'],'purchase_order',$oid,'GRN for PO '.$oid,$u['id']]);
+     q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$poi['item_id'],$loc,$qty]);
+    }
+    $totQty=val('SELECT COALESCE(SUM(quantity),0) FROM purchase_order_items WHERE order_id=?',[$oid]);
+    $rcvQty=val('SELECT COALESCE(SUM(received_qty),0) FROM purchase_order_items WHERE order_id=?',[$oid]);
+    q('UPDATE purchase_orders SET status=? WHERE id=?',[$rcvQty>=$totQty?'received':'partially_received',$oid]);
+    $pdo->commit();
+   }catch(Throwable $e){
+    if($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[hotel purchases] could not receive goods: '.$e->getMessage());
+    flash('The goods could not be received. Please try again.','bad');
+    go('purchases',['view'=>$oid]);
    }
-   $totQty=val('SELECT COALESCE(SUM(quantity),0) FROM purchase_order_items WHERE order_id=?',[$oid]);
-   $rcvQty=val('SELECT COALESCE(SUM(received_qty),0) FROM purchase_order_items WHERE order_id=?',[$oid]);
-   q('UPDATE purchase_orders SET status=? WHERE id=?',[$rcvQty>=$totQty?'received':'partially_received',$oid]);
    audit('goods_receive','purchase_order',$oid,['location'=>$loc]);
    $pnum=(string)val('SELECT number FROM purchase_orders WHERE id=?',[$oid]);
    notify_console('grn:'.$oid,'communication','Goods received for '.$pnum,
@@ -130,10 +193,11 @@ case 'reqstatus':
    break;
   case 'pocancel':
    $oid=(int)($_POST['oid']??0);
-   q('UPDATE purchase_orders SET status=\'cancelled\' WHERE id=?',[$oid]);
+   $o=row('SELECT * FROM purchase_orders WHERE id=? AND deleted_at IS NULL',[$oid]);
+   if(!$o||!in_array($o['status'],['draft','sent','partially_received'],true)){ flash('That purchase order cannot be cancelled.','bad'); go('purchases'); }
+   q('UPDATE purchase_orders SET status=\'cancelled\' WHERE id=? AND status IN(\'draft\',\'sent\',\'partially_received\')',[$oid]);
    audit('cancel','purchase_order',$oid);
-   $pnum=(string)val('SELECT number FROM purchase_orders WHERE id=?',[$oid]);
-   notify_console('po-cancel:'.$oid,'incident','Purchase order '.$pnum.' cancelled',
+   notify_console('po-cancel:'.$oid,'incident','Purchase order '.$o['number'].' cancelled',
     'The order has been cancelled before or during delivery.',
     ['purchase_order_id'=>$oid],['director','general_manager','storekeeper','accountant'],'purchase_order',$oid);
    flash('Purchase order cancelled.');

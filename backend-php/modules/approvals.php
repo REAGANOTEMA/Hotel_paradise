@@ -12,6 +12,7 @@ if(hp_table_exists('expenses')){
  catch(Throwable $e){ $schemaMissing[]='expenses'; }
 }else{ $schemaMissing[]='expenses'; }
 
+$canDecideReqs=(bool)array_intersect(roles_of(),stock_request_decision_roles());
 $reqs=[];
 if(hp_table_exists('purchase_requisitions')&&hp_table_exists('purchase_requisition_items')){
  $amountExpr=hp_column_exists('purchase_requisition_items','est_cost')
@@ -62,17 +63,21 @@ echo '<div class="panel"><h2>Stock requests</h2><p class="hint">Every inventory 
 echo '<table class="tbl"><thead><tr><th>Number</th><th>Department</th><th>Items</th><th class="num">Amount</th><th>Requested by</th><th>Decision</th></tr></thead><tbody>';
 foreach($reqs as $r){
  echo '<tr><td><b>'.e($r['number']).'</b></td><td>'.e($r['dept']).'</td>'
-  .'<td>'.e(stock_request_item_list((int)$r['id'])?:'—').'</td>'
+  .'<td>'.e(stock_request_item_list((int)$r['id'])?:'-').'</td>'
   .'<td class="num"><b>'.money($r['amount']).'</b></td><td>'.e($r['reqby']).'</td><td style="white-space:nowrap">';
- form_open('purchases','reqstatus',['id'=>$r['id']]);
- echo '<input type="hidden" name="nst" value="approved"><input type="hidden" name="back" value="purchases">';
- echo '<button class="btn sm tick">Approve</button></form>';
- /* A refusal always carries a reason, so the department and the store learn
-    exactly why the request was turned down. */
- form_open('purchases','reqstatus',['id'=>$r['id']]);
- echo '<input type="hidden" name="nst" value="rejected"><input type="hidden" name="back" value="purchases">';
- echo '<input name="reason" placeholder="Reason (required)" style="margin-top:6px;width:180px;padding:7px;border:1px solid var(--line);border-radius:8px">';
- echo '<button class="btn sm danger" style="margin-top:6px">Reject</button></form>';
+ if($canDecideReqs){
+  form_open('approvals','reqstatus',['id'=>$r['id']]);
+  echo '<input type="hidden" name="nst" value="approved">';
+  echo '<button class="btn sm tick">Approve</button></form>';
+  /* A refusal always carries a reason, so the department and the store learn
+     exactly why the request was turned down. */
+  form_open('approvals','reqstatus',['id'=>$r['id']]);
+  echo '<input type="hidden" name="nst" value="rejected">';
+  echo '<input name="reason" placeholder="Reason (required)" style="margin-top:6px;width:180px;padding:7px;border:1px solid var(--line);border-radius:8px">';
+  echo '<button class="btn sm danger" style="margin-top:6px">Reject</button></form>';
+ }else{
+  echo '<small style="color:var(--muted)">Awaiting Director or General Manager</small>';
+ }
  echo '</td></tr>';
 }
 if(!count($reqs)) echo '<tr><td colspan="6" style="text-align:center;color:var(--muted)">Nothing waiting.</td></tr>';

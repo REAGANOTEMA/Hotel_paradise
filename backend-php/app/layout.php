@@ -313,7 +313,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 
  /* ---- the rail ---- */
  echo '<aside class="side" id="side">';
- echo '<a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel-Paradise-on-the-Nile-Logo"></a>';
+ echo '<a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel Paradise on the Nile" width="1532" height="442" decoding="async" draggable="false"></a>';
  echo '<button class="sideClose" id="sideClose" type="button" aria-label="Close menu"><span></span><span></span></button>';
   echo '<nav class="sideNav" id="sideNav" aria-label="Modules">';
   foreach(nav_groups() as $group){
@@ -1232,7 +1232,7 @@ function receipt_sheet(array $r): string{
  $h='<div class="sheet">';
  $h.='<div class="sheetBar">'.e($r['kind']??'RECEIPT').'</div>';
  $b=hotel_brand();
- $h.='<div class="sheetHotel"><img class="sheetLogo" src="'.e($b['crest']).'" alt=""><b>HOTEL PARADISE ON THE NILE</b><span>'.e($b['city']).' &middot; '.e($b['country']).' &middot; '.e($b['phones'][0]).'</span></div>';
+ $h.='<div class="sheetHotel"><img class="sheetLogo" src="'.e($b['crest']).'" alt="" width="1532" height="442" decoding="async"><b>HOTEL PARADISE ON THE NILE</b><span>'.e($b['city']).' &middot; '.e($b['country']).' &middot; '.e($b['phones'][0]).'</span></div>';
  if(isset($r['number'])) $h.='<div class="sheetNo">'.e($r['number']).'</div>';
  if(!empty($r['meta'])){
   $h.='<div class="sheetMeta">';

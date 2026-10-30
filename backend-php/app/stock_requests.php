@@ -110,31 +110,20 @@ function stock_request_department_categories(string $code): array
 function stock_request_catalog(string $code): array
 {
  $wanted=stock_request_department_categories($code);
+ if(!$wanted) return [];
  $ids=[];
- if($wanted){
-  $names=array_map(static fn(string $n): string=>strtolower($n),$wanted);
-  foreach(rows('SELECT id,name FROM inventory_categories WHERE active=1 AND deleted_at IS NULL') as $c){
-   if(in_array(strtolower((string)$c['name']),$names,true)) $ids[]=(int)$c['id'];
-  }
+ $names=array_map(static fn(string $n): string=>strtolower($n),$wanted);
+ foreach(rows('SELECT id,name FROM inventory_categories WHERE active=1 AND deleted_at IS NULL') as $c){
+  if(in_array(strtolower((string)$c['name']),$names,true)) $ids[]=(int)$c['id'];
  }
+ if(!$ids) return [];
  $sql='SELECT i.*,c.name cat,'
   .'COALESCE((SELECT SUM(sl.quantity) FROM stock_levels sl WHERE sl.item_id=i.id),0) on_hand'
   .' FROM inventory_items i LEFT JOIN inventory_categories c ON c.id=i.category_id'
-  .' WHERE i.active=1 AND i.deleted_at IS NULL';
- $args=[];
- if($ids){
-  $sql.=' AND i.category_id IN('.implode(',',array_fill(0,count($ids),'?')).')';
-  $args=$ids;
- }
+  .' WHERE i.active=1 AND i.deleted_at IS NULL'
+  .' AND i.category_id IN('.implode(',',array_fill(0,count($ids),'?')).')';
  $sql.=' ORDER BY (COALESCE((SELECT SUM(sl.quantity) FROM stock_levels sl WHERE sl.item_id=i.id),0)<=i.reorder_level) DESC,i.name';
- $items=rows($sql,$args);
- if($ids && !$items){
-  $items=rows('SELECT i.*,c.name cat,'
-   .'COALESCE((SELECT SUM(sl.quantity) FROM stock_levels sl WHERE sl.item_id=i.id),0) on_hand'
-   .' FROM inventory_items i LEFT JOIN inventory_categories c ON c.id=i.category_id'
-   .' WHERE i.active=1 AND i.deleted_at IS NULL ORDER BY i.name');
- }
- return $items;
+ return rows($sql,$ids);
 }
 
 /** The ids a department is allowed to put on a requisition. */
@@ -218,12 +207,18 @@ function stock_request_handle_widget(string $page, array $user): void
    flash('Only the Director or General Manager may decide a stock request.','bad');
    go($page);
   }
-  $rid=(int)($_POST['id']??0);
+  $rid=(int)($_GET['id']??$_POST['id']??0);
   $r=$rid?row('SELECT * FROM purchase_requisitions WHERE id=?',[$rid]):null;
   if(!$r){ flash('That request no longer exists.','bad'); go($page); }
   $res=stock_request_decide($rid,(string)($_POST['nst']??''),(string)($_POST['reason']??''),(int)$user['id']);
   if(!$res['ok']){
-   flash($res['error']==='reason-required'?'A reason is required when turning down a request.':'That request could not be updated.','bad');
+   $msg=match($res['error']){
+    'reason-required'=>'A reason is required when turning down a request.',
+    'already-decided'=>'That request has already been decided.',
+    'not-allowed'=>'Only the Director or General Manager may decide a stock request.',
+    default=>'That request could not be updated.',
+   };
+   flash($msg,'bad');
   }else{
    flash('Stock request '.$r['number'].' '.(string)($_POST['nst']??'').'.');
   }
@@ -379,13 +374,15 @@ function stock_request_user_name(?int $id): string
  */
 function stock_request_decide(int $rid, string $status, string $reason, int $by): array
 {
+ if(!array_intersect(roles_of(),stock_request_decision_roles())) return ['ok'=>false,'error'=>'not-allowed'];
  if(!in_array($status,['approved','rejected'],true)) return ['ok'=>false,'error'=>'bad-status'];
  $r=row('SELECT * FROM purchase_requisitions WHERE id=?', [$rid]);
  if(!$r) return ['ok'=>false,'error'=>'not-found'];
+ if($r['status']!=='pending') return ['ok'=>false,'error'=>'already-decided'];
  $reason=trim($reason);
  if($status==='rejected' && $reason==='') return ['ok'=>false,'error'=>'reason-required'];
 
- q('UPDATE purchase_requisitions SET status=?,approved_by=?,approved_at=NOW(),decision_reason=? WHERE id=?',
+ q('UPDATE purchase_requisitions SET status=?,approved_by=?,approved_at=NOW(),decision_reason=? WHERE id=? AND status=\'pending\'',
   [$status,$by,$reason!==''?$reason:null,$rid]);
  audit('requisition_'.$status,'requisition',$rid,['status'=>$r['status'],'reason'=>$reason]);
 

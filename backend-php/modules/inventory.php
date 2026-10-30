@@ -33,32 +33,53 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
    go('inventory');
    break;
   case 'move':
-   $iid=(int)($_POST['item_id']??0); $type=$_POST['type']??''; $qty=abs((float)($_POST['qty']??0)); $loc=trim($_POST['location']??'')?:'Main Store'; $note=trim($_POST['note']??'');
-   $loc = $_POST['loc']??$loc;
-   if(!$iid||$qty<=0){ flash('Select an item and quantity.','bad'); go('inventory'); }
-   $sign=1;
-   if(in_array($type,['issue','waste','transfer_out'])) $sign=-1;
-   if($type==='count_adjust'){
-    $cur=(float)val('SELECT quantity FROM stock_levels WHERE item_id=? AND location=?',[$iid,$loc]);
-    $delta=$qty-$cur;
-    q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,$type,$delta,'Count adjusted to '.$qty.' '.$note,$u['id']]);
-    q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=VALUES(quantity)',[$iid,$loc,$qty]);
-    audit('stock_count_adjust','inventory_item',$iid,['location'=>$loc,'new'=>$qty]);
-    $lowStockAlert($iid,$loc);
-    flash('Stock level set to '.$qty.' at '.$loc.'.');
-    go('inventory');
+   $iid=(int)($_POST['item_id']??0); $type=$_POST['type']??''; $qty=abs((float)($_POST['qty']??0));
+   $loc=substr(trim((string)($_POST['loc']??$_POST['location']??'')),0,60)?:'Main Store';
+   $note=trim($_POST['note']??'');
+   $types=['issue','waste','transfer_in','transfer_out','count_adjust'];
+   if(!$iid||$qty<=0||!in_array($type,$types,true)||!val('SELECT id FROM inventory_items WHERE id=? AND active=1 AND deleted_at IS NULL',[$iid])){
+    flash('Select an active item, a movement type and quantity.','bad'); go('inventory');
    }
-    if($type==='transfer_in'){ $dst=trim($_POST['dst']??''); $dst=substr($dst,0,60)?:'Main Store';
+   $pdo=db();
+   $pdo->beginTransaction();
+   try{
+    $level=row('SELECT * FROM stock_levels WHERE item_id=? AND location=? FOR UPDATE',[$iid,$loc]);
+    $cur=(float)($level['quantity']??0);
+    if($type==='count_adjust'){
+     $delta=$qty-$cur;
+     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,$type,$delta,'Count adjusted to '.$qty.' '.$note,$u['id']]);
+     q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=VALUES(quantity)',[$iid,$loc,$qty]);
+     $pdo->commit();
+     audit('stock_count_adjust','inventory_item',$iid,['location'=>$loc,'new'=>$qty]);
+     $lowStockAlert($iid,$loc);
+     flash('Stock level set to '.$qty.' at '.$loc.'.');
+     go('inventory');
+    }
+    if($type==='transfer_in'){
+     $dst=substr(trim((string)($_POST['dst']??'')),0,60)?:'Main Store';
+     if($dst===$loc){ if($pdo->inTransaction()) $pdo->rollBack(); flash('Choose a different destination location.','bad'); go('inventory'); }
+     if($cur<$qty){ if($pdo->inTransaction()) $pdo->rollBack(); flash('There is not enough stock at '.$loc.' to transfer '.$qty.'.','bad'); go('inventory'); }
      q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,'transfer_out',-$qty,$note,$u['id']]);
      q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$dst,'transfer_in',$qty,$note,$u['id']]);
      q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$iid,$loc,-$qty]);
      q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$iid,$dst,$qty]);
+     $pdo->commit();
      audit('transfer','inventory_item',$iid,['from'=>$loc,'to'=>$dst,'qty'=>$qty]);
      $lowStockAlert($iid,$loc);
-     flash('Transferred '.$qty.' from '.$loc.' to '.$dst.'.'); go('inventory');
+     flash('Transferred '.$qty.' from '.$loc.' to '.$dst.'.');
+     go('inventory');
     }
+    $sign=in_array($type,['issue','waste','transfer_out'],true)?-1:1;
+    if($sign<0 && $cur<$qty){ if($pdo->inTransaction()) $pdo->rollBack(); flash('There is not enough stock at '.$loc.' for that movement.','bad'); go('inventory'); }
     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,note,user_id,created_at) VALUES(1,?,?,?,?,?,?,NOW())',[$iid,$loc,$type,$sign*$qty,$note,$u['id']]);
     q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$iid,$loc,$sign*$qty]);
+    $pdo->commit();
+   }catch(Throwable $e){
+    if($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[hotel inventory] could not record movement: '.$e->getMessage());
+    flash('The stock movement could not be saved. Please try again.','bad');
+    go('inventory');
+   }
    audit('stock_movement','inventory_item',$iid,['type'=>$type,'qty'=>$sign*$qty,'location'=>$loc]);
    $lowStockAlert($iid,$loc);
    flash(ucfirst(str_replace('_',' ',$type)).' of '.$qty.' recorded at '.$loc.'.');
