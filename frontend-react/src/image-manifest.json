@@ -8033,6 +8033,12 @@
       "h": 511,
       "variants": []
     },
+    "backgroun-image": {
+      "ext": "png",
+      "w": 1672,
+      "h": 941,
+      "variants": []
+    },
     "bar": {
       "ext": "webp",
       "w": 864,

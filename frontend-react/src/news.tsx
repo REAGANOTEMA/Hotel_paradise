@@ -224,7 +224,10 @@ function NewsSpotlight({posts, onOpen}: {posts: Post[]; onOpen: (p: Post) => voi
     aria-label="Featured stories" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
     onFocus={() => setFocus(true)} onBlur={() => setFocus(false)}>
     <div className="spotStage">
-      {slides.map((p, n) => (
+      {slides.map((p, n) => {
+        const r = p.reactions || EMPTY_REACTIONS;
+        const total = r.like + r.love + r.applause;
+        return (
         <button type="button" key={p.slug} className={'spotSlide' + (n === index ? ' on' : '')}
           onClick={() => onOpen(p)} aria-hidden={n !== index} tabIndex={n === index ? 0 : -1}>
           <img src={storyImage(p)} alt="" loading={n === 0 ? 'eager' : 'lazy'} decoding="async"
@@ -239,13 +242,18 @@ function NewsSpotlight({posts, onOpen}: {posts: Post[]; onOpen: (p: Post) => voi
             <span className="spotText">{p.excerpt}</span>
             <span className="spotMeta">
               <span>{niceDate(p.published)}</span>
+              <span className="spotStats" aria-label={total + ' reactions, ' + (p.comment_count || 0) + ' comments'}>
+                <span><ReactionIcon kind="like"/>{total}</span>
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v7A2.5 2.5 0 0 1 17.5 15H9l-4.5 4V5.5Z"/></svg>{p.comment_count || 0}</span>
+              </span>
               <span className="spotRead">Read the story
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </span>
             </span>
           </span>
         </button>
-      ))}
+        );
+      })}
 
       <div className="spotRail">
         <button type="button" className="spotArrow" onClick={() => step(-1)} aria-label="Previous featured story">
@@ -673,7 +681,13 @@ function NewsPage() {
                     <b className="newsCardTitle">{p.title}</b>
                     <span className="newsCardText">{p.excerpt}</span>
                     <span className="newsCardFoot">
-                      <span className="newsDate">{niceDate(p.published)}</span>
+                      <span className="newsCardMeta">
+                        <span className="newsDate">{niceDate(p.published)}</span>
+                        <span className="newsCardStats" aria-label={((p.reactions?.like || 0) + (p.reactions?.love || 0) + (p.reactions?.applause || 0)) + ' reactions, ' + (p.comment_count || 0) + ' comments'}>
+                          <span><ReactionIcon kind="like"/>{((p.reactions?.like || 0) + (p.reactions?.love || 0) + (p.reactions?.applause || 0))}</span>
+                          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v7A2.5 2.5 0 0 1 17.5 15H9l-4.5 4V5.5Z"/></svg>{p.comment_count || 0}</span>
+                        </span>
+                      </span>
                       <span className="newsRead">Read
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                       </span>

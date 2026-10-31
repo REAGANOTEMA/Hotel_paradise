@@ -56,6 +56,21 @@ export const LOGO = './Hotel-Paradise-on-the-Nile-Logo.webp';
 export const bgUrl = (path: string): string =>
   `url('${new URL(path, document.baseURI).href}')`;
 
+/*
+ * The house backdrop, set once for every page.
+ *
+ * The photograph is resolved against the document here, not inside the
+ * stylesheet, so it works whether the site is served from a domain root or a
+ * subdirectory. It sits under a warm ivory wash: cards, bands and panels keep
+ * their own backgrounds, and the river texture only shows in the quiet spaces
+ * between them.
+ */
+if (typeof document !== 'undefined') {
+  try {
+    document.documentElement.style.setProperty('--site-bg', bgUrl('./images/backgroun-image.png'));
+  } catch { /* a page without a document keeps the plain ivory ground */ }
+}
+
 /**
  * Registers the offline-capable service worker.
  *
@@ -233,6 +248,11 @@ export const HOTEL = {
 /** A telephone number written for people to a form a dialler can use. */
 export const telHref = (phone: string): string => 'tel:+' + phone.replace(/\D/g, '');
 
+/** The hotel's pin, opened in Google Maps from any page. */
+export const directionsHref = (): string =>
+  'https://www.google.com/maps/search/?api=1&query=' +
+  encodeURIComponent(HOTEL.shortName + ', ' + HOTEL.addressForMap);
+
 export const CALL = HOTEL.phones[0];
 
 export function Brand({light = false}: {light?: boolean}) {
@@ -387,15 +407,32 @@ export function Footer() {
     <div className="flag"><i></i><i></i><i></i></div>
     <div className="footerMain">
      <div className="footerBrand">
-      <img className="footerLogo" src={LOGO} alt="Hotel Paradise on the Nile" width={256} height={256}/>
+      <div className="footerMark">
+       <span className="footerHalo" aria-hidden="true"/>
+       <img className="footerLogo" src={LOGO} alt="Hotel Paradise on the Nile" width={256} height={256}/>
+      </div>
       <p className="footerTag">Premium hospitality in Jinja, on the banks of the Nile.</p>
       <div className="footerTagMore">
        <span>Sixty nine rooms and suites, riverside dining, a swimming pool and gardens for every occasion, all within one calm address.</span>
        <span>From a restful night to a wedding for two hundred guests, our team carries the details so you can simply arrive.</span>
       </div>
+      <div className="footerQuick" aria-label="Quick contact">
+       <a className="footChip" href={telHref(CALL)}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h3l1.6 4-2 1.4a13 13 0 0 0 5 5L14 12.4 18 14v3a2 2 0 0 1-2.2 2A15 15 0 0 1 3 6.2 2 2 0 0 1 5 4z"/></svg>
+        Call the front desk
+       </a>
+       <a className="footChip" href={'mailto:' + HOTEL.email}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg>
+        Email us
+       </a>
+       <a className="footChip" href={directionsHref()} target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        Directions
+       </a>
+      </div>
       <div className="footerTrust">
        <span className="footerCert">{HOTEL.certification}</span>
-       <span>Est. {HOTEL.founded.slice(-4)}</span>
+       <span className="footerLive"><i aria-hidden="true"/> Front desk open 24 hours</span>
       </div>
      </div>
      <div className="footerCol"><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p><a className="footLink" href="./news.html">News &amp; Careers</a></p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>

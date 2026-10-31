@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {rooms, ExploreMore, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, LOGO, HOTEL, telHref, bgUrl, useReveal} from './shared';
+import {rooms, ExploreMore, TopBar, PageNav, Footer, BedGlyph, roomImage, fmtPrice, withService, HOTEL, telHref, bgUrl, useReveal} from './shared';
 import {heroShots, SmartImage, type HeroShot, type ImageGroup} from './SmartImage';
 import {MenuConcierge} from './concierge';
 
@@ -481,13 +481,25 @@ function Hero() {
       const on = n === i;
       return (
        <div className={'heroPanel' + (on ? ' on' : '')} key={n} aria-hidden={!on}>
-        <div className="heroLogo"><img src={LOGO} alt="Hotel Paradise on the Nile" width={1532} height={442} decoding="async" draggable={false} style={{height:"150px",width:"auto"}}/></div>
-        <p className="eyebrow">{c.eyebrow}</p>
-        <h1 className="heroTitle">{c.title}</h1>
-        <p className="heroText">{c.text}</p>
-        <div className="heroBtns">
-         <a className="btn" href={c.primary.href} tabIndex={on ? undefined : -1}>{c.primary.label}</a>
-         <a className="btn ghost2" href={c.secondary.href} tabIndex={on ? undefined : -1}>{c.secondary.label}</a>
+        <div className="heroPanelInner">
+         <span className="heroGhost" aria-hidden="true">{String(n + 1).padStart(2, '0')}</span>
+         <span className="heroSeal" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+           <circle cx="60" cy="60" r="54"/>
+           <circle cx="60" cy="60" r="43"/>
+           <path d="M60 25l8.5 26.5L95 60l-26.5 8.5L60 95l-8.5-26.5L25 60l26.5-8.5z"/>
+           <path d="M33 75c7-5.2 14-5.2 21 0s14 5.2 21 0 14-5.2 21 0"/>
+           <path d="M39 33c7-4.4 14-4.4 21 0s14 4.4 21 0"/>
+          </svg>
+         </span>
+         <p className="eyebrow">{c.eyebrow}</p>
+         <h1 className="heroTitle">{c.title}</h1>
+         <p className="heroText">{c.text}</p>
+         <span className="heroRule" aria-hidden="true"/>
+         <div className="heroBtns">
+          <a className="btn" href={c.primary.href} tabIndex={on ? undefined : -1}>{c.primary.label}</a>
+          <a className="btn ghost2" href={c.secondary.href} tabIndex={on ? undefined : -1}>{c.secondary.label}</a>
+         </div>
         </div>
        </div>
       );
