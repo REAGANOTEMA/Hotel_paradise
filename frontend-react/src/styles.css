@@ -2750,13 +2750,17 @@ footer::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:non
 .conLine{color:var(--muted);font-size:12.5px}
 .conHeard{color:var(--gold-ink);font-size:11.5px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .conPrivacy{color:var(--faint);font-size:10.5px;letter-spacing:.02em;margin-top:1px}
+.conQuick{flex:none;display:flex;flex-wrap:wrap;gap:5px}
+.conChip{border:1px solid var(--line);border-radius:999px;padding:4px 9px;font:inherit;font-weight:600;font-size:11px;letter-spacing:.2px;color:var(--navy);background:#fff;cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.conChip:hover{background:var(--gold-soft);border-color:var(--gold);transform:translateY(-1px)}
+.conChip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .conActions{flex:none;display:flex;flex-wrap:wrap;gap:6px}
 .conBtn{border:0;border-radius:999px;padding:6px 10px;font:inherit;font-weight:600;font-size:11.5px;letter-spacing:.2px;cursor:pointer;background:var(--navy);color:#fff;transition:background .18s ease,transform .18s ease;white-space:nowrap}
 .conBtn:hover{background:var(--nebula);transform:translateY(-1px)}
 .conBtn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .conBtnGhost{background:#EEF0F3;color:#1F2937}
 .conBtnGhost:hover{background:#E5E8EC}
-@media(prefers-reduced-motion:reduce){.conDot{animation:none!important}.conBtn:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.conDot{animation:none!important}.conBtn:hover,.conChip:hover{transform:none}}
 
 /* folded away, the concierge is a single floating button, so it never sits
    over the menu on a small screen */
@@ -2806,6 +2810,8 @@ body.hpn-concierge .installApp{bottom:calc(28px + 156px)}
   .conLine{font-size:11.5px}
   .conHeard{font-size:10.5px;white-space:normal}
   .conIcon{width:30px;height:30px}
+  .conQuick{gap:4px}
+  .conChip{padding:4px 8px;font-size:10.5px}
   .conActions{gap:4px}
   .conBtn{padding:5px 8px;font-size:11px}
 }

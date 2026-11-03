@@ -16,20 +16,21 @@ import type {MenuSection} from './menuData';
 
    Three rules shape it:
 
-   - It never moves on its own. It speaks once to welcome a guest, and
-     after that it only answers something the guest actually said. A
-     guest who says nothing is left in peace for as long as they like.
+   - It never moves on its own. It waits as a small button and speaks
+     only after the guest opens it and asks to begin. After that it only
+     answers something the guest actually said or tapped. A guest who
+     says nothing is left in peace for as long as they like.
    - It never records and never saves anything. Speech is read and
      answered in the moment and then forgotten; no audio is written
      anywhere, and nothing is sent to the hotel.
-   - It never covers the page. On a phone it stands as a small round
-     button until it is asked to open, the card itself can be quieted,
-     folded away or closed at any time, and it is left out of print.
+   - It never covers the page. It stands as a small button until it is
+     asked to open, the card itself can be quieted, folded away or closed
+     at any time, and it is left out of print.
 
    The browser does the listening and the speaking through its own Web
-   Speech API, so the microphone only opens after the guest has touched
-   the page, and a guest who declines the microphone is simply told so
-   once and never asked again.
+   Speech API, so the microphone opens only after the guest has opened
+   the guide and asked to begin, and a guest who declines the microphone
+   is simply told so once and never asked again.
 
    The answers are written out here, in full, rather than guessed at, so
    the hotel's products, rates and offers are always presented the same
@@ -84,17 +85,21 @@ const NAME_FIXES: [RegExp, string][] = [
 ];
 const normalise = (s: string): string => NAME_FIXES.reduce((t, [re, v]) => t.replace(re, v), s);
 
-const FEMALE = /female|woman|zira|samantha|serena|aria|hazel|libby|sonia|joanna|salli|kendra|kimberly|ivy|karen|moira|tessa|fiona|veena|victoria|allison|ava|susan|nicole|catherine|clara|emily|michelle|elizabeth|google uk english female|google us english/i;
-const MALE = /male|david|mark|daniel|alex|fred|rishi|george|guy|brian|matthew|arthur|oliver|thomas|james|ryan|nico|diego|jorge|aaron|william|eric|christopher|liam|connor|google uk english male/i;
+const FEMALE = /female|woman|zira|samantha|serena|aria|hazel|libby|sonia|joanna|salli|kendra|kimberly|ivy|karen|moira|tessa|fiona|veena|victoria|allison|ava|susan|nicole|catherine|clara|emily|michelle|elizabeth|jenny|jenna|aria|emma|olivia|sophie|amber|ana|sara|nancy|linda|heather|ashley|allison|google uk english female|google us english/i;
+const MALE = /male|david|mark|daniel|alex|fred|rishi|george|guy|brian|matthew|arthur|oliver|thomas|james|ryan|nico|diego|jorge|aaron|william|eric|christopher|liam|connor|davis|tony|jason|brandon|roger|steffan|andrew|google uk english male|google us english male/i;
+const NOVELTY = /albert|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|hysterical|jester|organ|superstar|trinoids|whisper|wobble|zarvox/i;
 
 /* Where two voices are available, the richer one is chosen: an "online" or
-   "natural" voice first, then a Google voice, then a Microsoft one. A phone
-   that offers only one voice still works, it is simply the voice used. */
+   "natural" voice first, then a Google voice, then a Microsoft one. British
+   and American English are preferred, and novelty voices are never chosen.
+   A phone that offers only one voice still works, it is simply the voice used. */
 const voiceScore = (v: SpeechSynthesisVoice): number => {
   let score = 0;
   if (/natural|neural|online|premium|enhanced|wavenet/i.test(v.name)) score += 8;
   if (/google/i.test(v.name)) score += 4;
   if (/microsoft/i.test(v.name)) score += 2;
+  if (/^en[-_]GB/i.test(v.lang)) score += 3;
+  if (/^en[-_]US/i.test(v.lang)) score += 2;
   if (!v.localService) score += 1;
   return score;
 };
@@ -133,7 +138,8 @@ function pickVoices(): {female?: SpeechSynthesisVoice; male?: SpeechSynthesisVoi
   try {
     const all = window.speechSynthesis.getVoices() || [];
     const english = all.filter(v => /^en([-_]|$)/i.test(v.lang));
-    const pool = english.length ? english : all;
+    const natural = (english.length ? english : all).filter(v => !NOVELTY.test(v.name));
+    const pool = natural.length ? natural : (english.length ? english : all);
     if (!pool.length) return {};
     const rank = (list: SpeechSynthesisVoice[]) => [...list].sort((a, b) => voiceScore(b) - voiceScore(a));
     const female = rank(pool.filter(v => FEMALE.test(v.name)))[0];
@@ -381,6 +387,15 @@ const MORE_ANSWERS: Record<string, string> = {
 
 const MORE_DEFAULT = `I would be glad to say more. Tell me which part you would like: the rooms and rates, booking, our offers, the restaurant and bar, events, facilities, directions, or payment.`;
 
+const QUICK_ASKS: {label: string; ask: string}[] = [
+  {label: 'Rooms', ask: 'rooms'},
+  {label: 'Book', ask: 'booking'},
+  {label: 'Offers', ask: 'offers'},
+  {label: 'Menu', ask: 'menu'},
+  {label: 'Events', ask: 'events'},
+  {label: 'Find us', ask: 'location'}
+];
+
 export function MenuConcierge({sections}: {sections: MenuSection[]}) {
   const {speech, Ctor} = React.useMemo(speechWindow, []);
   const ready = Boolean(speech && Ctor && typeof SpeechSynthesisUtterance !== 'undefined');
@@ -392,9 +407,7 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
   const [heard, setHeard] = React.useState('');
   const [note, setNote] = React.useState('');
   const [closed, setClosed] = React.useState(false);
-  const [expanded, setExpanded] = React.useState<boolean>(
-    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1001px)').matches
-  );
+  const [expanded, setExpanded] = React.useState(false);
 
   const recRef = React.useRef<RecognitionLike | null>(null);
   const voicesRef = React.useRef<{female?: SpeechSynthesisVoice; male?: SpeechSynthesisVoice}>({});
@@ -431,7 +444,7 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     window.clearTimeout(watchdogRef.current);
     pendingRef.current = 0;
     speakingRef.current = false;
-    setPhase(pausedRef.current ? 'paused' : 'listening');
+    setPhase(pausedRef.current ? 'paused' : wantRef.current ? 'listening' : 'idle');
     startRec();
   }, [startRec]);
 
@@ -439,9 +452,9 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     const u = new SpeechSynthesisUtterance(forSpeech(text));
     const v = who === 'woman' ? voicesRef.current.female : voicesRef.current.male;
     if (v) u.voice = v;
-    u.lang = v?.lang || 'en-US';
-    u.rate = 0.94;
-    u.pitch = who === 'woman' ? 1.05 : 0.88;
+    u.lang = v?.lang || 'en-GB';
+    u.rate = 0.96;
+    u.pitch = who === 'woman' ? 1.03 : 0.9;
     u.volume = 1;
     return u;
   };
@@ -596,7 +609,6 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
   const openPanel = React.useCallback(() => {
     if (closedRef.current) return;
     setExpanded(true);
-    if (!startedRef.current) beginRef.current();
   }, []);
 
   const foldPanel = React.useCallback(() => {
@@ -606,14 +618,14 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
   /* ------- the little status line, folded in or open ------- */
 
   const miniStatus =
-    phase === 'idle' ? 'Tap to begin' :
+    phase === 'idle' ? 'Tap to open' :
     phase === 'paused' ? 'Resume to listen' :
     phase === 'blocked' ? 'Mic unavailable' :
     phase === 'speaking' ? 'Speaking...' :
     'Listening...';
 
   const status = phase === 'idle'
-    ? 'Tap the Begin button, or tap anywhere on the page, and I will welcome you.'
+    ? 'Tap Begin and I will welcome you, or choose a quick question below.'
     : phase === 'paused'
       ? 'Voice is quiet. Press Resume when you would like me to listen again, or Close to hide me.'
       : phase === 'blocked'
@@ -684,20 +696,6 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
 
   React.useEffect(() => {
     if (!ready) return;
-    const go = () => { if (!closedRef.current && !startedRef.current) beginRef.current(); };
-    const opts: AddEventListenerOptions = {passive: true};
-    document.addEventListener('pointerdown', go, opts);
-    document.addEventListener('keydown', go);
-    document.addEventListener('touchstart', go, opts);
-    return () => {
-      document.removeEventListener('pointerdown', go, opts);
-      document.removeEventListener('keydown', go);
-      document.removeEventListener('touchstart', go, opts);
-    };
-  }, [ready]);
-
-  React.useEffect(() => {
-    if (!ready) return;
     const onVis = () => {
       if (document.hidden) { abortRec(); }
       else if (wantRef.current && !pausedRef.current && !speakingRef.current && !closedRef.current) { startRec(); }
@@ -763,6 +761,12 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
         <span className="conLine" aria-live="polite">{status}</span>
         {heard && phase !== 'idle' && phase !== 'blocked' && <span className="conHeard">Heard: {heard}</span>}
         <span className="conPrivacy">Nothing is recorded or saved.</span>
+      </div>
+
+      <div className="conQuick" role="group" aria-label="Quick questions">
+        {QUICK_ASKS.map(q => (
+          <button type="button" className="conChip" key={q.ask} onClick={() => handle(q.ask)}>{q.label}</button>
+        ))}
       </div>
 
       <div className="conActions">

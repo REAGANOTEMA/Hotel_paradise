@@ -320,7 +320,7 @@ export function InstallApp() {
 
     const reveal = () => {
       if (timer.current) window.clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => setShow(true), 9000);
+      timer.current = window.setTimeout(() => setShow(true), 20000);
     };
     const onInstalled = () => {
       setShow(false); setSheet(false);
