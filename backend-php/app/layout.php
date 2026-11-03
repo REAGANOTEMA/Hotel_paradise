@@ -177,8 +177,8 @@ function assistant_facts(): array{
   'email'=>'frontdesk@hotelparadiseonthenile.info',
   'website'=>'www.hotelparadiseonthenile.info',
   'established'=>'18 April 1998',
-  'founders'=>['Mr. Otile Francis','Mrs. Magrate Otile'],
   'founded_rooms'=>'10',
+  'rooms_today'=>'69',
   'developer'=>'Reagan Otema',
   'company'=>'Reagansoft Innovation Limited',
   'company_site'=>'https://reagansoftinnovation.com',
@@ -192,9 +192,8 @@ function assistant_facts(): array{
  */
 function assistant_knowledge(): array{
  return [
-  ['k'=>['history','founded','establish','started','began','origin','1998','when was','how old'],'a'=>'Hotel Paradise on the Nile was established on the eighteenth of April, nineteen ninety eight, by Mr. Otile Francis and his wife, Mrs. Magrate Otile. They began with just ten rooms, and through their vision and hard work, and as the owner puts it, by God\'s grace, the hotel has grown into the riverside retreat it is today.'],
-  ['k'=>['founder','owner','francis','magrate','proprietor','who started'],'a'=>'The hotel was founded by Mr. Otile Francis and his wife, Mrs. Magrate Otile. They are warmly respected for their vision and dedication, and their efforts are the reason Hotel Paradise on the Nile stands on the banks of the Nile today.'],
-  ['k'=>['how many rooms did it start','started with','ten rooms','10 rooms','original rooms','first rooms'],'a'=>'The hotel opened with ten rooms in 1998. Over the years it has grown well beyond that beginning, and the current room inventory is listed in the Rooms module and on the public website.'],
+  ['k'=>['history','founded','establish','started','began','origin','1998','when was','how old'],'a'=>'Hotel Paradise on the Nile was established on the eighteenth of April, nineteen ninety eight. It began with ten rooms and has grown into a full riverside hotel with sixty nine rooms, a restaurant and bar, a swimming pool, a health club and gardens for every occasion. The hotel is registered with the Uganda Registration Services Bureau and certified UNBS, and it remains one of the most established addresses on the banks of the Nile in Jinja.'],
+  ['k'=>['how many rooms did it start','started with','ten rooms','10 rooms','original rooms','first rooms'],'a'=>'The hotel opened with ten rooms in 1998. It now offers sixty nine rooms across eight room types, from the Standard Single to the Suite, all with breakfast included. The current inventory is listed in the Rooms module and on the public website.'],
   ['k'=>['who developed','who built','developer','programmer','reagansoft','reagan','otema','who made the system','who made the website'],'a'=>'The hotel\'s website and management system were developed by Reagan Otema, founder of Reagansoft Innovation Limited, Uganda, based in Jinja. You can find the company at reagansoftinnovation dot com.'],
   ['k'=>['where is','located','location','address','directions','kiira','how do i get'],'a'=>'Hotel Paradise on the Nile is in Jinja, Uganda, at Plot twelve, nineteen and twenty five, Kiira Lane. The front desk can give exact directions on plus two five six, seven five nine, five oh four, nine two eight.'],
   ['k'=>['contact','phone','telephone','call them','email','reach the hotel'],'a'=>'You can reach the hotel on plus two five six, seven five nine, five oh four, nine two eight, or plus two five six, seven seven three, five six five, six six eight. The front desk email is front desk, at hotel paradise on the nile dot info.'],
@@ -764,7 +763,7 @@ function assistant_scripts(): void{
   var pstate=document.getElementById('assistState');
 
   function firstName(n){var w=String(n==null?'':n).trim().split(/\s+/);return w[0]||'';}
-  function phon(s){return String(s==null?'':s).replace(/Otile/gi,'Oh-till-eh');}
+  function phon(s){return String(s==null?'':s).replace(/Jinja/gi,'Jin-jah');}
   function setState(s){if(pstate)pstate.textContent=s;}
   function pickVoice(){
     if(!synth)return null;
@@ -916,8 +915,8 @@ function assistant_scripts(): void{
     for(var j=0;j<list.length;j++){var s=score(t,list[j].k||[]);if(s>bs){bs=s;best=list[j];}}
     if(best&&bs>=4)return best.a;
     if(t.indexOf('help')>=0||t.indexOf('what can you')>=0||t.indexOf('who are you')>=0)
-      return 'I am the Paradise assistant. I can help with the hotel\'s history and founders, rooms and rates, dining, bookings, payments, receipts, stock, the team, notifications, and how to use this console. '+guide();
-    return 'I do not have that detail to hand. I can help with the hotel\'s history and founders, rooms and rates, dining, bookings, payments, receipts, stock, the team, notifications, and how to use this console. For anything else, please ask a member of the hotel team.';
+    return 'I am the Paradise assistant. I can help with our rooms and rates, dining and the bar, offers and packages, events and venues, bookings, payments, receipts, stock, the team, notifications, and how to use this console. '+guide();
+   return 'I do not have that detail to hand. I can help with our rooms and rates, dining and the bar, offers and packages, events and venues, bookings, payments, receipts, stock, the team, notifications, and how to use this console. For anything else, please ask a member of the hotel team.';
   }
   function ask(text){
     if(!text)return;

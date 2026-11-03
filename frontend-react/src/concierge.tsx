@@ -7,12 +7,12 @@ import type {MenuSection} from './menuData';
 
    A calm voice that stands in the corner of a page and simply waits. A
    woman welcomes the guest first, then a man offers to help and keeps
-   listening. It knows the whole hotel by heart - who owns it, when it
-   opened, the rooms, the restaurant, the events, the way here, the way
-   to pay, and the people behind the website - and it reads the menu it
-   is standing in front of, so it can point a guest to the right
-   section, name the section a dish lives in, read a dish's price, or
-   walk them through paying.
+   listening. It knows the hotel's products by heart - the rooms and
+   rates, the restaurant, bar and menu, the events and venues, the
+   facilities, the offers, the way here, and the way to pay - and it
+   reads the menu it is standing in front of, so it can point a guest
+   to the right section, name the section a dish lives in, read a
+   dish's price, or walk them through booking and paying.
 
    Three rules shape it:
 
@@ -32,8 +32,9 @@ import type {MenuSection} from './menuData';
    once and never asked again.
 
    The answers are written out here, in full, rather than guessed at, so
-   the hotel's own story, its owners and its facts are always said the
-   same way. When a guest asks something it does not hold, it says so
+   the hotel's products, rates and offers are always presented the same
+   way, in a warm and businesslike voice that helps a guest choose and
+   book. When a guest asks something it does not hold, it says so
    plainly and points them to the front desk rather than inventing an
    answer.
    ------------------------------------------------------------------ */
@@ -74,15 +75,10 @@ const stem = (w: string): string => (w.length > 3 ? w.replace(/s$/, '') : w);
 
 const tokens = (s: string): string[] => strip(s).split(' ').filter(w => w && !STOP.has(w)).map(stem);
 
-/* Speech recognition mishears a name far more often than a common word, so a
-   handful of likely spellings of the owner's surname and the town are folded
-   back to the true ones before anything is looked up. */
+/* Speech recognition mishears a place name far more often than a common word,
+   so a handful of likely spellings of the town and the lane are folded back
+   to the true ones before anything is looked up. */
 const NAME_FIXES: [RegExp, string][] = [
-  [/\b(oh|o|a|the|eye)\s+tile\b/g, 'otile'],
-  [/\botill?e?\b/g, 'otile'],
-  [/\botil+a\b/g, 'otile'],
-  [/\botel+i?\b/g, 'otile'],
-  [/\bmagrat\w*/g, 'magrate'],
   [/\bjin[gj]ah?\b/g, 'jinja'],
   [/\bkii?ra\b/g, 'kiira']
 ];
@@ -124,11 +120,9 @@ const spokenPhone = (phone: string): string =>
     .replace(/\s+/g, ' ')
     .trim();
 
-/* The names and a few hotel words respelled for the voice alone, so the screen
-   keeps the true spelling while the ear hears the right sound. The owner's
-   surname is the important one: "Otile" is said "oh-teh-ah-leh". */
+/* A few hotel and place words respelled for the voice alone, so the screen
+   keeps the true spelling while the ear hears the right sound. */
 const SAY: [RegExp, string][] = [
-  [/\bOtile\b/g, HOTEL.founderSurnameSay],
   [/\bKiira\b/g, 'Kee-rah'],
   [/\bJinja\b/g, 'Jin-jah'],
   [/\bPesapal\b/g, 'Pess-a-pal']
@@ -227,18 +221,18 @@ function bestMatch<T extends {toks: string[]}>(query: string[], raw: string, lis
   return best;
 }
 
-/* The hotel's knowledge, in the order it should be trusted. A guest who names
-   the owners or asks about the story is answered from these facts before any
-   dish or section is considered, so a question about the hotel is never read
-   as a question about the menu. */
+/* The hotel's knowledge, in the order it should be trusted. A guest who asks
+   about the hotel, its packages or the way to book is answered from these
+   facts before any dish or section is considered, so a question about a stay
+   is never read as a question about the menu. */
 const TOPICS: {id: string; re: RegExp}[] = [
   {id: 'assistant', re: /\b(are you (a )?(human|robot|real|ai)|who are you|what are you|is this a robot|the voice)\b/},
-  {id: 'owners', re: /\b(owners?|proprietor|proprietors|landlord|who (owns?|owned|runs?|manages?)|whose (hotel|place)|belongs? to|owned by|otile|francis|the boss|the management|general manager)\b/},
-  {id: 'wife', re: /\b(his wife|the wife|magrate|husband|co ?founder|co ?owner|the madam|mrs|the missus)\b/},
   {id: 'developer', re: /\b(developer|designer|reagansoft|reagan|who (designed|built|made|created|developed|programmed|coded|wrote|did) (this|the|your|it)|who (made|built|designed|did) this|who is behind|who built (this|the) (site|website|web|page|system|software|app)|built (this|the) (site|website|system))\b/},
   {id: 'founding', re: /\b(founder|founders|founded|establish\w*|estab|inception|when (did|was|has|it|the hotel|this hotel|you)|started|began|opened (its doors|the doors)|first opened|since when|how (old|long)|history|the story|origin|who (started|began|built|opened|established|created|put up))\b/},
   {id: 'about', re: /\b(tell me about|what is (this|your|the hotel)|about (you|the hotel|us|this place)|our story|an overview|introduce)\b/},
   {id: 'tables', re: /\b(book a table|reserve a table|table reservation|table for|a table)\b/},
+  {id: 'offers', re: /\b(offers?|deals?|discounts?|promos?|promotions?|packages?|specials?|loyalty|reward|weekend (escape|getaway)|staycation|long stay|group rate|corporate rate)\b/},
+  {id: 'booking', re: /\b(book|booking|reserve|reservation|availability|vacancy|deposit|cancellation|cancel my)\b/},
   {id: 'location', re: /\b(where (are|is|can i find|do you sit)|address|located?|directions?|how (do|can) i get there|how to get (there|to you)|kiira|near (the )?river|entebbe|airport|drive|map|find you)\b/},
   {id: 'contact', re: /\b(phone|telephone|call|contact|email|e mail|whatsapp|reach|talk to|messenger|social|facebook|instagram|twitter|tiktok|number)\b/},
   {id: 'web', re: /\b(your (website|web|url|site)|hotel (website|site)|web address|online)\b/},
@@ -261,7 +255,7 @@ const TOPICS: {id: string; re: RegExp}[] = [
   {id: 'dress', re: /\b(dress ?code|what (should|do) i wear|attire|smart (casual|dress))\b/},
   {id: 'safety', re: /\b(security|is it safe|safe|secure|surveillance|cctv|guard)\b/},
   {id: 'jobs', re: /\b(jobs?|vacanc|career|hiring|work (with|for) (you|us)|employment|intern(ship)?|recruit)\b/},
-  {id: 'news', re: /\b(news|updates|announcements|what.s happening|what.s on|loyalty|special offer|offer|promo)\b/},
+  {id: 'news', re: /\b(news|updates|announcements|what.s happening|what.s on)\b/},
   {id: 'gift', re: /\b(gift|voucher|gift ?card|present)\b/},
   {id: 'currency', re: /\b(currency|dollar|usd|exchange|ugx|shillings?|forex)\b/},
   {id: 'taxes', re: /\b(tax|vat|service charge|receipt|invoice|efris|billing|bill)\b/},
@@ -277,8 +271,8 @@ const TOPICS: {id: string; re: RegExp}[] = [
 
 const CATEGORY_RX = /\b(breakfast|pizza|burger|sandwich|soup|dessert|starter|seafood|asian|chinese|pasta|curry|sizzler|chicken|beef|pork|salad|rice|noodle|omelet|wrap|accompaniment|drink|beverage)\b/;
 
-/* A nudge to keep a conversation going: "more", "and his wife", "go on". */
-const MORE_RX = /\b(more|else|continue|go on|and (his|her|the) (wife|husband|owner)s?|what about (him|her|them|the owner)|tell me more|keep going|anything else)\b/;
+/* A nudge to keep a conversation going: "more", "what else", "go on". */
+const MORE_RX = /\b(more|else|continue|go on|tell me more|keep going|anything else|what else)\b/;
 
 const QUESTION_RX = /^(who|what|when|where|why|which|whose|how|is there|are there|do you|does the|can i|could i|would i)\b/;
 
@@ -328,26 +322,26 @@ function interpret(text: string, catalog: Catalog): Action {
 const PH = spokenPhone(CALL);
 
 const INFO_ANSWERS: Record<string, string> = {
-  owners: `Hotel Paradise on the Nile is owned by ${HOTEL.founders}. Mr. Otile Francis is the owner, and Mrs. Magrate Otile is his wife and his partner in everything. The two of them founded the hotel in nineteen ninety eight and they still own and guide it today. Their family name, Otile, is ${HOTEL.founderSurnameSpoken}, and they are among the most respected people here in Jinja.`,
-  wife: `Mrs. Magrate Otile is the wife of Mr. Otile Francis. Together they own Hotel Paradise on the Nile, and together they built it from its first ten rooms. She is his partner in the hotel and in the family, and the two of them are widely loved and respected here in Jinja.`,
-  founding: `Hotel Paradise on the Nile is one of the oldest and best loved hotels in Jinja, and one of the most iconic on the river. It opened its doors on ${HOTEL.founded}, and it was founded by ${HOTEL.founders}. They began with only ${HOTEL.roomsAtOpening} rooms and, through hard work and God's grace, grew it into the ${HOTEL.roomsToday} rooms you see today. It is registered with ${HOTEL.registration}. Their family name, Otile, is ${HOTEL.founderSurnameSpoken}.`,
-  about: `Hotel Paradise on the Nile is one of Jinja's iconic and oldest hotels, standing on the banks of the River Nile. It has been on the water since ${HOTEL.founded}, founded by ${HOTEL.founders}, who still own it today. They opened with just ${HOTEL.roomsAtOpening} rooms and grew it into ${HOTEL.roomsToday} today, with a riverside restaurant and bar, a swimming pool, a health club and gardens for every occasion. It is registered with ${HOTEL.registration} and certified ${HOTEL.certification}.`,
+  founding: `Hotel Paradise on the Nile has welcomed guests on the banks of the Nile since ${HOTEL.founded}. It began with ${HOTEL.roomsAtOpening} rooms and has grown into a full riverside hotel with ${HOTEL.roomsToday} rooms, a restaurant and bar, a swimming pool, a health club and gardens for every occasion. That heritage is part of the experience: calm, established and genuinely on the water. It is registered with ${HOTEL.registration} and certified ${HOTEL.certification}.`,
+  about: `Hotel Paradise on the Nile is a riverside hotel in Jinja, on the banks of the Nile since ${HOTEL.founded}. We offer ${HOTEL.roomsToday} rooms across eight room types, a restaurant and bar with more than two hundred and fifty dishes, a swimming pool, a health club, and gardens and venues for weddings, conferences and celebrations. Every room rate includes breakfast, and booking direct gives you our best available rate and a confirmed booking. Tell me what you are planning, and I will point you to the right rooms, menu or venue.`,
   developer: `This website and the hotel's management system were designed and built by ${STUDIO.founder}, the founder of ${STUDIO.name}, based in ${STUDIO.city}. You can find them at reagansoftinnovation dot com, on WhatsApp at zero seven three zero, three one four, nine seven nine, or by searching Reagansoft Innovation Limited on Google.`,
-  location: `We are at Plot 12, 19 and 25, Kiira Lane, Jinja, Uganda, right on the banks of the River Nile. That is about five minutes from the centre of Jinja town, and about a three hour drive from Entebbe International Airport. The front desk can arrange a pick up if you call ${PH}.`,
-  contact: `The front desk is on ${PH}, and it is answered around the clock, every day. You can also email ${HOTEL.email}, or visit our website at ${HOTEL.website}.`,
-  web: `Our website is ${HOTEL.website}. Everything is there, from the rooms and the menu to the events and how to reach us.`,
-  rooms: `We have eight room types and sixty nine rooms in all, from a cosy Standard Single to the Suite, and breakfast is included in every rate. Rates start from about one hundred and twenty eight thousand Uganda shillings a night. Say a room type, or open the Rooms page, and I will tell you more.`,
+  location: `We are at Plot 12, 19 and 25, Kiira Lane, Jinja, Uganda, right on the banks of the River Nile. That is about five minutes from the centre of Jinja town, and about a three hour drive from Entebbe International Airport. The front desk can arrange a pick up if you call ${PH}, and the riverside setting comes with the room.`,
+  contact: `The front desk is on ${PH}, and it is answered around the clock, every day. You can also email ${HOTEL.email}, or book and browse our rooms, menu and events at ${HOTEL.website}.`,
+  web: `Our website is ${HOTEL.website}. You can book a room, explore the full menu, plan an event and see our current offers, all in one place.`,
+  rooms: `We have eight room types and sixty nine rooms, from the Standard Single to the Suite, all with a private bathroom and satellite television. Breakfast is included in every rate, and rates start from about one hundred and twenty eight thousand Uganda shillings a night. Booking direct gives you our best available rate and a confirmed booking. Say a room type, or open the Rooms page, and I will tell you more.`,
+  booking: `You can book direct on our website at ${HOTEL.website}, or call the front desk on ${PH} and we will confirm your room and rate in one call. Booking direct gives you our best available rate, breakfast included, free Wi-Fi and access to the pool and health club. We accept Pesapal, MTN and Airtel Mobile Money, Visa and Mastercard, and bank transfer. Would you like to hear about our rooms and rates, or our current offers?`,
+  offers: `We put our best value into packages and direct offers: weekend escapes, romantic stays, business and corporate rates, long-stay rates and seasonal promotions. Every room rate includes breakfast, free Wi-Fi and access to the pool and health club. Open the News page for what is current, or call ${PH} and the reservations team will build the right package around your dates.`,
   checkin: `Check in is from twelve noon, and check out is by ten in the morning. A room held past six in the evening is charged at seventy five per cent of its rate. If you would like an early check in or a late check out, call the front desk on ${PH} and they will do their best to help.`,
   events: `We host weddings, conferences, meetings and functions on our lawns and in our halls, right by the Nile. We have four venues, a kitchen that can plate for up to two hundred guests, and one events manager who looks after your day from the first call to the last dance. Call the front desk on ${PH}, or open the Events page, and we will send you a proposal the same day.`,
-  facilities: `For our guests we have a swimming pool, a health club with a gym, a riverside bar and terrace, beautiful gardens, laundry and room service. Every room has its own private bathroom and satellite television.`,
-  restaurant: `Our kitchen serves breakfast, lunch and dinner, and more than two hundred and fifty dishes on the a la carte menu, from light bites to full platters. Breakfast is included in every room rate. Name any dish and I will read you its price.`,
+  facilities: `Your stay includes a swimming pool, a health club with a gym, a riverside bar and terrace, beautiful gardens, laundry and room service. Every room has its own private bathroom and satellite television. It is a full riverside experience, not just a bed for the night.`,
+  restaurant: `Our kitchen serves breakfast, lunch and dinner, and more than two hundred and fifty dishes on the a la carte menu, from light bites to full platters. Breakfast is included in every room rate, and the riverside setting comes with every table. Name any dish and I will read you its price.`,
   hours: `Breakfast runs from six thirty to ten thirty in the morning, lunch from twelve noon to three in the afternoon, and dinner from seven to eleven in the evening. The front desk never closes.`,
-  bar: `Our bar pours cold beer, a careful wine list and cocktails, out on the terrace or by the window, as the sun sets behind Jinja.`,
+  bar: `Our bar pours cold beer, a careful wine list and cocktails, out on the terrace or by the window, as the sun sets behind Jinja. It is the best seat in the house for the river at dusk.`,
   roomservice: `Room service runs through the same kitchen. Add a dish to your order, tell us your room number when we call to confirm, and we will bring it up to you.`,
   delivery: `Yes, we deliver in Jinja. Order from this menu, add your delivery address, and the kitchen will bring it to you. We confirm every delivery by phone first.`,
   transfer: `We arrange pick ups and airport transfers from Entebbe or anywhere in Jinja. Call the front desk on ${PH} with your arrival time and we will take care of it.`,
-  parking: `Yes. We have private, secure parking on the grounds, watched around the clock.`,
-  wifi: `Wi-Fi is free for every guest throughout the hotel. Ask the front desk for the password when you arrive.`,
+  parking: `Yes. We have private, secure parking on the grounds, watched around the clock, and it is free for guests.`,
+  wifi: `Wi-Fi is free for every guest throughout the hotel. Ask the front desk for the password when you arrive, and you can work or stream from anywhere on the grounds.`,
   children: `Children are very welcome. We have baby cots at no charge, high chairs, smaller portions, and safe green lawns. Just tell your waiter or the front desk.`,
   pets: `I would check with the front desk about pets, on ${PH}, so they can tell you exactly what is possible for your stay.`,
   smoking: `There are designated smoking areas on the grounds. Ask the front desk to point them out, and please keep the rooms smoke free.`,
@@ -356,32 +350,36 @@ const INFO_ANSWERS: Record<string, string> = {
   safety: `The entrance and the grounds are watched around the clock, rooms have secure locks, and our parking is on site. You are in safe hands.`,
   jobs: `We are often hiring. Open the News and Careers page for the roles we have open, or send your CV to the front desk and our human resource office will be in touch.`,
   news: `Open the News page for our latest news, special offers and vacancies.`,
-  gift: `Call ${PH} and we will arrange a gift voucher for any amount, good across the rooms, the restaurant and the bar.`,
+  gift: `Call ${PH} and we will arrange a gift voucher for any amount, good across the rooms, the restaurant and the bar. It makes an easy gift for someone who deserves a night by the Nile.`,
   tables: `Walk ins are always welcome. For a busy evening, call ${PH} and we will hold a table for your party.`,
   currency: `Prices are in Ugandan shillings and include the taxes. We also quote room rates in US dollars for our international guests.`,
   taxes: `Every room rate includes the local hotel tax of two thousand shillings per room per day, and breakfast. Restaurant prices carry a small service charge, and your receipt itemises everything.`,
   feedback: `I am sorry if something was not right, and thank you for telling us. Please speak to the front desk on ${PH}, or open the Talk to Us page and send your message, and the team will look after it straight away.`,
   vegetarian: `The salads are full plates, the pizzeria has vegetable pizzas, and the kitchen will leave the meat off any curry or sizzler. Just say the word.`,
   spicy: `Say how hot you like it, from mild to very hot, and the kitchen will cook it to your taste.`,
-  weather: `I cannot see the sky from here, but Jinja is warm through the year, with the long rains around March to May and the short rains around September to November.`,
-  places: `Jinja is the city at the source of the Nile, about two hours from Kampala. Guests enjoy the source of the Nile, boat rides, Bujagali Falls and the markets in town. The front desk will gladly help you plan a day out.`,
+  weather: `I cannot see the sky from here, but Jinja is warm through the year, with the long rains around March to May and the short rains around September to November. The riverside gardens are beautiful in every season.`,
+  places: `Jinja is the city at the source of the Nile, about two hours from Kampala. Guests enjoy the source of the Nile, boat rides, Bujagali Falls and the markets in town. The front desk will gladly help you plan a day out from the hotel.`,
   language: `I speak English. For Luganda, Lusoga or another language, the front desk team on ${PH} will be glad to help you.`,
-  assistant: `I am the voice guide for Hotel Paradise on the Nile. I am here to answer your questions about the hotel, its owners, the rooms, the restaurant and events. I am not a person, but I will do my best to help, and I can pass you to the front desk on ${PH} at any time.`,
+  assistant: `I am Paradise, the digital voice guide for Hotel Paradise on the Nile. I can help you choose a room and book it, explore the restaurant, bar and menu, plan a wedding, conference or celebration, understand our offers, find us, and pay. I am not a person, but I am here around the clock, and I can pass you to the front desk on ${PH} at any time.`,
   menu: `This page is the whole menu. Name any dish and I will read you its price, or name a section and I will point you to it.`,
   prices: `Name the dish and I will read you its price, or name a section and I will point you to it. If you mean a room rate, say the word room and I will tell you.`,
-  clarify: `Let me make sure I give you the right thing. I can tell you who owns the hotel - Mr. Otile Francis and his wife, Mrs. Magrate Otile - when it opened in nineteen ninety eight, our rooms and rates, the restaurant, events, directions, payment, or who built this website. Ask me again in your own words, and I will look closer. I am listening.`,
-  fallback: `I want to get this exactly right for you. I can tell you who owns the hotel, when it opened, our rooms and rates, the restaurant, events, directions, payment, or who built this website. Ask me in your own words, and if it is something I truly do not know, I will point you to the front desk on ${PH}. I am still listening.`
+  clarify: `Let me make sure I give you the right thing. I can tell you about our rooms and rates, the restaurant, bar and menu, our events and venues, the facilities, current offers, directions, booking and payment. Ask me again in your own words, and I will look closer. I am listening.`,
+  fallback: `I want to get this exactly right for you. I can tell you about our rooms and rates, the restaurant, bar and menu, our events and venues, the facilities, current offers, directions, booking and payment. Ask me in your own words, and if it is something I truly do not know, I will point you to the front desk on ${PH}. I am still listening.`
 };
 
 const MORE_ANSWERS: Record<string, string> = {
-  owners: `A little more about the owners. Mr. Otile Francis and his wife, Mrs. Magrate Otile, are the founders and the owners of Hotel Paradise on the Nile. Their family name is Otile, ${HOTEL.founderSurnameSpoken}. They are deeply respected in Jinja, and the hotel they built remains a true landmark on the river.`,
-  founding: `A little more of the story. When the hotel opened on ${HOTEL.founded}, it had only ${HOTEL.roomsAtOpening} rooms. Step by step, and by God's grace, it grew into the ${HOTEL.roomsToday} rooms it has today, with a restaurant, a bar, a pool, a health club and gardens, all on the banks of the Nile.`,
-  rooms: `The eight room types are the Suite, the Family Room, the Triple Room, the Executive Deluxe, the Deluxe Double, the Standard Double, the Standard Twin and the Standard Single. Every rate includes breakfast and the local hotel tax. Open the Rooms page to see each one.`,
+  founding: `A little more of the story. Since opening on ${HOTEL.founded}, the hotel has grown from ${HOTEL.roomsAtOpening} rooms into the ${HOTEL.roomsToday} rooms it has today, with a restaurant, a bar, a pool, a health club and gardens, all on the banks of the Nile. The result is a hotel that feels established, calm and genuinely part of Jinja.`,
+  rooms: `The eight room types are the Suite, the Family Room, the Triple Room, the Executive Deluxe, the Deluxe Double, the Standard Double, the Standard Twin and the Standard Single. Every rate includes breakfast and the local hotel tax, and booking direct gives you our best available rate. Open the Rooms page to see each one.`,
+  booking: `Booking direct is the simplest way to get the best available rate. Choose your dates on the Rooms page, or call ${PH} and we will confirm the room in one call. We hold the reservation, include breakfast, and send your confirmation straight away. We also accept Pesapal, MTN and Airtel Mobile Money, Visa and Mastercard.`,
+  offers: `Our packages are built around the way people actually stay: a weekend escape for two, a romantic stay, a business or corporate rate, and a long-stay rate for guests who settle in. Each includes breakfast, free Wi-Fi and access to the pool and health club. Call ${PH} and we will tailor the package to your dates.`,
   events: `For events we offer four venues, from our halls to the riverside lawns, and a kitchen that can serve up to two hundred guests. Weddings, conferences, meetings and parties are all welcome. Call ${PH} and our events manager will plan it with you.`,
-  facilities: `Our facilities include the swimming pool, the health club and gym, the riverside bar and terrace, the gardens, laundry, and room service. Every room has a private bathroom and satellite television.`
+  facilities: `Our facilities include the swimming pool, the health club and gym, the riverside bar and terrace, the gardens, laundry, and room service. Every room has a private bathroom and satellite television. They are all part of the stay, not extras.`,
+  restaurant: `The kitchen serves breakfast, lunch and dinner, with more than two hundred and fifty dishes on the a la carte menu, from a quick bite to a full riverside platter. Breakfast is included in every room rate. Name any dish and I will read you its price.`,
+  bar: `The bar is the place to end the day: cold beer, a careful wine list and cocktails, out on the terrace or by the window as the sun sets over the Nile. It is open to guests and visitors alike.`,
+  gift: `A gift voucher from Hotel Paradise on the Nile can be used across the rooms, the restaurant and the bar. Call ${PH} and we will arrange any amount and send it to you or straight to the person you are treating.`
 };
 
-const MORE_DEFAULT = `I would be glad to say more. Tell me which part you would like, the owners and the history, the rooms and rates, the restaurant, events, directions, or payment.`;
+const MORE_DEFAULT = `I would be glad to say more. Tell me which part you would like: the rooms and rates, booking, our offers, the restaurant and bar, events, facilities, directions, or payment.`;
 
 export function MenuConcierge({sections}: {sections: MenuSection[]}) {
   const {speech, Ctor} = React.useMemo(speechWindow, []);
@@ -500,7 +498,7 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     if (action.kind === 'greeting') {
       speakAll([
         {who: 'woman', text: `${timeGreeting()}, and welcome to Hotel Paradise on the Nile.`},
-        {who: 'man', text: 'I am Paradise, your voice guide. Ask me anything about the hotel — who owns it, when it opened, the rooms and rates, the restaurant, events, directions or payment — or say any dish and I will point you to it.'}
+        {who: 'man', text: 'I am Paradise, your voice guide. Ask me about our rooms and rates, booking, our offers, the restaurant, bar and menu, events, facilities, directions or payment — or say any dish and I will point you to it.'}
       ]);
       return;
     }
@@ -515,7 +513,7 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     if (action.kind === 'options') {
       const examples = catalog.cats.slice(0, 3).map(c => c.name.toLowerCase()).join(', ');
       const menuBit = examples ? ` Or say a section, such as ${examples}, and I will point you to it.` : '';
-      speakAll([{who: 'man', text: `Ask me anything about the hotel. I can tell you who owns it, when it opened, the rooms and rates, the restaurant, events, directions or payment.${menuBit} What would you like to know?`}]);
+      speakAll([{who: 'man', text: `Ask me anything about your stay. I can tell you about our rooms and rates, booking, our offers, the restaurant and bar, events, facilities, directions or payment.${menuBit} What would you like to know?`}]);
       return;
     }
     if (action.kind === 'category') {
@@ -556,7 +554,7 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     pausedRef.current = false;
     speakAll([
       {who: 'woman', text: `${timeGreeting()}, and welcome to Hotel Paradise on the Nile, on the banks of the river in Jinja.`},
-      {who: 'man', text: 'I am Paradise, your voice guide. Ask me anything — who owns the hotel, when it opened, our rooms and rates, the restaurant, events, directions or payment — and I will answer. You can also say any dish, and I will point you to it.'},
+      {who: 'man', text: 'I am Paradise, your voice guide. Ask me about our rooms and rates, booking, our offers, the restaurant and bar, events, facilities, directions or payment — and I will answer. You can also say any dish, and I will point you to it.'},
       {who: 'man', text: 'Please speak whenever you are ready. I am listening.'}
     ]);
   }, [ready, speakAll]);

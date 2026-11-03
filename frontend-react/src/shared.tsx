@@ -220,24 +220,11 @@ export const HOTEL = {
   website: 'www.hotelparadiseonthenile.info',
   certification: 'UNBS Certified, US 130:2017',
 
-  /* The hotel's own story, in the few facts a guest may ask for. Written here
+  /* The hotel's own facts, in the few details a guest may ask for. Written here
      once so the voice concierge, the newsroom and any page that tells the
      story cannot drift apart. */
   /** The day the hotel first opened its doors: Saturday, 18 April 1998. */
   founded: 'Saturday, 18 April 1998',
-  /** The couple who founded it, and still own it today. */
-  founders: 'Mr. Otile Francis and his wife, Mrs. Magrate Otile',
-  /** The owner, named on his own. */
-  owner: 'Mr. Otile Francis',
-  /** The owner's wife, named on her own. */
-  ownerWife: 'Mrs. Magrate Otile',
-  /** The family name as the owner asks it to be spoken: the surname "Otile" is
-      said "oh-teh-ah-leh". The written name keeps its correct spelling everywhere
-      it appears, and only the voice respells it. */
-  founderSurnameSpoken: 'spelt O, T, I, L, E, and said oh-teh-ah-leh',
-  /** The surname respelled the way the voice should say it, so the browser
-      pronounces it correctly while the screen keeps the true spelling. */
-  founderSurnameSay: 'Oh-teh-ah-leh',
   /** It opened with ten rooms and has grown into a full hotel since. */
   roomsAtOpening: '10',
   roomsToday: '69',
