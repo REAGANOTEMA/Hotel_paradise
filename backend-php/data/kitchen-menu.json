@@ -1784,6 +1784,47 @@
       ]
     },
     {
+      "name": "Buffet & Conference",
+      "eyebrow": "For groups and conferences",
+      "blurb": "Served for conferences, retreats and celebrations. Every plate includes a salad, the green of the day and dessert fruit, with a soda or soft drink.",
+      "image": "full-buffet.webp",
+      "groups": [
+        {
+          "name": "Buffet & Conference",
+          "items": [
+            {
+              "name": "Mini Buffet (Children)",
+              "desc": "A smaller plate for younger guests: rice, matoke, chapatti or kale with a vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink.",
+              "price": 35000,
+              "image": "mini-buffet.jpg",
+              "group": "Buffet & Conference"
+            },
+            {
+              "name": "Full Buffet - Two Meats",
+              "desc": "Two meat choices with rice, matoke, chapatti or kale, vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink.",
+              "price": 45000,
+              "image": "full-buffet.webp",
+              "group": "Buffet & Conference"
+            },
+            {
+              "name": "Full Buffet - Three Meats",
+              "desc": "Three meat choices with rice, matoke, chapatti or kale, vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink.",
+              "price": 55000,
+              "image": "full-buffet.webp",
+              "group": "Buffet & Conference"
+            },
+            {
+              "name": "Full Buffet - Three Meats & Soup",
+              "desc": "Three meat choices with soup, rice, matoke, chapatti or kale, vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink.",
+              "price": 62000,
+              "image": "full-buffet.webp",
+              "group": "Buffet & Conference"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Desserts & Bakery",
       "eyebrow": "Sweet finish",
       "blurb": "Cakes, pastries and fruit from our own bakery.",

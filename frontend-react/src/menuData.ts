@@ -733,6 +733,24 @@ item('Chicken Sauté', 'Sautéed chicken with brown mushroom and spring onions, 
     ]
   },
   {
+    key: 'buffet',
+    name: 'Buffet & Conference',
+    eyebrow: 'For groups and conferences',
+    blurb: 'Served for conferences, retreats and celebrations. Every plate includes a salad, the green of the day and dessert fruit, with a soda or soft drink.',
+    image: 'full-buffet.webp',
+    groups: [
+      {
+        name: 'Buffet & Conference',
+        items: [
+          item('Mini Buffet (Children)', 'A smaller plate for younger guests: rice, matoke, chapatti or kale with a vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink.', 35000, 'Buffet & Conference', 'mini-buffet.jpg'),
+          item('Full Buffet - Two Meats', 'Two meat choices with rice, matoke, chapatti or kale, vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink.', 45000, 'Buffet & Conference', 'full-buffet.webp'),
+          item('Full Buffet - Three Meats', 'Three meat choices with rice, matoke, chapatti or kale, vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink.', 55000, 'Buffet & Conference', 'full-buffet.webp'),
+          item('Full Buffet - Three Meats & Soup', 'Three meat choices with soup, rice, matoke, chapatti or kale, vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink.', 62000, 'Buffet & Conference', 'full-buffet.webp')
+        ]
+      }
+    ]
+  },
+  {
     key: 'desserts',
     name: 'Desserts & Bakery',
     eyebrow: 'Sweet finish',

@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
+import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, fmtPrice, CALL, telHref, HOTEL, useReveal} from './shared';
 import {SmartImage, type ImageGroup} from './SmartImage';
 import {MenuConcierge} from './concierge';
 
@@ -30,11 +30,27 @@ const venues: Venue[] = [
 /** The occasions the hotel plans for, each drawn as its own small card. */
 const occasions: {title: string; text: string}[] = [
  {title: 'Weddings', text: 'Ceremony, reception and the party after, styled around your colours and served from a kitchen that has cooked for hundreds of guests at a time.'},
- {title: 'Conferences & seminars', text: 'Halls with table plans, screens and uninterrupted sessions, plus tea breaks and lunch served exactly when your agenda says.'},
+ {title: 'Conferences & seminars', text: 'Halls with table plans, screens and uninterrupted sessions, plus tea breaks and a served buffet lunch exactly when your agenda says.'},
  {title: 'Team retreats', text: 'Meeting rooms by day and the pool and gardens by evening, a working trip that actually feels like a trip.'},
  {title: 'Birthdays & family parties', text: 'A day for the family, with space for the children, a menu everyone will eat and a room dressed to celebrate.'},
  {title: 'Anniversaries & ceremonies', text: 'Small and private or a room of fifty, the details handled and the day allowed to rest on the people in the room.'},
  {title: 'Corporate dinners', text: 'A seated dinner for your clients and colleagues on the banks of the Nile, with wine, warm service and a view worth the invitation.'}
+];
+
+/** The two buffet plates the kitchen serves, and the adult tiers behind them. */
+const buffets: {group: ImageGroup; name: string; alt: string; title: string; tag: string; text: string; price: number}[] = [
+ {group: 'site', name: 'mini-buffet', alt: 'A mini buffet plate served at Hotel Paradise on the Nile',
+  title: 'Mini Buffet', tag: 'Children - per plate', price: 35000,
+  text: 'A smaller plate for younger guests: rice, matoke, chapatti or kale with a vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink.'},
+ {group: 'site', name: 'full-buffet', alt: 'The full buffet spread at Hotel Paradise on the Nile',
+  title: 'Full Buffet', tag: 'Adults - from', price: 45000,
+  text: 'The full spread with rice, matoke, chapatti or kale, vegetarian sauce, the green of the day, salad, dessert fruit and a soda or soft drink. Choose two meats, three meats, or add soup.'}
+];
+
+const buffetTiers: {label: string; detail: string; price: number}[] = [
+ {label: 'Two meats', detail: 'Two meat choices with every side, salad, dessert fruit and a drink.', price: 45000},
+ {label: 'Three meats', detail: 'Three meat choices with every side, salad, dessert fruit and a drink.', price: 55000},
+ {label: 'Three meats & soup', detail: 'Three meat choices with soup, every side, salad, dessert fruit and a drink.', price: 62000}
 ];
 
 const EVENT_TYPES = ['Wedding', 'Conference / seminar', 'Team retreat', 'Birthday party', 'Anniversary / ceremony', 'Corporate dinner', 'Family function', 'Other'];
@@ -100,6 +116,40 @@ function EventsPage() {
      </article>
     ))}
    </div>
+  </section>
+
+  <section className="section hasTint" id="buffet">
+   <div className="center reveal">
+    <p className="eyebrow">CONFERENCE AND GROUP DINING</p>
+    <h2>Buffet lunch for the room</h2>
+    <p className="intro">A buffet that keeps a conference on schedule and a family gathering at the table. Every plate comes with a salad, the green of the day, dessert fruit and a soda or soft drink, and the kitchen serves the whole room at once.</p>
+   </div>
+   <div className="venueGrid">
+    {buffets.map(b => (
+     <article className="venue reveal" key={b.title}>
+      <SmartImage group={b.group} name={b.name} alt={b.alt} ratio="4 / 3"
+       widths={[320, 480, 640, 960]} sizes="(max-width:900px) 100vw, 560px"
+       position="50% 50%" zoom className="photo"/>
+      <div className="venueBody">
+       <p className="pill">{b.tag}</p>
+       <h3>{b.title}</h3>
+       <p className="buffetPrice">{fmtPrice(b.price)}</p>
+       <p>{b.text}</p>
+      </div>
+     </article>
+    ))}
+   </div>
+   <div className="buffetTiers reveal">
+    {buffetTiers.map(t => (
+     <article className="buffetTier" key={t.label}>
+      <p className="pill">Full Buffet</p>
+      <h3>{t.label}</h3>
+      <p className="buffetPrice">{fmtPrice(t.price)} <span>per adult</span></p>
+      <p>{t.detail}</p>
+     </article>
+    ))}
+   </div>
+   <p className="buffetNote reveal">Mini Buffet is served for children at {fmtPrice(35000)} per plate. All prices include the hotel's service charge. For groups, call <a className="footLink nileLine" href={telHref(CALL)}>{CALL}</a> or send the form below.</p>
   </section>
 
   <section className="section hasTint" id="occasions">

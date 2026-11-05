@@ -1020,6 +1020,12 @@
         }
       ]
     },
+    "full-buffet": {
+      "ext": "webp",
+      "w": 800,
+      "h": 457,
+      "variants": []
+    },
     "ginger-carrot-soup": {
       "ext": "jpeg",
       "w": 1200,
@@ -1343,6 +1349,12 @@
       "ext": "jpg",
       "w": 452,
       "h": 678,
+      "variants": []
+    },
+    "mini-buffet": {
+      "ext": "jpg",
+      "w": 400,
+      "h": 266,
       "variants": []
     },
     "mixed-garden-salad": {
@@ -8147,6 +8159,12 @@
       "h": 1800,
       "variants": []
     },
+    "full-buffet": {
+      "ext": "webp",
+      "w": 800,
+      "h": 457,
+      "variants": []
+    },
     "gym": {
       "ext": "webp",
       "w": 800,
@@ -8345,6 +8363,12 @@
           "h": 1024
         }
       ]
+    },
+    "mini-buffet": {
+      "ext": "jpg",
+      "w": 400,
+      "h": 266,
+      "variants": []
     },
     "old-logo": {
       "ext": "webp",
