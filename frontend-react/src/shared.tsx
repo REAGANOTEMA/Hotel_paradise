@@ -396,7 +396,7 @@ export function Footer() {
      <div className="footerBrand">
       <div className="footerMark">
        <span className="footerHalo" aria-hidden="true"/>
-       <img className="footerLogo" src={LOGO} alt="Hotel Paradise on the Nile" width={256} height={256}/>
+       <img className="footerLogo" src={LOGO} alt="Hotel Paradise on the Nile" width={1532} height={442} loading="lazy" decoding="async"/>
       </div>
       <p className="footerTag">Premium hospitality in Jinja, on the banks of the Nile.</p>
       <div className="footerTagMore">

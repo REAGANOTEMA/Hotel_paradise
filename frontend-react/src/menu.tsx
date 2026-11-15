@@ -198,6 +198,27 @@ function DishShot({dish, large = false, hint = true}: {dish: MenuItem; large?: b
 }
 
 /**
+ * The small square of a dish in the order tray. It uses the same photograph as
+ * the menu card, cropped to a plate-sized square, and the same reserved-plate
+ * fallback when the kitchen has not filed a photograph yet.
+ */
+function TrayThumb({dish}: {dish: MenuItem}) {
+  return (
+    <SmartImage
+      group="dishes"
+      name={dishImage(dish)}
+      alt=""
+      ratio="1 / 1"
+      widths={[96, 160, 320]}
+      sizes="64px"
+      position="50% 52%"
+      className="trayThumb"
+      placeholder={<span className="trayThumbEmpty" aria-hidden="true"><PlateGlyph/></span>}
+    />
+  );
+}
+
+/**
  * The wide photograph that opens a section, with the section name laid over it.
  * Falls back to a deep navy panel with a gold rule, which reads as designed
  * rather than broken while the photograph is still outstanding.
@@ -939,6 +960,7 @@ if (d.ok) {
                 const unit = linePrice(x.dish, x.companion, x.salads);
                 return (
                   <div className={'trayItem' + (justAdded === x.key ? ' fresh' : '')} key={x.key}>
+                    <TrayThumb dish={x.dish}/>
                     <div className="trayInfo">
                       <b>{x.dish.name}</b>
                       {(x.companion || x.salads.length > 0) && <span className="traySides">

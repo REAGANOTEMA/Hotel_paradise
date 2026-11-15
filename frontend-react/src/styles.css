@@ -634,7 +634,7 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
    wordmark and line can compose on their own. */
 .footerMark{position:relative;display:inline-flex;margin:0 0 16px;isolation:isolate}
 .footerHalo{position:absolute;inset:-20px -30px;z-index:-1;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(201,162,39,.32),rgba(201,162,39,0) 68%);filter:blur(12px)}
-.footerLogo{display:block;width:auto;max-width:140px;max-height:140px;height:auto;object-fit:contain;background:none;padding:0;margin:0;border:0;image-rendering:auto;filter:drop-shadow(0 10px 28px rgba(212,175,55,.32))}
+.footerLogo{display:block;width:clamp(136px,16vw,184px);max-width:100%;height:auto;object-fit:contain;background:none;padding:0;margin:0;border:0;image-rendering:auto;filter:drop-shadow(0 10px 28px rgba(212,175,55,.32))}
 .footerTag{color:#b9c7d6;max-width:360px}
 .footerCol p,.footerBrand p{font-size:13.5px;line-height:1.75}
 
@@ -869,15 +869,15 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 .secBannerGlyph{position:absolute;right:5%;top:50%;transform:translateY(-50%);z-index:1;font-family:'Playfair Display',serif;font-size:clamp(64px,10vw,132px);line-height:1;font-weight:700;color:#ffffff17;pointer-events:none;user-select:none}
 
 /* dish cards, each with its photograph */
-.dishGrid{display:grid;grid-template-columns:repeat(4,1fr);--dishGap:24px;gap:var(--dishGap)}
+.dishGrid{display:grid;grid-template-columns:repeat(4,1fr);--dishGap:22px;gap:var(--dishGap);align-items:stretch}
 /* A category with fewer dishes than one full row centres its cards, so the
    empty cells fall evenly to either side instead of all to the right. A full
    row still fills the grid exactly as before. */
 @media(min-width:1051px){
 .dishGrid:not(:has(.dishCard:nth-child(4))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 3 * var(--dishGap)) / 4);justify-content:center}
 }
-.dishCard{position:relative;background:#ffffffe6;border-radius:var(--r);display:flex;flex-direction:column;box-shadow:0 10px 30px #071A3310;border:1px solid #ece7db;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;overflow:hidden}
-.dishCard:hover{transform:translateY(-2px);box-shadow:0 18px 42px #071A3318;border-color:#ded5bd}
+.dishCard{position:relative;background:linear-gradient(180deg,#fff 0%,#fdfbf4 100%);border-radius:10px;display:flex;flex-direction:column;box-shadow:0 1px 2px #071A3308,0 12px 30px #071A330d;border:1px solid #eae3d2;transition:transform .28s cubic-bezier(.22,.7,.3,1),box-shadow .28s ease,border-color .28s ease;overflow:hidden}
+.dishCard:hover{transform:translateY(-4px);box-shadow:0 3px 7px #071A3310,0 26px 54px #071A331f;border-color:#dccfa8}
 /* a hairline of gold wakes along the top edge as the card is picked up */
 .dishCard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold) 50%,transparent);transform:scaleX(0);transform-origin:center;transition:transform .35s ease;z-index:4;pointer-events:none}
 .dishCard:hover::after,.dishCard.held::after{transform:scaleX(1)}
@@ -889,6 +889,10 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 .dishOpen{position:absolute;inset:0;z-index:1;background:none;border:0;padding:0;border-radius:0;font:inherit;color:inherit;text-align:left}
 .dishOpen:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
 .dishOpenMedia{display:block;position:relative;overflow:hidden}
+/* a low scrim under the plate, so the card settles into the ivory page and the
+   photograph keeps the same depth whether it is pale or dark */
+.dishOpenMedia::after{content:'';position:absolute;left:0;right:0;bottom:0;height:38%;background:linear-gradient(180deg,transparent,rgba(7,26,51,.14));opacity:0;transition:opacity .3s ease;pointer-events:none;z-index:1}
+.dishCard:hover .dishOpenMedia::after{opacity:1}
 .shot{border-bottom:1px solid #ece7db}
 .shot.isEmpty{background:linear-gradient(150deg,#f9f6ee,#ece5d4)}
 .shotEmpty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:12px;text-align:center}
@@ -904,14 +908,14 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 /* how many of this dish are already in the order */
 .dishHeld{position:absolute;top:12px;left:12px;z-index:3;background:var(--gold);color:#071A33;font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;padding:6px 10px;box-shadow:0 4px 14px #071A3333}
 
-.dishOpenText{padding:15px 16px 0}
-.dishTitle{font-family:'Playfair Display';font-weight:600;font-size:18px;color:var(--navy);margin:0 0 6px;line-height:1.25}
-.dishDesc{margin:0 0 4px;color:#687386;font-size:13px;line-height:1.6}
+.dishOpenText{padding:16px 17px 0;position:relative;z-index:2}
+.dishTitle{font-family:'Playfair Display';font-weight:600;font-size:18.5px;color:var(--navy);margin:0 0 6px;line-height:1.25;letter-spacing:.002em}
+.dishDesc{margin:0 0 4px;color:#687386;font-size:13px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 /* the price row is held to the foot of the card, so a row of cards reads as
    one clean line of prices however long the descriptions are */
-.dishBody{padding:11px 16px 16px;display:flex;flex-direction:column;margin-top:auto;position:relative;z-index:2}
-.dishFoot{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.dishFoot b{color:var(--gold-ink);font-size:15px;white-space:nowrap}
+.dishBody{padding:12px 17px 17px;display:flex;flex-direction:column;margin-top:auto;position:relative;z-index:2}
+.dishFoot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid rgba(201,162,39,.18)}
+.dishFoot b{color:var(--gold-ink);font-size:15px;font-weight:700;white-space:nowrap;letter-spacing:.005em}
 .dishFoot b.askPrice{color:#7c8593;font-size:12.5px;font-weight:600;font-style:italic}
 .addBtn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(180deg,#eccd68,#c9a227);color:#071A33;font-weight:700;letter-spacing:1px;font-size:12px;padding:10px 16px;border-radius:var(--r);flex:none;box-shadow:0 6px 16px #C9A22738,inset 0 1px 0 rgba(255,255,255,.5);transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
 .addBtn svg{width:12px;height:12px;flex:none}
@@ -933,17 +937,23 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 .orderNote{color:#5b6675;font-size:14.5px;line-height:1.8;background:#fff;border-left:3px solid var(--gold);padding:18px 22px;box-shadow:0 8px 28px #071A3312}
 .trayEmpty{color:#687386;font-size:14px;line-height:1.7;padding:8px 2px 2px}
 .trayList{margin-bottom:6px}
-.trayItem{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #eaedf2}
-.trayInfo b{display:block;font-size:14.5px}
+.trayItem{display:grid;grid-template-columns:56px minmax(0,1fr) auto auto auto;grid-template-areas:"thumb info qty total drop";gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid #eaedf2}
+/* the plate the guest chose, so the order reads as a tray of dishes rather
+   than a list of words */
+.trayThumb{grid-area:thumb;width:56px;height:56px;border-radius:9px;border:1px solid #e7e0cf;overflow:hidden;background:#f6f1e6;box-shadow:0 3px 10px rgba(7,26,51,.07)}
+.trayThumb .plateGlyph{width:22px;height:22px;margin:0}
+.trayThumbEmpty{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.trayInfo{grid-area:info;min-width:0}
+.trayInfo b{display:block;font-size:14.5px;line-height:1.3;overflow-wrap:anywhere}
 .trayInfo span{color:var(--gold-ink);font-size:12px;font-weight:700}
-.trayQty{display:flex;align-items:center;gap:8px}
-.trayQty button{width:26px;height:26px;border-radius:50%;border:1px solid #d9dee7;background:#fff;color:var(--navy);font-weight:700;line-height:1}
-.trayQty button:hover{border-color:var(--gold);color:var(--gold-ink)}
+.trayQty{grid-area:qty;display:flex;align-items:center;gap:8px}
+.trayQty button{width:30px;height:30px;border-radius:8px;border:1px solid #d9dee7;background:#fff;color:var(--navy);font-weight:700;line-height:1;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
+.trayQty button:hover{background:var(--gold);border-color:var(--gold);color:#071A33;transform:translateY(-1px)}
 .trayQty em{font-style:normal;min-width:16px;text-align:center;font-weight:700}
-.lineTotal{font-weight:700;font-size:13.5px;color:var(--navy)}
-.dropBtn{background:none;border:0;color:#a8443a;font-size:11.5px;text-decoration:underline;padding:0}
+.lineTotal{grid-area:total;font-weight:700;font-size:13.5px;color:var(--navy);min-width:92px;text-align:right}
+.dropBtn{grid-area:drop;background:none;border:0;color:#a8443a;font-size:11.5px;text-decoration:underline;text-underline-offset:3px;padding:4px 2px}
 .dropBtn:hover{color:#7c2b23}
-.trayTotal{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0 4px;font-weight:700}
+.trayTotal{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 4px;padding:15px 18px;background:linear-gradient(135deg,#fbf6e8,#fffdf8);border:1px solid #ece3cd;border-radius:8px;font-weight:700}
 .trayTotal span{color:#667085;font-size:11px;letter-spacing:2px}
 .trayTotal b{font-family:'Playfair Display';font-size:24px;color:var(--navy)}
 .trayForm .planField{margin-bottom:12px}
@@ -965,7 +975,8 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 /* collapsed order panel, sits under the menu */
 .orderPanelWrap{padding-top:0;max-width:900px}
 .orderPanel{background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:220px}
-.orderPanelHead{width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px 26px;background:none;text-align:left;transition:background .2s ease}
+.orderPanelHead{position:relative;width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px 26px 22px 30px;background:none;text-align:left;transition:background .2s ease}
+.orderPanelHead::before{content:'';position:absolute;left:0;top:16px;bottom:16px;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,var(--gold),var(--gold-deep))}
 .orderPanelHead:hover{background:#fdfaf1}
 .orderPanelTitle b{display:block;font-family:'Playfair Display';font-size:24px;color:var(--navy)}
 .orderPanelTitle em{font-style:normal;display:block;color:#687386;font-size:13.5px;margin-top:3px}
@@ -1224,10 +1235,11 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 
 /* --- 900: the order tray reflows ------------------------------------ */
 @media(max-width:900px){
-  .trayItem{grid-template-columns:1fr auto;grid-template-areas:"info total" "qty drop";row-gap:12px;column-gap:8px}
+  .trayItem{grid-template-columns:52px minmax(0,1fr) auto;grid-template-areas:"thumb info total" "thumb qty drop";row-gap:8px;column-gap:12px}
+  .trayThumb{width:52px;height:52px;align-self:center}
   .trayInfo{grid-area:info}
   .trayQty{grid-area:qty}
-  .lineTotal{grid-area:total;justify-self:end}
+  .lineTotal{grid-area:total;justify-self:end;min-width:0}
   .dropBtn{grid-area:drop;justify-self:end}
   .booking{grid-template-columns:1fr}
   .cardBody{padding:24px 22px}
@@ -1244,23 +1256,23 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 }
 @keyframes sheetIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 
-/* --- 768: the menu goes to its three-across mobile grid ------------- */
+/* --- 768: two calm columns, the way a printed carte reads on a tablet --- */
 @media(max-width:768px){
   .menuWrap{padding-top:20px}
-  .dishGrid{grid-template-columns:repeat(3,1fr);--dishGap:12px;gap:var(--dishGap)}
-  /* the card is narrow here, so its insides are re-stacked: the words
-     are trimmed, and price and action sit one above the other */
-  .dishOpenText{padding:11px 11px 0}
-  .dishTitle{font-size:14.5px;margin-bottom:4px}
-  .dishDesc{font-size:12px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .dishBody{padding:9px 11px 11px}
-  .dishFoot{flex-direction:column;align-items:stretch;gap:8px}
-  .dishFoot b{font-size:13.5px;text-align:center;white-space:normal}
-  .addBtn{width:100%;justify-content:center;padding:10px 8px;font-size:12px;letter-spacing:.4px}
+  .dishGrid{grid-template-columns:repeat(2,1fr);--dishGap:16px;gap:var(--dishGap)}
+  /* an odd last dish centres under the pair above it instead of hanging left */
+  .dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - var(--dishGap)) / 2);justify-content:center}
+  .dishOpenText{padding:13px 13px 0}
+  .dishTitle{font-size:16.5px;margin-bottom:4px}
+  .dishDesc{font-size:12.5px;line-height:1.55;-webkit-line-clamp:3}
+  .dishBody{padding:10px 13px 13px}
+  .dishFoot{flex-direction:row;align-items:center;gap:10px;padding-top:10px}
+  .dishFoot b{font-size:14px;text-align:left;white-space:nowrap}
+  .addBtn{width:auto;justify-content:center;padding:9px 12px;font-size:11.5px;letter-spacing:.4px}
   /* the plate is small here, so the hover cue and the file hint go */
   .dishPeek{display:none}
   .shotFile{display:none}
-  .dishHeld{top:7px;left:7px;font-size:8.5px;letter-spacing:1.2px;padding:4px 7px}
+  .dishHeld{top:8px;left:8px;font-size:9px;letter-spacing:1.2px;padding:5px 8px}
   .plateGlyph{width:32px;height:32px}
   .secBanner{--r:16/9}
   .menuWatermark{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='300'%3E%3Ctext x='260' y='160' text-anchor='middle' font-family='Georgia,Times New Roman,serif' font-size='36' font-weight='700' letter-spacing='2' fill='%23071A33' fill-opacity='0.07' transform='rotate(-26 260 150)'%3EHotel Paradise on the Nile%3C/text%3E%3C/svg%3E");background-size:520px 300px}
@@ -1331,6 +1343,22 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .badge{white-space:normal}
 }
 
+/* --- 480: one generous column, so a phone reads like a menu card ----- */
+@media(max-width:480px){
+  .dishGrid,.dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:1fr;grid-auto-flow:row;grid-auto-columns:auto;justify-content:stretch;--dishGap:16px;gap:var(--dishGap)}
+  .dishOpenText{padding:15px 16px 0}
+  .dishTitle{font-size:19px}
+  .dishDesc{font-size:13px;line-height:1.6;-webkit-line-clamp:3}
+  .dishBody{padding:12px 16px 16px}
+  .dishFoot{gap:12px;padding-top:12px}
+  .dishFoot b{font-size:15px}
+  .addBtn{width:auto;padding:10px 15px;font-size:12px;letter-spacing:.5px}
+  .dishHeld{top:11px;left:11px;font-size:9.5px;padding:6px 10px}
+  .trayItem{grid-template-columns:48px minmax(0,1fr) auto;column-gap:10px}
+  .trayThumb{width:48px;height:48px}
+  .lineTotal{min-width:0;font-size:13px}
+}
+
 /* --- 420: the smallest phones still in use -------------------------- */
 @media(max-width:420px){
   .nav{padding:0 3.5vw}
@@ -1347,15 +1375,15 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .mobileCta{padding:9px 3vw calc(9px + env(safe-area-inset-bottom))}
   .mobileCta .btn{padding:13px 6px;font-size:12px;letter-spacing:.6px}
   .heroDots{bottom:calc(76px + env(safe-area-inset-bottom))}
-  /* three across on the smallest phone: the description steps aside and
-     the card carries the plate, the name and the price alone */
-  .dishGrid{--dishGap:9px;gap:var(--dishGap)}
-  .dishOpenText{padding:9px 9px 0}
-  .dishTitle{font-size:13.5px}
-  .dishDesc{display:none}
-  .dishBody{padding:8px 9px 10px}
-  .dishFoot b{font-size:13px}
-  .addBtn{padding:9px 6px;font-size:12px;letter-spacing:.2px}
+  /* the single column keeps the plate, the name, the description and the
+     price, only the scale steps down for the smallest screen */
+  .dishGrid{--dishGap:14px;gap:var(--dishGap)}
+  .dishOpenText{padding:14px 15px 0}
+  .dishTitle{font-size:18px}
+  .dishDesc{display:-webkit-box;font-size:12.5px}
+  .dishBody{padding:11px 15px 15px}
+  .dishFoot b{font-size:14.5px}
+  .addBtn{padding:10px 13px;font-size:11.5px;letter-spacing:.3px}
   .pickGrid{grid-template-columns:1fr}
   .cardBody{padding:20px 17px}
   .card h3{font-size:21px}
@@ -1748,7 +1776,7 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
   .footerMain>div:first-child{padding-top:6px}
   .footerBrand{text-align:center;display:flex;flex-direction:column;align-items:center}
   .footerMark{margin:0 auto 14px}
-  .footerLogo{max-width:120px}
+  .footerLogo{max-width:150px}
   .footerQuick{justify-content:center;max-width:100%}
   .footChip{min-height:44px}
   .footerTag{margin-left:auto;margin-right:auto}
