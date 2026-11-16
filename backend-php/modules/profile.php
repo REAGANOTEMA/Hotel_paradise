@@ -78,7 +78,7 @@ $profImg = $me['profile_image'] ?? '';
 if ($profImg) {
   $imgSrc = BASE . '/download.php?type=profile&id=' . $uid;
 } else {
-  $imgSrc = SITE_URL . '/images/Hotel-Paradise-on-the-Nile-Logo.webp';
+  $imgSrc = SITE_URL . '/images/hotel-paradise-master-logo.webp';
 }
 $profStyle = $profImg
   ? "width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #d4af37;cursor:pointer"

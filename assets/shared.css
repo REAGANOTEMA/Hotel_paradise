@@ -70,4 +70,3 @@ a.btn:active,button.btn:active,.btn:active{transform:translateY(0)}
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}.reveal{animation:none !important}*,*::before,*::after{transition:none !important}
 }
-

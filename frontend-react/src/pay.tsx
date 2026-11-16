@@ -166,7 +166,7 @@ function PayReceipt({src, receiptRef, charged, amt, form, detail, item, qty, uni
  return (
   <div className="payReceipt">
    <div className="prHead">
-    <img src="./images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel Paradise on the Nile" width={1532} height={442} decoding="async" draggable={false} onError={e => {e.currentTarget.style.display = 'none';}}/>
+    <img src="./images/hotel-paradise-master-logo.webp" alt="Hotel Paradise on the Nile" width={1532} height={442} decoding="async" draggable={false} onError={e => {e.currentTarget.style.display = 'none';}}/>
     <h3>HOTEL PARADISE ON THE NILE</h3>
     <p>Jinja, Uganda</p>
     <p>Tel: {HOTEL.phones[0] || CALL} &middot; Email: {HOTEL.email}</p>
@@ -265,7 +265,7 @@ function PayReceipt({src, receiptRef, charged, amt, form, detail, item, qty, uni
      <div className="prTotal"><span>TOTAL:</span><b>{fmt(total)}</b></div>
     )}
    </div>
-   <p className="prFoot">Thank you for choosing Hotel Paradise on the Nile.<br/>This is your official receipt. {methodLabel ? methodLabel + ' · ' : ''}{HOTEL.website}</p>
+   <p className="prFoot">Thank you for choosing Hotel Paradise on the Nile.<br/>This is your official receipt. {methodLabel ? methodLabel + ' ï¿½ ' : ''}{HOTEL.website}</p>
   </div>
  );
 }
@@ -750,10 +750,10 @@ if (done) {
         <div><dt>Guests</dt><dd>{detail.booking.adults} adult{detail.booking.adults === 1 ? '' : 's'}{detail.booking.children ? ' + ' + detail.booking.children + ' child' + (detail.booking.children === 1 ? '' : 'ren') : ''} &middot; {detail.booking.nights} night{detail.booking.nights === 1 ? '' : 's'}</dd></div>
        )}
        {detail?.order && (
-        <div><dt>Order</dt><dd>{detail.order.outlet === 'room_service' ? 'Room service' : detail.order.outlet === 'bar' ? 'Bar order' : 'Restaurant'}{detail.order.kind ? ' · ' + detail.order.kind.replace('_', ' ') : ''}<br/>{detail.order.placed}</dd></div>
+        <div><dt>Order</dt><dd>{detail.order.outlet === 'room_service' ? 'Room service' : detail.order.outlet === 'bar' ? 'Bar order' : 'Restaurant'}{detail.order.kind ? ' ï¿½ ' + detail.order.kind.replace('_', ' ') : ''}<br/>{detail.order.placed}</dd></div>
        )}
        {detail?.invoice && (
-        <div><dt>Invoice</dt><dd>{detail.invoice.number}{detail.invoice.issued ? ' · Issued ' + detail.invoice.issued : ''}{detail.invoice.due_date ? ' · Due ' + detail.invoice.due_date : ''}</dd></div>
+        <div><dt>Invoice</dt><dd>{detail.invoice.number}{detail.invoice.issued ? ' ï¿½ Issued ' + detail.invoice.issued : ''}{detail.invoice.due_date ? ' ï¿½ Due ' + detail.invoice.due_date : ''}</dd></div>
        )}
        {!detail && qty && (
         <div><dt>On this request</dt><dd>{qty}{unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''}</dd></div>
@@ -769,7 +769,7 @@ if (done) {
           <SmartImage group="dishes" name={l.image || l.name} alt={l.name} ratio="4 / 3" widths={[160, 320]} sizes="56px"/>
           <span className="payLineText">
            <b>{l.name}</b>
-           <small>{l.qty} &times; {fmt(l.unit)}{l.note ? ' · ' + l.note : ''}</small>
+           <small>{l.qty} &times; {fmt(l.unit)}{l.note ? ' ï¿½ ' + l.note : ''}</small>
           </span>
           <span className="payLineSum">{fmt(l.total)}</span>
          </div>
@@ -779,7 +779,7 @@ if (done) {
 
       {detail?.booking && (
        <div className="payLines">
-        <div className="payMoney"><span>Room{detail.booking.nights > 1 ? ' · ' + detail.booking.nights + ' nights' : ''}</span><b>{fmt(detail.booking.subtotal)}</b></div>
+        <div className="payMoney"><span>Room{detail.booking.nights > 1 ? ' ï¿½ ' + detail.booking.nights + ' nights' : ''}</span><b>{fmt(detail.booking.subtotal)}</b></div>
         {detail.booking.withdrawal_fee ? <div className="payMoney"><span>{detail.booking.fee_label}</span><b>{fmt(detail.booking.withdrawal_fee)}</b></div> : null}
         {detail.booking.tax > 0 && <div className="payMoney"><span>Service charge (3.5%)</span><b>{fmt(detail.booking.tax)}</b></div>}
         <div className="payMoney"><span>Total</span><b>{fmt(detail.total)}</b></div>
@@ -846,7 +846,7 @@ if (done) {
         <p className="eyebrow" style={{margin: '0 0 6px'}}>RECORDED AGAINST THIS REFERENCE</p>
         {detail.payments.map((p, i) => (
          <div className="payHistoryRow" key={i}>
-          <span>{METHOD_TEXT[p.method] || p.method}{p.when ? ' · ' + p.when : ''}</span>
+          <span>{METHOD_TEXT[p.method] || p.method}{p.when ? ' ï¿½ ' + p.when : ''}</span>
           <b>{fmt(p.amount)} &middot; {p.status}</b>
          </div>
         ))}
@@ -870,7 +870,7 @@ if (done) {
      <p className="eyebrow">1 &middot; YOUR DETAILS</p>
      <h3>Receipt details</h3>
      {token && !editWho && form.name.trim() && form.phone.trim() ? (
-      <p className="bookAs" style={{marginTop: 14}}>Paying as <b>{form.name.trim()}</b>{form.phone ? ' · ' + normPhone(form.phone) : ''}{form.email.trim() ? ' · ' + form.email.trim() : ''} <button type="button" className="bookAsEdit" onClick={() => setEditWho(true)}>change</button></p>
+      <p className="bookAs" style={{marginTop: 14}}>Paying as <b>{form.name.trim()}</b>{form.phone ? ' ï¿½ ' + normPhone(form.phone) : ''}{form.email.trim() ? ' ï¿½ ' + form.email.trim() : ''} <button type="button" className="bookAsEdit" onClick={() => setEditWho(true)}>change</button></p>
      ) : (
      <>
       <div className="planField" style={{marginTop: 14}}><label>Full name</label><input value={form.name} onChange={f('name')} placeholder="Name as it should appear"/></div>

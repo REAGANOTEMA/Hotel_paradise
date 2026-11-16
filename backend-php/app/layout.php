@@ -1123,8 +1123,8 @@ function hotel_brand(): array{
   'email'=>'frontdesk@hotelparadiseonthenile.info',
   'website'=>'www.hotelparadiseonthenile.info',
   'certification'=>'UNBS Certified, US 130:2017',
-  'logo'=>$site.'/images/Hotel-Paradise-on-the-Nile-Logo.webp',
-  'crest'=>$site.'/images/Hotel-Paradise-on-the-Nile-Logo.webp',
+  'logo'=>$site.'/images/hotel-paradise-master-logo.webp',
+  'crest'=>$site.'/images/hotel-paradise-master-logo.webp',
  ];
 }
 
