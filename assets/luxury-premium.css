@@ -1,0 +1,69 @@
+﻿:root{
+  --hp-gold:#c9a227;--hp-gold-soft:#e7cf78;--hp-gold-deep:#9e7b16;
+  --hp-navy:#071a33;--hp-navy-2:#0d2748;--hp-nile:#0b5d78;--hp-ivory:#f8f4ea;--hp-white:#fff;
+  --hp-shadow:0 18px 50px rgba(7,26,51,.18);--hp-shadow-soft:0 10px 28px rgba(7,26,51,.12);
+  --hp-radius:18px;--hp-radius-sm:12px;--hp-ease:cubic-bezier(.22,.61,.36,1);
+}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(1200px 500px at 10% -10%,rgba(201,162,39,.08),transparent 60%),linear-gradient(180deg,#f7f4ec 0%,#f3f1ea 100%);color:#132033}
+::selection{background:rgba(201,162,39,.28);color:#071a33}
+/* Shared premium chrome */
+.topbar,.siteHeader,header{backdrop-filter:saturate(140%) blur(10px)}
+.brandLogo,.footerLogo,.sideLogo,.lsLogo,.loginBrandTop img{filter:drop-shadow(0 4px 10px rgba(7,26,51,.18))}
+.brandLogo{height:54px !important;width:auto !important}
+.footerLogo{height:64px !important;width:auto !important;max-width:280px}
+a.btn,button.btn,.btn,.addBtn,.checkoutBtn,.payBtn{
+  border-radius:999px !important;letter-spacing:.02em;font-weight:700;
+  box-shadow:0 8px 22px rgba(201,162,39,.22);transition:transform .28s var(--hp-ease),box-shadow .28s var(--hp-ease),filter .28s var(--hp-ease)
+}
+a.btn:hover,button.btn:hover,.btn:hover,.addBtn:hover,.checkoutBtn:hover,.payBtn:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(201,162,39,.28);filter:saturate(1.04)}
+a.btn:active,button.btn:active,.btn:active{transform:translateY(0)}
+/* Hero / cinematic sections */
+.hero,.pageHero,.heroSec,[class*="hero"]{position:relative;isolation:isolate}
+.hero::after,.pageHero::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(7,26,51,.18),rgba(7,26,51,.45) 65%,rgba(7,26,51,.55));z-index:0}
+.hero > *,.pageHero > *{position:relative;z-index:1}
+.hero h1,.pageHero h1,h1{letter-spacing:.01em;text-shadow:0 8px 30px rgba(0,0,0,.18)}
+.eyebrow,.kicker,.pill,.tag,[class*="eyebrow"],[class*="kicker"]{letter-spacing:.18em !important}
+/* Premium cards */
+.card,.roomCard,.menuCard,.dishCard,.foodCard,.venueCard,.featureCard,.dineCard,.buffetTier,.factCard,[class*="Card"]{
+  border:1px solid rgba(201,162,39,.18) !important;border-radius:var(--hp-radius) !important;
+  box-shadow:var(--hp-shadow-soft) !important;overflow:hidden;background:rgba(255,255,255,.92);
+  transition:transform .35s var(--hp-ease),box-shadow .35s var(--hp-ease),border-color .35s var(--hp-ease)
+}
+.card:hover,.roomCard:hover,.menuCard:hover,.dishCard:hover,.foodCard:hover,.venueCard:hover,.featureCard:hover,.dineCard:hover,.buffetTier:hover,.factCard:hover,[class*="Card"]:hover{
+  transform:translateY(-6px);box-shadow:var(--hp-shadow) !important;border-color:rgba(201,162,39,.38) !important
+}
+.card img,.roomCard img,.menuCard img,.dishCard img,.foodCard img,.venueCard img,.dineCard img,[class*="Card"] img{
+  transition:transform .9s var(--hp-ease),filter .6s var(--hp-ease)
+}
+.card:hover img,.roomCard:hover img,.menuCard:hover img,.dishCard:hover img,.foodCard:hover img,.venueCard:hover img,.dineCard:hover img,[class*="Card"]:hover img{transform:scale(1.045);filter:saturate(1.05) contrast(1.02)}
+/* Menu-specific refinement */
+.menuGrid,.dishes,.dishGrid,[class*="menu"] .grid,[class*="Menu"]{gap:22px !important}
+.menuCard,.dishCard,.foodCard{background:linear-gradient(180deg,#fff, #fbfaf6)}
+.menuCard h3,.dishCard h3,.foodCard h3,.menuCard h4,.dishCard h4{font-family:'Playfair Display',serif;color:#0b2342}
+.price,.dishPrice,.menuPrice,[class*="price"],.dinePrice b{color:#0b2342 !important;font-weight:700}
+.price,.dishPrice,.menuPrice{font-size:1.05rem}
+.catTitle,.sectionTitle h2,h2{font-family:'Playfair Display',serif;color:#071a33}
+.catTitle::after,.sectionTitle h2::after{content:"";display:block;width:64px;height:3px;margin-top:10px;border-radius:99px;background:linear-gradient(90deg,var(--hp-gold-soft),var(--hp-gold),var(--hp-gold-deep))}
+/* Cart / checkout */
+.cart,.cartPanel,.cartDrawer,.tray,.orderTray,[class*="cart"],[class*="Cart"],[class*="tray"]{
+  border:1px solid rgba(201,162,39,.18);box-shadow:0 24px 60px rgba(7,26,51,.22);backdrop-filter:blur(10px)
+}
+.cartItem,.trayItem,[class*="cartItem"]{border-bottom:1px solid rgba(7,26,51,.08);padding:12px 0}
+.qtyBtn,button[class*="qty"],.qty button{border-radius:10px !important;border:1px solid rgba(201,162,39,.35) !important}
+/* Sections & depth */
+.section,.band{position:relative}
+.section.hasBackdrop::before,.band.hasBackdrop::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,26,51,.35),rgba(7,26,51,.55));z-index:0}
+.section.hasBackdrop > *,.band.hasBackdrop > *{position:relative;z-index:1}
+.reveal{animation:hpFadeUp .7s var(--hp-ease) both}
+@keyframes hpFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* Dashboard login/admin accents (shared by classes if present) */
+.loginCard,.lsCard{border:1px solid rgba(201,162,39,.22) !important;box-shadow:0 30px 80px rgba(7,26,51,.28) !important}
+@media (max-width: 900px){
+  .brandLogo{height:42px !important}.footerLogo{height:52px !important}
+  .card:hover,.roomCard:hover,.menuCard:hover,.dishCard:hover,.foodCard:hover,[class*="Card"]:hover{transform:none}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}.reveal{animation:none !important}*,*::before,*::after{transition:none !important}
+}

@@ -481,11 +481,11 @@ function AccountPage() {
        {note && <div className="bookMsg ok" style={{marginTop: 14}}>{note}</div>}
        <div className="planField" style={{marginTop: 16}}>
         <label>Mobile number</label>
-        <input value={phone} onChange={e => setPhone(e.target.value)} type="tel" inputMode="tel" autoFocus placeholder="e.g. 0759 504 928"/>
+        <input value={phone} onChange={e => setPhone(e.target.value)} type="tel" inputMode="tel" autoFocus placeholder="e.g. +256 759 504 928 or +44 7123 456789"/>
        </div>
        {err && <div className="bookMsg" style={{marginTop: 14}}>{err}</div>}
         <button className={'btn planBook' + (busy ? ' loading' : '')} type="submit" disabled={busy}>{busy ? 'Saving…' : 'Finish and continue'}</button>
-       <p className="plannerNote">Ugandan mobile numbers look like 0759 504 928 or +256 759 504 928. We use it to confirm your booking and your payment, and nothing else.</p>
+       <p className="plannerNote">Use a mobile number we can reach you on, including international numbers with country code (for example +256 759 504 928 or +44 7123 456789). We use it to confirm your booking and your payment, and nothing else.</p>
       </form>
      ) : (
       <>

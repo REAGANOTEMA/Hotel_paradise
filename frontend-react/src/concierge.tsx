@@ -408,6 +408,7 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
   const [note, setNote] = React.useState('');
   const [closed, setClosed] = React.useState(false);
   const [expanded, setExpanded] = React.useState(false);
+  const [typed, setTyped] = React.useState('');
 
   const recRef = React.useRef<RecognitionLike | null>(null);
   const voicesRef = React.useRef<{female?: SpeechSynthesisVoice; male?: SpeechSynthesisVoice}>({});
@@ -453,8 +454,8 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     const v = who === 'woman' ? voicesRef.current.female : voicesRef.current.male;
     if (v) u.voice = v;
     u.lang = v?.lang || 'en-GB';
-    u.rate = 0.96;
-    u.pitch = who === 'woman' ? 1.03 : 0.9;
+    u.rate = 0.95;
+    u.pitch = who === 'woman' ? 1.05 : 0.92;
     u.volume = 1;
     return u;
   };
@@ -475,7 +476,8 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     speakingRef.current = true;
     pendingRef.current = lines.length;
     setPhase('speaking');
-    lines.forEach(line => {
+    try { speech.cancel(); } catch {}
+    lines.forEach((line) => {
       const u = makeUtter(line.text, line.who);
       u.onstart = () => { if (batch === batchRef.current) setCaption(line.text); };
       u.onend = u.onerror = () => {
@@ -483,12 +485,11 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
         pendingRef.current = Math.max(0, pendingRef.current - 1);
         if (pendingRef.current === 0) finishSpeech();
       };
-      window.speechSynthesis.speak(u);
+      try { window.speechSynthesis.speak(u); } catch { pendingRef.current = Math.max(0, pendingRef.current - 1); }
     });
-    // A browser that never reports the end of a line must not leave the
-    // concierge mute and deaf: after a generous pause it simply resumes.
+    if (pendingRef.current <= 0) { finishSpeech(); return; }
     window.clearTimeout(watchdogRef.current);
-    watchdogRef.current = window.setTimeout(finishSpeech, 11000 * lines.length + 4000);
+    watchdogRef.current = window.setTimeout(finishSpeech, 12000 * lines.length + 5000);
   }, [speech, stopSpeaking, abortRec, finishSpeech]);
 
   const handle = React.useCallback((text: string) => {
@@ -565,10 +566,11 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     startedRef.current = true;
     wantRef.current = true;
     pausedRef.current = false;
+    setNote('');
     speakAll([
-      {who: 'woman', text: `${timeGreeting()}, and welcome to Hotel Paradise on the Nile, on the banks of the river in Jinja.`},
-      {who: 'man', text: 'I am Paradise, your voice guide. Ask me about our rooms and rates, booking, our offers, the restaurant and bar, events, facilities, directions or payment — and I will answer. You can also say any dish, and I will point you to it.'},
-      {who: 'man', text: 'Please speak whenever you are ready. I am listening.'}
+      {who: 'woman', text: `${timeGreeting()}, and welcome to Hotel Paradise on the Nile, on the banks of the River Nile in Jinja.`},
+      {who: 'man', text: 'I am Paradise, your personal voice concierge. Ask me about rooms and rates, bookings, offers, dining, events, facilities, directions, or payments, and I will assist you clearly.'},
+      {who: 'man', text: 'Please speak whenever you are ready. I am listening now.'}
     ]);
   }, [ready, speakAll]);
 
@@ -588,9 +590,11 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
     wantRef.current = true;
     setNote('');
     if (!startedRef.current) { beginRef.current(); return; }
+    if (speech) { try { speech.cancel(); } catch {} }
+    speakingRef.current = false;
     setPhase('listening');
     startRec();
-  }, [startRec]);
+  }, [startRec, speech]);
 
   /* ------- close hides it for the whole visit; fold keeps it listening ------- */
 
@@ -647,28 +651,44 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
   React.useEffect(() => {
     if (!ready || !Ctor) return;
     const rec = new Ctor();
-    rec.lang = 'en-US';
+    rec.lang = (typeof navigator !== 'undefined' && navigator.language && /^en/i.test(navigator.language)) ? navigator.language : 'en-GB';
     rec.continuous = true;
     rec.interimResults = true;
-    rec.maxAlternatives = 1;
+    rec.maxAlternatives = 3;
     rec.onstart = () => {
       activeRef.current = true;
-      if (!pausedRef.current && !speakingRef.current) setPhase('listening');
+      if (!pausedRef.current && !speakingRef.current) { setPhase('listening'); setNote(''); }
     };
     rec.onend = () => {
       activeRef.current = false;
       if (wantRef.current && !speakingRef.current && !closedRef.current) {
         window.clearTimeout(restartRef.current);
-        restartRef.current = window.setTimeout(() => { if (wantRef.current && !pausedRef.current && !closedRef.current) startRec(); }, 350);
+        restartRef.current = window.setTimeout(() => { if (wantRef.current && !pausedRef.current && !closedRef.current) startRec(); }, 250);
       }
     };
     rec.onerror = (ev) => {
       activeRef.current = false;
-      const err = ev?.error;
-      if (err === 'not-allowed' || err === 'service-not-allowed' || err === 'audio-capture') {
-        wantRef.current = false;
+      const err = ev?.error || '';
+      if (err === 'not-allowed' || err === 'service-not-allowed') {
+        wantRef.current = false; pausedRef.current = true;
         setPhase('blocked');
-        setNote(`I could not reach your microphone, so I will stay quiet. You can still read the menu, tap a section, or call ${CALL}.`);
+        setNote(`Microphone access is turned off. Please allow microphone access in your browser, or type your question below. You can also call ${CALL}.`);
+        return;
+      }
+      if (err === 'audio-capture') {
+        wantRef.current = false; pausedRef.current = true;
+        setPhase('blocked');
+        setNote(`I could not hear a microphone on this device. You can type your question below, or call ${CALL}.`);
+        return;
+      }
+      if (err === 'network') {
+        setNote('Voice recognition needs an internet connection on some browsers. Please try again, or type your question below.');
+        return;
+      }
+      if (err === 'aborted' || err === 'no-speech') {
+        // Common and recoverable: keep listening loop alive via onend restart.
+        if (wantRef.current && !pausedRef.current) setPhase('listening');
+        return;
       }
     };
     rec.onresult = (ev) => {
@@ -676,14 +696,15 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
       let finalText = '';
       for (let i = ev.resultIndex; i < ev.results.length; i += 1) {
         const r = ev.results[i];
-        const said = r[0].transcript;
+        const said = (r && r[0] && r[0].transcript) ? r[0].transcript : '';
+        if (!said) continue;
         if (r.isFinal) finalText += ' ' + said;
         else interim += ' ' + said;
       }
       const live = interim.trim();
       if (live) setHeard(live);
       finalText = finalText.trim();
-      if (finalText) handleRef.current(finalText);
+      if (finalText) { setNote(''); handleRef.current(finalText); }
     };
     recRef.current = rec;
     return () => {
@@ -769,10 +790,15 @@ export function MenuConcierge({sections}: {sections: MenuSection[]}) {
         ))}
       </div>
 
+      <form className="conType" onSubmit={(e) => { e.preventDefault(); const t = typed.trim(); if (!t) return; handle(t); setTyped(''); }}>
+        <input className="conInput" value={typed} onChange={e => setTyped(e.target.value)} placeholder="Type a question if voice is unavailable" aria-label="Type your question for Paradise"/>
+        <button type="submit" className="conBtn">Ask</button>
+      </form>
+
       <div className="conActions">
         {phase === 'idle' && <button type="button" className="conBtn" onClick={begin}>Begin</button>}
         {(phase === 'listening' || phase === 'speaking') && <button type="button" className="conBtn" onClick={pause}>Quiet</button>}
-        {(phase === 'paused' || phase === 'blocked') && <button type="button" className="conBtn" onClick={resume}>{phase === 'blocked' ? 'Try again' : 'Resume'}</button>}
+        {(phase === 'paused' || phase === 'blocked') && <button type="button" className="conBtn" onClick={resume}>{phase === 'blocked' ? 'Try microphone again' : 'Resume listening'}</button>}
         <button type="button" className="conBtn conBtnGhost" onClick={foldPanel}>Fold away</button>
         <button type="button" className="conBtn conBtnGhost" onClick={closeConcierge}>Close</button>
       </div>

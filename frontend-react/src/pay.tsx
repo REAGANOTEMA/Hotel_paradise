@@ -1,4 +1,4 @@
-Ôªøimport React from 'react';
+import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {ExploreMore, TopBar, PageNav, Footer, fmt, apiUrl, CALL, HOTEL, telHref, customerToken, rooms as bedRooms, WhatsAppIcon, BackLink, bgUrl} from './shared';
@@ -136,6 +136,12 @@ const Icon = ({kind}: {kind: string}) =>
  kind === 'card' ? <CardIcon/> : kind === 'wallet' ? <WalletIcon/> : <PhoneIcon/>;
 
 const normPhone = (p: string) => p.replace(/[^\d+]/g, '');
+const isValidPhone = (p: string) => {
+  const n = normPhone(p);
+  if (!n) return false;
+  if (/^(\+?256|0)7\d{8}$/.test(n)) return true;
+  return /^\+?[1-9]\d{6,14}$/.test(n);
+};
 
 /**
  * The official receipt, shown on the page and printed through the phone's own
@@ -259,7 +265,7 @@ function PayReceipt({src, receiptRef, charged, amt, form, detail, item, qty, uni
      <div className="prTotal"><span>TOTAL:</span><b>{fmt(total)}</b></div>
     )}
    </div>
-   <p className="prFoot">Thank you for choosing Hotel Paradise on the Nile.<br/>This is your official receipt. {methodLabel ? methodLabel + ' ¬∑ ' : ''}{HOTEL.website}</p>
+   <p className="prFoot">Thank you for choosing Hotel Paradise on the Nile.<br/>This is your official receipt. {methodLabel ? methodLabel + ' ∑ ' : ''}{HOTEL.website}</p>
   </div>
  );
 }
@@ -493,7 +499,7 @@ function PayPage() {
   if (!src || !ref) { setErr('There is nothing to pay right now. Please start again from the rooms or the menu.'); return; }
   if (settled) { setErr('This reference has already been paid in full. Nothing further is due on it.'); return; }
   if (!form.name.trim()) { setErr('Please add the name that should appear on the receipt.'); return; }
-  if (!normPhone(form.phone)) { setErr('Please add a phone number we can confirm the payment on.'); return; }
+  if (!isValidPhone(form.phone)) { setErr('Please add a valid mobile number with country code so we can confirm the payment (local and international numbers are welcome).'); return; }
   setBusy(true);
   // A checkout that never answers must never leave the guest staring at a
   // spinner. The request gets a hard ceiling, and whatever comes back is read
@@ -690,7 +696,7 @@ if (done) {
      <div className="payDoneActions">
        {done.paid && (
          <button className="btn" onClick={() => window.print()} style={{marginBottom:8}}>
-           üñ®Ô∏è Print / Save as PDF
+           ??? Print / Save as PDF
          </button>
        )}
        <a className="btn waBtn" href={waHref} target="_blank" rel="noopener noreferrer">
@@ -744,10 +750,10 @@ if (done) {
         <div><dt>Guests</dt><dd>{detail.booking.adults} adult{detail.booking.adults === 1 ? '' : 's'}{detail.booking.children ? ' + ' + detail.booking.children + ' child' + (detail.booking.children === 1 ? '' : 'ren') : ''} &middot; {detail.booking.nights} night{detail.booking.nights === 1 ? '' : 's'}</dd></div>
        )}
        {detail?.order && (
-        <div><dt>Order</dt><dd>{detail.order.outlet === 'room_service' ? 'Room service' : detail.order.outlet === 'bar' ? 'Bar order' : 'Restaurant'}{detail.order.kind ? ' ¬∑ ' + detail.order.kind.replace('_', ' ') : ''}<br/>{detail.order.placed}</dd></div>
+        <div><dt>Order</dt><dd>{detail.order.outlet === 'room_service' ? 'Room service' : detail.order.outlet === 'bar' ? 'Bar order' : 'Restaurant'}{detail.order.kind ? ' ∑ ' + detail.order.kind.replace('_', ' ') : ''}<br/>{detail.order.placed}</dd></div>
        )}
        {detail?.invoice && (
-        <div><dt>Invoice</dt><dd>{detail.invoice.number}{detail.invoice.issued ? ' ¬∑ Issued ' + detail.invoice.issued : ''}{detail.invoice.due_date ? ' ¬∑ Due ' + detail.invoice.due_date : ''}</dd></div>
+        <div><dt>Invoice</dt><dd>{detail.invoice.number}{detail.invoice.issued ? ' ∑ Issued ' + detail.invoice.issued : ''}{detail.invoice.due_date ? ' ∑ Due ' + detail.invoice.due_date : ''}</dd></div>
        )}
        {!detail && qty && (
         <div><dt>On this request</dt><dd>{qty}{unit === 'night' ? ' night' + (Number(qty) > 1 ? 's' : '') : unit === 'meal' ? ' dish' + (Number(qty) > 1 ? 'es' : '') : ''}</dd></div>
@@ -763,7 +769,7 @@ if (done) {
           <SmartImage group="dishes" name={l.image || l.name} alt={l.name} ratio="4 / 3" widths={[160, 320]} sizes="56px"/>
           <span className="payLineText">
            <b>{l.name}</b>
-           <small>{l.qty} &times; {fmt(l.unit)}{l.note ? ' ¬∑ ' + l.note : ''}</small>
+           <small>{l.qty} &times; {fmt(l.unit)}{l.note ? ' ∑ ' + l.note : ''}</small>
           </span>
           <span className="payLineSum">{fmt(l.total)}</span>
          </div>
@@ -773,7 +779,7 @@ if (done) {
 
       {detail?.booking && (
        <div className="payLines">
-        <div className="payMoney"><span>Room{detail.booking.nights > 1 ? ' ¬∑ ' + detail.booking.nights + ' nights' : ''}</span><b>{fmt(detail.booking.subtotal)}</b></div>
+        <div className="payMoney"><span>Room{detail.booking.nights > 1 ? ' ∑ ' + detail.booking.nights + ' nights' : ''}</span><b>{fmt(detail.booking.subtotal)}</b></div>
         {detail.booking.withdrawal_fee ? <div className="payMoney"><span>{detail.booking.fee_label}</span><b>{fmt(detail.booking.withdrawal_fee)}</b></div> : null}
         {detail.booking.tax > 0 && <div className="payMoney"><span>Service charge (3.5%)</span><b>{fmt(detail.booking.tax)}</b></div>}
         <div className="payMoney"><span>Total</span><b>{fmt(detail.total)}</b></div>
@@ -830,7 +836,7 @@ if (done) {
         detail={detail} item={item} qty={qty} unit={unit} methodLabel={METHOD_TEXT[method] || method}
        />
         <div style={{display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center',marginTop:10}}>
-          <button className="btn" onClick={() => window.print()}>üñ®Ô∏è Print / Save as PDF</button>
+          <button className="btn" onClick={() => window.print()}>??? Print / Save as PDF</button>
           <a className="btn waBtn" href={waHref} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={16}/> Send the details to the hotel on WhatsApp</a>
         </div>
       </div>}
@@ -840,7 +846,7 @@ if (done) {
         <p className="eyebrow" style={{margin: '0 0 6px'}}>RECORDED AGAINST THIS REFERENCE</p>
         {detail.payments.map((p, i) => (
          <div className="payHistoryRow" key={i}>
-          <span>{METHOD_TEXT[p.method] || p.method}{p.when ? ' ¬∑ ' + p.when : ''}</span>
+          <span>{METHOD_TEXT[p.method] || p.method}{p.when ? ' ∑ ' + p.when : ''}</span>
           <b>{fmt(p.amount)} &middot; {p.status}</b>
          </div>
         ))}
@@ -855,7 +861,7 @@ if (done) {
       <ol>
        <li>You pay on Pesapal\u2019s secure page, by MTN Mobile Money, Airtel Money, or a Visa or Mastercard.</li>
        <li>Pesapal confirms the payment and sends us the result, and your official receipt is emailed to you and shown here.</li>
-       <li>We confirm your {src === 'booking' ? 'room' : src === 'invoice' ? 'invoice payment' : 'order'} by phone on {form.phone || 'the number you give'}.</li>
+       <li>We confirm your {src === 'booking' ? 'room' : src === 'invoice' ? 'invoice payment' : 'order'} by phone on {normPhone(form.phone) || 'the number you give'}.</li>
       </ol>
      </div>
     </div>
@@ -864,12 +870,12 @@ if (done) {
      <p className="eyebrow">1 &middot; YOUR DETAILS</p>
      <h3>Receipt details</h3>
      {token && !editWho && form.name.trim() && form.phone.trim() ? (
-      <p className="bookAs" style={{marginTop: 14}}>Paying as <b>{form.name.trim()}</b>{form.phone ? ' ¬∑ ' + normPhone(form.phone) : ''}{form.email.trim() ? ' ¬∑ ' + form.email.trim() : ''} <button type="button" className="bookAsEdit" onClick={() => setEditWho(true)}>change</button></p>
+      <p className="bookAs" style={{marginTop: 14}}>Paying as <b>{form.name.trim()}</b>{form.phone ? ' ∑ ' + normPhone(form.phone) : ''}{form.email.trim() ? ' ∑ ' + form.email.trim() : ''} <button type="button" className="bookAsEdit" onClick={() => setEditWho(true)}>change</button></p>
      ) : (
      <>
       <div className="planField" style={{marginTop: 14}}><label>Full name</label><input value={form.name} onChange={f('name')} placeholder="Name as it should appear"/></div>
       <div className="payRow2">
-       <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>
+       <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" inputMode="tel" autoComplete="tel" placeholder="e.g. +256 759 504 928 or international"/></div>
        <div className="planField"><label>Email (optional)</label><input value={form.email} onChange={f('email')} type="email" placeholder="you@email.com"/></div>
       </div>
       {token && <button type="button" className="linkBtn" onClick={() => setEditWho(false)}>Done</button>}

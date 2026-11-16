@@ -44,7 +44,7 @@ export const apiUrl = async (act: string): Promise<string> => {
   return `${apiBase}?act=${act}`;
 };
 
-export const LOGO = './Hotel-Paradise-on-the-Nile-Logo.webp';
+export const LOGO = './images/hotel-paradise-master-logo.webp';
 
 /* A background photograph handed to CSS through a custom property.
  *

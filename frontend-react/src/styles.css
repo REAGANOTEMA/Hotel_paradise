@@ -2864,3 +2864,7 @@ body.hpn-concierge .installApp{bottom:calc(28px + 156px)}
 .buffetTier p{color:var(--muted);font-size:14.5px;line-height:1.7;margin:0}
 .buffetNote{max-width:760px;margin:28px auto 0;text-align:center;color:var(--muted);font-size:14px;line-height:1.7}
 @media(max-width:900px){.buffetTiers{grid-template-columns:1fr}}
+
+
+/* Concierge premium refinements */
+.conType{display:flex;gap:8px;margin-top:10px}.conInput{flex:1;min-width:0;border:1px solid rgba(201,162,39,.25);border-radius:999px;padding:10px 14px;background:rgba(255,255,255,.96);color:#132033}.conInput:focus{outline:none;box-shadow:0 0 0 3px rgba(201,162,39,.16);border-color:rgba(201,162,39,.5)}.conLauncher{box-shadow:0 14px 34px rgba(7,26,51,.22)!important;border:1px solid rgba(201,162,39,.35)!important;background:linear-gradient(135deg,rgba(7,26,51,.96),rgba(13,39,72,.96))!important;color:#fff}.conLauncher b{color:#fff}.conLauncher em{color:#d9e4f2}.concierge{border:1px solid rgba(201,162,39,.28)!important;box-shadow:0 24px 60px rgba(7,26,51,.28)!important;background:rgba(255,255,255,.94)!important;backdrop-filter:blur(12px)}.conTitle{font-family:'Playfair Display',serif;color:#071a33}.conBtn{border-radius:999px!important}

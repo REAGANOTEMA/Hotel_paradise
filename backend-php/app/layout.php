@@ -294,7 +294,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<title>'.e($title).' | Hotel Paradise on the Nile</title>';
  echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
  echo '<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">';
- echo '<link rel="stylesheet" href="'.BASE.'/assets/admin.css">';
+ echo '<link rel="stylesheet" href="'.BASE.'/assets/admin.css">'; echo '<link rel="stylesheet" href="'.BASE.'/assets/luxury-admin.css">';
  echo '<meta name="theme-color" content="#071A33">';
  echo '<meta name="mobile-web-app-capable" content="yes">';
  echo '<meta name="apple-mobile-web-app-capable" content="yes">';
@@ -312,7 +312,7 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 
  /* ---- the rail ---- */
  echo '<aside class="side" id="side">';
- echo '<a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp" alt="Hotel Paradise on the Nile" width="1532" height="442" decoding="async" draggable="false"></a>';
+ echo '<a class="sideBrand" href="'.BASE.'/index.php?page=dashboard"><img class="sideLogo" src="'.SITE_URL.'/images/hotel-paradise-master-logo.webp" alt="Hotel Paradise on the Nile" width="1532" height="442" decoding="async" draggable="false"></a>';
  echo '<button class="sideClose" id="sideClose" type="button" aria-label="Close menu"><span></span><span></span></button>';
   echo '<nav class="sideNav" id="sideNav" aria-label="Modules">';
   foreach(nav_groups() as $group){

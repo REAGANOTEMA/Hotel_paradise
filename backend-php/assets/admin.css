@@ -1101,3 +1101,95 @@ a,button,input,select,textarea,[role=button],label{touch-action:manipulation}
   .badge{border:1px solid #999;color:#000!important;background:#fff!important}
   .kpi{break-inside:avoid;page-break-inside:avoid}
 }
+
+
+/* === Luxury Premium Overlay (non-destructive) ===
+/* Luxury premium overlay for Hotel Paradise management system - preserves all functionality */
+:root{
+  --gold:#c9a227;--gold-deep:#9e7b16;--gold2:#e6cb74;--navy:#071a33;--navy2:#0d2748;--nile:#0b5d78;
+  --bg:#f4f1e8;--paper:#ffffff;--line:#e6dfcf;--ink:#132033;--muted:#5d6878;
+  --r:14px;--rSm:10px;--e1:0 8px 24px rgba(7,26,51,.08);--e2:0 16px 38px rgba(7,26,51,.12);--e3:0 26px 60px rgba(7,26,51,.16);
+  --foil:linear-gradient(135deg,#f0d889,#c9a227 45%,#9e7b16);
+}
+body{background:
+  radial-gradient(900px 380px at 100% -10%,rgba(201,162,39,.10),transparent 60%),
+  radial-gradient(700px 300px at -5% 0,rgba(11,93,120,.08),transparent 60%),
+  linear-gradient(180deg,#f7f4ec 0%,#f2efe6 100%) !important; color:var(--ink)}
+.side{
+  background:linear-gradient(175deg,rgba(4,12,26,.98),rgba(7,26,51,.98) 45%,rgba(13,39,72,.98)) !important;
+  border-right:1px solid rgba(201,162,39,.18) !important; box-shadow:12px 0 40px rgba(7,26,51,.18)
+}
+.sideBrand{padding:18px 16px 16px !important;justify-content:center;border-bottom:1px solid rgba(201,162,39,.18) !important;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent)}
+.sideLogo{height:58px !important;width:auto !important;max-width:100%;filter:drop-shadow(0 6px 14px rgba(0,0,0,.25))}
+.sideGroup{margin:2px 0}
+.groupHead{border-radius:12px !important}
+.sideGroup.hasActive>.groupHead{background:linear-gradient(90deg,rgba(201,162,39,.16),rgba(201,162,39,.04));box-shadow:inset 3px 0 0 var(--gold)}
+.sideNav a{border-radius:10px !important;margin:2px 4px;transition:all .22s ease}
+.sideNav a:hover{background:rgba(255,255,255,.07) !important;transform:translateX(2px)}
+.sideNav a.on{background:linear-gradient(90deg,rgba(201,162,39,.22),rgba(201,162,39,.08)) !important;color:#fff !important;
+  box-shadow:inset 3px 0 0 var(--gold)}
+.main{min-width:0}
+.topbar{
+  background:rgba(255,255,255,.78) !important;backdrop-filter:blur(12px) saturate(140%);
+  border:1px solid rgba(201,162,39,.16) !important;border-radius:16px !important;box-shadow:var(--e1) !important;
+  margin:14px 14px 0;padding:10px 14px !important
+}
+.tbTitle b{font-family:'Playfair Display',serif;letter-spacing:.01em;color:var(--navy)}
+.content{padding:16px 14px 28px !important}
+.card,.kpi,.stat,.panel,.box,[class*="card"],.tableWrap,table,.chartBox,.reportCard,.notifCard{
+  border-radius:var(--r) !important;border:1px solid rgba(201,162,39,.14) !important;box-shadow:var(--e1) !important
+}
+.card,.panel,.box,.tableWrap,.chartBox,.reportCard{background:rgba(255,255,255,.92) !important}
+.card:hover,.kpi:hover,.stat:hover,.panel:hover{box-shadow:var(--e2) !important}
+.kpis,.stats,.grid4,.grid3,.cards{gap:16px !important}
+.kpi,.stat,[class*="kpi"],[class*="stat"]{
+  position:relative;overflow:hidden;background:linear-gradient(180deg,#fff,#fbfaf6) !important
+}
+.kpi::before,.stat::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--foil)}
+.kpi b,.stat b,.kpi .v,.stat .v,.bigNum{font-family:'Playfair Display',serif;color:var(--navy)}
+h1,h2,h3,.pageTitle,.sectionTitle{font-family:'Playfair Display',serif;color:var(--navy)}
+/* Tables */
+table{width:100%;border-collapse:separate !important;border-spacing:0;overflow:hidden;background:#fff}
+thead th,th{
+  background:linear-gradient(180deg,#0d2748,#071a33) !important;color:#f8f4ea !important;
+  font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:11px;border-bottom:1px solid rgba(201,162,39,.25) !important
+}
+th,td{padding:12px 14px !important;border-bottom:1px solid #ece7db !important;vertical-align:middle}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(201,162,39,.06) !important}
+tbody tr:last-child td{border-bottom:0 !important}
+/* Forms & buttons */
+input,select,textarea{
+  border-radius:10px !important;border:1px solid #ddd6c6 !important;background:#fff !important;
+  transition:border-color .2s ease,box-shadow .2s ease
+}
+input:focus,select:focus,textarea:focus{border-color:rgba(201,162,39,.55) !important;box-shadow:0 0 0 4px rgba(201,162,39,.14) !important;outline:none}
+.btn,button.btn,a.btn,.button,[type="submit"]{
+  border-radius:999px !important;font-weight:700;letter-spacing:.01em;
+  transition:transform .22s ease,box-shadow .22s ease,filter .22s ease
+}
+.btn.primary,.btnP,.btn-gold,[class*="primary"],button[type="submit"].btn{
+  background:var(--foil) !important;color:#071a33 !important;border:0 !important;box-shadow:0 8px 20px rgba(201,162,39,.25) !important
+}
+.btn:hover,button.btn:hover,a.btn:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(7,26,51,.14)}
+/* Status pills */
+.pill,.badge,.status,.tag,[class*="pill"],[class*="badge"]{border-radius:999px !important;font-weight:600}
+/* Login page premium (classes present in login template) */
+.loginBody{background:#071a33 !important}
+.loginBg{background:linear-gradient(135deg,rgba(7,26,51,.55),rgba(7,26,51,.78)), radial-gradient(800px 400px at 20% 10%,rgba(201,162,39,.18),transparent 60%) !important}
+.loginCard{border-radius:24px !important;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.35) !important;border:1px solid rgba(201,162,39,.22) !important}
+.loginShowcase{background:linear-gradient(160deg,rgba(7,26,51,.82),rgba(11,93,120,.35)) !important}
+.loginPane{background:rgba(255,255,255,.96) !important;backdrop-filter:blur(8px)}
+.loginBrandTop img,.lsLogo{filter:drop-shadow(0 8px 18px rgba(0,0,0,.25))}
+.lsStars span{color:#e6cb74}
+/* Charts containers if present */
+canvas{max-width:100%}
+@media (max-width: 900px){
+  .topbar{margin:10px 10px 0;border-radius:14px !important}
+  .content{padding:12px 10px 20px !important}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important;scroll-behavior:auto !important}
+}
+

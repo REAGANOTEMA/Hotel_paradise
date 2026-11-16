@@ -57,6 +57,7 @@ function pagelogin(): void{
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="%%BASE%%/assets/admin.css">
+<link rel="stylesheet" href="%%BASE%%/assets/luxury-admin.css">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -182,7 +183,7 @@ HTML;
 
  echo str_replace(
   ['%%BASE%%','%%SITE%%','%%HOME%%','%%LOGO%%','%%FLASH%%','%%CSRF%%','%%YEAR%%'],
-  [e(BASE),e(SITE_URL),e(SITE_URL.'/'),e(SITE_URL.'/images/Hotel-Paradise-on-the-Nile-Logo.webp'),$flashHtml,csrf_field(),date('Y')],
+  [e(BASE),e(SITE_URL),e(SITE_URL.'/'),e(SITE_URL.'/images/hotel-paradise-master-logo.webp'),$flashHtml,csrf_field(),date('Y')],
   $tpl
  );
 }
