@@ -9535,23 +9535,6 @@
       "kind": "image"
     },
     {
-      "slug": "hotel-view",
-      "dir": "./images/",
-      "file": "hotel-view.mp4",
-      "ext": "mp4",
-      "w": 0,
-      "h": 0,
-      "variants": [],
-      "kind": "video",
-      "poster": {
-        "dir": "./images/",
-        "file": "hotel-view-poster.jpg",
-        "ext": "jpg",
-        "w": 1600,
-        "h": 900
-      }
-    },
-    {
       "slug": "view",
       "dir": "./images/hero/",
       "file": "view-1920.webp",
@@ -9733,6 +9716,16 @@
           "h": 682
         }
       ],
+      "kind": "image"
+    },
+    {
+      "slug": "hotel-view-poster",
+      "dir": "./images/",
+      "file": "hotel-view-poster.jpg",
+      "ext": "jpg",
+      "w": 1600,
+      "h": 900,
+      "variants": [],
       "kind": "image"
     }
   ]

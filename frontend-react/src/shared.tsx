@@ -1,6 +1,8 @@
 import React from 'react';
 import './buttonShake';
 
+if (typeof document !== 'undefined') document.documentElement.classList.add('js');
+
 /**
  * Where the PHP API actually is.
  *

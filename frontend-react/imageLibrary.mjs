@@ -149,16 +149,15 @@ function scanFolder(dir) {
  * camera original, and no two slides are the same photograph under two names.
  * The order is matched, one for one, to HERO_COPY on the home page.
  *
- * The set is deliberately short and hotel first: full-frame 1920px photography
- * of the pool, the river, the rooms and the house, one silent film of the
- * property, then a small group of signature dishes. Every still in this list is
- * at least 1440px wide, so nothing is asked to stretch a small photograph
- * across a desktop screen. The film waits on its poster and is only played
- * when its slide is on screen and the visitor has not asked for less motion.
+ * The set is deliberately short and hotel first: full-frame photography of the
+ * pool, the river, the rooms and the house, then a small group of signature
+ * dishes. The property film stays in the library, but the hero itself is made
+ * only of still photographs; its final frame closes the tour as a photograph.
+ * Every still in this list is at least 1600px wide, so nothing is asked to
+ * stretch a small photograph across a desktop screen.
  */
 const HERO_SEQUENCE = [
   'hero/pool',
-  'hotel-view',
   'hero/view',
   'hero/bed-suite',
   'hero/hotel',
@@ -166,7 +165,8 @@ const HERO_SEQUENCE = [
   'hero/food-pizza-two',
   'hero/food-breakfast',
   'hero/bed-executive',
-  'hero/pork-bbq'
+  'hero/pork-bbq',
+  'hotel-view-poster'
 ];
 
 const VIDEO_EXTS = ['.mp4', '.webm', '.mov', '.m4v'];

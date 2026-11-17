@@ -199,14 +199,14 @@ b,strong{font-variant-numeric:tabular-nums}
 /* The hero is drawn underneath the header, which sits over it in return, so
    the photograph runs to the very top of the page without the header taking
    a band out of it. */
-.hero{position:relative;margin-top:calc(-1 * var(--navh));min-height:min(760px,88vh);background:var(--navy);display:flex;align-items:center;overflow:hidden}
+.hero{position:relative;margin-top:calc(-1 * var(--navh));min-height:100vh;min-height:100svh;background:var(--navy);display:flex;align-items:center;overflow:hidden}
 .hero:focus-visible{outline:3px solid var(--gold);outline-offset:-4px}
 .heroShots{position:absolute;inset:0;z-index:0}
 /* The drift is deliberately small. These photographs are already being scaled
    up from small files, and a large scale on top of that is what makes a good
    photo look soft, so this stays barely perceptible. */
-.heroSlide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;opacity:0;visibility:hidden;transform:scale(1.02);filter:saturate(1.04) contrast(1.02);transition:opacity 1.5s ease,transform 11s cubic-bezier(.3,0,.2,1),visibility 0s linear 1.5s;will-change:opacity,transform;-webkit-user-drag:none}
-.heroSlide.active{opacity:1;visibility:visible;transform:scale(1.03);transition:opacity 1.5s ease,transform 11s cubic-bezier(.3,0,.2,1),visibility 0s}
+.heroSlide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;opacity:0;visibility:hidden;transform:scale(1.01);filter:saturate(1.04) contrast(1.02);transition:opacity 1.25s ease,transform 1.25s cubic-bezier(.3,0,.2,1),visibility 0s linear 1.25s;will-change:opacity,transform;-webkit-user-drag:none}
+.heroSlide.active{opacity:1;visibility:visible;transform:scale(1.02);transition:opacity 1.25s ease,transform 1.25s cubic-bezier(.3,0,.2,1),visibility 0s}
 /* The film waits on its poster like a photograph, and never grabs the mouse
    away from the carousel controls that share its frame. */
 .heroFilm{background:#04101f;pointer-events:none}
@@ -215,18 +215,18 @@ b,strong{font-variant-numeric:tabular-nums}
    before it. The resting scale of a dormant slide is the scale its animation
    ends on, so nothing visibly snaps when the slide hands over - the zoom keeps
    running while the next picture is fading in over it. */
-.heroSlide.zoomOut{transform:scale(1.03)}
-.heroSlide.zoomIn{transform:scale(1.08)}
-.heroSlide.zoomOut.active{animation:heroZoomOut var(--heroZoom,var(--slide-ms,5000ms)) cubic-bezier(.32,.02,.24,1) both}
-.heroSlide.zoomIn.active{animation:heroZoomIn var(--heroZoom,var(--slide-ms,5000ms)) cubic-bezier(.32,.02,.24,1) both}
-@keyframes heroZoomOut{from{transform:scale(1.08)}to{transform:scale(1.03)}}
-@keyframes heroZoomIn{from{transform:scale(1.03)}to{transform:scale(1.08)}}
+.heroSlide.zoomOut{transform:scale(1.02)}
+.heroSlide.zoomIn{transform:scale(1.06)}
+.heroSlide.zoomOut.active{animation:heroZoomOut var(--heroZoom,var(--slide-ms,4000ms)) cubic-bezier(.32,.02,.24,1) both}
+.heroSlide.zoomIn.active{animation:heroZoomIn var(--heroZoom,var(--slide-ms,4000ms)) cubic-bezier(.32,.02,.24,1) both}
+@keyframes heroZoomOut{from{transform:scale(1.06)}to{transform:scale(1.02)}}
+@keyframes heroZoomIn{from{transform:scale(1.02)}to{transform:scale(1.06)}}
 /* A poured drink is given a faint handheld tremor on top of its slow zoom, so
    the frame reads as a short film rather than a still. The tremor rides the
    separate translate and rotate properties, which is what lets it live
    alongside the transform the zoom already owns. */
-.heroSlide.isJuice.zoomOut.active{animation:heroZoomOut var(--heroZoom,var(--slide-ms,5000ms)) cubic-bezier(.32,.02,.24,1) both,heroTremor 5.5s ease-in-out .4s infinite}
-.heroSlide.isJuice.zoomIn.active{animation:heroZoomIn var(--heroZoom,var(--slide-ms,5000ms)) cubic-bezier(.32,.02,.24,1) both,heroTremor 5.5s ease-in-out .4s infinite}
+.heroSlide.isJuice.zoomOut.active{animation:heroZoomOut var(--heroZoom,var(--slide-ms,4000ms)) cubic-bezier(.32,.02,.24,1) both,heroTremor 5.5s ease-in-out .4s infinite}
+.heroSlide.isJuice.zoomIn.active{animation:heroZoomIn var(--heroZoom,var(--slide-ms,4000ms)) cubic-bezier(.32,.02,.24,1) both,heroTremor 5.5s ease-in-out .4s infinite}
 @keyframes heroTremor{
   0%,100%{translate:0 0;rotate:0deg}
   25%{translate:.7px -.9px;rotate:.16deg}
@@ -261,8 +261,8 @@ b,strong{font-variant-numeric:tabular-nums}
 .heroCopy{position:relative;z-index:2;width:100%;display:grid;padding:calc(var(--navh) + clamp(34px,4vw,54px)) 8vw clamp(96px,9vw,128px);color:#fff}
 /* All seven panels share one grid cell, so the block is as tall as the longest
    of them and the words can change length without moving anything. */
-.heroPanel{grid-area:1/1;align-self:center;width:100%;max-width:820px;opacity:0;visibility:hidden;pointer-events:none;perspective:1400px;transition:opacity .26s ease,visibility 0s linear .26s}
-.heroPanel.on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .7s ease .14s,visibility 0s}
+.heroPanel{grid-area:1/1;align-self:center;width:100%;max-width:820px;opacity:0;visibility:hidden;pointer-events:none;perspective:1400px;transition:opacity .28s ease,visibility 0s linear .28s}
+.heroPanel.on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .55s ease .3s,visibility 0s}
 /* The writing stands directly on the photograph. The decoration lives in the
    words themselves (a gold rule, a gilded title and a ruled body) instead of a
    pane of glass that would blur and cover the picture behind it. */
@@ -304,22 +304,22 @@ b,strong{font-variant-numeric:tabular-nums}
 }
 .heroRule{display:block;width:78px;height:2px;margin:22px 0 0;border-radius:99px;background:linear-gradient(90deg,var(--gold),rgba(201,162,39,0));box-shadow:0 0 18px rgba(201,162,39,.55);transform:translateZ(20px)}
 .heroPanelInner .heroBtns{transform:translateZ(26px)}
-.heroPanel.on .heroPanelInner{animation:heroPlateIn .85s cubic-bezier(.2,.7,.2,1) both}
+.heroPanel.on .heroPanelInner{animation:heroPlateIn .85s cubic-bezier(.2,.7,.2,1) .3s both}
 @keyframes heroPlateIn{from{opacity:0;transform:translateY(22px) rotateX(7deg)}to{opacity:1;transform:none}}
 .heroWord{display:inline-block;opacity:0;translate:0 .44em;filter:blur(7px)}
 .heroPanel.on .heroWord{animation:heroWordIn .95s cubic-bezier(.18,.72,.22,1) both}
 @keyframes heroWordIn{from{opacity:0;translate:0 .44em;rotate:-3deg;filter:blur(7px)}to{opacity:1;translate:0 0;rotate:0deg;filter:blur(0)}}
 .heroPanel .eyebrow{opacity:0;translate:0 12px}
-.heroPanel.on .eyebrow{animation:heroLineIn .8s cubic-bezier(.18,.72,.22,1) .04s both}
+.heroPanel.on .eyebrow{animation:heroLineIn .8s cubic-bezier(.18,.72,.22,1) .34s both}
 .heroPanel .heroText{opacity:0;translate:0 18px}
-.heroPanel.on .heroText{animation:heroLineIn .9s cubic-bezier(.18,.72,.22,1) .44s both}
+.heroPanel.on .heroText{animation:heroLineIn .9s cubic-bezier(.18,.72,.22,1) .74s both}
 .heroPanel .heroRule{opacity:0;translate:-18px 0}
-.heroPanel.on .heroRule{animation:heroRuleIn .8s cubic-bezier(.18,.72,.22,1) .66s both}
+.heroPanel.on .heroRule{animation:heroRuleIn .8s cubic-bezier(.18,.72,.22,1) .96s both}
 @keyframes heroLineIn{from{opacity:0;translate:0 16px}to{opacity:1;translate:0 0}}
 @keyframes heroRuleIn{from{opacity:0;translate:-18px 0}to{opacity:1;translate:0 0}}
 .heroPanel.on .heroBtns .btn{opacity:0;translate:0 14px;animation:heroCtaIn .85s cubic-bezier(.18,.72,.22,1) both}
-.heroPanel.on .heroBtns .btn:nth-child(1){animation-delay:.76s}
-.heroPanel.on .heroBtns .btn:nth-child(2){animation-delay:.9s}
+.heroPanel.on .heroBtns .btn:nth-child(1){animation-delay:1.06s}
+.heroPanel.on .heroBtns .btn:nth-child(2){animation-delay:1.2s}
 @keyframes heroCtaIn{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
 .heroDots{position:absolute;z-index:3;left:50%;bottom:24px;transform:translateX(-50%);display:flex;gap:2px;align-items:center}
 /* The bar is drawn by ::before so the tap target can be a comfortable
@@ -332,7 +332,7 @@ b,strong{font-variant-numeric:tabular-nums}
 .heroDots .dot:hover::before{background:rgba(255,255,255,.75)}
 .heroDots .dot.on{width:48px}
 .heroDots .dot.on::before{background:rgba(255,255,255,.28)}
-.heroDots .dot.on::after{opacity:1;animation:dotFill var(--slide-ms,5000ms) linear both}
+.heroDots .dot.on::after{opacity:1;animation:dotFill var(--slide-ms,4000ms) linear both}
 .heroDots .dot.on:hover::before{background:rgba(255,255,255,.6)}
 @keyframes dotFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 /* Hovering or focusing the carousel holds a slide open, so it holds the
@@ -431,10 +431,10 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
 .section .center h2{position:relative;padding-bottom:16px}
 .section .center h2::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:64px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--gold),#e6c54a)}
 /* Everything marked .reveal rises into place the first time it scrolls past.
-    The class is only ever added by the observer, so a browser without one shows
-    the page at full brightness from the start. */
-.reveal{opacity:0;transform:translateY(20px);filter:blur(3px);transition:opacity .85s ease,transform .9s cubic-bezier(.16,.72,.24,1),filter .85s ease;transition-delay:var(--rdelay,0ms)}
-.reveal.in{opacity:1;transform:none;filter:blur(0)}
+    Only a script adds the js class, so a browser without one shows the page at
+    full brightness from the start instead of hiding the writing. */
+html.js .reveal{opacity:0;transform:translateY(20px);filter:blur(3px);transition:opacity .85s ease,transform .9s cubic-bezier(.16,.72,.24,1),filter .85s ease;transition-delay:var(--rdelay,0ms)}
+html.js .reveal.in{opacity:1;transform:none;filter:blur(0)}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;text-align:left;margin-top:10px}
 .card{background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;transition:box-shadow .25s ease,transform .25s ease}
 .photo.isEmpty{display:flex;align-items:center;justify-content:center;color:#b39c5e;background:linear-gradient(150deg,#16293f,#0B5D78)}

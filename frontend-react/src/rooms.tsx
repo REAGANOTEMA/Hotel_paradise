@@ -61,7 +61,7 @@ const ROOM_SLIDES: Record<string, BedSlide[]> = {
 /** The fallback frame a room is drawn from when every working folder is empty. */
 const roomFallback = (type: string): BedSlide[] => [{group: 'rooms', name: roomImage(type), position: '50% 45%'}];
 
-const SLIDE_MS = 5000;
+const SLIDE_MS = 4000;
 
 /**
  * A room photograph that turns over: the mainplate first, then the bed shots

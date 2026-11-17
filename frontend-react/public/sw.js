@@ -10,11 +10,14 @@
  *     (`?act=...`). Those requests go straight to the network, are never
  *     read from the cache and are never written to it, so one signed-in
  *     person's data can never be served to another.
+ *   - It never touches video, audio or byte-range requests. A film is streamed
+ *     as 206 Partial Content, which Cache.put() cannot store; intercepting it
+ *     broke playback with ERR_CACHE_OPERATION_NOT_SUPPORTED and a 504.
  *   - An offline screen is a fallback, never a success. Nothing here lets
  *     a booking, an order or a payment look as though it was submitted
  *     when the server has not confirmed it: those pages are network-only.
  */
-const VERSION = 'hpn-2026-17-cinematic-hero';
+const VERSION = 'hpn-2026-18-video-range-fix';
 const STATIC_CACHE = VERSION + '-static';
 const RUNTIME_CACHE = VERSION + '-runtime';
 const OFFLINE_URL = './offline.html';
@@ -66,6 +69,10 @@ function isStaticAsset(pathname) {
       || /\.(?:css|js|mjs|png|jpg|jpeg|webp|avif|gif|svg|ico|woff2?|ttf|otf)$/i.test(pathname);
 }
 
+function isMedia(pathname) {
+  return /\.(?:mp4|webm|ogv|ogg|mov|m4v|mp3|m4a|wav|aac)$/i.test(pathname);
+}
+
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
@@ -74,6 +81,7 @@ self.addEventListener('fetch', event => {
   try { url = new URL(request.url); } catch (e) { return; }
   if (url.origin !== self.location.origin) return;      // cross-origin: leave it alone
   if (isConsolePath(url.pathname)) return;              // console and API: network only, never cached
+  if (isMedia(url.pathname) || request.headers.has('range')) return;
 
   const acceptsHtml = (request.headers.get('accept') || '').indexOf('text/html') !== -1;
   const isNavigate = request.mode === 'navigate' || acceptsHtml;
@@ -104,13 +112,13 @@ self.addEventListener('fetch', event => {
       if (cached) {
         // Refresh quietly so a later load has the newest file.
         fetch(request).then(res => {
-          if (res && res.ok) caches.open(RUNTIME_CACHE).then(c => c.put(request, res.clone()).catch(() => {}));
+          if (res && res.status === 200) caches.open(RUNTIME_CACHE).then(c => c.put(request, res.clone()).catch(() => {}));
         }).catch(() => {});
         return cached;
       }
       try {
         const res = await fetch(request);
-        if (res && res.ok) {
+        if (res && res.status === 200) {
           const cache = await caches.open(RUNTIME_CACHE);
           cache.put(request, res.clone()).catch(() => {});
         }

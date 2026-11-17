@@ -184,12 +184,11 @@ const untiltDesk = (e: React.PointerEvent<HTMLDivElement>) => {
 const HERO_WIDTHS = [640, 1024, 1440, 1920, 2560];
 
 /**
- * How long a scene holds before the next one begins. It is long enough for the
- * headline, the supporting line and the buttons to finish their entrance and
- * then settle, so the writing is readable before the picture changes. The same
- * number drives the progress bar and the Ken Burns drift in CSS.
+ * How long a scene holds before the next one begins. Four seconds leaves room
+ * for the headline, the supporting line and the buttons to settle, with the
+ * same number driving the progress bar and the Ken Burns drift in CSS.
  */
-const SLIDE_MS = 5000;
+const SLIDE_MS = 4000;
 
 /**
  * What a slide is a photograph of, so the frame can dress it to suit. A plated
@@ -259,13 +258,6 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'WELCOME TO PARADISE',
-    title: 'A place the river calls home.',
-    text: 'Follow the Nile through the gardens and discover the calm that has welcomed guests to Jinja since 1998.',
-    primary: {label: 'Explore the hotel', href: './facilities.html'},
-    secondary: {label: 'Plan your stay', href: '#book'}
-  },
-  {
     eyebrow: 'ON THE BANKS OF THE NILE',
     title: 'The river, right outside your door.',
     text: 'Wake to the water, linger over breakfast and watch the Nile move past the garden and the terrace.',
@@ -320,6 +312,13 @@ const HERO_COPY: HeroCopy[] = [
     text: 'Marinated overnight, grilled low and slow, then finished with a glossy glaze.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
+  },
+  {
+    eyebrow: 'WELCOME TO PARADISE',
+    title: 'A place the river calls home.',
+    text: 'Follow the Nile through the gardens and discover the calm that has welcomed guests to Jinja since 1998.',
+    primary: {label: 'Explore the hotel', href: './facilities.html'},
+    secondary: {label: 'Plan your stay', href: '#book'}
   }
 ];
 
@@ -336,11 +335,6 @@ function Hero() {
   // carousel moving under them.
   const [still, setStill] = React.useState(false);
   const [gone, setGone] = React.useState(false);
-
-  // The film slot is only ever played while it is the slide on screen, and
-  // only then rewound, so the tour starts from the beginning each time it
-  // comes round rather than from wherever it was left.
-  const films = React.useRef<Array<HTMLVideoElement | null>>([]);
 
   React.useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -364,24 +358,6 @@ function Hero() {
     return () => document.removeEventListener('visibilitychange', onVis);
   }, []);
 
-  React.useEffect(() => {
-    const stop: HTMLVideoElement[] = [];
-    slides.forEach((shot, n) => {
-      if (shot.kind !== 'video') return;
-      const v = films.current[n];
-      if (!v) return;
-      if (n === i && !still && !gone) {
-        const played = v.play();
-        if (played && played.catch) played.catch(() => { /* autoplay refused, the poster holds the frame */ });
-      } else {
-        v.pause();
-        try { v.currentTime = 0; } catch { /* not seekable until its metadata arrives */ }
-        stop.push(v);
-      }
-    });
-    return () => { stop.forEach(v => v.pause()); films.current.forEach(v => v && v.pause()); };
-  }, [i, still, gone, slides]);
-
   const step = (d: number) => setI(v => (v + d + count) % count);
   const mood = slideMood(slides[i]?.slug || '');
   const onKey = (e: React.KeyboardEvent) => {
@@ -393,7 +369,7 @@ function Hero() {
     <section
      className="hero"
      id="main"
-     style={{'--slide-ms': SLIDE_MS + 'ms'} as React.CSSProperties}
+     style={{'--slide-ms': SLIDE_MS + 'ms', '--heroZoom': (SLIDE_MS + 1200) + 'ms'} as React.CSSProperties}
      aria-roledescription="carousel"
      aria-label="Hotel Paradise on the Nile"
      tabIndex={0}
@@ -411,24 +387,6 @@ function Hero() {
       // its own crop, so the eye never sees the same move twice running.
       const cls = 'heroSlide ' + (n % 2 ? 'zoomIn' : 'zoomOut') + slideMood(shot.slug) + (on ? ' active' : '');
       const box = {objectPosition: heroPosition(shot)};
-      if (shot.kind === 'video') {
-       return (
-        <video
-         key={shot.slug}
-         className={cls + ' heroFilm'}
-         ref={el => { films.current[n] = el; }}
-         src={shot.dir + shot.file}
-         poster={shot.poster ? shot.poster.dir + shot.poster.file : undefined}
-         muted
-         loop
-         playsInline
-         preload="metadata"
-         aria-hidden={!on}
-         style={box}
-         tabIndex={-1}
-        />
-       );
-      }
       return (
        <img
         key={shot.slug}
@@ -475,7 +433,7 @@ function Hero() {
          <p className="eyebrow">{c.eyebrow}</p>
           <h1 className="heroTitle">{c.title.split(' ').map((word, k, all) => (
             <React.Fragment key={k}>
-              <span className="heroWord" style={{animationDelay: `${(0.16 + k * 0.055).toFixed(3)}s`}}>{word}</span>
+              <span className="heroWord" style={{animationDelay: `${(0.46 + k * 0.055).toFixed(3)}s`}}>{word}</span>
               {k < all.length - 1 ? ' ' : null}
             </React.Fragment>
           ))}</h1>
