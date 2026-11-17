@@ -145,11 +145,23 @@ function finance_payment_rows(array $f): array
     if (($f['source'] ?? '') === 'invoice') $where[] = 'p.invoice_id IS NOT NULL';
     if (($f['source'] ?? '') === 'reservation') $where[] = 'p.reservation_id IS NOT NULL';
     if (($f['source'] ?? '') === 'other') $where[] = 'p.order_id IS NULL AND p.invoice_id IS NULL AND p.reservation_id IS NULL';
+    if (($f['currency'] ?? '') !== '' && finance_column_exists('payments', 'charged_currency')) {
+        $where[] = 'COALESCE(p.charged_currency, p.currency, \'UGX\')=?';
+        $args[] = strtoupper(trim((string)$f['currency']));
+    }
+    if (($f['settlement'] ?? '') !== '' && finance_column_exists('payments', 'settlement_status')) {
+        $where[] = 'p.settlement_status=?';
+        $args[] = trim((string)$f['settlement']);
+    }
     $search = trim((string)($f['q'] ?? ''));
     if ($search !== '') {
         $like = '%'.$search.'%';
-        $where[] = '(u.name LIKE ? OR p.provider_reference LIKE ? OR o.order_number LIKE ? OR i.invoice_number LIKE ? OR r.booking_number LIKE ? OR p.payer_phone LIKE ?)';
-        array_push($args, $like, $like, $like, $like, $like, $like);
+        $parts = ['u.name LIKE ?', 'p.provider_reference LIKE ?', 'o.order_number LIKE ?', 'i.invoice_number LIKE ?', 'r.booking_number LIKE ?', 'p.payer_phone LIKE ?'];
+        foreach (['order_tracking_id', 'confirmation_code', 'settlement_reference'] as $col) {
+            if (finance_column_exists('payments', $col)) $parts[] = 'p.'.$col.' LIKE ?';
+        }
+        $where[] = '('.implode(' OR ', $parts).')';
+        $args = array_merge($args, array_fill(0, count($parts), $like));
     }
     $limit = max(1, min(5000, (int)($f['limit'] ?? 300)));
     $sql = "SELECT p.*,u.name recorded_by,
@@ -178,6 +190,33 @@ function finance_payment_totals(array $payments): array
         if ($p['status'] === 'successful') $out['successful'] += $amount;
         elseif ($p['status'] === 'pending') $out['pending'] += $amount;
         elseif (in_array($p['status'], ['refunded', 'reversed'], true)) $out['reversed'] += $amount;
+    }
+    return $out;
+}
+
+function finance_settlement_totals(array $payments): array
+{
+    $out = [
+        'status' => [], 'currency' => [],
+        'awaiting_count' => 0, 'awaiting' => 0.0,
+        'settled_count' => 0, 'settled' => 0.0,
+        'fees' => 0.0, 'net' => 0.0,
+    ];
+    foreach ($payments as $p) {
+        $status = (string)($p['settlement_status'] ?? 'not_settled');
+        if ($status === '') $status = 'not_settled';
+        $currency = strtoupper((string)($p['charged_currency'] ?? $p['currency'] ?? 'UGX'));
+        if ($currency === '') $currency = 'UGX';
+        $gross = (float)($p['charged_amount'] ?? $p['amount'] ?? 0);
+        $fee = (float)($p['gateway_fee'] ?? 0);
+        $out['status'][$status] = ($out['status'][$status] ?? 0.0) + $gross;
+        if (!isset($out['currency'][$currency])) $out['currency'][$currency] = ['gross'=>0.0,'awaiting'=>0.0,'settled'=>0.0,'fees'=>0.0,'net'=>0.0,'count'=>0];
+        $out['currency'][$currency]['gross'] += $gross;
+        $out['currency'][$currency]['fees'] += $fee;
+        $out['currency'][$currency]['net'] += $gross - $fee;
+        $out['currency'][$currency]['count']++;
+        if ($status === 'awaiting_settlement') { $out['awaiting_count']++; $out['awaiting'] += $gross; $out['currency'][$currency]['awaiting'] += $gross; }
+        if ($status === 'settled') { $out['settled_count']++; $out['settled'] += $gross; $out['fees'] += $fee; $out['net'] += $gross - $fee; $out['currency'][$currency]['settled'] += $gross; }
     }
     return $out;
 }

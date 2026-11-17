@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 29, 2026 at 09:52 AM
+-- Generation Time: Nov 18, 2026 at 11:33 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.27
 
@@ -254,7 +254,37 @@ INSERT INTO `audit_logs` (`id`, `hotel_id`, `user_id`, `action`, `entity_type`, 
 (171, 1, 6, 'assign_guest_message', 'guest_messages', 2, '{\"assigned_to\":null}', '{\"assigned_to\":6}', '102.86.13.247', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36', '2026-10-29 05:21:35'),
 (172, 1, 6, 'reply_guest_message', 'guest_messages', 2, '{\"reply\":null}', '{\"reply\":\"okay sir, our team is coming\"}', '102.86.13.247', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36', '2026-10-29 05:22:07'),
 (173, 1, 6, 'news_create', 'news_posts', 21, '{\"slug\":\"welcome-to-hotel-paradise-on-the-nile\"}', NULL, '102.86.13.247', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36', '2026-10-29 06:29:40'),
-(174, 1, 6, 'logout', 'user', 6, NULL, NULL, '102.86.13.247', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36', '2026-10-29 06:30:00');
+(174, 1, 6, 'logout', 'user', 6, NULL, NULL, '102.86.13.247', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36', '2026-10-29 06:30:00'),
+(175, 1, 8, 'login', 'user', 8, NULL, NULL, '102.86.13.247', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-10-29 08:31:14'),
+(176, 1, 8, 'login', 'user', 8, NULL, NULL, '102.86.13.247', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-10-29 08:37:17'),
+(177, 1, NULL, 'web_payment', 'payments', 24, '{\"provider_reference\":\"PAY-20261031-001\",\"source\":\"booking\",\"reference\":\"HPN-20261031-001\",\"method\":\"mtn_momo\",\"amount\":440910,\"status\":\"pending\"}', NULL, '197.239.14.34', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-10-31 07:57:15'),
+(178, 1, NULL, 'web_payment_gateway', 'payments', 24, '{\"provider_reference\":\"PAY-20261031-001\",\"gateway\":\"pesapal\",\"tracking_id\":\"f6e020c8-8b72-489f-b2c5-d9b84f75b6eb\",\"status\":\"pending\"}', NULL, '197.239.14.34', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-10-31 07:57:17'),
+(179, 1, NULL, 'payment_settled', 'payments', 24, '{\"provider_reference\":\"PAY-20261031-001\",\"from\":\"pending\",\"to\":\"failed\"}', NULL, '185.191.3.19', '', '2026-10-31 07:57:44'),
+(180, 1, 13, 'login', 'user', 13, NULL, NULL, '197.239.14.34', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-10-31 08:01:22'),
+(181, 1, 7, 'login', 'user', 7, NULL, NULL, '197.239.14.34', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-10-31 08:19:11'),
+(182, 1, 13, 'login', 'user', 13, NULL, NULL, '197.239.14.34', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-31 08:50:46'),
+(183, 1, 5, 'login', 'user', 5, NULL, NULL, '197.239.14.34', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-31 08:57:49'),
+(184, 1, 5, 'logout', 'user', 5, NULL, NULL, '197.239.14.34', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-31 08:58:20'),
+(185, 1, 8, 'login', 'user', 8, NULL, NULL, '197.239.14.34', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', '2026-10-31 08:58:29'),
+(186, 1, 13, 'login', 'user', 13, NULL, NULL, '102.86.1.74', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-03 08:54:31'),
+(187, 1, NULL, 'web_order', 'order', 19, '{\"order_number\":\"ORD-20261104-001\",\"subtotal\":6000,\"service_charge\":210,\"total\":6210,\"customer\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja  town\"}', NULL, '41.210.141.23', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-04 15:19:28'),
+(188, 1, NULL, 'web_payment', 'payments', 25, '{\"provider_reference\":\"PAY-20261104-001\",\"source\":\"order\",\"reference\":\"ORD-20261104-001\",\"method\":\"mtn_momo\",\"amount\":6210,\"status\":\"pending\"}', NULL, '41.210.141.23', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-04 15:20:09'),
+(189, 1, NULL, 'web_payment_gateway', 'payments', 25, '{\"provider_reference\":\"PAY-20261104-001\",\"gateway\":\"pesapal\",\"tracking_id\":\"13c2508e-edb7-4fe9-8704-d9b41fafa757\",\"status\":\"pending\"}', NULL, '41.210.141.23', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-04 15:20:12'),
+(190, 1, NULL, 'payment_settled', 'payments', 25, '{\"provider_reference\":\"PAY-20261104-001\",\"from\":\"pending\",\"to\":\"failed\"}', NULL, '185.191.3.19', '', '2026-11-04 15:27:21'),
+(191, 1, NULL, 'web_event', 'event_requests', 7, '{\"request_number\":\"EVT-20261104-001\",\"event_type\":\"Wedding\",\"event_date\":\"2026-11-06\",\"guests\":54,\"venue\":\"The Nile Hall\",\"phone\":\"0772514889\"}', NULL, '41.210.146.106', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-04 15:36:35'),
+(192, 1, 6, 'login', 'user', 6, NULL, NULL, '41.210.146.106', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-04 15:37:49');
+INSERT INTO `audit_logs` (`id`, `hotel_id`, `user_id`, `action`, `entity_type`, `entity_id`, `old_values`, `new_values`, `ip_address`, `user_agent`, `created_at`) VALUES
+(193, 1, 6, 'create', 'reservation', 43, '{\"booking_no\":\"HPN-20261104-001\"}', NULL, '41.210.146.106', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-04 15:40:05'),
+(194, 1, 6, 'logout', 'user', 6, NULL, NULL, '41.210.146.106', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-04 15:42:24'),
+(195, 1, 2, 'login', 'user', 2, NULL, NULL, '41.210.146.106', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-04 15:42:42'),
+(196, 1, NULL, 'web_order', 'order', 20, '{\"order_number\":\"ORD-20261106-001\",\"subtotal\":30000,\"service_charge\":1050,\"total\":31050,\"customer\":\"Tadeo Owot\",\"phone\":\"0782125278\",\"address\":\"Kimaka Senior Command\"}', NULL, '41.210.146.221', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36', '2026-11-06 13:25:18'),
+(197, 1, NULL, 'web_payment', 'payments', 26, '{\"provider_reference\":\"PAY-20261106-001\",\"source\":\"order\",\"reference\":\"ORD-20261106-001\",\"method\":\"mtn_momo\",\"amount\":31050,\"status\":\"pending\"}', NULL, '41.210.146.221', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36', '2026-11-06 13:25:41'),
+(198, 1, NULL, 'web_payment_gateway', 'payments', 26, '{\"provider_reference\":\"PAY-20261106-001\",\"gateway\":\"pesapal\",\"tracking_id\":\"d191ace7-47b7-479a-b5af-d9b211308520\",\"status\":\"pending\"}', NULL, '41.210.146.221', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36', '2026-11-06 13:25:44'),
+(199, 1, NULL, 'payment_settled', 'payments', 26, '{\"provider_reference\":\"PAY-20261106-001\",\"from\":\"pending\",\"to\":\"failed\"}', NULL, '185.191.3.19', '', '2026-11-06 13:26:38'),
+(200, 1, 3, 'login', 'user', 3, NULL, NULL, '41.210.147.45', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-06 13:40:40'),
+(201, 1, 3, 'logout', 'user', 3, NULL, NULL, '41.210.147.45', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-06 13:43:12'),
+(202, 1, 3, 'login', 'user', 3, NULL, NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 06:32:03'),
+(203, 1, 3, 'logout', 'user', 3, NULL, NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 06:32:57');
 
 -- --------------------------------------------------------
 
@@ -420,14 +450,17 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `hotel_id`, `full_name`, `email`, `phone`, `password_hash`, `google_sub`, `status`, `created_at`, `updated_at`, `last_login_at`, `profile_image`, `date_of_birth`, `gender`, `nationality`, `national_id`, `address`, `city`, `country`, `postcode`, `company`, `job_title`, `preferred_language`, `dietary_preferences`, `room_preferences`, `marketing_opt_in`, `emergency_contact_name`, `emergency_contact_phone`, `notes`, `deleted_at`, `deleted_by`) VALUES
-(1, 1, 'Reagan Otema', 'reaganotema2022@gmail.com', '0772514889', '$2y$10$Tki76GP1jf405y9UUUI1Ret6Xw9sdaPrHVODp.fYu0P7ib/JOSl9.', NULL, 'active', '2026-10-09 12:25:49', '2026-10-27 17:00:18', '2026-10-27 17:00:18', 'cust_1_1792041214_48fb6a55.jpg', '1998-06-01', 'male', 'Ugandan', 'CM9801910356YD', 'JINJA', 'JINJA', 'Uganda', '904188', 'ReaganSoft Innovation Ltd', 'Director', 'english', 'too much salt', 'quiet side', 1, 'Reagan Otema', '0772514889', 'arrival time', NULL, NULL),
+(1, 1, 'Reagan Otema', 'reaganotema2022@gmail.com', '0772514889', '$2y$10$Tki76GP1jf405y9UUUI1Ret6Xw9sdaPrHVODp.fYu0P7ib/JOSl9.', NULL, 'active', '2026-10-09 12:25:49', '2026-11-04 18:18:35', '2026-11-04 18:18:35', 'cust_1_1792041214_48fb6a55.jpg', '1998-06-01', 'male', 'Ugandan', 'CM9801910356YD', 'JINJA', 'JINJA', 'Uganda', '904188', 'ReaganSoft Innovation Ltd', 'Director', 'english', 'too much salt', 'quiet side', 1, 'Reagan Otema', '0772514889', 'arrival time', NULL, NULL),
 (2, 1, 'Andrew wakabi', 'andrew@gmail.com', '0772514889', '$2y$10$Mi0P4grIsraJuxS5bIgnXuPHhGnH4DMnDGOK3N.UWlY06xPHcfzyC', NULL, 'active', '2026-10-09 16:54:56', '2026-10-09 16:55:09', '2026-10-09 16:55:09', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
 (3, 1, 'Okot Denis', 'denisokot47@gmail.com', '0705761090', '$2y$10$0x18s2lSk1oUg7pNubR1TuGeBY.CUHBzCAt6tvD7PomQzOzr/ExTW', NULL, 'active', '2026-10-10 19:46:56', '2026-10-10 19:47:13', '2026-10-10 19:47:13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
 (4, 1, 'Reagan Otema', 'reaganotemas@gmail.com', '0772514889', '$2y$10$uu9Ag/WbheyjzMV18aVJyeSCZfe8nXn7B6ODG1nnowKMpSwjkak1i', NULL, 'active', '2026-10-11 12:45:41', '2026-10-11 12:45:51', '2026-10-11 12:45:51', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
 (5, 1, 'Lillian Kwagala', 'lilliankwagala29@gmail.com', '0778209207', '$2y$10$xUiaVulNuX1U/plJSDlNN.qW102nTWSh8EcsW8F5v8YVPJ7WJqnHa', NULL, 'active', '2026-10-13 13:34:15', '2026-10-13 13:34:28', '2026-10-13 13:34:28', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
 (6, 1, 'Atim Jeremiah Okello', 'jeremiahotile@gmail.com', '0706407275', '$2y$10$Us7OW21XLg5j2b0ZDwuEhugzgGY36SHTCysMk3OgW1rUtfB0Ka2OK', NULL, 'active', '2026-10-21 14:19:54', '2026-10-21 14:20:02', '2026-10-21 14:20:02', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
 (7, 1, 'WOZISI WILLIAM', 'willywozisi@gmail.com', '0705491314', '$2y$10$CN0jitVXBhQ4Z./N3l6so.eXAAOKmWzEi/mPTsFgZhzyjouI6aZkq', NULL, 'active', '2026-10-21 14:20:30', '2026-10-21 14:20:38', '2026-10-21 14:20:38', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
-(8, 1, 'paiton witness', 'paiton@gmail.com', '0750891058', '$2y$10$noKIHP.ysw.ZEEhKXrMk0O2pELBeUT6gwdSsptb7aNz6pGQhKop2W', NULL, 'active', '2026-10-28 12:21:46', '2026-10-28 12:29:50', '2026-10-28 12:22:02', 'cust_8_1793179790_0c3c549c.jpg', '2003-03-28', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', '', '', NULL, NULL);
+(8, 1, 'paiton witness', 'paiton@gmail.com', '0750891058', '$2y$10$noKIHP.ysw.ZEEhKXrMk0O2pELBeUT6gwdSsptb7aNz6pGQhKop2W', NULL, 'active', '2026-10-28 12:21:46', '2026-10-31 10:56:36', '2026-10-31 10:56:36', 'cust_8_1793179790_0c3c549c.jpg', '2003-03-28', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', '', '', NULL, NULL),
+(9, 1, 'Jennifer wood', 'woodjennifer2015@gmail.com', '', '$2y$10$1z0HLeze0xXKhS9h8UItzOWfEiPn.1ycZcoxW7SiqyTxHElBxR9xm', NULL, 'pending_phone', '2026-11-04 19:11:52', '2026-11-04 19:11:52', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
+(10, 1, 'Jennifer Beloved', 'jennthebelvd@hotmail.com', '+256772455519', '$2y$10$2lV2UNCYLNXLNyaFTa1ZnuN5gVz1KaswGMTmHKKL9jcTvciEOCdKm', NULL, 'active', '2026-11-04 19:30:28', '2026-11-04 19:44:56', '2026-11-04 19:44:56', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
+(11, 1, 'Tadeo Owot', '4maramans@gmail.com', '0782125278', '$2y$10$qjto7l8I./MFAn2K2urTHOsjd4RcZ3JMUjK9HsYUoEp8rqAgiIJKO', NULL, 'active', '2026-11-06 16:23:28', '2026-11-06 16:23:57', '2026-11-06 16:23:57', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -526,7 +559,12 @@ INSERT INTO `customer_tokens` (`id`, `customer_id`, `token_hash`, `purpose`, `ex
 (17, 1, '4010433e72c36ed204bf47c6e9832c28e678b29ca9c22111a22e9b037b9dc8f0', 'session', '2026-11-16 11:34:23', '2026-10-17 11:34:23', '2026-10-17 11:43:31'),
 (19, 6, '52c47c1acb4c8c08bf038b99b425cd15423c85c0d63e74ca178c4bac8b88a117', 'session', '2026-11-20 14:20:02', '2026-10-21 14:20:02', '2026-10-21 14:21:35'),
 (21, 7, '46c5000c67e6d1c5e171af06f67a53e6d79f686aa425e0a2e045c4613e2d6eb5', 'session', '2026-11-20 14:20:38', '2026-10-21 14:20:38', '2026-10-21 14:21:26'),
-(22, 1, '2b39ba8aeda5dd3777958631ccea9cc3c8f6e50a7c5a515c242008b83dff91ba', 'session', '2026-11-26 17:00:18', '2026-10-27 17:00:18', '2026-10-27 18:29:32');
+(22, 1, '2b39ba8aeda5dd3777958631ccea9cc3c8f6e50a7c5a515c242008b83dff91ba', 'session', '2026-11-26 17:00:18', '2026-10-27 17:00:18', '2026-10-27 18:29:32'),
+(25, 8, 'a1f6aab846c45461b89e7e4679cecbfb9bf6264520c1e1781f445a9bc07edcda', 'session', '2026-11-30 10:56:36', '2026-10-31 10:56:36', '2026-10-31 10:59:09'),
+(26, 1, 'c726c3a2c780ab9c643a9775c58a96e85f653fce715dda0ce78aac2b7a2f9245', 'session', '2026-12-04 18:18:35', '2026-11-04 18:18:35', '2026-11-06 16:43:26'),
+(27, 9, '173750301de28ad847755e5ee52bd62a7ae280550599602d4dc5580b07de7817', 'register', '2026-11-05 19:11:52', '2026-11-04 19:11:52', NULL),
+(29, 10, '6ad1ddc4dc53e775b7591385dc92dc53c212752d1efeab152f44c43fc4c0b570', 'session', '2026-12-04 19:44:56', '2026-11-04 19:44:56', '2026-11-04 19:44:57'),
+(31, 11, '97338957f9b77fa71db40c7df7025a1f76eabfa1924568c6f7ca60324f21410c', 'session', '2026-12-06 16:23:57', '2026-11-06 16:23:57', '2026-11-06 16:25:20');
 
 -- --------------------------------------------------------
 
@@ -749,7 +787,8 @@ INSERT INTO `event_requests` (`id`, `hotel_id`, `request_number`, `full_name`, `
 (3, 1, 'EVT-20261016-001', 'altar at the gates', '0772514889', 'reaganotemas@gmail.com', 'Other', '2026-10-17', 30, 'The Nile Hall', 'we are planning a fundraising meeting from 10am to 1pm this Saturday.', 'new', '2026-10-16 16:19:18', NULL, NULL, NULL),
 (4, 1, 'EVT-20261017-001', 'Akware olivia', '0761080587', 'akwareolivia@gmail.com', 'Birthday party', '2027-06-10', 10, 'The Riverside Gardens', NULL, 'new', '2026-10-17 11:40:12', NULL, NULL, NULL),
 (5, 1, 'EVT-20261025-001', 'Otema Reagan', '0772514889', 'reaganotema2022@gmail.com', 'Wedding', '2026-12-20', 200, 'The Nile Hall', 'Wedding anniversary', 'new', '2026-10-25 02:25:33', NULL, NULL, NULL),
-(6, 1, 'EVT-20261027-001', 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'Wedding', '2026-10-29', 119, 'The Nile Hall', 'wedding anniversary', 'new', '2026-10-27 17:07:35', NULL, NULL, NULL);
+(6, 1, 'EVT-20261027-001', 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'Wedding', '2026-10-29', 119, 'The Nile Hall', 'wedding anniversary', 'new', '2026-10-27 17:07:35', NULL, NULL, NULL),
+(7, 1, 'EVT-20261104-001', 'Reagan Otema', '0772514889', 'reaganotemas@gmail.com', 'Wedding', '2026-11-06', 54, 'The Nile Hall', 'wedding', 'new', '2026-11-04 18:36:35', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1061,7 +1100,8 @@ INSERT INTO `guests` (`id`, `user_id`, `hotel_id`, `full_name`, `phone`, `email`
 (43, NULL, 1, 'Sarah Namuli', '+256 770 111 003', 'sarah.namuli@example.com', 'Ugandan', 'National ID', 'CM22-0317', NULL, NULL, NULL, NULL),
 (44, NULL, 1, 'David Okello', '+256 770 111 004', 'david.okello@example.com', 'Kenyan', 'Passport', 'KE-A-9012', NULL, NULL, NULL, NULL),
 (45, NULL, 1, 'Amelia Turner', '+256 770 111 005', 'amelia.turner@example.com', 'British', 'Passport', 'GB-5522', NULL, NULL, NULL, NULL),
-(46, NULL, 1, 'Otema Reagan', '0772514889', 'reaganotema2022@gmail.com', NULL, NULL, NULL, '2026-10-09 09:26:27', NULL, NULL, NULL);
+(46, NULL, 1, 'Otema Reagan', '0772514889', 'reaganotema2022@gmail.com', NULL, NULL, NULL, '2026-10-09 09:26:27', NULL, NULL, NULL),
+(47, NULL, 1, 'paiton witness', '0750891058', 'paiton@gmail.com', NULL, NULL, NULL, '2026-10-31 07:57:04', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2118,6 +2158,25 @@ CREATE TABLE `message_reads` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `news_comments`
+--
+
+CREATE TABLE `news_comments` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `news_id` bigint(20) UNSIGNED NOT NULL,
+  `parent_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `name` varchar(80) NOT NULL,
+  `email` varchar(160) DEFAULT NULL,
+  `body` text NOT NULL,
+  `visitor_hash` char(64) NOT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'published',
+  `ip_hash` char(64) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `news_posts`
 --
 
@@ -2166,6 +2225,20 @@ INSERT INTO `news_posts` (`id`, `hotel_id`, `slug`, `title`, `category`, `excerp
 (14, 1, 'welcome-to-the-paradise-newsroom', 'Welcome to the Paradise newsroom', 'news', 'Stories, service updates and opportunities from Hotel Paradise on the Nile.', 'Welcome to our newsroom. This is where the hotel shares what is happening on the Nile: new services, team news, seasonal offers and the people who make a stay at Paradise memorable.\n\nCheck back for updates, or follow the links on the website to plan your next visit.', NULL, 'Management', NULL, NULL, NULL, NULL, NULL, NULL, 'Hotel Paradise on the Nile', 'Management', NULL, 0, 'published', '2026-10-26 18:43:14', 0, '2026-10-26 18:43:14', NULL, NULL, NULL),
 (15, 1, 'join-the-paradise-team', 'Join the Paradise team', 'recruitment', 'We are always looking for warm, careful people to join the hotel.', 'Hotel Paradise on the Nile is built on people who care about the small details. We welcome applications from experienced hospitality professionals and from people starting their first role in the industry.\n\nSend your application to the front desk or use the contact details on the website. Please tell us the role you are interested in and a little about yourself.', NULL, 'Human Resource', NULL, NULL, NULL, NULL, NULL, NULL, 'Hotel Paradise on the Nile', 'Human Resource', NULL, 0, 'published', '2026-10-26 18:43:14', 0, '2026-10-26 18:43:14', NULL, NULL, NULL),
 (21, 1, 'welcome-to-hotel-paradise-on-the-nile', 'Welcome to Hotel Paradise on the Nile , Your Perfect Getaway in Jinja', 'news', '# Welcome to Hotel Paradise on the Nile\r\n\r\nWelcome to Hotel Paradise on the Nile, your welcoming destination in the beautiful town of Jinja, Uganda.\r\n\r\nAt Hotel Paradise on the Nile, we believe every guest deserves a warm welcome, attentive service, and a comfortable stay. Whether you are visiting Jinja for business, l', '# Welcome to Hotel Paradise on the Nile\r\n\r\nWelcome to Hotel Paradise on the Nile, your welcoming destination in the beautiful town of Jinja, Uganda.\r\n\r\nAt Hotel Paradise on the Nile, we believe every guest deserves a warm welcome, attentive service, and a comfortable stay. Whether you are visiting Jinja for business, leisure, a family holiday, or a peaceful escape, our team looks forward to making your experience memorable.\r\n\r\n## Experience Jinja with Us\r\n\r\nJinja is a wonderful destination for travellers looking to discover Uganda\'s natural beauty, culture, and exciting experiences. Hotel Paradise on the Nile provides a welcoming base for visitors exploring the area and enjoying everything Jinja has to offer.\r\n\r\n## Our Commitment to You\r\n\r\nOur team is dedicated to providing friendly hospitality and assisting guests throughout their stay. From the moment you arrive until the time you depart, we aim to make your experience pleasant and enjoyable.\r\n\r\n## Plan Your Stay\r\n\r\nPlanning a visit to Jinja? We invite you to consider Hotel Paradise on the Nile for your next stay.\r\n\r\nFor reservations, room availability, and enquiries, please contact our team directly through our official hotel contact channels.\r\n\r\n## We Look Forward to Welcoming You\r\n\r\nThank you for considering Hotel Paradise on the Nile. We look forward to welcoming you and making your visit to Jinja a memorable one.\r\n\r\n**Hotel Paradise on the Nile – Your Stay, Our Hospitality.**', './images/news/news-welcome-to-hotel-paradise-on-the-nile-20261029092940-d95732.jpg', 'Front Office', '', '', '', NULL, '', '', 'Front Desk Reception', 'Front Desk', 6, 0, 'published', '2026-10-29 08:41:00', 0, '2026-10-29 09:29:40', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `news_reactions`
+--
+
+CREATE TABLE `news_reactions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `news_id` bigint(20) UNSIGNED NOT NULL,
+  `reaction` varchar(16) NOT NULL,
+  `visitor_hash` char(64) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -2417,7 +2490,47 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `body`, `data`, `
 (256, 2, 'payment', 'Payment request PAY-20261028-001', 'paiton witness started a AIRTEL_MONEY payment of UGX 48,645 for the order ORD-20261028-001.', '{\"reference\":\"PAY-20261028-001\",\"source\":\"order\",\"amount\":48645,\"method\":\"airtel_money\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-28 09:22:49'),
 (257, 3, 'payment', 'Payment request PAY-20261028-001', 'paiton witness started a AIRTEL_MONEY payment of UGX 48,645 for the order ORD-20261028-001.', '{\"reference\":\"PAY-20261028-001\",\"source\":\"order\",\"amount\":48645,\"method\":\"airtel_money\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-28 09:22:49'),
 (258, 4, 'payment', 'Payment request PAY-20261028-001', 'paiton witness started a AIRTEL_MONEY payment of UGX 48,645 for the order ORD-20261028-001.', '{\"reference\":\"PAY-20261028-001\",\"source\":\"order\",\"amount\":48645,\"method\":\"airtel_money\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-28 09:22:49'),
-(260, 66, 'payment', 'Payment request PAY-20261028-001', 'paiton witness started a AIRTEL_MONEY payment of UGX 48,645 for the order ORD-20261028-001.', '{\"reference\":\"PAY-20261028-001\",\"source\":\"order\",\"amount\":48645,\"method\":\"airtel_money\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-28 09:22:49');
+(260, 66, 'payment', 'Payment request PAY-20261028-001', 'paiton witness started a AIRTEL_MONEY payment of UGX 48,645 for the order ORD-20261028-001.', '{\"reference\":\"PAY-20261028-001\",\"source\":\"order\",\"amount\":48645,\"method\":\"airtel_money\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-28 09:22:49'),
+(261, 1, 'booking', 'New website booking HPN-20261031-001', 'paiton witness asked for Triple Room for 2 nights, 2026-11-01 to 2026-11-03. Total UGX 440,910.', '{\"booking_number\":\"HPN-20261031-001\",\"room_type\":\"Triple Room\",\"nights\":2,\"check_in\":\"2026-11-01\",\"check_out\":\"2026-11-03\",\"total\":440910,\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:04'),
+(262, 2, 'booking', 'New website booking HPN-20261031-001', 'paiton witness asked for Triple Room for 2 nights, 2026-11-01 to 2026-11-03. Total UGX 440,910.', '{\"booking_number\":\"HPN-20261031-001\",\"room_type\":\"Triple Room\",\"nights\":2,\"check_in\":\"2026-11-01\",\"check_out\":\"2026-11-03\",\"total\":440910,\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:04'),
+(263, 3, 'booking', 'New website booking HPN-20261031-001', 'paiton witness asked for Triple Room for 2 nights, 2026-11-01 to 2026-11-03. Total UGX 440,910.', '{\"booking_number\":\"HPN-20261031-001\",\"room_type\":\"Triple Room\",\"nights\":2,\"check_in\":\"2026-11-01\",\"check_out\":\"2026-11-03\",\"total\":440910,\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:04'),
+(264, 4, 'booking', 'New website booking HPN-20261031-001', 'paiton witness asked for Triple Room for 2 nights, 2026-11-01 to 2026-11-03. Total UGX 440,910.', '{\"booking_number\":\"HPN-20261031-001\",\"room_type\":\"Triple Room\",\"nights\":2,\"check_in\":\"2026-11-01\",\"check_out\":\"2026-11-03\",\"total\":440910,\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:04'),
+(265, 6, 'booking', 'New website booking HPN-20261031-001', 'paiton witness asked for Triple Room for 2 nights, 2026-11-01 to 2026-11-03. Total UGX 440,910.', '{\"booking_number\":\"HPN-20261031-001\",\"room_type\":\"Triple Room\",\"nights\":2,\"check_in\":\"2026-11-01\",\"check_out\":\"2026-11-03\",\"total\":440910,\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:04'),
+(266, 66, 'booking', 'New website booking HPN-20261031-001', 'paiton witness asked for Triple Room for 2 nights, 2026-11-01 to 2026-11-03. Total UGX 440,910.', '{\"booking_number\":\"HPN-20261031-001\",\"room_type\":\"Triple Room\",\"nights\":2,\"check_in\":\"2026-11-01\",\"check_out\":\"2026-11-03\",\"total\":440910,\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:04'),
+(267, 1, 'payment', 'Payment request PAY-20261031-001', 'paiton witness started a MTN_MOMO payment of UGX 440,910 for the booking HPN-20261031-001.', '{\"reference\":\"PAY-20261031-001\",\"source\":\"booking\",\"amount\":440910,\"method\":\"mtn_momo\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:15'),
+(268, 2, 'payment', 'Payment request PAY-20261031-001', 'paiton witness started a MTN_MOMO payment of UGX 440,910 for the booking HPN-20261031-001.', '{\"reference\":\"PAY-20261031-001\",\"source\":\"booking\",\"amount\":440910,\"method\":\"mtn_momo\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:15'),
+(269, 3, 'payment', 'Payment request PAY-20261031-001', 'paiton witness started a MTN_MOMO payment of UGX 440,910 for the booking HPN-20261031-001.', '{\"reference\":\"PAY-20261031-001\",\"source\":\"booking\",\"amount\":440910,\"method\":\"mtn_momo\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:15'),
+(270, 4, 'payment', 'Payment request PAY-20261031-001', 'paiton witness started a MTN_MOMO payment of UGX 440,910 for the booking HPN-20261031-001.', '{\"reference\":\"PAY-20261031-001\",\"source\":\"booking\",\"amount\":440910,\"method\":\"mtn_momo\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:15'),
+(271, 5, 'payment', 'Payment request PAY-20261031-001', 'paiton witness started a MTN_MOMO payment of UGX 440,910 for the booking HPN-20261031-001.', '{\"reference\":\"PAY-20261031-001\",\"source\":\"booking\",\"amount\":440910,\"method\":\"mtn_momo\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:15'),
+(272, 66, 'payment', 'Payment request PAY-20261031-001', 'paiton witness started a MTN_MOMO payment of UGX 440,910 for the booking HPN-20261031-001.', '{\"reference\":\"PAY-20261031-001\",\"source\":\"booking\",\"amount\":440910,\"method\":\"mtn_momo\",\"guest\":\"paiton witness\",\"phone\":\"0750891058\"}', NULL, '2026-10-31 07:57:15'),
+(273, 1, 'order', 'New website order ORD-20261104-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261104-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja  town\"}', NULL, '2026-11-04 15:19:28'),
+(274, 2, 'order', 'New website order ORD-20261104-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261104-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja  town\"}', NULL, '2026-11-04 15:19:28'),
+(275, 3, 'order', 'New website order ORD-20261104-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261104-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja  town\"}', NULL, '2026-11-04 15:19:28'),
+(276, 5, 'order', 'New website order ORD-20261104-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261104-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja  town\"}', NULL, '2026-11-04 15:19:28'),
+(277, 9, 'order', 'New website order ORD-20261104-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261104-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja  town\"}', NULL, '2026-11-04 15:19:28'),
+(278, 66, 'order', 'New website order ORD-20261104-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261104-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja  town\"}', NULL, '2026-11-04 15:19:28'),
+(279, 1, 'payment', 'Payment request PAY-20261104-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261104-001.', '{\"reference\":\"PAY-20261104-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:20:09'),
+(280, 2, 'payment', 'Payment request PAY-20261104-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261104-001.', '{\"reference\":\"PAY-20261104-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:20:09'),
+(281, 3, 'payment', 'Payment request PAY-20261104-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261104-001.', '{\"reference\":\"PAY-20261104-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:20:09'),
+(282, 4, 'payment', 'Payment request PAY-20261104-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261104-001.', '{\"reference\":\"PAY-20261104-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:20:09'),
+(283, 5, 'payment', 'Payment request PAY-20261104-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261104-001.', '{\"reference\":\"PAY-20261104-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:20:09'),
+(284, 66, 'payment', 'Payment request PAY-20261104-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261104-001.', '{\"reference\":\"PAY-20261104-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:20:09'),
+(285, 1, 'communication', 'New event enquiry EVT-20261104-001', 'Reagan Otema wants to plan wedding (EVT-20261104-001). 54 guests. 2026-11-06. Please call 0772514889.', '{\"request_number\":\"EVT-20261104-001\",\"event_type\":\"Wedding\",\"event_date\":\"2026-11-06\",\"guests\":54,\"venue\":\"The Nile Hall\",\"name\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:36:35'),
+(286, 2, 'communication', 'New event enquiry EVT-20261104-001', 'Reagan Otema wants to plan wedding (EVT-20261104-001). 54 guests. 2026-11-06. Please call 0772514889.', '{\"request_number\":\"EVT-20261104-001\",\"event_type\":\"Wedding\",\"event_date\":\"2026-11-06\",\"guests\":54,\"venue\":\"The Nile Hall\",\"name\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:36:35'),
+(287, 3, 'communication', 'New event enquiry EVT-20261104-001', 'Reagan Otema wants to plan wedding (EVT-20261104-001). 54 guests. 2026-11-06. Please call 0772514889.', '{\"request_number\":\"EVT-20261104-001\",\"event_type\":\"Wedding\",\"event_date\":\"2026-11-06\",\"guests\":54,\"venue\":\"The Nile Hall\",\"name\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:36:35'),
+(288, 66, 'communication', 'New event enquiry EVT-20261104-001', 'Reagan Otema wants to plan wedding (EVT-20261104-001). 54 guests. 2026-11-06. Please call 0772514889.', '{\"request_number\":\"EVT-20261104-001\",\"event_type\":\"Wedding\",\"event_date\":\"2026-11-06\",\"guests\":54,\"venue\":\"The Nile Hall\",\"name\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-04 15:36:35'),
+(289, 1, 'order', 'New website order ORD-20261106-001', 'Tadeo Owot placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261106-001\",\"items\":1,\"total\":31050,\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\",\"address\":\"Kimaka Senior Command\"}', NULL, '2026-11-06 13:25:18'),
+(290, 2, 'order', 'New website order ORD-20261106-001', 'Tadeo Owot placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261106-001\",\"items\":1,\"total\":31050,\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\",\"address\":\"Kimaka Senior Command\"}', NULL, '2026-11-06 13:25:18'),
+(291, 3, 'order', 'New website order ORD-20261106-001', 'Tadeo Owot placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261106-001\",\"items\":1,\"total\":31050,\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\",\"address\":\"Kimaka Senior Command\"}', NULL, '2026-11-06 13:25:18'),
+(292, 5, 'order', 'New website order ORD-20261106-001', 'Tadeo Owot placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261106-001\",\"items\":1,\"total\":31050,\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\",\"address\":\"Kimaka Senior Command\"}', NULL, '2026-11-06 13:25:18'),
+(293, 9, 'order', 'New website order ORD-20261106-001', 'Tadeo Owot placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261106-001\",\"items\":1,\"total\":31050,\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\",\"address\":\"Kimaka Senior Command\"}', NULL, '2026-11-06 13:25:18'),
+(294, 66, 'order', 'New website order ORD-20261106-001', 'Tadeo Owot placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261106-001\",\"items\":1,\"total\":31050,\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\",\"address\":\"Kimaka Senior Command\"}', NULL, '2026-11-06 13:25:18'),
+(295, 1, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', NULL, '2026-11-06 13:25:41'),
+(296, 2, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', NULL, '2026-11-06 13:25:41'),
+(297, 3, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', '2026-11-06 16:41:38', '2026-11-06 13:25:41'),
+(298, 4, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', NULL, '2026-11-06 13:25:41'),
+(299, 5, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', NULL, '2026-11-06 13:25:41'),
+(300, 66, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', NULL, '2026-11-06 13:25:41');
 
 -- --------------------------------------------------------
 
@@ -2490,7 +2603,28 @@ INSERT INTO `notification_deliveries` (`id`, `notification_id`, `user_id`, `devi
 (44, 250, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-28 09:22:41', '2026-10-29 04:40:39'),
 (45, 256, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-28 09:22:49', '2026-10-29 04:40:39'),
 (46, 256, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-28 09:22:49', '2026-10-29 04:40:39'),
-(47, 256, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-28 09:22:49', '2026-10-29 04:40:39');
+(47, 256, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-28 09:22:49', '2026-10-29 04:40:39'),
+(48, 262, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-31 07:57:04', '2026-10-31 08:57:50'),
+(49, 262, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-31 07:57:04', '2026-10-31 08:57:50'),
+(50, 262, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-31 07:57:04', '2026-10-31 08:57:50'),
+(51, 268, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-31 07:57:15', '2026-10-31 08:57:50'),
+(52, 268, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-31 07:57:15', '2026-10-31 08:57:50'),
+(53, 268, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-10-31 07:57:15', '2026-10-31 08:57:50'),
+(54, 274, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-04 15:19:28', '2026-11-04 15:38:50'),
+(55, 274, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-04 15:19:28', '2026-11-04 15:38:50'),
+(56, 274, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-04 15:19:28', '2026-11-04 15:38:50'),
+(57, 280, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-04 15:20:09', '2026-11-04 15:38:50'),
+(58, 280, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-04 15:20:09', '2026-11-04 15:38:50'),
+(59, 280, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-04 15:20:09', '2026-11-04 15:38:50'),
+(60, 286, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-04 15:36:35', '2026-11-04 15:38:50'),
+(61, 286, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-04 15:36:35', '2026-11-04 15:38:50'),
+(62, 286, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-04 15:36:35', '2026-11-04 15:38:50'),
+(63, 290, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:18', '2026-11-06 13:42:42'),
+(64, 290, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:18', '2026-11-06 13:42:42'),
+(65, 290, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:18', '2026-11-06 13:42:42'),
+(66, 296, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:41', '2026-11-06 13:42:42'),
+(67, 296, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:41', '2026-11-06 13:42:42'),
+(68, 296, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:41', '2026-11-06 13:42:42');
 
 -- --------------------------------------------------------
 
@@ -2588,7 +2722,14 @@ INSERT INTO `notification_events` (`id`, `event_key`, `event_type`, `entity_type
 (46, 'event:EVT-20261027-001', 'communication', NULL, NULL, '2026-10-27 14:07:35'),
 (47, 'gm:GM-20261027-001', 'communication', NULL, NULL, '2026-10-27 14:09:59'),
 (48, 'order:ORD-20261028-001', 'order', NULL, NULL, '2026-10-28 09:22:41'),
-(49, 'payment:PAY-20261028-001', 'payment', NULL, NULL, '2026-10-28 09:22:49');
+(49, 'payment:PAY-20261028-001', 'payment', NULL, NULL, '2026-10-28 09:22:49'),
+(50, 'booking:HPN-20261031-001', 'booking', NULL, NULL, '2026-10-31 07:57:04'),
+(51, 'payment:PAY-20261031-001', 'payment', NULL, NULL, '2026-10-31 07:57:15'),
+(52, 'order:ORD-20261104-001', 'order', NULL, NULL, '2026-11-04 15:19:28'),
+(53, 'payment:PAY-20261104-001', 'payment', NULL, NULL, '2026-11-04 15:20:09'),
+(54, 'event:EVT-20261104-001', 'communication', NULL, NULL, '2026-11-04 15:36:35'),
+(55, 'order:ORD-20261106-001', 'order', NULL, NULL, '2026-11-06 13:25:18'),
+(56, 'payment:PAY-20261106-001', 'payment', NULL, NULL, '2026-11-06 13:25:41');
 
 -- --------------------------------------------------------
 
@@ -2659,7 +2800,9 @@ INSERT INTO `orders` (`id`, `hotel_id`, `user_id`, `shift_id`, `order_number`, `
 (15, 1, 1, NULL, 'ORD-20261021-001', 'restaurant', 'takeaway', NULL, NULL, 'Atim Jeremiah Okello', '0706407275', 'jeremiahotile@gmail.com', 'Main Street', '', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-21 11:20:40', NULL, NULL),
 (16, 1, 1, NULL, 'ORD-20261021-002', 'restaurant', 'takeaway', NULL, NULL, 'WOZISI WILLIAM', '0705491314', 'willywozisi@gmail.com', 'Lubas Rd', '', 'pending', 0.00, 37000.00, 1295.00, 38295.00, '2026-10-21 11:21:24', NULL, NULL),
 (17, 1, 1, NULL, 'ORD-20261027-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja town', 'less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-27 14:01:41', NULL, NULL),
-(18, 1, 1, NULL, 'ORD-20261028-001', 'restaurant', 'takeaway', NULL, NULL, 'paiton witness', '0750891058', 'paiton@gmail.com', 'mpumudde, jinja.', 'less salt please.', 'pending', 0.00, 47000.00, 1645.00, 48645.00, '2026-10-28 09:22:41', NULL, NULL);
+(18, 1, 1, NULL, 'ORD-20261028-001', 'restaurant', 'takeaway', NULL, NULL, 'paiton witness', '0750891058', 'paiton@gmail.com', 'mpumudde, jinja.', 'less salt please.', 'pending', 0.00, 47000.00, 1645.00, 48645.00, '2026-10-28 09:22:41', NULL, NULL),
+(19, 1, 1, NULL, 'ORD-20261104-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja  town', 'i need less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-11-04 15:19:28', NULL, NULL),
+(20, 1, 1, NULL, 'ORD-20261106-001', 'restaurant', 'takeaway', NULL, NULL, 'Tadeo Owot', '0782125278', '4maramans@gmail.com', 'Kimaka Senior Command', 'Not too much salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-11-06 13:25:18', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2701,7 +2844,9 @@ INSERT INTO `order_items` (`id`, `order_id`, `menu_item_id`, `custom_name`, `qua
 (16, 15, 2292, NULL, 1.00, 6000.00, 6000.00, 'Web takeaway order from Atim Jeremiah Okello, 0706407275'),
 (17, 16, 2406, NULL, 1.00, 37000.00, 37000.00, 'Web takeaway order from WOZISI WILLIAM, 0705491314 Ã¢â‚¬â€ Companion: Chips.'),
 (18, 17, 2292, NULL, 1.00, 6000.00, 6000.00, 'Web takeaway order from Reagan Otema, 0772514889'),
-(19, 18, 2318, NULL, 1.00, 47000.00, 47000.00, 'Web takeaway order from paiton witness, 0750891058');
+(19, 18, 2318, NULL, 1.00, 47000.00, 47000.00, 'Web takeaway order from paiton witness, 0750891058'),
+(20, 19, 2292, NULL, 1.00, 6000.00, 6000.00, 'Web takeaway order from Reagan Otema, 0772514889'),
+(21, 20, 2391, NULL, 1.00, 30000.00, 30000.00, 'Web takeaway order from Tadeo Owot, 0782125278 Ã¢â‚¬â€ Companion: Chips. Also: Green salad.');
 
 -- --------------------------------------------------------
 
@@ -2752,12 +2897,28 @@ CREATE TABLE `payments` (
   `shift_id` bigint(20) UNSIGNED DEFAULT NULL,
   `reservation_id` bigint(20) UNSIGNED DEFAULT NULL,
   `amount` decimal(14,2) NOT NULL,
+  `base_currency` char(3) DEFAULT NULL,
+  `base_amount` decimal(14,2) DEFAULT NULL,
+  `currency` char(3) DEFAULT NULL,
+  `fx_rate` decimal(24,10) DEFAULT NULL,
+  `fx_source` varchar(120) DEFAULT NULL,
+  `fx_at` varchar(60) DEFAULT NULL,
+  `charged_amount` decimal(14,2) DEFAULT NULL,
+  `charged_currency` char(3) DEFAULT NULL,
   `method` varchar(50) NOT NULL,
   `provider` varchar(100) DEFAULT NULL,
   `provider_reference` varchar(190) DEFAULT NULL,
+  `order_tracking_id` varchar(120) DEFAULT NULL,
+  `confirmation_code` varchar(120) DEFAULT NULL,
+  `gateway_payment_method` varchar(100) DEFAULT NULL,
   `checkout_token` varchar(190) DEFAULT NULL,
   `status` enum('pending','successful','failed','refunded','reversed') DEFAULT 'pending',
+  `settlement_status` varchar(30) NOT NULL DEFAULT 'not_settled',
+  `settlement_reference` varchar(120) DEFAULT NULL,
+  `gateway_fee` decimal(14,2) DEFAULT NULL,
   `verified_at` datetime DEFAULT NULL,
+  `verified_by` varchar(30) DEFAULT NULL,
+  `verification_note` varchar(255) DEFAULT NULL,
   `gateway_result` text DEFAULT NULL,
   `payer_phone` varchar(50) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL
@@ -2767,30 +2928,52 @@ CREATE TABLE `payments` (
 -- Dumping data for table `payments`
 --
 
-INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `customer_id`, `invoice_id`, `order_id`, `shift_id`, `reservation_id`, `amount`, `method`, `provider`, `provider_reference`, `checkout_token`, `status`, `verified_at`, `gateway_result`, `payer_phone`, `created_at`) VALUES
-(1, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
-(2, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
-(3, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
-(4, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
-(5, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
-(6, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
-(7, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
-(8, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
-(9, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'cash', NULL, NULL, NULL, 'successful', NULL, NULL, NULL, NULL),
-(10, 1, NULL, 1, NULL, 1, NULL, NULL, 13455.00, 'card', 'pesapal', 'PAY-20261009-001', NULL, 'pending', NULL, NULL, NULL, '2026-10-09 12:19:08'),
-(11, 1, NULL, 3, NULL, 3, NULL, NULL, 46575.00, 'mtn_momo', 'pesapal', 'PAY-20261010-001', NULL, 'successful', NULL, NULL, NULL, '2026-10-10 16:49:03'),
-(12, 1, NULL, 1, NULL, NULL, NULL, 37, 264960.00, 'mtn_momo', 'pesapal', 'PAY-20261010-002', NULL, 'successful', NULL, NULL, NULL, '2026-10-10 20:54:40'),
-(13, 1, NULL, 4, NULL, NULL, NULL, 39, 324990.00, 'mtn_momo', 'pesapal', 'PAY-20261011-001', NULL, 'successful', NULL, NULL, NULL, '2026-10-11 09:48:21'),
-(14, 1, NULL, 1, NULL, 9, NULL, NULL, 6210.00, 'card', 'pesapal', 'PAY-20261015-001', 'b1794a8e8bada8cf5e960c45eee53ae2', 'pending', NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"4e20c044-bcd2-43a2-8f85-d9c8b786c508\",\"env\":\"live\",\"initiated_at\":\"2026-10-15T12:21:46+03:00\"}', NULL, '2026-10-15 09:21:44'),
-(15, 1, NULL, 1, NULL, 10, NULL, NULL, 6210.00, 'mtn_momo', 'pesapal', 'PAY-20261015-002', 'dfd39218f470a9d8ac3fedb1b44b6cc2', 'pending', NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"27311cfd-a6f7-4a5d-88f7-d9c87a7054f3\",\"env\":\"live\",\"initiated_at\":\"2026-10-15T16:13:34+03:00\"}', NULL, '2026-10-15 13:13:31'),
-(16, 1, NULL, 1, NULL, 11, NULL, NULL, 31050.00, 'mtn_momo', 'pesapal', 'PAY-20261015-003', '367cc4c2d176b18656080039b6a6519c', 'failed', '2026-10-15 17:06:22', '{\"gateway\":\"pesapal\",\"tracking_id\":\"c4337c8c-f453-4dad-84e3-d9c8ed5aa6f6\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":31050,\"created_date\":\"2026-10-15T17:06:22.117\",\"confirmation_code\":\"44251459812\",\"order_tracking_id\":\"c4337c8c-f453-4dad-84e3-d9c8ed5aa6f6\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261015-003&OrderTrackingId=c4337c8c-f453-4dad-84e3-d9c8ed5aa6f6&OrderMerchantReference=PAY-20261015-003\",\"status_code\":2,\"merchant_reference\":\"PAY-20261015-003\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-15 13:59:12'),
-(17, 1, NULL, 4, NULL, 12, NULL, NULL, 6210.00, 'mtn_momo', 'pesapal', 'PAY-20261015-004', '1e5490c8053b7bec2788480fe998ee09', 'failed', '2026-10-15 19:53:24', '{\"gateway\":\"pesapal\",\"tracking_id\":\"085c626b-a3d3-402f-90c8-d9c8cd5b22e7\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":6210,\"created_date\":\"2026-10-15T19:53:23.477\",\"confirmation_code\":\"44257084334\",\"order_tracking_id\":\"085c626b-a3d3-402f-90c8-d9c8cd5b22e7\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx27243\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261015-004&OrderTrackingId=085c626b-a3d3-402f-90c8-d9c8cd5b22e7&OrderMerchantReference=PAY-20261015-004\",\"status_code\":2,\"merchant_reference\":\"PAY-20261015-004\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx27243', '2026-10-15 16:45:55'),
-(18, 1, NULL, 1, NULL, 13, NULL, NULL, 15525.00, 'mtn_momo', 'pesapal', 'PAY-20261016-001', '8a1fddbb0b218329b88b3ea0484e88d1', 'failed', '2026-10-16 06:49:32', '{\"gateway\":\"pesapal\",\"tracking_id\":\"bc2818be-cf10-4d14-a8e9-d9c7ce756d17\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":15525,\"created_date\":\"2026-10-16T06:49:32.077\",\"confirmation_code\":\"44264178790\",\"order_tracking_id\":\"bc2818be-cf10-4d14-a8e9-d9c7ce756d17\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261016-001&OrderTrackingId=bc2818be-cf10-4d14-a8e9-d9c7ce756d17&OrderMerchantReference=PAY-20261016-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261016-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-16 03:43:14'),
-(19, 1, NULL, 4, NULL, NULL, NULL, 40, 661365.00, 'mtn_momo', 'pesapal', 'PAY-20261016-002', '72afaef855f73f058aad2d58dd5f0423', 'failed', '2026-10-16 16:08:34', '{\"gateway\":\"pesapal\",\"tracking_id\":\"a3c09c5f-57fd-4534-83ca-d9c7dbd48267\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":661365,\"created_date\":\"2026-10-16T16:08:35.077\",\"confirmation_code\":\"3B18A9161026M\",\"order_tracking_id\":\"a3c09c5f-57fd-4534-83ca-d9c7dbd48267\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx55519\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261016-002&OrderTrackingId=a3c09c5f-57fd-4534-83ca-d9c7dbd48267&OrderMerchantReference=PAY-20261016-002\",\"status_code\":2,\"merchant_reference\":\"PAY-20261016-002\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx55519', '2026-10-16 13:06:16'),
-(20, 1, NULL, 4, NULL, 14, NULL, NULL, 31050.00, 'mtn_momo', 'pesapal', 'PAY-20261016-003', '503bffbcfc7a38114b6da858f24076ea', 'failed', '2026-10-16 16:17:21', '{\"gateway\":\"pesapal\",\"tracking_id\":\"dd02f908-a902-46fe-9113-d9c703f67a4c\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":31050,\"created_date\":\"2026-10-16T16:17:21.21\",\"confirmation_code\":\"44275586634\",\"order_tracking_id\":\"dd02f908-a902-46fe-9113-d9c703f67a4c\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261016-003&OrderTrackingId=dd02f908-a902-46fe-9113-d9c703f67a4c&OrderMerchantReference=PAY-20261016-003\",\"status_code\":2,\"merchant_reference\":\"PAY-20261016-003\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-16 13:10:53'),
-(21, 1, NULL, 1, NULL, NULL, NULL, 41, 256680.00, 'mtn_momo', 'pesapal', 'PAY-20261017-001', '98b02307bea5a73265647c5d52f0c1c0', 'pending', NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"ee1dfc58-a3d2-4bfc-86e5-d9c65f8a9188\",\"env\":\"live\",\"initiated_at\":\"2026-10-17T11:41:52+03:00\"}', NULL, '2026-10-17 08:41:50'),
-(22, 1, NULL, 1, NULL, 17, NULL, NULL, 6210.00, 'mtn_momo', 'pesapal', 'PAY-20261027-001', 'b05812d81531a906326e1d5d62784706', 'failed', '2026-10-27 17:10:21', '{\"gateway\":\"pesapal\",\"tracking_id\":\"dc22c289-9f61-43c9-9d22-d9bc23d7d57b\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":6210,\"created_date\":\"2026-10-27T17:10:20.657\",\"confirmation_code\":\"44581987317\",\"order_tracking_id\":\"dc22c289-9f61-43c9-9d22-d9bc23d7d57b\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261027-001&OrderTrackingId=dc22c289-9f61-43c9-9d22-d9bc23d7d57b&OrderMerchantReference=PAY-20261027-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261027-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-27 14:02:17'),
-(23, 1, NULL, 8, NULL, 18, NULL, NULL, 48645.00, 'mtn_momo', 'pesapal', 'PAY-20261028-001', 'e23a02943cde5a7203cef697d398d5e9', 'failed', '2026-10-28 12:25:11', '{\"gateway\":\"pesapal\",\"tracking_id\":\"9111b2b1-5bdb-45f5-8711-d9bbedfd4445\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":48645,\"created_date\":\"2026-10-28T12:25:11.513\",\"confirmation_code\":\"3C47DD281026P\",\"order_tracking_id\":\"9111b2b1-5bdb-45f5-8711-d9bbedfd4445\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx91058\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261028-001&OrderTrackingId=9111b2b1-5bdb-45f5-8711-d9bbedfd4445&OrderMerchantReference=PAY-20261028-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261028-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx91058', '2026-10-28 09:22:49');
+INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `customer_id`, `invoice_id`, `order_id`, `shift_id`, `reservation_id`, `amount`, `base_currency`, `base_amount`, `currency`, `fx_rate`, `fx_source`, `fx_at`, `charged_amount`, `charged_currency`, `method`, `provider`, `provider_reference`, `order_tracking_id`, `confirmation_code`, `gateway_payment_method`, `checkout_token`, `status`, `settlement_status`, `settlement_reference`, `gateway_fee`, `verified_at`, `verified_by`, `verification_note`, `gateway_result`, `payer_phone`, `created_at`) VALUES
+(1, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'UGX', 744000.00, 'UGX', 1.0000000000, NULL, NULL, 744000.00, 'UGX', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'UGX', 744000.00, 'UGX', 1.0000000000, NULL, NULL, 744000.00, 'UGX', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'UGX', 744000.00, 'UGX', 1.0000000000, NULL, NULL, 744000.00, 'UGX', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'UGX', 744000.00, 'UGX', 1.0000000000, NULL, NULL, 744000.00, 'UGX', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'UGX', 744000.00, 'UGX', 1.0000000000, NULL, NULL, 744000.00, 'UGX', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'UGX', 744000.00, 'UGX', 1.0000000000, NULL, NULL, 744000.00, 'UGX', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(7, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'UGX', 744000.00, 'UGX', 1.0000000000, NULL, NULL, 744000.00, 'UGX', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'UGX', 744000.00, 'UGX', 1.0000000000, NULL, NULL, 744000.00, 'UGX', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 1, 6, NULL, 1, NULL, NULL, 1, 744000.00, 'UGX', 744000.00, 'UGX', 1.0000000000, NULL, NULL, 744000.00, 'UGX', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(10, 1, NULL, 1, NULL, 1, NULL, NULL, 13455.00, 'UGX', 13455.00, 'UGX', 1.0000000000, NULL, NULL, 13455.00, 'UGX', 'card', 'pesapal', 'PAY-20261009-001', NULL, NULL, NULL, NULL, 'pending', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-10-09 12:19:08'),
+(11, 1, NULL, 3, NULL, 3, NULL, NULL, 46575.00, 'UGX', 46575.00, 'UGX', 1.0000000000, NULL, NULL, 46575.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261010-001', NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-10-10 16:49:03'),
+(12, 1, NULL, 1, NULL, NULL, NULL, 37, 264960.00, 'UGX', 264960.00, 'UGX', 1.0000000000, NULL, NULL, 264960.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261010-002', NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-10-10 20:54:40'),
+(13, 1, NULL, 4, NULL, NULL, NULL, 39, 324990.00, 'UGX', 324990.00, 'UGX', 1.0000000000, NULL, NULL, 324990.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261011-001', NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-10-11 09:48:21'),
+(14, 1, NULL, 1, NULL, 9, NULL, NULL, 6210.00, 'UGX', 6210.00, 'UGX', 1.0000000000, NULL, NULL, 6210.00, 'UGX', 'card', 'pesapal', 'PAY-20261015-001', NULL, NULL, NULL, 'b1794a8e8bada8cf5e960c45eee53ae2', 'pending', 'not_settled', NULL, NULL, NULL, NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"4e20c044-bcd2-43a2-8f85-d9c8b786c508\",\"env\":\"live\",\"initiated_at\":\"2026-10-15T12:21:46+03:00\"}', NULL, '2026-10-15 09:21:44'),
+(15, 1, NULL, 1, NULL, 10, NULL, NULL, 6210.00, 'UGX', 6210.00, 'UGX', 1.0000000000, NULL, NULL, 6210.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261015-002', NULL, NULL, NULL, 'dfd39218f470a9d8ac3fedb1b44b6cc2', 'pending', 'not_settled', NULL, NULL, NULL, NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"27311cfd-a6f7-4a5d-88f7-d9c87a7054f3\",\"env\":\"live\",\"initiated_at\":\"2026-10-15T16:13:34+03:00\"}', NULL, '2026-10-15 13:13:31'),
+(16, 1, NULL, 1, NULL, 11, NULL, NULL, 31050.00, 'UGX', 31050.00, 'UGX', 1.0000000000, NULL, NULL, 31050.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261015-003', NULL, NULL, NULL, '367cc4c2d176b18656080039b6a6519c', 'failed', 'not_settled', NULL, NULL, '2026-10-15 17:06:22', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"c4337c8c-f453-4dad-84e3-d9c8ed5aa6f6\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":31050,\"created_date\":\"2026-10-15T17:06:22.117\",\"confirmation_code\":\"44251459812\",\"order_tracking_id\":\"c4337c8c-f453-4dad-84e3-d9c8ed5aa6f6\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261015-003&OrderTrackingId=c4337c8c-f453-4dad-84e3-d9c8ed5aa6f6&OrderMerchantReference=PAY-20261015-003\",\"status_code\":2,\"merchant_reference\":\"PAY-20261015-003\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-15 13:59:12'),
+(17, 1, NULL, 4, NULL, 12, NULL, NULL, 6210.00, 'UGX', 6210.00, 'UGX', 1.0000000000, NULL, NULL, 6210.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261015-004', NULL, NULL, NULL, '1e5490c8053b7bec2788480fe998ee09', 'failed', 'not_settled', NULL, NULL, '2026-10-15 19:53:24', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"085c626b-a3d3-402f-90c8-d9c8cd5b22e7\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":6210,\"created_date\":\"2026-10-15T19:53:23.477\",\"confirmation_code\":\"44257084334\",\"order_tracking_id\":\"085c626b-a3d3-402f-90c8-d9c8cd5b22e7\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx27243\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261015-004&OrderTrackingId=085c626b-a3d3-402f-90c8-d9c8cd5b22e7&OrderMerchantReference=PAY-20261015-004\",\"status_code\":2,\"merchant_reference\":\"PAY-20261015-004\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx27243', '2026-10-15 16:45:55'),
+(18, 1, NULL, 1, NULL, 13, NULL, NULL, 15525.00, 'UGX', 15525.00, 'UGX', 1.0000000000, NULL, NULL, 15525.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261016-001', NULL, NULL, NULL, '8a1fddbb0b218329b88b3ea0484e88d1', 'failed', 'not_settled', NULL, NULL, '2026-10-16 06:49:32', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"bc2818be-cf10-4d14-a8e9-d9c7ce756d17\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":15525,\"created_date\":\"2026-10-16T06:49:32.077\",\"confirmation_code\":\"44264178790\",\"order_tracking_id\":\"bc2818be-cf10-4d14-a8e9-d9c7ce756d17\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261016-001&OrderTrackingId=bc2818be-cf10-4d14-a8e9-d9c7ce756d17&OrderMerchantReference=PAY-20261016-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261016-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-16 03:43:14'),
+(19, 1, NULL, 4, NULL, NULL, NULL, 40, 661365.00, 'UGX', 661365.00, 'UGX', 1.0000000000, NULL, NULL, 661365.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261016-002', NULL, NULL, NULL, '72afaef855f73f058aad2d58dd5f0423', 'failed', 'not_settled', NULL, NULL, '2026-10-16 16:08:34', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"a3c09c5f-57fd-4534-83ca-d9c7dbd48267\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":661365,\"created_date\":\"2026-10-16T16:08:35.077\",\"confirmation_code\":\"3B18A9161026M\",\"order_tracking_id\":\"a3c09c5f-57fd-4534-83ca-d9c7dbd48267\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx55519\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261016-002&OrderTrackingId=a3c09c5f-57fd-4534-83ca-d9c7dbd48267&OrderMerchantReference=PAY-20261016-002\",\"status_code\":2,\"merchant_reference\":\"PAY-20261016-002\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx55519', '2026-10-16 13:06:16'),
+(20, 1, NULL, 4, NULL, 14, NULL, NULL, 31050.00, 'UGX', 31050.00, 'UGX', 1.0000000000, NULL, NULL, 31050.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261016-003', NULL, NULL, NULL, '503bffbcfc7a38114b6da858f24076ea', 'failed', 'not_settled', NULL, NULL, '2026-10-16 16:17:21', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"dd02f908-a902-46fe-9113-d9c703f67a4c\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":31050,\"created_date\":\"2026-10-16T16:17:21.21\",\"confirmation_code\":\"44275586634\",\"order_tracking_id\":\"dd02f908-a902-46fe-9113-d9c703f67a4c\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261016-003&OrderTrackingId=dd02f908-a902-46fe-9113-d9c703f67a4c&OrderMerchantReference=PAY-20261016-003\",\"status_code\":2,\"merchant_reference\":\"PAY-20261016-003\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-16 13:10:53'),
+(21, 1, NULL, 1, NULL, NULL, NULL, 41, 256680.00, 'UGX', 256680.00, 'UGX', 1.0000000000, NULL, NULL, 256680.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261017-001', NULL, NULL, NULL, '98b02307bea5a73265647c5d52f0c1c0', 'pending', 'not_settled', NULL, NULL, NULL, NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"ee1dfc58-a3d2-4bfc-86e5-d9c65f8a9188\",\"env\":\"live\",\"initiated_at\":\"2026-10-17T11:41:52+03:00\"}', NULL, '2026-10-17 08:41:50'),
+(22, 1, NULL, 1, NULL, 17, NULL, NULL, 6210.00, 'UGX', 6210.00, 'UGX', 1.0000000000, NULL, NULL, 6210.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261027-001', NULL, NULL, NULL, 'b05812d81531a906326e1d5d62784706', 'failed', 'not_settled', NULL, NULL, '2026-10-27 17:10:21', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"dc22c289-9f61-43c9-9d22-d9bc23d7d57b\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":6210,\"created_date\":\"2026-10-27T17:10:20.657\",\"confirmation_code\":\"44581987317\",\"order_tracking_id\":\"dc22c289-9f61-43c9-9d22-d9bc23d7d57b\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261027-001&OrderTrackingId=dc22c289-9f61-43c9-9d22-d9bc23d7d57b&OrderMerchantReference=PAY-20261027-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261027-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-27 14:02:17'),
+(23, 1, NULL, 8, NULL, 18, NULL, NULL, 48645.00, 'UGX', 48645.00, 'UGX', 1.0000000000, NULL, NULL, 48645.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261028-001', NULL, NULL, NULL, 'e23a02943cde5a7203cef697d398d5e9', 'failed', 'not_settled', NULL, NULL, '2026-10-28 12:25:11', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"9111b2b1-5bdb-45f5-8711-d9bbedfd4445\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":48645,\"created_date\":\"2026-10-28T12:25:11.513\",\"confirmation_code\":\"3C47DD281026P\",\"order_tracking_id\":\"9111b2b1-5bdb-45f5-8711-d9bbedfd4445\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx91058\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261028-001&OrderTrackingId=9111b2b1-5bdb-45f5-8711-d9bbedfd4445&OrderMerchantReference=PAY-20261028-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261028-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx91058', '2026-10-28 09:22:49'),
+(24, 1, NULL, 8, NULL, NULL, NULL, 42, 440910.00, 'UGX', 440910.00, 'UGX', 1.0000000000, NULL, NULL, 440910.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261031-001', NULL, NULL, NULL, 'b9bc659707db5b74fbef97c73e51318d', 'failed', 'not_settled', NULL, NULL, '2026-10-31 10:57:44', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"f6e020c8-8b72-489f-b2c5-d9b84f75b6eb\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":440910,\"created_date\":\"2026-10-31T10:57:43.997\",\"confirmation_code\":\"3C91CD311026Z\",\"order_tracking_id\":\"f6e020c8-8b72-489f-b2c5-d9b84f75b6eb\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://www.hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261031-001&OrderTrackingId=f6e020c8-8b72-489f-b2c5-d9b84f75b6eb&OrderMerchantReference=PAY-20261031-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261031-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-31 07:57:15'),
+(25, 1, NULL, 1, NULL, 19, NULL, NULL, 6210.00, 'UGX', 6210.00, 'UGX', 1.0000000000, NULL, NULL, 6210.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261104-001', NULL, NULL, NULL, '3db3fef55866b19db61719f51d38df6a', 'failed', 'not_settled', NULL, NULL, '2026-11-04 18:27:21', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"13c2508e-edb7-4fe9-8704-d9b41fafa757\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":6210,\"created_date\":\"2026-11-04T18:27:21.203\",\"confirmation_code\":\"44813328084\",\"order_tracking_id\":\"13c2508e-edb7-4fe9-8704-d9b41fafa757\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261104-001&OrderTrackingId=13c2508e-edb7-4fe9-8704-d9b41fafa757&OrderMerchantReference=PAY-20261104-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261104-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-11-04 15:20:09'),
+(26, 1, NULL, 11, NULL, 20, NULL, NULL, 31050.00, 'UGX', 31050.00, 'UGX', 1.0000000000, NULL, NULL, 31050.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261106-001', NULL, NULL, NULL, '8f4c38f670cf16f71d8f3544313293df', 'failed', 'not_settled', NULL, NULL, '2026-11-06 16:26:38', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"d191ace7-47b7-479a-b5af-d9b211308520\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":31050,\"created_date\":\"2026-11-06T16:26:39.157\",\"confirmation_code\":\"3D2EF661126Q\",\"order_tracking_id\":\"d191ace7-47b7-479a-b5af-d9b211308520\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx25278\",\"call_back_url\":\"https://www.hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261106-001&OrderTrackingId=d191ace7-47b7-479a-b5af-d9b211308520&OrderMerchantReference=PAY-20261106-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261106-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx25278', '2026-11-06 13:25:41');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_notifications`
+--
+
+CREATE TABLE `payment_notifications` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `payment_id` bigint(20) UNSIGNED NOT NULL,
+  `channel` enum('ipn','callback','manual') NOT NULL,
+  `order_tracking_id` varchar(120) NOT NULL,
+  `merchant_reference` varchar(190) NOT NULL,
+  `notification_type` varchar(60) DEFAULT NULL,
+  `payload_hash` char(64) NOT NULL,
+  `status` varchar(30) NOT NULL DEFAULT 'received',
+  `detail` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -3150,7 +3333,28 @@ INSERT INTO `reservations` (`id`, `hotel_id`, `guest_id`, `booking_number`, `sou
 (38, 1, 46, 'HPN-20261011-001', 'website', '2026-10-12 14:00:00', '2026-10-13 11:00:00', 1, 0, 'pending', 314000.00, 1, 314000.00, 10990.00, 324990.00, 0.00, NULL, '2026-10-11 09:44:29', NULL, NULL, NULL),
 (39, 1, 46, 'HPN-20261011-002', 'website', '2026-10-12 14:00:00', '2026-10-13 11:00:00', 1, 0, 'cancelled', 314000.00, 1, 314000.00, 10990.00, 324990.00, 0.00, NULL, '2026-10-11 09:46:59', '2026-10-14 08:51:19', '2026-10-14 10:07:26', 2),
 (40, 1, 46, 'HPN-20261016-001', 'website', '2026-10-17 14:00:00', '2026-10-20 11:00:00', 1, 0, 'pending', 213000.00, 3, 639000.00, 22365.00, 661365.00, 0.00, NULL, '2026-10-16 13:05:53', NULL, NULL, NULL),
-(41, 1, 46, 'HPN-20261017-001', 'website', '2026-10-18 14:00:00', '2026-10-19 11:00:00', 1, 0, 'pending', 248000.00, 1, 248000.00, 8680.00, 256680.00, 0.00, NULL, '2026-10-17 08:41:36', NULL, NULL, NULL);
+(41, 1, 46, 'HPN-20261017-001', 'website', '2026-10-18 14:00:00', '2026-10-19 11:00:00', 1, 0, 'pending', 248000.00, 1, 248000.00, 8680.00, 256680.00, 0.00, NULL, '2026-10-17 08:41:36', NULL, NULL, NULL),
+(42, 1, 47, 'HPN-20261031-001', 'website', '2026-11-01 14:00:00', '2026-11-03 11:00:00', 1, 0, 'pending', 213000.00, 2, 426000.00, 14910.00, 440910.00, 0.00, NULL, '2026-10-31 07:57:04', NULL, NULL, NULL),
+(43, 1, 45, 'HPN-20261104-001', 'website', '2026-11-04 14:00:00', '2026-11-05 11:00:00', 1, 0, 'pending', 314000.00, 1, 314000.00, 0.00, 314000.00, 0.00, 'no ac in the room', '2026-11-04 15:40:05', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reservation_holds`
+--
+
+CREATE TABLE `reservation_holds` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `reservation_id` bigint(20) UNSIGNED NOT NULL,
+  `room_type_id` bigint(20) UNSIGNED NOT NULL,
+  `room_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `checkout_token` varchar(190) DEFAULT NULL,
+  `expires_at` datetime NOT NULL,
+  `released_at` datetime DEFAULT NULL,
+  `released_reason` varchar(60) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -3183,7 +3387,9 @@ INSERT INTO `reservation_rooms` (`id`, `reservation_id`, `room_type_id`, `room_i
 (41, 38, 58, NULL, 1, 314000.00),
 (42, 39, 58, NULL, 1, 314000.00),
 (43, 40, 59, NULL, 1, 213000.00),
-(44, 41, 57, NULL, 1, 248000.00);
+(44, 41, 57, NULL, 1, 248000.00),
+(45, 42, 59, NULL, 1, 213000.00),
+(46, 43, 58, NULL, 1, 314000.00);
 
 -- --------------------------------------------------------
 
@@ -4512,6 +4718,14 @@ ALTER TABLE `message_reads`
   ADD KEY `fk_mr_user` (`user_id`);
 
 --
+-- Indexes for table `news_comments`
+--
+ALTER TABLE `news_comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_news_comments_news` (`news_id`,`status`,`created_at`),
+  ADD KEY `idx_news_comments_parent` (`parent_id`);
+
+--
 -- Indexes for table `news_posts`
 --
 ALTER TABLE `news_posts`
@@ -4521,6 +4735,14 @@ ALTER TABLE `news_posts`
   ADD KEY `idx_news_status` (`status`,`publish_at`),
   ADD KEY `idx_news_pinned` (`pinned`,`publish_at`),
   ADD KEY `idx_deleted_at` (`deleted_at`);
+
+--
+-- Indexes for table `news_reactions`
+--
+ALTER TABLE `news_reactions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_news_reaction` (`news_id`,`visitor_hash`),
+  ADD KEY `idx_news_reaction_news` (`news_id`);
 
 --
 -- Indexes for table `notifications`
@@ -4629,7 +4851,17 @@ ALTER TABLE `payments`
   ADD KEY `hp_pos_pay_order_status` (`order_id`,`status`),
   ADD KEY `hp_pos_pay_shift_cash` (`shift_id`,`status`,`method`,`created_at`),
   ADD KEY `hp_pos_pay_user_cash` (`user_id`,`status`,`method`,`created_at`),
-  ADD KEY `hp_pos_pay_method_day` (`status`,`method`,`created_at`);
+  ADD KEY `hp_pos_pay_method_day` (`status`,`method`,`created_at`),
+  ADD KEY `idx_pay_tracking` (`order_tracking_id`),
+  ADD KEY `idx_pay_currency` (`currency`,`status`,`created_at`);
+
+--
+-- Indexes for table `payment_notifications`
+--
+ALTER TABLE `payment_notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_payment_notification` (`payment_id`,`channel`,`order_tracking_id`,`payload_hash`),
+  ADD KEY `idx_payment_notification_payment` (`payment_id`,`created_at`);
 
 --
 -- Indexes for table `permissions`
@@ -4790,6 +5022,15 @@ ALTER TABLE `reservations`
   ADD KEY `hp_perf_res_status` (`status`),
   ADD KEY `hp_perf_res_checkin` (`check_in`),
   ADD KEY `hp_perf_res_checkout` (`check_out`);
+
+--
+-- Indexes for table `reservation_holds`
+--
+ALTER TABLE `reservation_holds`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_hold_checkout_token` (`checkout_token`),
+  ADD KEY `idx_hold_reservation` (`reservation_id`),
+  ADD KEY `idx_hold_expiry` (`released_at`,`expires_at`);
 
 --
 -- Indexes for table `reservation_rooms`
@@ -5061,7 +5302,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=175;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=204;
 
 --
 -- AUTO_INCREMENT for table `beds`
@@ -5085,7 +5326,7 @@ ALTER TABLE `cashier_shifts`
 -- AUTO_INCREMENT for table `chart_of_accounts`
 --
 ALTER TABLE `chart_of_accounts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `communication_calls`
@@ -5097,7 +5338,7 @@ ALTER TABLE `communication_calls`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `customer_addresses`
@@ -5121,7 +5362,7 @@ ALTER TABLE `customer_signin_attempts`
 -- AUTO_INCREMENT for table `customer_tokens`
 --
 ALTER TABLE `customer_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -5181,7 +5422,7 @@ ALTER TABLE `event_bookings`
 -- AUTO_INCREMENT for table `event_requests`
 --
 ALTER TABLE `event_requests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `expenses`
@@ -5253,7 +5494,7 @@ ALTER TABLE `goods_received`
 -- AUTO_INCREMENT for table `guests`
 --
 ALTER TABLE `guests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `guest_accounts`
@@ -5418,22 +5659,34 @@ ALTER TABLE `menu_items`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2558;
 
 --
+-- AUTO_INCREMENT for table `news_comments`
+--
+ALTER TABLE `news_comments`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `news_posts`
 --
 ALTER TABLE `news_posts`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
+-- AUTO_INCREMENT for table `news_reactions`
+--
+ALTER TABLE `news_reactions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=261;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=301;
 
 --
 -- AUTO_INCREMENT for table `notification_deliveries`
 --
 ALTER TABLE `notification_deliveries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT for table `notification_devices`
@@ -5445,19 +5698,19 @@ ALTER TABLE `notification_devices`
 -- AUTO_INCREMENT for table `notification_events`
 --
 ALTER TABLE `notification_events`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `outlets`
@@ -5475,7 +5728,13 @@ ALTER TABLE `password_reset_tokens`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
+-- AUTO_INCREMENT for table `payment_notifications`
+--
+ALTER TABLE `payment_notifications`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `permissions`
@@ -5571,13 +5830,19 @@ ALTER TABLE `reception_records`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+
+--
+-- AUTO_INCREMENT for table `reservation_holds`
+--
+ALTER TABLE `reservation_holds`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `reservation_rooms`
 --
 ALTER TABLE `reservation_rooms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `roles`

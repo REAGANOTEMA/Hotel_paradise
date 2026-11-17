@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 26, 2026 at 07:19 PM
+-- Generation Time: Nov 18, 2026 at 11:34 AM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.27
 
@@ -20,6 +20,24 @@ SET time_zone = "+00:00";
 --
 -- Database: `hotelpardise_website`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`hotelpardise`@`localhost` PROCEDURE `hp_add_col` (IN `p_table` VARCHAR(64), IN `p_col` VARCHAR(64), IN `p_def` TEXT)   BEGIN
+ IF NOT EXISTS (
+  SELECT 1 FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = p_table AND COLUMN_NAME = p_col
+ ) THEN
+  SET @hp_sql = CONCAT('ALTER TABLE `', p_table, '` ADD COLUMN `', p_col, '` ', p_def);
+  PREPARE hp_stmt FROM @hp_sql;
+  EXECUTE hp_stmt;
+  DEALLOCATE PREPARE hp_stmt;
+ END IF;
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -589,6 +607,137 @@ INSERT INTO `menu_items` (`id`, `hotel_id`, `category_id`, `name`, `description`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `news_posts`
+--
+
+CREATE TABLE `news_posts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `slug` varchar(180) NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `category` varchar(20) NOT NULL DEFAULT 'news',
+  `excerpt` varchar(320) NOT NULL DEFAULT '',
+  `body` mediumtext DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `department` varchar(120) DEFAULT NULL,
+  `location` varchar(120) DEFAULT NULL,
+  `employment_type` varchar(60) DEFAULT NULL,
+  `salary` varchar(120) DEFAULT NULL,
+  `deadline` date DEFAULT NULL,
+  `apply_email` varchar(160) DEFAULT NULL,
+  `apply_url` varchar(300) DEFAULT NULL,
+  `author_name` varchar(120) DEFAULT NULL,
+  `author_role` varchar(120) DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `pinned` tinyint(1) NOT NULL DEFAULT 0,
+  `status` varchar(20) NOT NULL DEFAULT 'published',
+  `publish_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `views` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `news_posts`
+--
+
+INSERT INTO `news_posts` (`id`, `hotel_id`, `slug`, `title`, `category`, `excerpt`, `body`, `image`, `department`, `location`, `employment_type`, `salary`, `deadline`, `apply_email`, `apply_url`, `author_name`, `author_role`, `created_by`, `pinned`, `status`, `publish_at`, `views`, `created_at`, `updated_at`, `deleted_at`, `deleted_by`) VALUES
+(1, 1, 'welcome-to-the-paradise-newsroom', 'Welcome to the Paradise newsroom', 'news', 'Stories, service updates and opportunities from Hotel Paradise on the Nile.', 'Welcome to our newsroom. This is where the hotel shares what is happening on the Nile: new services, team news, seasonal offers and the people who make a stay at Paradise memorable.\n\nCheck back for updates, or follow the links on the website to plan your next visit.', NULL, 'Management', NULL, NULL, NULL, NULL, NULL, NULL, 'Hotel Paradise on the Nile', 'Management', NULL, 0, 'published', '2026-10-26 19:27:50', 0, '2026-10-26 19:27:50', NULL, NULL, NULL),
+(2, 1, 'join-the-paradise-team', 'Join the Paradise team', 'recruitment', 'We are always looking for warm, careful people to join the hotel.', 'Hotel Paradise on the Nile is built on people who care about the small details. We welcome applications from experienced hospitality professionals and from people starting their first role in the industry.\n\nSend your application to the front desk or use the contact details on the website. Please tell us the role you are interested in and a little about yourself.', NULL, 'Human Resource', NULL, NULL, NULL, NULL, NULL, NULL, 'Hotel Paradise on the Nile', 'Human Resource', NULL, 0, 'published', '2026-10-26 19:27:50', 0, '2026-10-26 19:27:50', NULL, NULL, NULL),
+(3, 1, 'employee-of-the-month', 'Employee of the month', 'employee', 'Celebrating the member of the team who went the extra mile.', 'Every month the hotel recognises a member of the team whose care, craft and kindness stood out. Their name is shared here and at the staff briefing.\n\nCongratulations to this month\'s winner, and thank you to everyone who makes Paradise feel like home.', NULL, 'Human Resource', NULL, NULL, NULL, NULL, NULL, NULL, 'Hotel Paradise on the Nile', 'Human Resource', NULL, 0, 'published', '2026-10-26 19:27:50', 0, '2026-10-26 19:27:50', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `type` varchar(100) NOT NULL,
+  `title` varchar(190) NOT NULL,
+  `body` text NOT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `read_at` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_deliveries`
+--
+
+CREATE TABLE `notification_deliveries` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `notification_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `device_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `channel` enum('web_push','fcm','apns','in_app') NOT NULL DEFAULT 'web_push',
+  `status` enum('queued','accepted','delivered','failed','read') NOT NULL DEFAULT 'queued',
+  `provider_message_id` varchar(190) DEFAULT NULL,
+  `attempts` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `last_error` varchar(500) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_devices`
+--
+
+CREATE TABLE `notification_devices` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `platform` enum('web','android','ios','other') NOT NULL,
+  `push_token` varchar(500) NOT NULL,
+  `p256dh` varchar(255) DEFAULT NULL,
+  `auth` varchar(255) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT 1,
+  `user_agent` varchar(255) DEFAULT NULL,
+  `last_seen_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_events`
+--
+
+CREATE TABLE `notification_events` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `event_key` varchar(190) NOT NULL,
+  `event_type` varchar(100) NOT NULL,
+  `entity_type` varchar(60) DEFAULT NULL,
+  `entity_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_preferences`
+--
+
+CREATE TABLE `notification_preferences` (
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `booking_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `order_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `payment_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `communication_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `incident_alerts` tinyint(1) NOT NULL DEFAULT 1,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `orders`
 --
 
@@ -646,10 +795,24 @@ CREATE TABLE `payments` (
   `order_id` bigint(20) UNSIGNED DEFAULT NULL,
   `reservation_id` bigint(20) UNSIGNED DEFAULT NULL,
   `amount` decimal(14,2) NOT NULL,
+  `base_currency` char(3) DEFAULT NULL,
+  `base_amount` decimal(14,2) DEFAULT NULL,
+  `currency` char(3) DEFAULT NULL,
+  `fx_rate` decimal(24,10) DEFAULT NULL,
+  `fx_source` varchar(120) DEFAULT NULL,
+  `fx_at` varchar(60) DEFAULT NULL,
+  `charged_amount` decimal(14,2) DEFAULT NULL,
+  `charged_currency` char(3) DEFAULT NULL,
   `method` varchar(50) NOT NULL,
   `provider` varchar(100) DEFAULT NULL,
   `provider_reference` varchar(190) DEFAULT NULL,
+  `order_tracking_id` varchar(120) DEFAULT NULL,
+  `confirmation_code` varchar(120) DEFAULT NULL,
+  `gateway_payment_method` varchar(100) DEFAULT NULL,
   `status` enum('pending','successful','failed','refunded','reversed') DEFAULT 'pending',
+  `settlement_status` varchar(30) NOT NULL DEFAULT 'not_settled',
+  `settlement_reference` varchar(120) DEFAULT NULL,
+  `gateway_fee` decimal(14,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -657,11 +820,11 @@ CREATE TABLE `payments` (
 -- Dumping data for table `payments`
 --
 
-INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `customer_id`, `invoice_id`, `order_id`, `reservation_id`, `amount`, `method`, `provider`, `provider_reference`, `status`, `created_at`) VALUES
-(1, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(2, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(3, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL),
-(4, 1, 6, NULL, 1, NULL, 1, 744000.00, 'cash', NULL, NULL, 'successful', NULL);
+INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `customer_id`, `invoice_id`, `order_id`, `reservation_id`, `amount`, `base_currency`, `base_amount`, `currency`, `fx_rate`, `fx_source`, `fx_at`, `charged_amount`, `charged_currency`, `method`, `provider`, `provider_reference`, `order_tracking_id`, `confirmation_code`, `gateway_payment_method`, `status`, `settlement_status`, `settlement_reference`, `gateway_fee`, `created_at`) VALUES
+(1, 1, 6, NULL, 1, NULL, 1, 744000.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'cash', NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL),
+(2, 1, 6, NULL, 1, NULL, 1, 744000.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'cash', NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL),
+(3, 1, 6, NULL, 1, NULL, 1, 744000.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'cash', NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL),
+(4, 1, 6, NULL, 1, NULL, 1, 744000.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'cash', NULL, NULL, NULL, NULL, NULL, 'successful', 'not_settled', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -875,6 +1038,7 @@ INSERT INTO `roles` (`id`, `name`) VALUES
 (3, 'general_manager'),
 (66, 'guest'),
 (12, 'housekeeping'),
+(97, 'human_resource'),
 (65, 'inventory_manager'),
 (9, 'kitchen'),
 (13, 'maintenance'),
@@ -1500,6 +1664,54 @@ ALTER TABLE `menu_items`
   ADD KEY `category_id` (`category_id`);
 
 --
+-- Indexes for table `news_posts`
+--
+ALTER TABLE `news_posts`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_news_slug` (`slug`),
+  ADD KEY `idx_news_cat` (`category`),
+  ADD KEY `idx_news_status` (`status`,`publish_at`),
+  ADD KEY `idx_news_pinned` (`pinned`,`publish_at`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_notification_user` (`user_id`);
+
+--
+-- Indexes for table `notification_deliveries`
+--
+ALTER TABLE `notification_deliveries`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_delivery_once` (`notification_id`,`device_id`),
+  ADD KEY `idx_delivery_user` (`user_id`),
+  ADD KEY `idx_delivery_status` (`status`);
+
+--
+-- Indexes for table `notification_devices`
+--
+ALTER TABLE `notification_devices`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_push_token` (`push_token`(191)),
+  ADD KEY `fk_nd_user` (`user_id`);
+
+--
+-- Indexes for table `notification_events`
+--
+ALTER TABLE `notification_events`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_event_key` (`event_key`),
+  ADD KEY `idx_event_entity` (`entity_type`,`entity_id`);
+
+--
+-- Indexes for table `notification_preferences`
+--
+ALTER TABLE `notification_preferences`
+  ADD PRIMARY KEY (`user_id`);
+
+--
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
@@ -1819,6 +2031,36 @@ ALTER TABLE `menu_items`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=743;
 
 --
+-- AUTO_INCREMENT for table `news_posts`
+--
+ALTER TABLE `news_posts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `notification_deliveries`
+--
+ALTER TABLE `notification_deliveries`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `notification_devices`
+--
+ALTER TABLE `notification_devices`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `notification_events`
+--
+ALTER TABLE `notification_events`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
@@ -1888,7 +2130,7 @@ ALTER TABLE `reservation_rooms`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
 
 --
 -- AUTO_INCREMENT for table `rooms`
@@ -1972,7 +2214,7 @@ ALTER TABLE `website_enquiries`
 -- AUTO_INCREMENT for table `website_settings`
 --
 ALTER TABLE `website_settings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- Constraints for dumped tables

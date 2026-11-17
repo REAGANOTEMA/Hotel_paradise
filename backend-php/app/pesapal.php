@@ -18,15 +18,14 @@ declare(strict_types=1);
  *                             that answer — never the browser.
  *
  * Nothing here ever marks money as received on its own: it reports what the
- * gateway says and the caller decides. The keys live in config.php (never in
- * the browser), under a "pesapal" key, and can be overridden by the environment
- * (HP_PESAPAL_KEY / HP_PESAPAL_SECRET / HP_PESAPAL_ENV) so a host can be set up
- * without editing a file.
+ * gateway says and the caller decides. The merchant keys are read from the
+ * server environment only (HP_PESAPAL_KEY / HP_PESAPAL_SECRET / HP_PESAPAL_ENV).
+ * They are never stored in a file, in git, or in the browser, and they are never
+ * printed in an error or a log.
  *
- * Until a consumer key and secret are filled in, pesapal_enabled() is false and
- * the site keeps its safe offline behaviour: a payment is recorded as pending
- * and the front desk settles it. The moment the keys are present, the very same
- * checkout route starts sending guests to Pesapal.
+ * Until a consumer key and secret are set, pesapal_enabled() is false and the
+ * site keeps its safe offline behaviour: a payment is recorded as pending and
+ * the front desk settles it. The sandbox is the default environment.
  */
 
 /** Where the gateway settings live: config.php, then the environment, then blank. */
@@ -47,16 +46,17 @@ function pesapal_config(): array
   return $default;
  };
 
- $env=strtolower($pick('env','HP_PESAPAL_ENV','sandbox'));
- $cfg=[
-  'env'=>in_array($env,['live','production'],true)?'live':'sandbox',
-  'consumer_key'=>$pick('consumer_key','HP_PESAPAL_KEY',''),
-  'consumer_secret'=>$pick('consumer_secret','HP_PESAPAL_SECRET',''),
-  'currency'=>strtoupper($pick('currency','HP_PESAPAL_CURRENCY','UGX')),
-  // Optional absolute overrides. Left blank they are worked out from the request.
-  'ipn_url'=>$pick('ipn_url','HP_PESAPAL_IPN_URL',''),
-  'callback_url'=>$pick('callback_url','HP_PESAPAL_CALLBACK_URL',''),
- ];
+  $env=strtolower($pick('env','HP_PESAPAL_ENV','sandbox'));
+  $base=strtoupper($pick('base_currency','HP_PESAPAL_CURRENCY','UGX'));
+  $cfg=[
+   'env'=>in_array($env,['live','production'],true)?'live':'sandbox',
+   'consumer_key'=>$pick('consumer_key','HP_PESAPAL_KEY',''),
+   'consumer_secret'=>$pick('consumer_secret','HP_PESAPAL_SECRET',''),
+   'base_currency'=>preg_match('/^[A-Z]{3}$/',$base)?$base:'UGX',
+   // Optional absolute overrides. Left blank they are worked out from the request.
+   'ipn_url'=>$pick('ipn_url','HP_PESAPAL_IPN_URL',''),
+   'callback_url'=>$pick('callback_url','HP_PESAPAL_CALLBACK_URL',''),
+  ];
  return $cfg;
 }
 
@@ -204,7 +204,7 @@ function pesapal_http(string $method,string $path,?array $body=null,?string $tok
  $json=json_decode((string)$raw,true);
  $result['data']=is_array($json)?$json:[];
  if($code<200||$code>=300){
-  $result['error']=pesapal_error_message($result['data'],$code);
+  $result['error']=pesapal_safe_error(pesapal_error_message($result['data'],$code));
   return $result;
  }
  $result['ok']=true;
@@ -222,6 +222,12 @@ function pesapal_error_message(array $data,int $code): string
   if(is_string($first)) return $first;
  }
  return 'The payment gateway returned an error (HTTP '.$code.').';
+}
+
+/** Error sentences are scrubbed again here so no upstream text can leak a key. */
+function pesapal_safe_error(string $message): string
+{
+ return pesapal_redact($message);
 }
 
 /** A bearer token, reusing the cached one until it is nearly expired. */
@@ -314,7 +320,8 @@ function pesapal_billing_email(string $given): string
  *
  * $order = [
  *   'reference'   => the merchant reference we will get back (our pay ref),
- *   'amount'      => float, in the hotel's currency,
+ *   'amount'      => float, in the currency below,
+ *   'currency'    => an approved charging currency (defaults to the hotel's),
  *   'description' => a short human phrase,
  *   'email'       => billing email (may be blank),
  *   'phone'       => billing phone (may be blank),
@@ -336,10 +343,12 @@ function pesapal_submit_order(array $order): array
  $first=$parts[0]??'Guest';
  $last=$parts[1]??'';
 
- $body=[
-  'id'=>$ref,
-  'currency'=>pesapal_config()['currency'],
-  'amount'=>round((float)($order['amount']??0),2),
+  $currency=strtoupper(trim((string)($order['currency']??pesapal_config()['base_currency'])));
+  if(!preg_match('/^[A-Z]{3}$/',$currency)) $currency=pesapal_config()['base_currency'];
+  $body=[
+   'id'=>$ref,
+   'currency'=>$currency,
+   'amount'=>round((float)($order['amount']??0),2),
   'description'=>(string)($order['description']??('Payment '.$ref)),
   'callback_url'=>pesapal_callback_url($ref),
   'notification_id'=>$ipn['id'],
@@ -423,4 +432,77 @@ function pesapal_payer_account(array $raw): string
 {
  $a=$raw['payment_account']??$raw['paymentAccount']??'';
  return is_string($a)?trim($a):'';
+}
+
+/** Read one of the spellings Pesapal has used for a status field. */
+function pesapal_status_field(array $raw, array $names): string
+{
+ foreach($names as $n){
+  if(isset($raw[$n])&&is_scalar($raw[$n])&&(string)$raw[$n]!=='') return trim((string)$raw[$n]);
+ }
+ return '';
+}
+
+/**
+ * Scrub anything secret before a gateway message reaches a log or a guest.
+ * Consumer keys, secrets and bearer tokens are never printed anywhere.
+ */
+function pesapal_redact(string $text): string
+{
+ $c=pesapal_config();
+ $hide=[];
+ foreach(['consumer_key','consumer_secret'] as $k){
+  if(isset($c[$k])&&is_string($c[$k])&&$c[$k]!=='') $hide[]=$c[$k];
+ }
+ $text=str_replace($hide,'[redacted]',$text);
+ $text=preg_replace('/Bearer\s+[A-Za-z0-9._\-]+/i','Bearer [redacted]',$text)??$text;
+ $text=preg_replace('/(consumer_secret|consumer_key|token)"?\s*[:=]\s*"?[^,\s}&]+/i','$1=[redacted]',$text)??$text;
+ return $text;
+}
+
+/**
+ * Cross-check a gateway status against the payment we think it belongs to.
+ *
+ * A completed status is useless if it is for another amount, another currency
+ * or another merchant reference. This is the gate that must pass before any
+ * booking, order or receipt can be marked paid. Nothing here trusts the browser
+ * callback or a value the guest supplied.
+ *
+ * Returns ['ok','status','reason','raw'] where status is the payment-table
+ * status to write. A mismatch always leaves the payment pending.
+ */
+function pesapal_verify_payment(array $pay, array $gateway, string $trackingId): array
+{
+ $raw=(isset($gateway['raw'])&&is_array($gateway['raw']))?$gateway['raw']:[];
+ $reject=function(string $why) use($raw): array {
+  return ['ok'=>false,'status'=>'pending','reason'=>$why,'raw'=>$raw];
+ };
+
+ $status=pesapal_map_status((string)($gateway['description']??''),(int)($gateway['status_code']??-1));
+ if($status!=='successful') return ['ok'=>true,'status'=>$status,'reason'=>'Gateway reported '.$status,'raw'=>$raw];
+
+ $tid=pesapal_status_field($raw,['orderTrackingId','order_tracking_id','trackingId']);
+ if($tid!==''&&$trackingId!==''&&strcasecmp($tid,$trackingId)!==0){
+  return $reject('Tracking ID returned by the gateway does not match the notification.');
+ }
+ $ref=pesapal_status_field($raw,['merchant_reference','merchantReference','orderMerchantReference','order_reference']);
+ if($ref!==''&&isset($pay['provider_reference'])&&strcasecmp($ref,(string)$pay['provider_reference'])!==0){
+  return $reject('Merchant reference returned by the gateway does not match this payment.');
+ }
+ $currency=strtoupper(pesapal_status_field($raw,['currency','currencyCode']));
+ $expectedCurrency=strtoupper((string)($pay['charged_currency']??$pay['currency']??''));
+ if($currency!==''&&$expectedCurrency!==''&&$currency!==$expectedCurrency){
+  return $reject('Currency returned by the gateway does not match the amount the guest approved.');
+ }
+ $amountField=pesapal_status_field($raw,['amount','total','paid_amount']);
+ if($amountField!==''&&is_numeric($amountField)){
+  $actual=(float)$amountField;
+  $expected=(float)($pay['charged_amount']??$pay['amount']??0);
+  $tolerance=$expectedCurrency==='UGX'?1.0:0.02;
+  if(abs($actual-$expected)>$tolerance){
+   return $reject('Amount returned by the gateway does not match the amount the guest approved.');
+  }
+ }
+ $confirmation=pesapal_status_field($raw,['confirmation_code','confirmationCode','payment_reference','transactionReference']);
+ return ['ok'=>true,'status'=>$status,'reason'=>'','raw'=>$raw,'confirmation'=>$confirmation];
 }

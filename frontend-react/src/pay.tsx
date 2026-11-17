@@ -405,6 +405,48 @@ function PayPage() {
   // catch the confirmation and turn "confirming" into a receipt without the
   // guest having to reload.
   const [poll, setPoll] = React.useState(0);
+  const [currency, setCurrency] = React.useState('UGX');
+  const [baseCurrency, setBaseCurrency] = React.useState('UGX');
+  const [currencies, setCurrencies] = React.useState<string[]>(['UGX']);
+  const [quote, setQuote] = React.useState<{rate: number; source: string; at: string; amount: number; base: number; baseCurrency: string; currency: string; token: string; quotedAt: number} | null>(null);
+  const [quoteBusy, setQuoteBusy] = React.useState(false);
+  const [quoteErr, setQuoteErr] = React.useState('');
+  React.useEffect(() => {
+   let alive = true;
+   (async () => {
+    try {
+     const res = await fetch(await apiUrl('currencies'), {headers: {Accept: 'application/json'}});
+     const d = await res.json();
+     if (!alive || !d || !d.ok || !Array.isArray(d.currencies)) return;
+     const list: string[] = d.currencies.map(String);
+     setCurrencies(list.length ? list : ['UGX']);
+     const base = String(d.base || 'UGX');
+     setBaseCurrency(base);
+     setCurrency(base);
+    } catch { /* the hotel's own currency stays selected */ }
+   })();
+   return () => { alive = false; };
+  }, []);
+  React.useEffect(() => {
+   if (!src || !ref || !detail || Number(detail.due) <= 0) { setQuote(null); return; }
+   if (currency === baseCurrency) { setQuote(null); setQuoteErr(''); return; }
+   let alive = true;
+   setQuoteBusy(true);
+   setQuoteErr('');
+   (async () => {
+    try {
+     const url = await apiUrl('quote');
+     const res = await fetch(`${url}&src=${encodeURIComponent(src)}&ref=${encodeURIComponent(ref)}&currency=${encodeURIComponent(currency)}`, {headers: {Accept: 'application/json'}});
+     const d = await res.json();
+     if (!alive) return;
+     if (!d || !d.ok) { setQuote(null); setQuoteErr(String(d?.error || 'The exchange rate could not be confirmed.')); return; }
+     setQuote({rate: Number(d.rate), source: String(d.source || ''), at: String(d.at || ''), amount: Number(d.amount), base: Number(d.base), baseCurrency: String(d.base_currency || 'UGX'), currency: String(d.currency || currency), token: String(d.quote_token || ''), quotedAt: Date.now()});
+    } catch { if (alive) { setQuote(null); setQuoteErr('The exchange rate could not be confirmed.'); } }
+    finally { if (alive) setQuoteBusy(false); }
+   })();
+   return () => { alive = false; };
+  }, [src, ref, currency, baseCurrency, detail, poll]);
+
   React.useEffect(() => {
    if (!src || !ref) { setLooking(false); return; }
    let alive = true;
@@ -511,12 +553,12 @@ function PayPage() {
   try {
    const body = {
     source: src, reference: ref, name: form.name.trim(), phone: normPhone(form.phone), email: form.email.trim(),
-    method, amount: payable,
+    method, amount: payable, currency, country: 'UG', quote_token: quote?.token || '',
     ...(token ? {token} : {})
    };
    const res = await fetch(await apiUrl('payment'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body), signal: ctrl.signal});
    const raw = await res.text();
-   let d: {ok?: boolean; error?: string; redirect_url?: string; amount?: number; status?: string; paid?: boolean; reference?: string; message?: string} | null = null;
+   let d: {ok?: boolean; error?: string; redirect_url?: string; amount?: number; status?: string; paid?: boolean; reference?: string; message?: string; currency?: string; charged_amount?: number; fx_rate?: number; fx_source?: string; fx_at?: string} | null = null;
    try { d = raw ? JSON.parse(raw) : null; } catch { d = null; }
    if (d && d.ok) {
     // The real gateway hands back a secure checkout link. Leaving the page for
@@ -882,8 +924,28 @@ if (done) {
      </>
      )}
 
-     <p className="eyebrow" style={{marginTop: 26}}>2 &middot; PAYMENT METHOD</p>
-     <h3>How would you like to pay?</h3>
+      <p className="eyebrow" style={{marginTop: 26}}>2 &middot; CURRENCY</p>
+      <h3>Choose the currency to pay in</h3>
+      <div className="payRow2" style={{marginTop: 14}}>
+       <div className="planField"><label>Charging currency</label>
+        <select value={currency} onChange={e => { setCurrency(e.target.value); setErr(''); }}>
+         {currencies.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+       </div>
+       <div className="planField"><label>Hotel price</label><p style={{margin: 0, paddingTop: 10}}>{fmt(payable)} {baseCurrency}</p></div>
+      </div>
+      {currency !== baseCurrency && (
+       <p className="plannerNote" style={{marginTop: 10}}>
+        {quoteBusy ? 'Fetching the live exchange rate\u2026'
+         : quoteErr ? quoteErr
+         : quote ? <>At the live rate of <b>1 {baseCurrency} = {quote.rate} {currency}</b> ({quote.source}{quote.at ? ', ' + quote.at : ''}), Pesapal will charge <b>{quote.amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} {currency}</b>. This rate and final amount are locked until you pay.</>
+         : 'The exchange rate and final amount are confirmed before any money is taken.'}
+       </p>
+      )}
+      <p className="plannerNote">Only currencies approved on the hotel&rsquo;s Pesapal merchant account are offered. Card and mobile-money details are entered on Pesapal&rsquo;s own page.</p>
+
+      <p className="eyebrow" style={{marginTop: 26}}>3 &middot; PAYMENT METHOD</p>
+      <h3>How would you like to pay?</h3>
      <div className="payMethodList">
       {METHODS.map(m => (
        <button key={m.key} type="button" className={'payMethodRow' + (method === m.key ? ' sel' : '')} onClick={() => { setMethod(m.key); setErr(''); }}>
@@ -899,8 +961,8 @@ if (done) {
 
      {err && <div className="bookMsg" style={{marginTop: 16}}>{err}</div>}
 
-       <button className={'btn planBook' + (busy ? ' loading' : '')} style={{marginTop: 22}} onClick={pay} disabled={busy || !payable}>
-       {busy ? 'Contacting Pesapal...' : settled ? 'Already paid in full' : 'Pay ' + fmt(payable) + ' securely'}
+      <button className={'btn planBook' + (busy ? ' loading' : '')} style={{marginTop: 22}} onClick={pay} disabled={busy || !payable || quoteBusy || (currency !== baseCurrency && (!quote || !!quoteErr))}>
+       {busy ? 'Contacting Pesapal...' : settled ? 'Already paid in full' : currency !== baseCurrency && quote ? 'Pay ' + quote.amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + currency + ' securely' : 'Pay ' + fmt(payable) + ' securely'}
       </button>
      <p className="plannerNote">Pesapal is the merchant of record for online payments. On the next step you pay on Pesapal\u2019s secure page, so no card or mobile money details are entered here. Reviewing your request does not charge you, and you are never charged twice. For help, call <a className="footLink" href={telHref(CALL)}>{CALL}</a> or email {HOTEL.email}.</p>
     </div>
