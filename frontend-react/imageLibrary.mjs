@@ -147,27 +147,26 @@ function scanFolder(dir) {
  * Every slot is a different picture. `/images/hero` holds the resized WebP set
  * the page is built from, so the carousel never falls back to a multi megabyte
  * camera original, and no two slides are the same photograph under two names.
- * The order is matched, one for one, to HERO_COPY on the home page. The
- * headline shots the hotel asked for come first - the pool, the pork barbecue,
- * the dining table, the fresh juice and cocktail, the grilled steak, the wine
- * and fried chicken, the seafood, the spirit poured at the bar, the pizza, the
- * beds and the signature dishes - and the remaining classic hero photographs
- * follow behind them.
+ * The order is matched, one for one, to HERO_COPY on the home page.
+ *
+ * The set is deliberately short and hotel first: full-frame 1920px photography
+ * of the pool, the river, the rooms and the house, one silent film of the
+ * property, then a small group of signature dishes. Every still in this list is
+ * at least 1440px wide, so nothing is asked to stretch a small photograph
+ * across a desktop screen. The film waits on its poster and is only played
+ * when its slide is on screen and the visitor has not asked for less motion.
  */
 const HERO_SEQUENCE = [
   'hero/pool',
-  'hero/pork-bbq',
-  'hero/pizza-and-drinks-and-souce',
-  'hero/coctail-juice',
-  'hero/steak-on-plate',
-  'hero/wine-and-fried-chiken',
-  'hero/sea-food-hero',
-  'hero/spirit-alcholic-drink-poured-in-the-glass',
-  'hero/food-pizza-two',
+  'hotel-view',
+  'hero/view',
   'hero/bed-suite',
-  'hero/fish-and-chips',
-  'hero/chicken-whole-roasted',
-  'hero/burger-chips-and-beer'
+  'hero/hotel',
+  'hero/jinja-main-bridge-view-from-hotel-at-night',
+  'hero/food-pizza-two',
+  'hero/food-breakfast',
+  'hero/bed-executive',
+  'hero/pork-bbq'
 ];
 
 const VIDEO_EXTS = ['.mp4', '.webm', '.mov', '.m4v'];

@@ -183,23 +183,18 @@ const untiltDesk = (e: React.PointerEvent<HTMLDivElement>) => {
 
 const HERO_WIDTHS = [640, 1024, 1440, 1920, 2560];
 
-/** The carousel turns over on this, and so does the zoom on each slide. */
-const SLIDE_MS = 4000;
+/** The carousel turns over on this, and so does the zoom and the progress bar. */
+const SLIDE_MS = 3000;
 
 /**
- * What a slide is a photograph of, so the frame can dress it to suit: a dish
- * carries a soft drift of smoke over it, a poured drink a faint handheld
- * tremor, as if the picture were a short film rather than a still.
+ * What a slide is a photograph of, so the frame can dress it to suit. A plated
+ * dish carries a soft drift of smoke over it; the hotel photographs stay clean,
+ * which is what keeps the writing on them easy to read.
  */
-const FOOD_SLUGS = new Set([
-  'pork-bbq', 'pizza-and-drinks-and-souce', 'steak-on-plate', 'wine-and-fried-chiken',
-  'sea-food-hero', 'food-pizza-two', 'fish-and-chips', 'chicken-whole-roasted', 'burger-chips-and-beer'
-]);
-const JUICE_SLUGS = new Set(['coctail-juice', 'spirit-alcholic-drink-poured-in-the-glass']);
+const FOOD_SLUGS = new Set(['food-pizza-two', 'food-breakfast', 'pork-bbq']);
 
 /** The one effect class a slide's photograph calls for, or none. */
-const slideMood = (slug: string): '' | ' isFood' | ' isJuice' =>
-  FOOD_SLUGS.has(slug) ? ' isFood' : JUICE_SLUGS.has(slug) ? ' isJuice' : '';
+const slideMood = (slug: string): '' | ' isFood' => FOOD_SLUGS.has(slug) ? ' isFood' : '';
 
 /** Only widths the file really has, so a 680px photo is never asked to fill 2560. */
 const heroSrcSet = (shot: HeroShot) => {
