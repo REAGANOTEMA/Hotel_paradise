@@ -87,6 +87,10 @@ input:focus,select:focus,textarea:focus{border-color:rgba(201,162,39,.55) !impor
 .lsStars span{color:#e6cb74}
 /* Charts containers if present */
 canvas{max-width:100%}
+.pageHead h1,.pageHead h2,.sectionHead h2,.tbTitle b{animation:adminTitleIn .6s cubic-bezier(.2,.7,.2,1) both}
+.chartBox,.reportCard{animation:adminFadeIn .7s ease .1s backwards}
+@keyframes adminTitleIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes adminFadeIn{from{opacity:0}to{opacity:1}}
 @media (max-width: 900px){
   .topbar{margin:10px 10px 0;border-radius:14px !important}
   .content{padding:12px 10px 20px !important}

@@ -493,7 +493,12 @@ function Hero() {
           </svg>
          </span>
          <p className="eyebrow">{c.eyebrow}</p>
-         <h1 className="heroTitle">{c.title}</h1>
+          <h1 className="heroTitle">{c.title.split(' ').map((word, k, all) => (
+            <React.Fragment key={k}>
+              <span className="heroWord" style={{animationDelay: `${(0.16 + k * 0.055).toFixed(3)}s`}}>{word}</span>
+              {k < all.length - 1 ? ' ' : null}
+            </React.Fragment>
+          ))}</h1>
          <p className="heroText">{c.text}</p>
          <span className="heroRule" aria-hidden="true"/>
          <div className="heroBtns">

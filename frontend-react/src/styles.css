@@ -306,6 +306,21 @@ b,strong{font-variant-numeric:tabular-nums}
 .heroPanelInner .heroBtns{transform:translateZ(26px)}
 .heroPanel.on .heroPanelInner{animation:heroPlateIn .85s cubic-bezier(.2,.7,.2,1) both}
 @keyframes heroPlateIn{from{opacity:0;transform:translateY(22px) rotateX(7deg)}to{opacity:1;transform:none}}
+.heroWord{display:inline-block;opacity:0;translate:0 .44em;filter:blur(7px)}
+.heroPanel.on .heroWord{animation:heroWordIn .95s cubic-bezier(.18,.72,.22,1) both}
+@keyframes heroWordIn{from{opacity:0;translate:0 .44em;filter:blur(7px)}to{opacity:1;translate:0 0;filter:blur(0)}}
+.heroPanel .eyebrow{opacity:0;translate:0 12px}
+.heroPanel.on .eyebrow{animation:heroLineIn .8s cubic-bezier(.18,.72,.22,1) .04s both}
+.heroPanel .heroText{opacity:0;translate:0 18px}
+.heroPanel.on .heroText{animation:heroLineIn .9s cubic-bezier(.18,.72,.22,1) .44s both}
+.heroPanel .heroRule{opacity:0;translate:-18px 0}
+.heroPanel.on .heroRule{animation:heroRuleIn .8s cubic-bezier(.18,.72,.22,1) .66s both}
+@keyframes heroLineIn{from{opacity:0;translate:0 16px}to{opacity:1;translate:0 0}}
+@keyframes heroRuleIn{from{opacity:0;translate:-18px 0}to{opacity:1;translate:0 0}}
+.heroPanel.on .heroBtns .btn{opacity:0;translate:0 14px;animation:heroCtaIn .85s cubic-bezier(.18,.72,.22,1) both}
+.heroPanel.on .heroBtns .btn:nth-child(1){animation-delay:.76s}
+.heroPanel.on .heroBtns .btn:nth-child(2){animation-delay:.9s}
+@keyframes heroCtaIn{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
 .heroDots{position:absolute;z-index:3;left:50%;bottom:24px;transform:translateX(-50%);display:flex;gap:2px;align-items:center}
 /* The bar is drawn by ::before so the tap target can be a comfortable
    34 by 26 pixels instead of a 4 pixel sliver. */
@@ -348,14 +363,9 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
   text-shadow:none;transform:translateY(-1px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 12px 28px rgba(201,162,39,.35);
 }
-/* The two hero buttons call for the eye one after the other: the first shakes
-   once and holds a gold ring for a few seconds, then the second, and the pair
-   rests before it begins again. The animation restarts each time a new slide
-   takes the stage, so the offer always opens on the button in view. */
+/* The calls to action settle in one after the other as a new slide opens, then
+   stay still so the words and the buttons remain easy to read and to use. */
 .heroPanel.on .heroBtns .btn{position:relative}
-.heroPanel.on .heroBtns .btn:nth-child(1){animation:heroAttn 4s ease-in-out .3s infinite}
-.heroPanel.on .heroBtns .btn:nth-child(2){animation:heroAttn 4s ease-in-out 2.3s infinite}
-.heroPanel.on .heroBtns .btn:hover{animation-play-state:paused}
 @keyframes heroAttn{
   0%{transform:translateX(0) scale(1)}
   2%{transform:translateX(-4px)}
@@ -371,6 +381,7 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
   60%,100%{transform:translateX(0) scale(1);box-shadow:0 0 0 0 rgba(201,162,39,0)}
 }
 @media(prefers-reduced-motion:reduce){
+  .heroWord,.heroPanel .eyebrow,.heroPanel .heroText,.heroPanel .heroRule,.heroPanel.on .heroBtns .btn{opacity:1!important;translate:none!important;filter:none!important;animation:none!important}
   .heroPanel.on .heroBtns .btn{animation:none}
   .heroPanel.on .heroPanelInner{animation:none}
   .heroSeal{animation:none}
@@ -422,8 +433,8 @@ h1,h2{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:-.01em
 /* Everything marked .reveal rises into place the first time it scrolls past.
     The class is only ever added by the observer, so a browser without one shows
     the page at full brightness from the start. */
-.reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
-.reveal.in{opacity:1;transform:none}
+.reveal{opacity:0;transform:translateY(20px);filter:blur(3px);transition:opacity .85s ease,transform .9s cubic-bezier(.16,.72,.24,1),filter .85s ease;transition-delay:var(--rdelay,0ms)}
+.reveal.in{opacity:1;transform:none;filter:blur(0)}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;text-align:left;margin-top:10px}
 .card{background:#fff;border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;transition:box-shadow .25s ease,transform .25s ease}
 .photo.isEmpty{display:flex;align-items:center;justify-content:center;color:#b39c5e;background:linear-gradient(150deg,#16293f,#0B5D78)}
@@ -1524,7 +1535,7 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .drawer.open .drawerNav a{transition-delay:0s;transform:none}
   .pulse,.btn.loading::after{animation-duration:1.6s}
   /* nothing waits to be scrolled into view, and nothing drifts into place */
-  .reveal{opacity:1!important;transform:none!important;transition:none!important}
+  .reveal{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
 }
 
 /* the menu is designed to be printed as well as browsed */
@@ -2873,3 +2884,66 @@ body.hpn-concierge .installApp{bottom:calc(28px + 156px)}
 
 /* Concierge premium refinements */
 .conType{display:flex;gap:8px;margin-top:10px}.conInput{flex:1;min-width:0;border:1px solid rgba(201,162,39,.25);border-radius:999px;padding:10px 14px;background:rgba(255,255,255,.96);color:#132033}.conInput:focus{outline:none;box-shadow:0 0 0 3px rgba(201,162,39,.16);border-color:rgba(201,162,39,.5)}.conLauncher{box-shadow:0 14px 34px rgba(7,26,51,.22)!important;border:1px solid rgba(201,162,39,.35)!important;background:linear-gradient(135deg,rgba(7,26,51,.96),rgba(13,39,72,.96))!important;color:#fff}.conLauncher b{color:#fff}.conLauncher em{color:#d9e4f2}.concierge{border:1px solid rgba(201,162,39,.28)!important;box-shadow:0 24px 60px rgba(7,26,51,.28)!important;background:rgba(255,255,255,.94)!important;backdrop-filter:blur(12px)}.conTitle{font-family:'Playfair Display',serif;color:#071a33}.conBtn{border-radius:999px!important}
+
+:root{
+  --hp-gold:#c9a227;--hp-gold-soft:#e7cf78;--hp-gold-deep:#9e7b16;
+  --hp-navy:#071a33;--hp-navy-2:#0d2748;--hp-nile:#0b5d78;--hp-ivory:#f8f4ea;--hp-white:#fff;
+  --hp-shadow:0 18px 50px rgba(7,26,51,.18);--hp-shadow-soft:0 10px 28px rgba(7,26,51,.12);
+  --hp-radius:18px;--hp-radius-sm:12px;--hp-ease:cubic-bezier(.22,.61,.36,1);
+}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(1200px 500px at 10% -10%,rgba(201,162,39,.08),transparent 60%),linear-gradient(180deg,#f7f4ec 0%,#f3f1ea 100%);color:#132033}
+::selection{background:rgba(201,162,39,.28);color:#071a33}
+.topbar,.siteHeader,header{backdrop-filter:saturate(140%) blur(10px)}
+.brandLogo,.footerLogo,.sideLogo,.lsLogo,.loginBrandTop img{filter:drop-shadow(0 4px 10px rgba(7,26,51,.18))}
+.brandLogo{height:54px !important;width:auto !important}
+.footerLogo{height:64px !important;width:auto !important;max-width:280px}
+a.btn,button.btn,.btn,.addBtn,.checkoutBtn,.payBtn{
+  border-radius:999px !important;letter-spacing:.02em;font-weight:700;
+  box-shadow:0 8px 22px rgba(201,162,39,.22);transition:transform .28s var(--hp-ease),box-shadow .28s var(--hp-ease),filter .28s var(--hp-ease)
+}
+a.btn:hover,button.btn:hover,.btn:hover,.addBtn:hover,.checkoutBtn:hover,.payBtn:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(201,162,39,.28);filter:saturate(1.04)}
+a.btn:active,button.btn:active,.btn:active{transform:translateY(0)}
+.hero,.pageHero,.heroSec,[class*="hero"]{position:relative;isolation:isolate}
+.hero::after,.pageHero::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(7,26,51,.18),rgba(7,26,51,.45) 65%,rgba(7,26,51,.55));z-index:0}
+.hero > *,.pageHero > *{position:relative;z-index:1}
+.hero h1,.pageHero h1,h1{letter-spacing:.01em;text-shadow:0 8px 30px rgba(0,0,0,.18)}
+.eyebrow,.kicker,.pill,.tag,[class*="eyebrow"],[class*="kicker"]{letter-spacing:.18em !important}
+.card,.roomCard,.menuCard,.dishCard,.foodCard,.venueCard,.featureCard,.dineCard,.buffetTier,.factCard,[class*="Card"]{
+  border:1px solid rgba(201,162,39,.18) !important;border-radius:var(--hp-radius) !important;
+  box-shadow:var(--hp-shadow-soft) !important;overflow:hidden;background:rgba(255,255,255,.92);
+  transition:transform .35s var(--hp-ease),box-shadow .35s var(--hp-ease),border-color .35s var(--hp-ease)
+}
+.card:hover,.roomCard:hover,.menuCard:hover,.dishCard:hover,.foodCard:hover,.venueCard:hover,.featureCard:hover,.dineCard:hover,.buffetTier:hover,.factCard:hover,[class*="Card"]:hover{
+  transform:translateY(-6px);box-shadow:var(--hp-shadow) !important;border-color:rgba(201,162,39,.38) !important
+}
+.card img,.roomCard img,.menuCard img,.dishCard img,.foodCard img,.venueCard img,.dineCard img,[class*="Card"] img{
+  transition:transform .9s var(--hp-ease),filter .6s var(--hp-ease)
+}
+.card:hover img,.roomCard:hover img,.menuCard:hover img,.dishCard:hover img,.foodCard:hover img,.venueCard:hover img,.dineCard:hover img,[class*="Card"]:hover img{transform:scale(1.045);filter:saturate(1.05) contrast(1.02)}
+.menuGrid,.dishes,.dishGrid,[class*="menu"] .grid,[class*="Menu"]{gap:22px !important}
+.menuCard,.dishCard,.foodCard{background:linear-gradient(180deg,#fff, #fbfaf6)}
+.menuCard h3,.dishCard h3,.foodCard h3,.menuCard h4,.dishCard h4{font-family:'Playfair Display',serif;color:#0b2342}
+.price,.dishPrice,.menuPrice,[class*="price"],.dinePrice b{color:#0b2342 !important;font-weight:700}
+.price,.dishPrice,.menuPrice{font-size:1.05rem}
+.catTitle,.sectionTitle h2,h2{font-family:'Playfair Display',serif;color:#071a33}
+.catTitle::after,.sectionTitle h2::after{content:"";display:block;width:64px;height:3px;margin-top:10px;border-radius:99px;background:linear-gradient(90deg,var(--hp-gold-soft),var(--hp-gold),var(--hp-gold-deep))}
+.cart,.cartPanel,.cartDrawer,.tray,.orderTray,[class*="cart"],[class*="Cart"],[class*="tray"]{
+  border:1px solid rgba(201,162,39,.18);box-shadow:0 24px 60px rgba(7,26,51,.22);backdrop-filter:blur(10px)
+}
+.cartItem,.trayItem,[class*="cartItem"]{border-bottom:1px solid rgba(7,26,51,.08);padding:12px 0}
+.qtyBtn,button[class*="qty"],.qty button{border-radius:10px !important;border:1px solid rgba(201,162,39,.35) !important}
+.section,.band{position:relative}
+.section.hasBackdrop::before,.band.hasBackdrop::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,26,51,.35),rgba(7,26,51,.55));z-index:0}
+.section.hasBackdrop > *,.band.hasBackdrop > *{position:relative;z-index:1}
+.hpLegacyReveal{animation:hpFadeUp .7s var(--hp-ease) both}
+@keyframes hpFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.loginCard,.lsCard{border:1px solid rgba(201,162,39,.22) !important;box-shadow:0 30px 80px rgba(7,26,51,.28) !important}
+@media (max-width: 900px){
+  .brandLogo{height:42px !important}.footerLogo{height:52px !important}
+  .card:hover,.roomCard:hover,.menuCard:hover,.dishCard:hover,.foodCard:hover,[class*="Card"]:hover{transform:none}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}.reveal{animation:none !important}*,*::before,*::after{transition:none !important}
+}

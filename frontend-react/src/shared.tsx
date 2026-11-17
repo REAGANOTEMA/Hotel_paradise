@@ -794,6 +794,61 @@ export function BackToTop() {
  * Everything is revealed at once when the browser cannot observe scrolling or
  * the guest has asked for less motion, so the writing is never held back.
  */
+const cinematicSelector = [
+  'h1', 'h2', 'h3', 'h4', '.eyebrow', '.lead', '.intro', '.sectionLead',
+  '.legalLead', '.legalMeta', '.stripNote', '.buffetNote',
+  '.card p', '.dineCard p', '.venue p', '.fac p', '.newsArticle p', '.legalClause > p',
+  '.splitBand p', '.rateCard p', '.policy p', '.contactCard p',
+  'footer h2', 'footer h3', 'footer p'
+].join(',');
+const cinematicSkip = '.hero,.topbar,.nav,.drawer,.modal,.orderPanel,.cart,.skipLink,form,table,button,label';
+
+let cinematicStarted = false;
+export function useCinematicType(): void {
+  if (cinematicStarted || typeof document === 'undefined') return;
+  cinematicStarted = true;
+  const start = () => {
+    let still = false;
+    try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { /* no preference reported */ }
+    if (still || !('IntersectionObserver' in window)) return;
+    const seen = new Set<Element>();
+    const counters = new WeakMap<Element, number>();
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, {threshold: 0.08, rootMargin: '0px 0px -4% 0px'});
+    const mark = () => {
+      document.querySelectorAll<HTMLElement>(cinematicSelector).forEach(el => {
+        if (seen.has(el) || el.closest('.reveal') || el.closest(cinematicSkip)) return;
+        seen.add(el);
+        el.classList.add('reveal');
+        const parent = el.parentElement;
+        if (parent) {
+          const n = counters.get(parent) || 0;
+          counters.set(parent, n + 1);
+          el.style.setProperty('--rdelay', `${Math.min(n, 6) * 75}ms`);
+        }
+        io.observe(el);
+      });
+    };
+    mark();
+    if ('MutationObserver' in window) {
+      let queued = false;
+      const mo = new MutationObserver(() => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(() => { queued = false; mark(); });
+      });
+      mo.observe(document.documentElement, {childList: true, subtree: true});
+    }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once: true});
+  else start();
+}
+
 export function useReveal() {
   React.useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
@@ -820,6 +875,7 @@ export function useReveal() {
 /* Every page imports this module, so the service worker is offered once,
    from one place, rather than each page having to remember to ask. */
 registerServiceWorker();
+useCinematicType();
 
 
 
