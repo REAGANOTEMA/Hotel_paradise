@@ -217,16 +217,16 @@ b,strong{font-variant-numeric:tabular-nums}
    running while the next picture is fading in over it. */
 .heroSlide.zoomOut{transform:scale(1.03)}
 .heroSlide.zoomIn{transform:scale(1.08)}
-.heroSlide.zoomOut.active{animation:heroZoomOut var(--heroZoom,4s) cubic-bezier(.32,.02,.24,1) both}
-.heroSlide.zoomIn.active{animation:heroZoomIn var(--heroZoom,4s) cubic-bezier(.32,.02,.24,1) both}
+.heroSlide.zoomOut.active{animation:heroZoomOut var(--heroZoom,var(--slide-ms,5000ms)) cubic-bezier(.32,.02,.24,1) both}
+.heroSlide.zoomIn.active{animation:heroZoomIn var(--heroZoom,var(--slide-ms,5000ms)) cubic-bezier(.32,.02,.24,1) both}
 @keyframes heroZoomOut{from{transform:scale(1.08)}to{transform:scale(1.03)}}
 @keyframes heroZoomIn{from{transform:scale(1.03)}to{transform:scale(1.08)}}
 /* A poured drink is given a faint handheld tremor on top of its slow zoom, so
    the frame reads as a short film rather than a still. The tremor rides the
    separate translate and rotate properties, which is what lets it live
    alongside the transform the zoom already owns. */
-.heroSlide.isJuice.zoomOut.active{animation:heroZoomOut var(--heroZoom,4s) cubic-bezier(.32,.02,.24,1) both,heroTremor 5.5s ease-in-out .4s infinite}
-.heroSlide.isJuice.zoomIn.active{animation:heroZoomIn var(--heroZoom,4s) cubic-bezier(.32,.02,.24,1) both,heroTremor 5.5s ease-in-out .4s infinite}
+.heroSlide.isJuice.zoomOut.active{animation:heroZoomOut var(--heroZoom,var(--slide-ms,5000ms)) cubic-bezier(.32,.02,.24,1) both,heroTremor 5.5s ease-in-out .4s infinite}
+.heroSlide.isJuice.zoomIn.active{animation:heroZoomIn var(--heroZoom,var(--slide-ms,5000ms)) cubic-bezier(.32,.02,.24,1) both,heroTremor 5.5s ease-in-out .4s infinite}
 @keyframes heroTremor{
   0%,100%{translate:0 0;rotate:0deg}
   25%{translate:.7px -.9px;rotate:.16deg}
@@ -261,8 +261,8 @@ b,strong{font-variant-numeric:tabular-nums}
 .heroCopy{position:relative;z-index:2;width:100%;display:grid;padding:calc(var(--navh) + clamp(34px,4vw,54px)) 8vw clamp(96px,9vw,128px);color:#fff}
 /* All seven panels share one grid cell, so the block is as tall as the longest
    of them and the words can change length without moving anything. */
-.heroPanel{grid-area:1/1;align-self:center;width:100%;max-width:820px;opacity:0;visibility:hidden;pointer-events:none;perspective:1400px;transition:opacity .5s ease,visibility 0s linear .5s}
-.heroPanel.on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .55s ease,visibility 0s}
+.heroPanel{grid-area:1/1;align-self:center;width:100%;max-width:820px;opacity:0;visibility:hidden;pointer-events:none;perspective:1400px;transition:opacity .26s ease,visibility 0s linear .26s}
+.heroPanel.on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .7s ease .14s,visibility 0s}
 /* The writing stands directly on the photograph. The decoration lives in the
    words themselves (a gold rule, a gilded title and a ruled body) instead of a
    pane of glass that would blur and cover the picture behind it. */
@@ -308,7 +308,7 @@ b,strong{font-variant-numeric:tabular-nums}
 @keyframes heroPlateIn{from{opacity:0;transform:translateY(22px) rotateX(7deg)}to{opacity:1;transform:none}}
 .heroWord{display:inline-block;opacity:0;translate:0 .44em;filter:blur(7px)}
 .heroPanel.on .heroWord{animation:heroWordIn .95s cubic-bezier(.18,.72,.22,1) both}
-@keyframes heroWordIn{from{opacity:0;translate:0 .44em;filter:blur(7px)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@keyframes heroWordIn{from{opacity:0;translate:0 .44em;rotate:-3deg;filter:blur(7px)}to{opacity:1;translate:0 0;rotate:0deg;filter:blur(0)}}
 .heroPanel .eyebrow{opacity:0;translate:0 12px}
 .heroPanel.on .eyebrow{animation:heroLineIn .8s cubic-bezier(.18,.72,.22,1) .04s both}
 .heroPanel .heroText{opacity:0;translate:0 18px}
@@ -326,13 +326,13 @@ b,strong{font-variant-numeric:tabular-nums}
    34 by 26 pixels instead of a 4 pixel sliver. */
 .heroDots .dot{position:relative;width:34px;height:26px;background:none;border:0;padding:0;cursor:pointer;transition:width .4s ease}
 .heroDots .dot::before{content:'';position:absolute;left:2px;right:2px;top:11px;height:4px;border-radius:99px;background:rgba(255,255,255,.38);transition:background .4s ease}
-/* ::after is the progress fill, played over the same six seconds a slide
+/* ::after is the progress fill, played over exactly the same interval a slide
    lives, so the active bar doubles as the carousel's timer. */
 .heroDots .dot::after{content:'';position:absolute;left:2px;right:2px;top:11px;height:4px;border-radius:99px;background:linear-gradient(90deg,var(--gold),#e6c54a);transform:scaleX(0);transform-origin:left;opacity:0}
 .heroDots .dot:hover::before{background:rgba(255,255,255,.75)}
 .heroDots .dot.on{width:48px}
 .heroDots .dot.on::before{background:rgba(255,255,255,.28)}
-.heroDots .dot.on::after{opacity:1;animation:dotFill 4s linear both}
+.heroDots .dot.on::after{opacity:1;animation:dotFill var(--slide-ms,5000ms) linear both}
 .heroDots .dot.on:hover::before{background:rgba(255,255,255,.6)}
 @keyframes dotFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 /* Hovering or focusing the carousel holds a slide open, so it holds the

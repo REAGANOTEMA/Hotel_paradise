@@ -9535,176 +9535,38 @@
       "kind": "image"
     },
     {
-      "slug": "pork-bbq",
-      "dir": "./images/hero/",
-      "file": "pork-bbq.webp",
-      "ext": "webp",
-      "w": 1280,
-      "h": 853,
-      "variants": [
-        {
-          "file": "pork-bbq-640.webp",
-          "ext": "webp",
-          "w": 640,
-          "h": 426
-        },
-        {
-          "file": "pork-bbq-1024.webp",
-          "ext": "webp",
-          "w": 1024,
-          "h": 682
-        }
-      ],
-      "kind": "image"
+      "slug": "hotel-view",
+      "dir": "./images/",
+      "file": "hotel-view.mp4",
+      "ext": "mp4",
+      "w": 0,
+      "h": 0,
+      "variants": [],
+      "kind": "video",
+      "poster": {
+        "dir": "./images/",
+        "file": "hotel-view-poster.jpg",
+        "ext": "jpg",
+        "w": 1600,
+        "h": 900
+      }
     },
     {
-      "slug": "pizza-and-drinks-and-souce",
+      "slug": "view",
       "dir": "./images/hero/",
-      "file": "pizza-and-drinks-and-souce-1500.webp",
-      "ext": "webp",
-      "w": 1500,
-      "h": 1000,
-      "variants": [
-        {
-          "file": "pizza-and-drinks-and-souce-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 640
-        },
-        {
-          "file": "pizza-and-drinks-and-souce-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 853
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "coctail-juice",
-      "dir": "./images/hero/",
-      "file": "coctail-juice.webp",
-      "ext": "webp",
-      "w": 1440,
-      "h": 810,
-      "variants": [
-        {
-          "file": "coctail-juice-640.webp",
-          "ext": "webp",
-          "w": 640,
-          "h": 360
-        },
-        {
-          "file": "coctail-juice-1024.webp",
-          "ext": "webp",
-          "w": 1024,
-          "h": 576
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "steak-on-plate",
-      "dir": "./images/hero/",
-      "file": "steak-on-plate.webp",
-      "ext": "webp",
-      "w": 940,
-      "h": 625,
-      "variants": [
-        {
-          "file": "steak-on-plate-640.webp",
-          "ext": "webp",
-          "w": 640,
-          "h": 426
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "wine-and-fried-chiken",
-      "dir": "./images/hero/",
-      "file": "wine-and-fried-chiken.webp",
-      "ext": "webp",
-      "w": 1024,
-      "h": 683,
-      "variants": [
-        {
-          "file": "wine-and-fried-chiken-640.webp",
-          "ext": "webp",
-          "w": 640,
-          "h": 427
-        },
-        {
-          "file": "wine-and-fried-chiken-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 640
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "sea-food-hero",
-      "dir": "./images/hero/",
-      "file": "sea-food-hero.webp",
-      "ext": "webp",
-      "w": 1800,
-      "h": 1201,
-      "variants": [
-        {
-          "file": "sea-food-hero-640.webp",
-          "ext": "webp",
-          "w": 640,
-          "h": 427
-        },
-        {
-          "file": "sea-food-hero-960.webp",
-          "ext": "webp",
-          "w": 960,
-          "h": 641
-        },
-        {
-          "file": "sea-food-hero-1280.webp",
-          "ext": "webp",
-          "w": 1280,
-          "h": 854
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "spirit-alcholic-drink-poured-in-the-glass",
-      "dir": "./images/hero/",
-      "file": "spirit-alcholic-drink-poured-in-the-glass.webp",
-      "ext": "webp",
-      "w": 739,
-      "h": 415,
-      "variants": [
-        {
-          "file": "spirit-alcholic-drink-poured-in-the-glass-640.webp",
-          "ext": "webp",
-          "w": 640,
-          "h": 359
-        }
-      ],
-      "kind": "image"
-    },
-    {
-      "slug": "food-pizza-two",
-      "dir": "./images/hero/",
-      "file": "food-pizza-two-1920.webp",
+      "file": "view-1920.webp",
       "ext": "webp",
       "w": 1920,
       "h": 1280,
       "variants": [
         {
-          "file": "food-pizza-two-960.webp",
+          "file": "view-960.webp",
           "ext": "webp",
           "w": 960,
           "h": 640
         },
         {
-          "file": "food-pizza-two-1280.webp",
+          "file": "view-1280.webp",
           "ext": "webp",
           "w": 1280,
           "h": 853
@@ -9736,52 +9598,139 @@
       "kind": "image"
     },
     {
-      "slug": "fish-and-chips",
+      "slug": "hotel",
       "dir": "./images/hero/",
-      "file": "fish-and-chips.webp",
+      "file": "hotel-1920.webp",
       "ext": "webp",
-      "w": 780,
-      "h": 438,
+      "w": 1920,
+      "h": 1280,
       "variants": [
         {
-          "file": "fish-and-chips-640.webp",
+          "file": "hotel-960.webp",
           "ext": "webp",
-          "w": 640,
-          "h": 359
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "hotel-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
         }
       ],
       "kind": "image"
     },
     {
-      "slug": "chicken-whole-roasted",
+      "slug": "jinja-main-bridge-view-from-hotel-at-night",
       "dir": "./images/hero/",
-      "file": "chicken-whole-roasted.webp",
+      "file": "jinja-main-bridge-view-from-hotel-at-night.webp",
       "ext": "webp",
-      "w": 740,
-      "h": 555,
+      "w": 1440,
+      "h": 960,
       "variants": [
         {
-          "file": "chicken-whole-roasted-640.webp",
+          "file": "jinja-main-bridge-view-from-hotel-at-night-640.webp",
           "ext": "webp",
           "w": 640,
-          "h": 480
+          "h": 427
+        },
+        {
+          "file": "jinja-main-bridge-view-from-hotel-at-night-1024.webp",
+          "ext": "webp",
+          "w": 1024,
+          "h": 683
         }
       ],
       "kind": "image"
     },
     {
-      "slug": "burger-chips-and-beer",
+      "slug": "food-pizza-two",
       "dir": "./images/hero/",
-      "file": "burger-chips-and-beer.webp",
+      "file": "food-pizza-two-1920.webp",
       "ext": "webp",
-      "w": 959,
-      "h": 653,
+      "w": 1920,
+      "h": 1280,
       "variants": [
         {
-          "file": "burger-chips-and-beer-640.webp",
+          "file": "food-pizza-two-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "food-pizza-two-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "food-breakfast",
+      "dir": "./images/hero/",
+      "file": "food-breakfast-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "food-breakfast-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "food-breakfast-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "bed-executive",
+      "dir": "./images/hero/",
+      "file": "bed-executive-1920.webp",
+      "ext": "webp",
+      "w": 1920,
+      "h": 1280,
+      "variants": [
+        {
+          "file": "bed-executive-960.webp",
+          "ext": "webp",
+          "w": 960,
+          "h": 640
+        },
+        {
+          "file": "bed-executive-1280.webp",
+          "ext": "webp",
+          "w": 1280,
+          "h": 853
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "slug": "pork-bbq",
+      "dir": "./images/hero/",
+      "file": "pork-bbq.webp",
+      "ext": "webp",
+      "w": 1280,
+      "h": 853,
+      "variants": [
+        {
+          "file": "pork-bbq-640.webp",
           "ext": "webp",
           "w": 640,
-          "h": 436
+          "h": 426
+        },
+        {
+          "file": "pork-bbq-1024.webp",
+          "ext": "webp",
+          "w": 1024,
+          "h": 682
         }
       ],
       "kind": "image"

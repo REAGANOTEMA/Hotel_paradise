@@ -183,8 +183,13 @@ const untiltDesk = (e: React.PointerEvent<HTMLDivElement>) => {
 
 const HERO_WIDTHS = [640, 1024, 1440, 1920, 2560];
 
-/** The carousel turns over on this, and so does the zoom and the progress bar. */
-const SLIDE_MS = 3000;
+/**
+ * How long a scene holds before the next one begins. It is long enough for the
+ * headline, the supporting line and the buttons to finish their entrance and
+ * then settle, so the writing is readable before the picture changes. The same
+ * number drives the progress bar and the Ken Burns drift in CSS.
+ */
+const SLIDE_MS = 5000;
 
 /**
  * What a slide is a photograph of, so the frame can dress it to suit. A plated
@@ -247,67 +252,25 @@ type HeroCopy = {
  */
 const HERO_COPY: HeroCopy[] = [
   {
-    eyebrow: 'HEALTH CLUB AND POOL',
+    eyebrow: 'THE POOL AND GARDENS',
     title: 'Golden afternoons by the pool.',
     text: 'Cool off in the pool, framed by sun loungers, lush gardens and the sound of the Nile.',
     primary: {label: 'See the facilities', href: './facilities.html'},
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'STRAIGHT FROM THE GRILL',
-    title: 'Pork barbecue, glazed and sticky.',
-    text: 'Marinated overnight, grilled low and slow, then finished with a glossy glaze.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'Send an order', href: './menu.html#order'}
+    eyebrow: 'WELCOME TO PARADISE',
+    title: 'A place the river calls home.',
+    text: 'Follow the Nile through the gardens and discover the calm that has welcomed guests to Jinja since 1998.',
+    primary: {label: 'Explore the hotel', href: './facilities.html'},
+    secondary: {label: 'Plan your stay', href: '#book'}
   },
   {
-    eyebrow: 'DINING IN PARADISE',
-    title: 'A table set by the river.',
-    text: 'Breakfast, lunch and dinner by the river, every dish served fresh through the day.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'Send an order', href: './menu.html#order'}
-  },
-  {
-    eyebrow: 'PRESSED AND POURED',
-    title: 'Juices and cocktails, made fresh.',
-    text: 'Juices pressed to order from ripe local fruit, and cocktails shaken with the same care.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'Send an order', href: './menu.html#order'}
-  },
-  {
-    eyebrow: 'FROM THE GRILL',
-    title: 'A steak, cooked just right.',
-    text: 'Char-grilled to your liking and rested until tender, served hot with your choice of sides.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'Send an order', href: './menu.html#order'}
-  },
-  {
-    eyebrow: 'CRISP AND GOLDEN',
-    title: 'Fried chicken, and a glass of wine.',
-    text: 'Crisp, golden fried chicken with a chilled glass of wine, a pairing worth the trip.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'Send an order', href: './menu.html#order'}
-  },
-  {
-    eyebrow: 'FRESH FROM THE NILE',
-    title: 'Catch of the day, served with pride.',
-    text: 'Fresh tilapia and river fish, seasoned and grilled by our chefs, from water to plate.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'Send an order', href: './menu.html#order'}
-  },
-  {
-    eyebrow: 'FROM THE BAR',
-    title: 'A spirit, poured with a steady hand.',
-    text: 'Whisky, gin and local pours, measured and served the way they should be.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'Send an order', href: './menu.html#order'}
-  },
-  {
-    eyebrow: 'FROM THE PIZZA OVEN',
-    title: 'A proper margherita.',
-    text: 'Tomato, mozzarella and basil on a thin, floury crust, pulled hot from the oven.',
-    primary: {label: 'Open the menu', href: './menu.html'},
-    secondary: {label: 'Send an order', href: './menu.html#order'}
+    eyebrow: 'ON THE BANKS OF THE NILE',
+    title: 'The river, right outside your door.',
+    text: 'Wake to the water, linger over breakfast and watch the Nile move past the garden and the terrace.',
+    primary: {label: 'See the rooms', href: './rooms.html'},
+    secondary: {label: 'Book your stay', href: '#book'}
   },
   {
     eyebrow: 'THE SUITE',
@@ -317,23 +280,44 @@ const HERO_COPY: HeroCopy[] = [
     secondary: {label: 'Check availability', href: '#book'}
   },
   {
-    eyebrow: 'FRESH FROM THE WATER',
-    title: 'Golden fish and chunky chips.',
-    text: 'Fresh tilapia, lightly battered and fried crisp, with a generous portion of hot chips.',
+    eyebrow: 'YOUR HOME IN JINJA',
+    title: 'A landmark on the Nile.',
+    text: 'Sixty nine rooms, a kitchen that plates for two hundred and a front desk that never closes.',
+    primary: {label: 'Explore the hotel', href: './facilities.html'},
+    secondary: {label: 'Book a room', href: '#book'}
+  },
+  {
+    eyebrow: 'JINJA AFTER DARK',
+    title: 'The Nile, lit up at night.',
+    text: 'The bridge, the water and the lights of Jinja, only a few minutes from your room.',
+    primary: {label: 'See the facilities', href: './facilities.html'},
+    secondary: {label: 'Plan your stay', href: '#book'}
+  },
+  {
+    eyebrow: 'FROM THE PIZZA OVEN',
+    title: 'A proper margherita.',
+    text: 'Tomato, mozzarella and basil on a thin, floury crust, pulled hot from the oven.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'ROASTED TO PERFECTION',
-    title: 'A whole chicken, slow roasted.',
-    text: 'Marinated in house spices and roasted until golden and tender, made to share.',
+    eyebrow: 'MORNING AT THE HOTEL',
+    title: 'Breakfast, served with the sunrise.',
+    text: 'Freshly prepared, unhurried and included with every room, however early you are up.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   },
   {
-    eyebrow: 'FROM THE GRILL AND BAR',
-    title: 'A burger, chips and a cold beer.',
-    text: 'A juicy grilled burger, a basket of hot chips and an ice cold beer.',
+    eyebrow: 'THE EXECUTIVE ROOM',
+    title: 'Rest, finely considered.',
+    text: 'A quiet, well appointed room with a king sized bed, ready for business or a well earned break.',
+    primary: {label: 'See the rooms', href: './rooms.html'},
+    secondary: {label: 'Check availability', href: '#book'}
+  },
+  {
+    eyebrow: 'STRAIGHT FROM THE GRILL',
+    title: 'Pork barbecue, glazed and sticky.',
+    text: 'Marinated overnight, grilled low and slow, then finished with a glossy glaze.',
     primary: {label: 'Open the menu', href: './menu.html'},
     secondary: {label: 'Send an order', href: './menu.html#order'}
   }
@@ -406,13 +390,14 @@ function Hero() {
   };
 
   return (
-   <section
-    className="hero"
-    id="main"
-    aria-roledescription="carousel"
-    aria-label="Hotel Paradise on the Nile"
-    tabIndex={0}
-    onKeyDown={onKey}
+    <section
+     className="hero"
+     id="main"
+     style={{'--slide-ms': SLIDE_MS + 'ms'} as React.CSSProperties}
+     aria-roledescription="carousel"
+     aria-label="Hotel Paradise on the Nile"
+     tabIndex={0}
+     onKeyDown={onKey}
     onMouseEnter={() => setHover(true)}
     onMouseLeave={() => setHover(false)}
     onFocus={() => setFocus(true)}
@@ -466,7 +451,7 @@ function Hero() {
     <div className="heroShade"/>
     {/* The mood of the active photograph, laid over it: a drift of smoke for a
         dish, a faint sheen for a poured drink. It changes with the slide. */}
-    <div className={'heroFx' + (mood === ' isFood' ? ' smoke' : mood === ' isJuice' ? ' sheen' : '')} aria-hidden="true"/>
+    <div className={'heroFx' + (mood === ' isFood' ? ' smoke' : '')} aria-hidden="true"/>
 
     {/* Every slide's writing is stacked in the same grid cell, so the block
         keeps one height and the carousel never jumps as the words change. */}
