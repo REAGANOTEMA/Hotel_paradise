@@ -36,7 +36,7 @@ const assets = join(site, 'assets');
 const removed = [];
 for (const name of readdirSync(assets)) {
   if (!kept.has(name)) {
-    rmSync(join(assets, name));
+    rmSync(join(assets, name), {recursive: true, force: true});
     removed.push(name);
   }
 }

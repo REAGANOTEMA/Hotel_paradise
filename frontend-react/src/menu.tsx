@@ -180,9 +180,9 @@ function DishShot({dish, large = false, hint = true}: {dish: MenuItem; large?: b
       group="dishes"
       name={file}
       alt={dish.name}
-      ratio={large ? '16 / 10' : '4 / 3'}
+      ratio="16 / 10"
       widths={large ? [640, 1024, 1440] : [320, 480, 640, 960]}
-      sizes={large ? '(max-width:900px) 100vw, 46vw' : '(max-width:640px) 132px, (max-width:1050px) 240px, 320px'}
+      sizes={large ? '(max-width:900px) 100vw, 46vw' : '(max-width:480px) 92vw, (max-width:768px) 44vw, (max-width:1050px) 32vw, 320px'}
       position="50% 52%"
       zoom={!large}
       className={large ? 'shot shotLarge' : 'shot'}

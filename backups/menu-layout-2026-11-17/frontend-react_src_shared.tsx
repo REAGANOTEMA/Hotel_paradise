@@ -1,0 +1,885 @@
+import React from 'react';
+import './buttonShake';
+
+if (typeof document !== 'undefined') document.documentElement.classList.add('js');
+
+/**
+ * Where the PHP API actually is.
+ *
+ * The site has been installed in more than one place: at the root of a domain
+ * and inside a subdirectory. Guessing one of them and being wrong on the other
+ * host is how a working site ends up silently serving its baked-in menu while
+ * every order fails. So the plausible places are tried once, in order, and the
+ * first one that answers is kept for the rest of the visit.
+ */
+let apiBase: string | null = null;
+
+const apiCandidates = (): string[] => {
+  const here = new URL('.', window.location.href).pathname.replace(/\/+$/, '');
+  return [...new Set([
+    `${here}/backend-php/api.php`,
+    '/backend-php/api.php',
+    '/hotelparadiseonthenile/backend-php/api.php',
+  ])];
+};
+
+export const apiUrl = async (act: string): Promise<string> => {
+  if (apiBase === null) {
+    for (const candidate of apiCandidates()) {
+      try {
+        const res = await fetch(`${candidate}?act=health`, {headers: {Accept: 'application/json'}});
+        if (res.ok) {
+          const body = await res.json();
+          if (body && body.ok) {
+            apiBase = candidate;
+            break;
+          }
+        }
+      } catch {
+        // This address is not the API. Try the next one.
+      }
+    }
+    // Nothing answered, so use the most likely address and let the caller's
+    // own error handling report it in words the guest can act on.
+    if (apiBase === null) apiBase = apiCandidates()[0];
+  }
+  return `${apiBase}?act=${act}`;
+};
+
+export const LOGO = './images/hotel-paradise-master-logo.webp';
+
+/* A background photograph handed to CSS through a custom property.
+ *
+ * A url() token that sits inside a custom property is resolved against the
+ * stylesheet that uses it, not against the page. A relative path would then be
+ * looked for under /assets/, where the stylesheet lives, and 404. Resolving the
+ * path against the document's own base here makes the value absolute, so
+ * whichever stylesheet consumes it, the browser has the real URL. */
+export const bgUrl = (path: string): string =>
+  `url('${new URL(path, document.baseURI).href}')`;
+
+/*
+ * The house backdrop, set once for every page.
+ *
+ * The photograph is resolved against the document here, not inside the
+ * stylesheet, so it works whether the site is served from a domain root or a
+ * subdirectory. It sits under a warm ivory wash: cards, bands and panels keep
+ * their own backgrounds, and the river texture only shows in the quiet spaces
+ * between them.
+ */
+if (typeof document !== 'undefined') {
+  try {
+    document.documentElement.style.setProperty('--site-bg', bgUrl('./images/backgroun-image.png'));
+  } catch { /* a page without a document keeps the plain ivory ground */ }
+}
+
+/**
+ * Registers the offline-capable service worker.
+ *
+ * It is only registered where a service worker is actually allowed (a secure
+ * context). That is HTTPS in production and localhost or 127.0.0.1 on a
+ * development machine; on a plain-HTTP host or an odd IP the browser refuses
+ * one, so this quietly does nothing rather than throwing.
+ *
+ * The worker keeps only the public site's own static files. It is explicitly
+ * written to never cache the management console, the PHP API or anything the
+ * site asks the server for, so no signed-in guest's data is ever served to
+ * another visitor or left behind on a shared phone.
+ */
+export const registerServiceWorker = (): void => {
+  try {
+    if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return;
+    const secure = window.isSecureContext
+      || location.protocol === 'https:'
+      || location.hostname === 'localhost'
+      || location.hostname === '127.0.0.1';
+    if (!secure) return;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => { /* not fatal */ });
+    });
+  } catch { /* a browser that cannot do this simply does not */ }
+};
+
+/**
+ * The 3.5% the hotel carries inside every price it quotes.
+ *
+ * A guest reads one number. The card on the menu, the rate on the room, the
+ * total in the tray and the amount the payment takes are the same figure, so
+ * the 3.5% is added in exactly one place here and the server adds the same
+ * 3.5% when it fixes a total. The receipt itemises it, so the arithmetic can
+ * still be read.
+ */
+export const SERVICE_RATE = 0.035;
+
+/** A base figure with the hotel's 3.5% carried inside it. */
+export const withService = (n: number): number => Math.round(n * (1 + SERVICE_RATE));
+
+/** Formats shillings that already carry everything they should. */
+export const fmt = (n: number): string => 'UGX ' + Math.round(n).toLocaleString();
+
+/** A price as it is printed on a tag: the base figure with the 3.5% inside it. */
+export const fmtPrice = (n: number): string => fmt(withService(n));
+
+/**
+ * The guest's own account, kept in this browser.
+ *
+ * The token is a random string the server only ever stores as its sha256, so
+ * nothing here can be turned back into a login by anyone who reads it. The name
+ * is kept beside it so the navigation can say who is signed in without asking
+ * the API on every page load.
+ */
+const TOKEN_KEY = 'hpn_customer_token';
+const NAME_KEY = 'hpn_customer_name';
+
+export const customerToken = (): string => {
+  try { return window.localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; }
+};
+export const customerFirstName = (): string => {
+  try { return (window.localStorage.getItem(NAME_KEY) || '').split(' ')[0]; } catch { return ''; }
+};
+export const setCustomer = (token: string, name: string): void => {
+  try { window.localStorage.setItem(TOKEN_KEY, token); window.localStorage.setItem(NAME_KEY, name); } catch {}
+};
+export const forgetCustomer = (): void => {
+  try { window.localStorage.removeItem(TOKEN_KEY); window.localStorage.removeItem(NAME_KEY); } catch {}
+};
+
+export type Room = {
+  id: number;
+  type: string;
+  rate: string;
+  usd: string;
+  price: number;
+  guests: string;
+  beds: string;
+  pillow: string;
+  text: string;
+  featured?: boolean;
+};
+
+export const rooms: Room[] = [
+     {id: 1, type: 'Suite', rate: fmtPrice(248000), usd: '100', price: 248000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'The grand retreat', text: 'Our most spacious room, generous in space and comfort, with premium furnishings, a king sized bed and a calm, elegant atmosphere.', featured: true},
+  {id: 2, type: 'Family Room', rate: fmtPrice(314000), usd: '122 to 125', price: 314000, guests: 'Up to 4 guests', beds: 'One king sized bed and extra beds', pillow: 'Made for families', text: 'Roomier than most, with a king sized bed and extra beds, made for families travelling together with comfort in mind.', featured: true},
+  {id: 3, type: 'Triple Room', rate: fmtPrice(213000), usd: '100', price: 213000, guests: 'Up to 3 guests', beds: 'Three single beds', pillow: 'For three guests', text: 'A comfortable setting with three single beds, ideal for friends or a small group staying together.'},
+  {id: 4, type: 'Executive Deluxe', rate: fmtPrice(202000), usd: '80', price: 202000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'Business ready', text: 'An elevated stay with refined touches and a king sized bed, well suited to business and leisure travellers alike.'},
+  {id: 5, type: 'Deluxe Double', rate: fmtPrice(178000), usd: '70', price: 178000, guests: 'Up to 2 guests', beds: 'One king sized bed', pillow: 'The popular choice', text: 'Elegant double accommodation with a restful, warm and private atmosphere and a comfortable king sized bed.'},
+     {id: 6, type: 'Standard Double', rate: fmtPrice(155000), usd: '60', price: 155000, guests: 'Up to 2 guests', beds: 'One double bed', pillow: 'Quiet and cosy', text: 'A well kept double room with a comfortable bed, everything you need for a good night in Jinja.'},
+     {id: 7, type: 'Standard Twin', rate: fmtPrice(142000), usd: '60', price: 142000, guests: 'Up to 2 guests', beds: 'Two single beds', pillow: 'Two beds', text: 'A neatly kept room with two comfortable single beds for a peaceful night of rest.'},
+     {id: 8, type: 'Standard Single', rate: fmtPrice(128000), usd: '55', price: 128000, guests: '1 guest', beds: 'One single bed', pillow: 'Great value', text: 'A simple, well equipped single room with a comfortable single bed, and the best value on the river.'}
+   ];
+
+/**
+ * The photograph a room is illustrated by, in /images/rooms/.
+ * Naming follows the room type: Deluxe Double looks for deluxe-double.jpg.
+ */
+export const roomImage = (type: string): string =>
+  type.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+export const palettes = (i: number): string =>
+  ['linear-gradient(150deg,#16293f,#0B5D78)', 'linear-gradient(150deg,#c9a22766,#0d2338)', 'linear-gradient(150deg,#071A33,#3d7d96)', 'linear-gradient(150deg,#16324a,#0f4c66)', 'linear-gradient(150deg,#c9a22755,#1E3A5F)', 'linear-gradient(150deg,#0d2338,#0B5D78)', 'linear-gradient(150deg,#0f4c66,#16293f)'][i % 7];
+
+export function BedGlyph({size = 120}: {size?: number}) {
+ return (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" aria-hidden="true">
+   <rect x="10" y="48" width="80" height="22" rx="4" stroke="currentColor" strokeWidth="3.2"/>
+   <rect x="17" y="38" width="66" height="13" rx="3.5" stroke="currentColor" strokeWidth="3.2"/>
+   <rect x="15" y="27" width="58" height="10" rx="3.5" stroke="currentColor" strokeWidth="3.2"/>
+   <line x1="23" y1="70" x2="23" y2="84" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round"/>
+   <line x1="77" y1="70" x2="77" y2="84" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round"/>
+   <rect x="11" y="8" width="8" height="40" rx="3" stroke="currentColor" strokeWidth="3"/>
+   <rect x="81" y="8" width="8" height="40" rx="3" stroke="currentColor" strokeWidth="3"/>
+   <path d="M15 20 q20 -6 70 0" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"/>
+   <rect x="52" y="50" width="11" height="7" rx="2" stroke="currentColor" strokeWidth="2.4"/>
+  </svg>
+ );
+}
+
+/* ------------------------------------------------------------------
+   THE HOTEL'S OWN DETAILS
+
+   Written down once, here, so that the top bar, the footer, the drawer,
+   the menu page and the booking page cannot drift apart. A phone number
+   that appears on one page and not another is the sort of thing a guest
+   notices at the moment they need it.
+
+   The web address is hotelparadiseonthenile.info. It is not a .com and
+   must never be written as one.
+   ------------------------------------------------------------------ */
+
+export const HOTEL = {
+  legalName: 'Hotel Paradise on the Nile Ltd',
+  shortName: 'Hotel Paradise on the Nile',
+  /** The full postal address, as it stands on the title deeds. */
+  address: 'Plot 12, 19 & 25 Kiira Lane, Jinja, Uganda',
+  /** Without the country, for a footer column that already says Uganda. */
+  addressShort: 'Plot 12, 19 & 25 Kiira Lane, Jinja',
+  /** What to hand to a map, which wants the comma after the plot numbers. */
+  addressForMap: 'Plot 12, 19 & 25, Kiira Lane, Jinja, Uganda',
+  poBox: 'P.O. Box 1139, Jinja, Uganda',
+  /** Front desk first, reservations second. Both are dialled, both are answered. */
+  phones: ['+256 759 504 928', '+256 773 565 668'],
+  email: 'frontdesk@hotelparadiseonthenile.info',
+  website: 'www.hotelparadiseonthenile.info',
+  certification: 'UNBS Certified, US 130:2017',
+
+  /* The hotel's own facts, in the few details a guest may ask for. Written here
+     once so the voice concierge, the newsroom and any page that tells the
+     story cannot drift apart. */
+  /** The day the hotel first opened its doors: Saturday, 18 April 1998. */
+  founded: 'Saturday, 18 April 1998',
+  /** It opened with ten rooms and has grown into a full hotel since. */
+  roomsAtOpening: '10',
+  roomsToday: '69',
+  /** The office the company is registered with. */
+  registration: 'the Uganda Registration Services Bureau (URSB)'
+} as const;
+
+/** A telephone number written for people to a form a dialler can use. */
+export const telHref = (phone: string): string => 'tel:+' + phone.replace(/\D/g, '');
+
+/** The hotel's pin, opened in Google Maps from any page. */
+export const directionsHref = (): string =>
+  'https://www.google.com/maps/search/?api=1&query=' +
+  encodeURIComponent(HOTEL.shortName + ', ' + HOTEL.addressForMap);
+
+export const CALL = HOTEL.phones[0];
+
+export function Brand({light = false}: {light?: boolean}) {
+  return (
+   <a className={light ? 'brandL light' : 'brandL'} href="./index.html">
+    <img className="brandLogo" src={LOGO} alt="Hotel Paradise on the Nile" width={1532} height={442} decoding="async" draggable={false}/>
+    
+   </a>
+  );
+}
+
+export function TopBar() {
+ return (
+  <div className="topbar">
+   <span>HOTEL PARADISE ON THE NILE, PLOT 12, 19 &amp; 25 KIIRA LANE, JINJA, UGANDA</span>
+   <span className="right">{HOTEL.phones.join('  ·  ')}</span>
+  </div>
+ );
+}
+
+export const NAV = [['./index.html', 'Home'], ['./rooms.html', 'Rooms and beds'], ['./menu.html', 'Menu and dining'], ['./events.html', 'Plan an event'], ['./facilities.html', 'Facilities'], ['./talk.html', 'Talk to us'], ['./news.html', 'News & Careers'], ['./system/', 'Staffs Logins']] as const;
+
+/** The padlock that marks the staff entrance, so the last button reads as a
+ *  door into the management system rather than one more page of the site. */
+export const LockIcon = ({size = 14}: {size?: number}) => (
+ <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+  <rect x="4.5" y="10.5" width="15" height="10" rx="2.4" stroke="currentColor" strokeWidth="1.9"/>
+  <path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
+  <circle cx="12" cy="15.6" r="1.5" fill="currentColor"/>
+ </svg>
+);
+
+/** The studio that designed and built this website and the management system behind it. */
+export const STUDIO = {
+  name: 'Reagansoft Innovation Limited',
+  url: 'https://reagansoftinnovation.com',
+  label: 'reagansoftinnovation.com',
+  /** The person behind the company, and where it is based. */
+  founder: 'Reagan Otema',
+  city: 'Jinja, Uganda',
+  /** Uganda country code 256, then 730 314 979, written as 0730 314 979 locally. */
+  whatsapp: '256730314979',
+  whatsappLabel: 'WhatsApp 0730 314 979'
+};
+
+export const WhatsAppIcon = ({size = 15}: {size?: number}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+   <path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.74.46 3.44 1.32 4.94L2 22l5.36-1.4a9.84 9.84 0 0 0 4.68 1.2h.01c5.43 0 9.84-4.4 9.84-9.84C21.89 6.4 17.48 2 12.04 2Zm5.76 14.02c-.24.68-1.4 1.32-1.94 1.36-.5.04-.98.24-3.3-.7-2.78-1.1-4.54-3.94-4.68-4.12-.14-.18-1.12-1.5-1.12-2.86 0-1.36.72-2.04.98-2.32.24-.28.54-.34.72-.34h.5c.16 0 .38-.06.6.46.22.54.74 1.86.8 2 .06.14.1.3.02.48-.08.18-.14.28-.26.44-.14.14-.28.32-.4.44-.14.14-.28.28-.12.56.16.28.72 1.18 1.54 1.92 1.06.94 1.96 1.24 2.24 1.38.28.14.44.12.6-.08.16-.18.68-.8.86-1.08.18-.28.36-.22.6-.14.24.1 1.56.74 1.82.88.26.14.44.2.5.32.06.12.06.7-.18 1.38Z"/>
+  </svg>
+);
+
+const INSTALL_KEY = 'hpn_install_dismissed';
+
+/**
+ * Offers the site as an app, once, and quietly.
+ *
+ * The browsers that can install a page directly - Chrome and Edge on
+ * Android, Windows and macOS - run their own install banner, and the site
+ * lets them: intercepting it would only produce the browser's "Banner not
+ * shown" note and nothing to show for it. The only step-in is on iOS Safari,
+ * which has no install prompt on the web, where the two taps to the Home
+ * Screen are explained instead. A guest already using the installed app
+ * never sees it, a guest who dismisses it is remembered, and it only appears
+ * after the page has been read for a while rather than the moment it opens.
+ */
+export function InstallApp() {
+  const [ios, setIos] = React.useState(false);
+  const [show, setShow] = React.useState(false);
+  const [sheet, setSheet] = React.useState(false);
+  const timer = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    try {
+      if (window.matchMedia('(display-mode: standalone)').matches) return;
+      if ((navigator as unknown as {standalone?: boolean}).standalone) return;
+      if (window.localStorage.getItem(INSTALL_KEY) === '1') return;
+    } catch { /* private mode: carry on without the memory */ }
+
+    const reveal = () => {
+      if (timer.current) window.clearTimeout(timer.current);
+      timer.current = window.setTimeout(() => setShow(true), 20000);
+    };
+    const onInstalled = () => {
+      setShow(false); setSheet(false);
+      try { window.localStorage.setItem(INSTALL_KEY, '1'); } catch {}
+    };
+
+    window.addEventListener('appinstalled', onInstalled);
+
+    const ua = navigator.userAgent || '';
+    const isIos = /iPad|iPhone|iPod/.test(ua) && !('MSStream' in window);
+    const isSafari = /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(ua);
+    if (isIos && isSafari) { setIos(true); reveal(); }
+
+    return () => {
+      window.removeEventListener('appinstalled', onInstalled);
+      if (timer.current) window.clearTimeout(timer.current);
+    };
+  }, []);
+
+  const dismiss = () => {
+    setShow(false); setSheet(false);
+    try { window.localStorage.setItem(INSTALL_KEY, '1'); } catch {}
+  };
+
+  const install = () => setSheet(true);
+
+  if (!show && !sheet) return null;
+
+  return (
+   <>
+    {show && !sheet && (
+     <button type="button" className="installApp" onClick={install} aria-label="Install Hotel Paradise as an app">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+       <path d="M12 3v11m0 0 4-4m-4 4-4-4"/><path d="M5 17v2.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V17"/>
+      </svg>
+      <span>Install app</span>
+     </button>
+    )}
+    {sheet && (
+     <div className="installSheet" role="dialog" aria-modal="true" aria-label="Install the app" onClick={e => { if (e.target === e.currentTarget) setSheet(false); }}>
+      <div className="installCard">
+       <button type="button" className="installClose" onClick={dismiss} aria-label="Close">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+       </button>
+       <h3>Keep the hotel in your pocket</h3>
+       <p>{ios ? 'Add Hotel Paradise to your Home Screen, and it opens like any other app.' : 'Install Hotel Paradise from your browser for one-tap access, even offline.'}</p>
+       {ios ? (
+        <ol className="installSteps">
+         <li><b>1</b><span>Tap the <strong>Share</strong> button at the foot of Safari.</span></li>
+         <li><b>2</b><span>Choose <strong>Add to Home Screen</strong>.</span></li>
+         <li><b>3</b><span>Tap <strong>Add</strong>. The hotel is on your Home Screen.</span></li>
+        </ol>
+       ) : (
+        <ol className="installSteps">
+         <li><b>1</b><span>Open the browser menu (the three dots, top right).</span></li>
+         <li><b>2</b><span>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</span></li>
+         <li><b>3</b><span>Confirm, and the hotel is on your device.</span></li>
+        </ol>
+       )}
+       <button type="button" className="btn" onClick={dismiss}>Got it</button>
+      </div>
+     </div>
+    )}
+   </>
+  );
+}
+
+export function Footer() {
+  return (
+   <footer>
+    <div className="flag"><i></i><i></i><i></i></div>
+    <div className="footerMain">
+     <div className="footerBrand">
+      <div className="footerMark">
+       <span className="footerHalo" aria-hidden="true"/>
+       <img className="footerLogo" src={LOGO} alt="Hotel Paradise on the Nile" width={1532} height={442} loading="lazy" decoding="async"/>
+      </div>
+      <p className="footerTag">Premium hospitality in Jinja, on the banks of the Nile.</p>
+      <div className="footerTagMore">
+       <span>Sixty nine rooms and suites, riverside dining, a swimming pool and gardens for every occasion, all within one calm address.</span>
+       <span>From a restful night to a wedding for two hundred guests, our team carries the details so you can simply arrive.</span>
+      </div>
+      <div className="footerQuick" aria-label="Quick contact">
+       <a className="footChip" href={telHref(CALL)}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h3l1.6 4-2 1.4a13 13 0 0 0 5 5L14 12.4 18 14v3a2 2 0 0 1-2.2 2A15 15 0 0 1 3 6.2 2 2 0 0 1 5 4z"/></svg>
+        Call the front desk
+       </a>
+       <a className="footChip" href={'mailto:' + HOTEL.email}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg>
+        Email us
+       </a>
+       <a className="footChip" href={directionsHref()} target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        Directions
+       </a>
+      </div>
+      <div className="footerTrust">
+       <span className="footerCert">{HOTEL.certification}</span>
+       <span className="footerLive"><i aria-hidden="true"/> Front desk open 24 hours</span>
+      </div>
+     </div>
+     <div className="footerCol"><h4>HOTEL</h4><p>{HOTEL.addressShort}</p><p>Rooms, dining, bar and events</p><p><a className="footLink" href="./news.html">News &amp; Careers</a></p><p>{HOTEL.poBox}</p><p>{HOTEL.certification}</p></div>
+     <div className="footerCol"><h4>STAY</h4><p>Check in from 12 noon</p><p>Check out by 10 am</p><p>Breakfast included</p></div>
+     <div className="footerCol"><h4>CONTACT</h4>
+      <p className="footerPhones">{HOTEL.phones.map((p, i) => (
+       <React.Fragment key={p}>{i > 0 && '  ·  '}<a className="footLink" href={telHref(p)}>{p}</a></React.Fragment>
+      ))}</p>
+      <p><a className="footLink" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a></p>
+      <p><a className="footLink" href="./talk.html">Message the hotel</a></p>
+      <p>Front desk open 24 hours</p>
+     </div>
+     <div className="footerStudio">
+      <h4>BUILT BY</h4>
+      <a className="studioLink" href={STUDIO.url} target="_blank" rel="noopener noreferrer">
+       <img className="studioLogo" src="./images/reagansoftinnovation-logo.jpeg" alt={STUDIO.name} width={44} height={44}/>
+       <span className="studioId"><span className="studioName">{STUDIO.name}</span>
+       <span className="studioUrl">{STUDIO.label}</span></span>
+      </a>
+      <p>Design, build and support of this website and the hotel management system.</p>
+      <a className="studioWa" href={'https://wa.me/' + STUDIO.whatsapp} target="_blank" rel="noopener noreferrer">
+       <WhatsAppIcon/>{STUDIO.whatsappLabel}
+      </a>
+     </div>
+    </div>
+    <div className="footerCredit">
+     <span>Hotel Paradise on the Nile Ltd, Jinja, Uganda</span>
+     <span>Designed, built and supported by <a className="projLink" href={STUDIO.url} target="_blank" rel="noopener noreferrer">{STUDIO.name}</a></span>
+    </div>
+    <nav className="footerLegal" aria-label="Legal">
+     <a href="./terms.html">Terms &amp; Conditions</a>
+     <span className="dot" aria-hidden="true">·</span>
+     <a href="./privacy.html">Privacy Policy</a>
+     <span className="dot" aria-hidden="true">·</span>
+     <a href="./cookies.html">Cookie Policy</a>
+    </nav>
+    <InstallApp/>
+   </footer>
+  );
+ }
+
+/* ------------------------------------------------------------------
+   MORE OF THE HOTEL
+
+   One band, drawn the same way on every page, that offers the rest of the
+   site as a row of cards. A guest who lands deep in a room, a single dish
+   or a legal document should never reach a dead end: from any page the way
+   on is a tap away. The page it is already on is left out, so the row is
+   always somewhere new to go, and the whole thing is written here once so
+   the header, the footer and this band can never disagree about a link.
+   ------------------------------------------------------------------ */
+
+const EXPLORE_ICONS: Record<string, React.ReactNode> = {
+  rooms: <><rect x="3" y="10" width="18" height="10" rx="2"/><path d="M5 10V7a2 2 0 0 1 2-2h2.5a2 2 0 0 1 2 2v3M11.5 10V8a2 2 0 0 1 2-2H16a2 2 0 0 1 2 2v2M7 20v-2M17 20v-2"/></>,
+  dining: <><path d="M5 3v6M8 3v6M6.5 9V21M6.5 3v6M17 3c1.6 0 2.5 1.5 2.5 3.1S18.6 9.3 17 9.3V21M17 3v6.3"/></>,
+  events: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18M8 15h4"/></>,
+  facilities: <><path d="M3 12a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 1 3 0"/><path d="M3 18a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 1 3 0"/></>,
+  news: <><rect x="3" y="5" width="13" height="15" rx="2"/><path d="M16 8h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5M7 9h5M7 13h5M7 17h4"/></>,
+  talk: <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v7A2.5 2.5 0 0 1 17.5 15H9l-4.5 4V5.5Z"/><path d="M8 8h8M8 11h5"/></>,
+  account: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>
+};
+
+const EXPLORE = [
+  ['./rooms.html', 'Rooms and beds', 'Eight room types, each one photographed, with honest rates in shillings and dollars.', 'rooms', 'See rooms and beds'],
+  ['./menu.html', 'Menu and dining', 'Every dish, with takeaway and delivery, and a tray you build yourself.', 'dining', 'See the menu and order'],
+  ['./events.html', 'Plan an event', 'Weddings, conferences and functions in our halls and riverside gardens.', 'events', 'Plan your event'],
+  ['./facilities.html', 'Facilities', 'The pool, the health club, the bar and the grounds.', 'facilities', 'Explore the facilities'],
+  ['./talk.html', 'Talk to us', 'Message the front desk or the kitchen, or tell us about your stay.', 'talk', 'Send a message'],
+  ['./news.html', 'News & Careers', 'Announcements, opportunities and the roles we are hiring for.', 'news', 'Read news and careers'],
+  ['./account.html', 'Your account', 'Track your bookings and orders, or sign in to book faster.', 'account', 'Open your account'],
+] as const;
+
+export function ExploreMore({current = ''}: {current?: string}) {
+ const here = './' + current.replace(/^\.?\//, '');
+ const items = EXPLORE.filter(i => i[0] !== here);
+ return (
+  <section className="section explore" aria-label="More of the hotel">
+   <div className="center reveal">
+    <p className="eyebrow">MORE OF THE HOTEL</p>
+    <h2>Where would you like to go next?</h2>
+   </div>
+   <div className="exploreGrid">
+    {items.map(([href, title, text, icon, cta]) => (
+     <a className="exploreCard reveal" href={href} key={href}>
+      <span className="exploreIcon" aria-hidden="true"><svg viewBox="0 0 24 24">{EXPLORE_ICONS[icon]}</svg></span>
+      <span className="exploreBody">
+       <b>{title}</b>
+       <span className="exploreText">{text}</span>
+      </span>
+      <span className="exploreGo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <span className="srOnly">{cta}</span>
+     </a>
+    ))}
+   </div>
+  </section>
+ );
+}
+
+/** The calm end of a page: only the way on and the way home. */
+export function EndLinks({links}: {links: {label: string; href: string; primary?: boolean}[]}) {
+ return (
+  <section className="endLinks" aria-label="Continue">
+   <div className="center">
+    {links.map(l => (
+     <a key={l.label} className={l.primary ? 'btn' : 'btn ghost2'} href={l.href}>{l.label}</a>
+    ))}
+   </div>
+  </section>
+ );
+}
+
+/**
+ * The gate a guest passes through once, before an order or a booking is sent.
+ *
+ * Rather than two plain links, it is set as a small membership card in navy and
+ * gold: a seal, a short reason to make the account, one confident way through,
+ * and a quiet way back for a guest who already has one. The same card is used
+ * by the menu and by the rooms page, so the promise is worded once and the two
+ * can never drift apart. The explanatory sentence is passed in as children.
+ */
+const GateSeal = () => (
+ <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+  <circle cx="12" cy="8.4" r="3.6" stroke="currentColor" strokeWidth="1.7"/>
+  <path d="M4.8 20a7.2 7.2 0 0 1 14.4 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
+ </svg>
+);
+const GateGo = () => (
+ <svg viewBox="0 0 20 12" fill="none" aria-hidden="true" focusable="false">
+  <path d="M1 6h16M12.6 1.4 17.2 6l-4.6 4.6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+ </svg>
+);
+const GateCheck = () => (
+ <svg viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false">
+  <path d="M2 7.4 5.4 11 12 3.6" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"/>
+ </svg>
+);
+
+export function AccountGate({signupHref, signinHref, children}: {signupHref: string; signinHref: string; children?: React.ReactNode}) {
+ return (
+  <div className="acctGate">
+   <span className="gateSeal" aria-hidden="true"><GateSeal/></span>
+   <b className="gateTitle">One account, and your place is kept</b>
+   <p className="gateCopy">{children}</p>
+   <div className="gateActions">
+    <a className="gatePrimary" href={signupHref}>
+     <span>Create your account and continue</span>
+     <GateGo/>
+    </a>
+    <span className="gateOr" aria-hidden="true">or</span>
+    <a className="gateSecondary" href={signinHref}>
+     <GateSeal/>
+     <span>I already have an account</span>
+    </a>
+   </div>
+   <p className="gateFine"><GateCheck/>Free to create. Takes a minute. Nothing is charged.</p>
+  </div>
+ );
+}
+
+/**
+ * The photograph that fills the header of a subpage, and the sequence of
+ * frames it turns over in.
+ *
+ * Each frame is served from the narrow copies that sit beside the full file, so
+ * a phone downloads a small one and a wide screen the big one. The frames cross
+ * fade behind the writing, the scrim already on the header keeps every one of
+ * them legible, and the turning stops for a guest who has asked for less motion
+ * or has moved to another tab - exactly as the home carousel behaves.
+ */
+export type HeroCoverFrame = {base: string; ext: string; widths: number[]};
+
+const coverSrc = (f: HeroCoverFrame) => {
+ const w = f.widths[f.widths.length - 1];
+ return f.base + '-' + w + '.' + f.ext;
+};
+const coverSrcSet = (f: HeroCoverFrame) =>
+ f.widths.map(w => f.base + '-' + w + '.' + f.ext + ' ' + w + 'w').join(', ');
+
+const COVER_MS = 4000;
+
+export function PageHeroCover({frames}: {frames: HeroCoverFrame[]}) {
+ const [i, setI] = React.useState(0);
+ const [still, setStill] = React.useState(false);
+ const [gone, setGone] = React.useState(false);
+
+ React.useEffect(() => {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const sync = () => setStill(mq.matches);
+  sync();
+  if (mq.addEventListener) mq.addEventListener('change', sync);
+  else if (mq.addListener) mq.addListener(sync);
+  return () => { if (mq.removeEventListener) mq.removeEventListener('change', sync); else if (mq.removeListener) mq.removeListener(sync); };
+ }, []);
+
+ React.useEffect(() => {
+  if (still || gone || frames.length < 2) return;
+  const t = window.setInterval(() => setI(v => (v + 1) % frames.length), COVER_MS);
+  return () => window.clearInterval(t);
+ }, [still, gone, frames.length]);
+
+ React.useEffect(() => {
+  const onVis = () => setGone(document.hidden);
+  document.addEventListener('visibilitychange', onVis);
+  return () => document.removeEventListener('visibilitychange', onVis);
+ }, []);
+
+ return (
+  <div className="pageHeroBg" aria-hidden="true">
+   {frames.map((f, n) => (
+    <img
+     key={f.base}
+     className={'pageHeroBgImg' + (n === i ? ' on' : '')}
+     src={coverSrc(f)}
+     srcSet={coverSrcSet(f)}
+     sizes="100vw"
+     alt=""
+     loading={n === 0 ? 'eager' : 'lazy'}
+     decoding="async"
+     fetchPriority={n === 0 ? 'high' : 'auto'}
+     draggable={false}
+    />
+   ))}
+  </div>
+ );
+}
+
+export function PageNav({onDark = false}: {onDark?: boolean}) {
+ const [open, setOpen] = React.useState(false);
+ /* The bar turns solid the moment the page moves, so the links never sit on
+    top of whatever scrolls behind them. */
+ const [stuck, setStuck] = React.useState(false);
+ const burgerRef = React.useRef<HTMLButtonElement>(null);
+ const firstLinkRef = React.useRef<HTMLAnchorElement>(null);
+ const wasOpen = React.useRef(false);
+ const here = (location.pathname.split('/').pop() || 'index.html');
+ const active = (href: string) => href.split('#')[0] === './' + here;
+ const close = () => setOpen(false);
+
+ React.useEffect(() => {
+  const onScroll = () => setStuck(window.scrollY > 40);
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive: true});
+  return () => window.removeEventListener('scroll', onScroll);
+ }, []);
+
+ React.useEffect(() => {
+  if (!open) return;
+  const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+  document.addEventListener('keydown', onKey);
+  const prev = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
+  return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prev; };
+ }, [open]);
+
+ /* Focus goes into the menu when it opens and comes back to the burger when it
+    closes, so a keyboard guest is never dropped at the top of the page. */
+ React.useEffect(() => {
+  if (open) firstLinkRef.current?.focus();
+  else if (wasOpen.current) burgerRef.current?.focus();
+  wasOpen.current = open;
+ }, [open]);
+
+ return (
+  <>
+   <a className="skipLink" href="#main">Skip to content</a>
+   <header className={(onDark ? 'nav dark' : 'nav') + (stuck ? ' stuck' : '')}>
+    <Brand light={onDark}/>
+    <nav>{NAV.map(([href, label]) => <a key={href} className={(active(href) ? 'active ' : '') + (label === 'Staffs Logins' ? 'staffNav' : '')} href={href}>{label === 'Staffs Logins' && <LockIcon/>}<span>{label}</span></a>)}</nav>
+    <div className="navRight">
+     <a className={'navSignIn' + (active('./account.html') ? ' active' : '')} href="./account.html">{customerFirstName() || 'Sign in'}</a>
+     <a className="btn navCta ctaAttn" href="./rooms.html">Book now</a>
+     <button ref={burgerRef} className={'burger' + (open ? ' open' : '')} onClick={() => setOpen(o => !o)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="mobile-menu">
+      <span/><span/><span/>
+     </button>
+    </div>
+   </header>
+
+   <div className={'drawer' + (open ? ' open' : '')} id="mobile-menu" aria-hidden={!open}>
+    <div className="drawerScrim" onClick={close}/>
+    <aside className="drawerPanel" role="dialog" aria-modal="true" aria-label="Site menu">
+     <div className="drawerNav">
+      {NAV.map(([href, label], i) => <a key={href} ref={i === 0 ? firstLinkRef : undefined} className={(active(href) ? 'active ' : '') + (label === 'Staffs Logins' ? 'staffNav' : '')} href={href} onClick={close}>{label === 'Staffs Logins' && <LockIcon/>}{label}</a>)}
+     </div>
+      <div className="drawerFoot">
+       <a className="btn" href="./rooms.html" onClick={close}>Book now</a>
+       <a className="drawerCall systemLink" href="./account.html" onClick={close}>{customerFirstName() ? 'My account · ' + customerFirstName() : 'Sign in or create an account'}</a>
+       <a className="drawerCall systemLink" href="./system/" onClick={close}><LockIcon/> Staffs Logins</a>
+       <a className="drawerCall" href={telHref(CALL)}>Call {CALL}</a>
+       <p className="drawerNote">{HOTEL.address}</p>
+      </div>
+     </aside>
+    </div>
+
+    <div className="mobileCta">
+     <a className="btn ctaAttn" href="./rooms.html">Book your stay</a>
+     <a className="btn ghost" href={telHref(CALL)}>Call us</a>
+    </div>
+
+    <BackToTop/>
+   </>
+  );
+ }
+
+/**
+ * The way back out of a page.
+ *
+ * A guest who reaches a room, a dish or the checkout from a search result, a
+ * chat or a bookmark has no history of ours to step back into. So this steps
+ * back through the visit when one of our own pages is behind it, and otherwise
+ * follows the link home. Either way there is always a way out.
+ */
+export function BackLink({fallback = './index.html', label = 'Back'}: {fallback?: string; label?: string}) {
+ const go = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  let ours = false;
+  try {
+   const from = new URL(document.referrer);
+   ours = !!document.referrer && from.origin === location.origin && from.pathname !== location.pathname;
+  } catch { ours = false; }
+  if (ours && window.history.length > 1) {
+   e.preventDefault();
+   window.history.back();
+  }
+ };
+ return (
+  <a className="backLink" href={fallback} onClick={go}>
+   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7"/></svg>
+   <span>{label}</span>
+  </a>
+ );
+}
+
+/**
+ * The way back to the top, for the pages that run long.
+ *
+ * The menu carries more than two hundred dishes and the home page a dozen
+ * bands, so by the time a guest has read this far the top is a long way up.
+ * The button keeps out of the way until the page has actually moved, and it
+ * jumps rather than slides for anyone who asked for less motion.
+ */
+export function BackToTop() {
+ const [on, setOn] = React.useState(false);
+ React.useEffect(() => {
+  const onScroll = () => setOn(window.scrollY > 600);
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive: true});
+  return () => window.removeEventListener('scroll', onScroll);
+ }, []);
+ const toTop = () => {
+  let soft = true;
+  try { soft = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { soft = true; }
+  window.scrollTo({top: 0, behavior: soft ? 'smooth' : 'auto'});
+ };
+ return (
+  <button
+   type="button"
+   className={'backTop' + (on ? ' on' : '')}
+   onClick={toTop}
+   aria-label="Back to top"
+   aria-hidden={!on}
+  >
+   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V6M6 11l6-6 6 6"/></svg>
+   <span>Top</span>
+  </button>
+ );
+}
+
+/**
+ * Reveals anything marked `.reveal` as it scrolls into view.
+ *
+ * The mark starts its elements hidden, so a page that uses it must run this
+ * once from its own root component or nothing marked would ever be shown.
+ * Everything is revealed at once when the browser cannot observe scrolling or
+ * the guest has asked for less motion, so the writing is never held back.
+ */
+const cinematicSelector = [
+  'h1', 'h2', 'h3', 'h4', '.eyebrow', '.lead', '.intro', '.sectionLead',
+  '.legalLead', '.legalMeta', '.stripNote', '.buffetNote',
+  '.card p', '.dineCard p', '.venue p', '.fac p', '.newsArticle p', '.legalClause > p',
+  '.splitBand p', '.rateCard p', '.policy p', '.contactCard p',
+  'footer h2', 'footer h3', 'footer p'
+].join(',');
+const cinematicSkip = '.hero,.topbar,.nav,.drawer,.modal,.orderPanel,.cart,.skipLink,form,table,button,label';
+
+let cinematicStarted = false;
+export function useCinematicType(): void {
+  if (cinematicStarted || typeof document === 'undefined') return;
+  cinematicStarted = true;
+  const start = () => {
+    let still = false;
+    try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { /* no preference reported */ }
+    if (still || !('IntersectionObserver' in window)) return;
+    const seen = new Set<Element>();
+    const counters = new WeakMap<Element, number>();
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, {threshold: 0.08, rootMargin: '0px 0px -4% 0px'});
+    const mark = () => {
+      document.querySelectorAll<HTMLElement>(cinematicSelector).forEach(el => {
+        if (seen.has(el) || el.closest('.reveal') || el.closest(cinematicSkip)) return;
+        seen.add(el);
+        el.classList.add('reveal');
+        const parent = el.parentElement;
+        if (parent) {
+          const n = counters.get(parent) || 0;
+          counters.set(parent, n + 1);
+          el.style.setProperty('--rdelay', `${Math.min(n, 6) * 75}ms`);
+        }
+        io.observe(el);
+      });
+    };
+    mark();
+    if ('MutationObserver' in window) {
+      let queued = false;
+      const mo = new MutationObserver(() => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(() => { queued = false; mark(); });
+      });
+      mo.observe(document.documentElement, {childList: true, subtree: true});
+    }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once: true});
+  else start();
+}
+
+export function useReveal() {
+  React.useEffect(() => {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+    const still = (() => {
+      try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
+    })();
+    if (!('IntersectionObserver' in window) || still) {
+      nodes.forEach(n => n.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }),
+      {threshold: 0.12, rootMargin: '0px 0px -6% 0px'}
+    );
+    nodes.forEach(n => io.observe(n));
+    return () => io.disconnect();
+  }, []);
+}
+
+/* Every page imports this module, so the service worker is offered once,
+   from one place, rather than each page having to remember to ask. */
+registerServiceWorker();
+useCinematicType();
+
+
+
+
+

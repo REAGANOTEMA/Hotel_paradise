@@ -282,9 +282,12 @@ export const STUDIO = {
   /** The person behind the company, and where it is based. */
   founder: 'Reagan Otema',
   city: 'Jinja, Uganda',
-  /** Uganda country code 256, then 730 314 979, written as 0730 314 979 locally. */
-  whatsapp: '256730314979',
-  whatsappLabel: 'WhatsApp 0730 314 979'
+  /** Developer WhatsApp, written as 0772 514 889 locally. */
+  whatsapp: '256772514889',
+  whatsappLabel: 'WhatsApp 0772 514 889',
+  /** Developer calls, written as 0730 314 979 locally. */
+  call: '256730314979',
+  callLabel: 'Call 0730 314 979'
 };
 
 export const WhatsAppIcon = ({size = 15}: {size?: number}) => (
@@ -442,9 +445,14 @@ export function Footer() {
        <span className="studioUrl">{STUDIO.label}</span></span>
       </a>
       <p>Design, build and support of this website and the hotel management system.</p>
-      <a className="studioWa" href={'https://wa.me/' + STUDIO.whatsapp} target="_blank" rel="noopener noreferrer">
-       <WhatsAppIcon/>{STUDIO.whatsappLabel}
-      </a>
+      <div className="studioContacts">
+       <a className="studioContact studioContactCall" href={telHref('+' + STUDIO.call)}>
+        <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 4h3l1.6 4-2 1.4a13 13 0 0 0 5 5L14 12.4 18 14v3a2 2 0 0 1-2.2 2A15 15 0 0 1 3 6.2 2 2 0 0 1 5 4z"/></svg>{STUDIO.callLabel}
+       </a>
+       <a className="studioContact studioWa" href={'https://wa.me/' + STUDIO.whatsapp} target="_blank" rel="noopener noreferrer">
+        <WhatsAppIcon/>{STUDIO.whatsappLabel}
+       </a>
+      </div>
      </div>
     </div>
     <div className="footerCredit">
