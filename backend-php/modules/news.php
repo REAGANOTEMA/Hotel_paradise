@@ -430,7 +430,7 @@ if($act==='list'){
     echo '<td>'.news_badge((string)$r['category'],$CATS).'</td>';
     echo '<td>'.news_status((string)$r['status'],$STATS).'</td>';
     echo '<td>'.((int)$r['pinned']?badge('Pinned','gold'):'').(($r['category']==='recruitment'&&(string)($r['deadline']??'')!=='')?' '.badge('Closes '.fmtdate($r['deadline']),'warn'):'').'</td>';
-    echo '<td>'.e($r['author_name']?:'â€”').($r['author_role']?'<br><small>'.e($r['author_role']).'</small>':'').'</td>';
+    echo '<td>'.e($r['author_name']?:'—').($r['author_role']?'<br><small>'.e($r['author_role']).'</small>':'').'</td>';
     echo '<td>'.e(fmtdt($r['publish_at'])).'</td>';
     echo '<td>'.(int)$r['views'].'</td>';
     echo '<td style="white-space:nowrap">';

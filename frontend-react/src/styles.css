@@ -1,4 +1,4 @@
-﻿/* Web fonts (DM Sans + Playfair Display) are loaded from the page <head> with
+/* Web fonts (DM Sans + Playfair Display) are loaded from the page <head> with
    a preconnect, not with @import here. A CSS @import cannot start the font
    request until this whole sheet has arrived, which serialises the critical
    path; the <link> in the HTML starts it immediately. */
@@ -1344,15 +1344,22 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 
 /* --- 480: one generous column, so a phone reads like a menu card ----- */
 @media(max-width:480px){
-  .dishGrid,.dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:1fr;grid-auto-flow:row;grid-auto-columns:auto;justify-content:stretch;--dishGap:16px;gap:var(--dishGap)}
-  .dishOpenText{padding:15px 16px 0}
-  .dishTitle{font-size:19px}
-  .dishDesc{font-size:13px;line-height:1.5;-webkit-line-clamp:2}
-  .dishBody{padding:12px 16px 16px}
-  .dishFoot{gap:12px;padding-top:12px}
-  .dishFoot b{font-size:15px}
-  .addBtn{width:auto;padding:10px 15px;font-size:12px;letter-spacing:.5px}
-  .dishHeld{top:11px;left:11px;font-size:9.5px;padding:6px 10px}
+  .dishGrid,.dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-flow:row;grid-auto-columns:auto;justify-content:stretch;--dishGap:9px;gap:var(--dishGap)}
+  .dishCard{border-radius:8px}
+  .dishOpenMedia .shot{--r:4/3}
+  .dishOpenText{padding:8px 8px 0}
+  .dishTitle{font-size:11.5px;line-height:1.25;min-height:2.5em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .dishDesc{display:none}
+  .dishBody{padding:7px 8px 9px}
+  .dishFoot{flex-direction:column;align-items:stretch;gap:6px;padding-top:7px}
+  .dishFoot b{font-size:11.5px;text-align:left;white-space:normal;line-height:1.2}
+  .dishFoot b.askPrice{font-size:9.5px}
+  .addBtn{width:100%;justify-content:center;padding:7px 3px;font-size:10px;letter-spacing:0;gap:4px;box-shadow:none}
+  .addBtn svg{width:10px;height:10px}
+  .dishHeld{top:5px;left:5px;font-size:7.5px;letter-spacing:.5px;padding:3px 5px}
+  .shotNote{font-size:8px;letter-spacing:1px}
+  .shotEmpty{gap:3px;padding:5px}
+  .plateGlyph{width:24px;height:24px}
   .trayItem{grid-template-columns:48px minmax(0,1fr) auto;column-gap:10px}
   .trayThumb{width:48px;height:48px}
   .lineTotal{min-width:0;font-size:13px}
@@ -1377,13 +1384,13 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .heroDots{bottom:calc(76px + env(safe-area-inset-bottom))}
   /* the single column keeps the plate, the name, the description and the
      price, only the scale steps down for the smallest screen */
-  .dishGrid{--dishGap:14px;gap:var(--dishGap)}
-  .dishOpenText{padding:14px 15px 0}
-  .dishTitle{font-size:18px}
-  .dishDesc{display:-webkit-box;font-size:12.5px;-webkit-line-clamp:2}
-  .dishBody{padding:11px 15px 15px}
-  .dishFoot b{font-size:14.5px}
-  .addBtn{padding:10px 13px;font-size:11.5px;letter-spacing:.3px}
+  .dishGrid{--dishGap:7px;gap:var(--dishGap)}
+  .dishOpenText{padding:7px 6px 0}
+  .dishTitle{font-size:10.5px}
+  .dishBody{padding:6px 6px 8px}
+  .dishFoot{gap:5px;padding-top:6px}
+  .dishFoot b{font-size:10.5px}
+  .addBtn{padding:6px 2px;font-size:9.5px}
   .pickGrid{grid-template-columns:1fr}
   .cardBody{padding:20px 17px}
   .card h3{font-size:21px}
@@ -1559,7 +1566,7 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 
-/* Management system bridge â€” the drawer it sits in is navy, so the gold passes */
+/* Management system bridge — the drawer it sits in is navy, so the gold passes */
 .systemLink{color:var(--gold)!important;font-weight:700;border-top:1px solid #C9A22733;padding-top:14px;margin-top:6px}
 @media(max-width:720px){.navRight .navCta{display:none}}
 /* Before the drawer takes over, the header is at its most crowded: drop the
@@ -1692,7 +1699,7 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
    SHARED PIECES: a status badge, a resting message, the password
    field and the account mark. Written once, used by every page.
    --------------------------------------------------------------- */
-/* One badge shape, four tones â€” never colour alone: the label carries the
+/* One badge shape, four tones — never colour alone: the label carries the
    meaning, the tint only reinforces it. */
 .badge{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;line-height:1.4;white-space:nowrap}
 .badge::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
@@ -1964,7 +1971,7 @@ input,select,textarea{transition:border-color .18s ease,box-shadow .18s ease}
 }
 
 /* ---------------------------------------------------------------
-   TACTILE DEPTH â€” THE HOUSE BUTTON SYSTEM
+   TACTILE DEPTH — THE HOUSE BUTTON SYSTEM
 
    Every solid control is built as one physical key: a brushed cap
    with a soft highlight along its top edge, a shaded underside, and

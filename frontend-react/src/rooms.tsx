@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
 import {rooms as baseRooms, EndLinks, TopBar, PageNav, Footer, BedGlyph, roomImage, fmt, fmtPrice, withService, apiUrl, CALL, customerToken, BackLink, PageHeroCover, AccountGate, type HeroCoverFrame} from './shared';

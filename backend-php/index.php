@@ -43,7 +43,7 @@ function pagelogin(): void{
  }
 
  $flashHtml='';
- if($f=flash_out()){ $flashHtml='<div class="flash '.e($f['type']).'"><span class="noteIco">'.($f['type']==='bad'?'!':'âœ“').'</span><span>'.e($f['msg']).'</span></div>'; }
+ if($f=flash_out()){ $flashHtml='<div class="flash '.e($f['type']).'"><span class="noteIco">'.($f['type']==='bad'?'!':'✓').'</span><span>'.e($f['msg']).'</span></div>'; }
 
  $tpl=<<<'HTML'
 <!doctype html>

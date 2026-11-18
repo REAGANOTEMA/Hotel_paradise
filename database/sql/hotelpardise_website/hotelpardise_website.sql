@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 18, 2026 at 11:34 AM
+-- Generation Time: Nov 18, 2026 at 01:51 PM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.27
 
@@ -429,6 +429,84 @@ INSERT INTO `invoices` (`id`, `hotel_id`, `guest_id`, `invoice_number`, `subtota
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `kds_print_queue`
+--
+
+CREATE TABLE `kds_print_queue` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `ticket_key` varchar(120) NOT NULL,
+  `kind` varchar(40) NOT NULL,
+  `order_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `station_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `target` varchar(120) DEFAULT NULL,
+  `payload` longtext DEFAULT NULL,
+  `status` enum('queued','printed','failed') NOT NULL DEFAULT 'queued',
+  `attempts` int(11) NOT NULL DEFAULT 0,
+  `last_error` varchar(500) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `printed_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `kitchen_order_items`
+--
+
+CREATE TABLE `kitchen_order_items` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `order_item_id` bigint(20) UNSIGNED NOT NULL,
+  `station_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `status` enum('queued','accepted','preparing','ready','served','cancelled') NOT NULL DEFAULT 'queued',
+  `course` varchar(40) DEFAULT NULL,
+  `priority` enum('normal','rush','vip') NOT NULL DEFAULT 'normal',
+  `note` varchar(500) DEFAULT NULL,
+  `accepted_at` datetime DEFAULT NULL,
+  `started_at` datetime DEFAULT NULL,
+  `ready_at` datetime DEFAULT NULL,
+  `served_at` datetime DEFAULT NULL,
+  `served_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `started_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `ready_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `recall_count` int(11) NOT NULL DEFAULT 0,
+  `fire_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `kitchen_stations`
+--
+
+CREATE TABLE `kitchen_stations` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `property_id` bigint(20) UNSIGNED NOT NULL,
+  `code` varchar(20) NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `color` varchar(20) NOT NULL DEFAULT '#0B5D78',
+  `printer_key` varchar(80) DEFAULT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `active` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `kitchen_stations`
+--
+
+INSERT INTO `kitchen_stations` (`id`, `hotel_id`, `property_id`, `code`, `name`, `color`, `printer_key`, `sort_order`, `active`) VALUES
+(1, 1, 1, 'HOT', 'Hot Kitchen', '#c62828', NULL, 0, 1),
+(2, 1, 1, 'COLD', 'Cold Kitchen', '#0B5D78', NULL, 1, 1),
+(3, 1, 1, 'BAR', 'Bar & Drinks', '#7b1fa2', NULL, 2, 1),
+(4, 1, 1, 'PASTRY', 'Pastry & Desserts', '#b26a00', NULL, 3, 1),
+(5, 1, 1, 'ROOM', 'Room Service', '#2e7d32', NULL, 4, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `menu_categories`
 --
 
@@ -761,7 +839,10 @@ CREATE TABLE `orders` (
   `subtotal` decimal(14,2) DEFAULT 0.00,
   `tax` decimal(14,2) DEFAULT 0.00,
   `total` decimal(14,2) DEFAULT 0.00,
-  `created_at` timestamp NULL DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  `kds_runner` varchar(80) DEFAULT NULL,
+  `kds_eta` datetime DEFAULT NULL,
+  `kds_dispatched_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
@@ -1651,6 +1732,30 @@ ALTER TABLE `invoices`
   ADD UNIQUE KEY `invoice_number` (`invoice_number`);
 
 --
+-- Indexes for table `kds_print_queue`
+--
+ALTER TABLE `kds_print_queue`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_kds_ticket` (`hotel_id`,`ticket_key`),
+  ADD KEY `idx_kds_print_status` (`status`);
+
+--
+-- Indexes for table `kitchen_order_items`
+--
+ALTER TABLE `kitchen_order_items`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_kds_item` (`order_item_id`),
+  ADD KEY `idx_kds_status` (`status`),
+  ADD KEY `idx_kds_station` (`station_id`);
+
+--
+-- Indexes for table `kitchen_stations`
+--
+ALTER TABLE `kitchen_stations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_kds_station_code` (`hotel_id`,`code`);
+
+--
 -- Indexes for table `menu_categories`
 --
 ALTER TABLE `menu_categories`
@@ -2016,6 +2121,24 @@ ALTER TABLE `inventory_items`
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `kds_print_queue`
+--
+ALTER TABLE `kds_print_queue`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `kitchen_order_items`
+--
+ALTER TABLE `kitchen_order_items`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `kitchen_stations`
+--
+ALTER TABLE `kitchen_stations`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --

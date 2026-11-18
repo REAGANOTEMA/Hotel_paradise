@@ -541,7 +541,6 @@ function useAddButtonLights() {
 function MenuPage() {
   useAddButtonLights();
   const [sections, setSections] = React.useState<MenuSection[]>(FALLBACK);
-  const [live, setLive] = React.useState(false);
   // The order survives a trip to sign in and back. A guest builds their tray,
   // is asked for an account, and returns to exactly the order they left, items
   // and quantities intact, rather than to an empty list.
@@ -583,7 +582,6 @@ function MenuPage() {
           const next = tidySections(toSections(d.categories));
           if (next.length) {
             setSections(next);
-            setLive(true);
             setCat(c => (c === null || next.some(s => s.key === c)) ? c : null);
           }
         }
@@ -980,8 +978,7 @@ if (d.ok) {
             </div>
           )}
 
-          {live ? (
-            !signedIn ? (
+          {!signedIn ? (
               <div className="trayForm">
                 <AccountGate signupHref={accountUrl('signup')} signinHref={accountUrl('signin')}>
                   One quick account and your order stays exactly as you built it. We bring you straight back here.
@@ -995,11 +992,6 @@ if (d.ok) {
               <div className="planField wide"><label>Notes for the kitchen <small>optional</small></label><textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder="Allergies, spice level, or a delivery time."/></div>
               <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={send} disabled={busy || tray.length === 0}>{busy ? 'Opening payment...' : 'Continue to payment'}</button>
               {tray.length > 0 && <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>}
-            </div>
-            )
-          ) : (
-            <div className="trayForm">
-              <div className="bookMsg">Online ordering is briefly unavailable. Your list is still here — call <a href={telHref(CALL)}>{CALL}</a> to place it.</div>
             </div>
           )}
 

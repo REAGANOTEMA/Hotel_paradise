@@ -12,6 +12,7 @@ declare(strict_types=1);
  */
 
 $u=current_user();
+require_once __DIR__.'/../app/kds.php';
 $day0=today().' 00:00:00';
 $day1=date('Y-m-d',strtotime(today().' +1 day')).' 00:00:00';
 
@@ -30,6 +31,8 @@ $open=rows(
   WHERE o.outlet='bar' AND o.deleted_at IS NULL AND o.status IN('pending','accepted','preparing','ready')
   ORDER BY o.id ASC LIMIT 20",[]
 );
+
+foreach(array_merge($ordersToday,$open) as $kdsOrder) kds_sync_order((int)$kdsOrder['id']);
 
 $k=[
  'orders'=>count($ordersToday),

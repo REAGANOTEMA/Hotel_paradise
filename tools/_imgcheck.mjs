@@ -1,4 +1,4 @@
-﻿import fs from "node:fs";
+import fs from "node:fs";
 const man = JSON.parse(fs.readFileSync("frontend-react/src/image-manifest.json","utf8"));
 const src = fs.readFileSync("frontend-react/src/menuData.ts","utf8");
 const slugify = s => s.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 18, 2026 at 11:33 AM
+-- Generation Time: Nov 18, 2026 at 01:51 PM
 -- Server version: 10.11.19-MariaDB
 -- PHP Version: 8.4.27
 
@@ -1594,6 +1594,28 @@ CREATE TABLE `journal_lines` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `kds_print_queue`
+--
+
+CREATE TABLE `kds_print_queue` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `ticket_key` varchar(120) NOT NULL,
+  `kind` varchar(40) NOT NULL,
+  `order_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `station_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `target` varchar(120) DEFAULT NULL,
+  `payload` longtext DEFAULT NULL,
+  `status` enum('queued','printed','failed') NOT NULL DEFAULT 'queued',
+  `attempts` int(11) NOT NULL DEFAULT 0,
+  `last_error` varchar(500) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `printed_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `kitchen_order_items`
 --
 
@@ -1603,7 +1625,20 @@ CREATE TABLE `kitchen_order_items` (
   `station_id` bigint(20) UNSIGNED DEFAULT NULL,
   `status` enum('queued','accepted','preparing','ready','served','cancelled') DEFAULT 'queued',
   `started_at` datetime DEFAULT NULL,
-  `completed_at` datetime DEFAULT NULL
+  `completed_at` datetime DEFAULT NULL,
+  `course` varchar(40) DEFAULT NULL,
+  `priority` enum('normal','rush','vip') NOT NULL DEFAULT 'normal',
+  `note` varchar(500) DEFAULT NULL,
+  `accepted_at` datetime DEFAULT NULL,
+  `ready_at` datetime DEFAULT NULL,
+  `served_at` datetime DEFAULT NULL,
+  `served_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `started_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `ready_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `recall_count` int(11) NOT NULL DEFAULT 0,
+  `fire_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
@@ -1616,8 +1651,24 @@ CREATE TABLE `kitchen_stations` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `property_id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(120) NOT NULL,
-  `active` tinyint(1) DEFAULT 1
+  `active` tinyint(1) DEFAULT 1,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `code` varchar(20) NOT NULL DEFAULT 'HOT',
+  `color` varchar(20) NOT NULL DEFAULT '#0B5D78',
+  `printer_key` varchar(80) DEFAULT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `kitchen_stations`
+--
+
+INSERT INTO `kitchen_stations` (`id`, `property_id`, `name`, `active`, `hotel_id`, `code`, `color`, `printer_key`, `sort_order`) VALUES
+(1, 1, 'Hot Kitchen', 1, 1, 'HOT', '#c62828', NULL, 0),
+(2, 1, 'Cold Kitchen', 1, 1, 'COLD', '#0B5D78', NULL, 1),
+(3, 1, 'Bar & Drinks', 1, 1, 'BAR', '#7b1fa2', NULL, 2),
+(4, 1, 'Pastry & Desserts', 1, 1, 'PASTRY', '#b26a00', NULL, 3),
+(5, 1, 'Room Service', 1, 1, 'ROOM', '#2e7d32', NULL, 4);
 
 -- --------------------------------------------------------
 
@@ -2775,34 +2826,37 @@ CREATE TABLE `orders` (
   `total` decimal(14,2) DEFAULT 0.00,
   `created_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL
+  `deleted_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `kds_runner` varchar(80) DEFAULT NULL,
+  `kds_eta` datetime DEFAULT NULL,
+  `kds_dispatched_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `hotel_id`, `user_id`, `shift_id`, `order_number`, `outlet`, `order_type`, `table_name`, `room_id`, `customer_name`, `customer_phone`, `customer_email`, `delivery_address`, `delivery_notes`, `status`, `discount`, `subtotal`, `tax`, `total`, `created_at`, `deleted_at`, `deleted_by`) VALUES
-(1, 1, 1, NULL, 'ORD-20261009-001', 'restaurant', 'takeaway', NULL, NULL, 'Otema Reagan', '+256772514889', 'reaganotema2022@gmail.com', 'Jinja city', 'Add salt', 'pending', 0.00, 13000.00, 455.00, 13455.00, '2026-10-09 12:18:03', NULL, NULL),
-(2, 1, 1, NULL, 'ORD-20261010-001', 'restaurant', 'takeaway', NULL, NULL, 'Okot Denis', '+256779562514', 'denisokot47@gmail.com', 'walukuba', 'Please hurry withbmy order i need it now.', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-10 16:44:59', NULL, NULL),
-(3, 1, 1, NULL, 'ORD-20261010-002', 'restaurant', 'takeaway', NULL, NULL, 'Okot Denis', '+256779562514', 'denisokot47@gmail.com', 'Jinja town', 'I need salt.', 'pending', 0.00, 45000.00, 1575.00, 46575.00, '2026-10-10 16:48:28', NULL, NULL),
-(4, 1, 1, NULL, 'ORD-20261011-001', 'restaurant', 'takeaway', NULL, NULL, 'mama mafalda', '0772514889', 'reaganotemas@gmail.com', 'jinja', 'less salt', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-11 14:46:23', NULL, NULL),
-(5, 1, 1, NULL, 'ORD-20261013-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '+256772514889', 'reaganotema2022@gmail.com', 'JINJA', 'too much salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-10-13 10:29:48', NULL, NULL),
-(6, 1, 1, NULL, 'ORD-20261013-002', 'restaurant', 'takeaway', NULL, NULL, 'Otema Reagan', '+256772514889', 'reaganotema2022@gmail.com', 'Jinja', 'Less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-13 11:19:23', NULL, NULL),
-(7, 1, 1, NULL, 'ORD-20261015-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'Jinja', 'Less salt', 'pending', 0.00, 71000.00, 2485.00, 73485.00, '2026-10-15 05:12:43', NULL, NULL),
-(8, 1, 1, NULL, 'ORD-20261015-002', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'Jinja', 'Less salt', 'pending', 0.00, 50000.00, 1750.00, 51750.00, '2026-10-15 08:29:11', NULL, NULL),
-(9, 1, 1, NULL, 'ORD-20261015-003', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja mpummude', 'please make sure the food is hot', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-15 08:31:05', NULL, NULL),
-(10, 1, 1, NULL, 'ORD-20261015-004', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja', 'not salty', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-15 13:13:18', NULL, NULL),
-(11, 1, 1, NULL, 'ORD-20261015-005', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja', 'not salty', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-10-15 13:58:57', NULL, NULL),
-(12, 1, 1, NULL, 'ORD-20261015-006', 'restaurant', 'takeaway', NULL, NULL, 'mama mafalda', '0772514889', 'reaganotemas@gmail.com', 'jinja', 'put less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-15 16:45:42', NULL, NULL),
-(13, 1, 1, NULL, 'ORD-20261016-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'Jinja', 'Less salt', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-16 03:41:40', NULL, NULL),
-(14, 1, 1, NULL, 'ORD-20261016-002', 'restaurant', 'takeaway', NULL, NULL, 'mama mafalda', '0772514889', 'reaganotemas@gmail.com', 'jinja', 'put less salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-10-16 13:10:38', NULL, NULL),
-(15, 1, 1, NULL, 'ORD-20261021-001', 'restaurant', 'takeaway', NULL, NULL, 'Atim Jeremiah Okello', '0706407275', 'jeremiahotile@gmail.com', 'Main Street', '', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-21 11:20:40', NULL, NULL),
-(16, 1, 1, NULL, 'ORD-20261021-002', 'restaurant', 'takeaway', NULL, NULL, 'WOZISI WILLIAM', '0705491314', 'willywozisi@gmail.com', 'Lubas Rd', '', 'pending', 0.00, 37000.00, 1295.00, 38295.00, '2026-10-21 11:21:24', NULL, NULL),
-(17, 1, 1, NULL, 'ORD-20261027-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja town', 'less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-27 14:01:41', NULL, NULL),
-(18, 1, 1, NULL, 'ORD-20261028-001', 'restaurant', 'takeaway', NULL, NULL, 'paiton witness', '0750891058', 'paiton@gmail.com', 'mpumudde, jinja.', 'less salt please.', 'pending', 0.00, 47000.00, 1645.00, 48645.00, '2026-10-28 09:22:41', NULL, NULL),
-(19, 1, 1, NULL, 'ORD-20261104-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja  town', 'i need less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-11-04 15:19:28', NULL, NULL),
-(20, 1, 1, NULL, 'ORD-20261106-001', 'restaurant', 'takeaway', NULL, NULL, 'Tadeo Owot', '0782125278', '4maramans@gmail.com', 'Kimaka Senior Command', 'Not too much salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-11-06 13:25:18', NULL, NULL);
+INSERT INTO `orders` (`id`, `hotel_id`, `user_id`, `shift_id`, `order_number`, `outlet`, `order_type`, `table_name`, `room_id`, `customer_name`, `customer_phone`, `customer_email`, `delivery_address`, `delivery_notes`, `status`, `discount`, `subtotal`, `tax`, `total`, `created_at`, `deleted_at`, `deleted_by`, `kds_runner`, `kds_eta`, `kds_dispatched_at`) VALUES
+(1, 1, 1, NULL, 'ORD-20261009-001', 'restaurant', 'takeaway', NULL, NULL, 'Otema Reagan', '+256772514889', 'reaganotema2022@gmail.com', 'Jinja city', 'Add salt', 'pending', 0.00, 13000.00, 455.00, 13455.00, '2026-10-09 12:18:03', NULL, NULL, NULL, NULL, NULL),
+(2, 1, 1, NULL, 'ORD-20261010-001', 'restaurant', 'takeaway', NULL, NULL, 'Okot Denis', '+256779562514', 'denisokot47@gmail.com', 'walukuba', 'Please hurry withbmy order i need it now.', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-10 16:44:59', NULL, NULL, NULL, NULL, NULL),
+(3, 1, 1, NULL, 'ORD-20261010-002', 'restaurant', 'takeaway', NULL, NULL, 'Okot Denis', '+256779562514', 'denisokot47@gmail.com', 'Jinja town', 'I need salt.', 'pending', 0.00, 45000.00, 1575.00, 46575.00, '2026-10-10 16:48:28', NULL, NULL, NULL, NULL, NULL),
+(4, 1, 1, NULL, 'ORD-20261011-001', 'restaurant', 'takeaway', NULL, NULL, 'mama mafalda', '0772514889', 'reaganotemas@gmail.com', 'jinja', 'less salt', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-11 14:46:23', NULL, NULL, NULL, NULL, NULL),
+(5, 1, 1, NULL, 'ORD-20261013-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '+256772514889', 'reaganotema2022@gmail.com', 'JINJA', 'too much salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-10-13 10:29:48', NULL, NULL, NULL, NULL, NULL),
+(6, 1, 1, NULL, 'ORD-20261013-002', 'restaurant', 'takeaway', NULL, NULL, 'Otema Reagan', '+256772514889', 'reaganotema2022@gmail.com', 'Jinja', 'Less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-13 11:19:23', NULL, NULL, NULL, NULL, NULL),
+(7, 1, 1, NULL, 'ORD-20261015-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'Jinja', 'Less salt', 'pending', 0.00, 71000.00, 2485.00, 73485.00, '2026-10-15 05:12:43', NULL, NULL, NULL, NULL, NULL),
+(8, 1, 1, NULL, 'ORD-20261015-002', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'Jinja', 'Less salt', 'pending', 0.00, 50000.00, 1750.00, 51750.00, '2026-10-15 08:29:11', NULL, NULL, NULL, NULL, NULL),
+(9, 1, 1, NULL, 'ORD-20261015-003', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja mpummude', 'please make sure the food is hot', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-15 08:31:05', NULL, NULL, NULL, NULL, NULL),
+(10, 1, 1, NULL, 'ORD-20261015-004', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja', 'not salty', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-15 13:13:18', NULL, NULL, NULL, NULL, NULL),
+(11, 1, 1, NULL, 'ORD-20261015-005', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja', 'not salty', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-10-15 13:58:57', NULL, NULL, NULL, NULL, NULL),
+(12, 1, 1, NULL, 'ORD-20261015-006', 'restaurant', 'takeaway', NULL, NULL, 'mama mafalda', '0772514889', 'reaganotemas@gmail.com', 'jinja', 'put less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-15 16:45:42', NULL, NULL, NULL, NULL, NULL),
+(13, 1, 1, NULL, 'ORD-20261016-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'Jinja', 'Less salt', 'pending', 0.00, 15000.00, 525.00, 15525.00, '2026-10-16 03:41:40', NULL, NULL, NULL, NULL, NULL),
+(14, 1, 1, NULL, 'ORD-20261016-002', 'restaurant', 'takeaway', NULL, NULL, 'mama mafalda', '0772514889', 'reaganotemas@gmail.com', 'jinja', 'put less salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-10-16 13:10:38', NULL, NULL, NULL, NULL, NULL),
+(15, 1, 1, NULL, 'ORD-20261021-001', 'restaurant', 'takeaway', NULL, NULL, 'Atim Jeremiah Okello', '0706407275', 'jeremiahotile@gmail.com', 'Main Street', '', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-21 11:20:40', NULL, NULL, NULL, NULL, NULL),
+(16, 1, 1, NULL, 'ORD-20261021-002', 'restaurant', 'takeaway', NULL, NULL, 'WOZISI WILLIAM', '0705491314', 'willywozisi@gmail.com', 'Lubas Rd', '', 'pending', 0.00, 37000.00, 1295.00, 38295.00, '2026-10-21 11:21:24', NULL, NULL, NULL, NULL, NULL),
+(17, 1, 1, NULL, 'ORD-20261027-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja town', 'less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-27 14:01:41', NULL, NULL, NULL, NULL, NULL),
+(18, 1, 1, NULL, 'ORD-20261028-001', 'restaurant', 'takeaway', NULL, NULL, 'paiton witness', '0750891058', 'paiton@gmail.com', 'mpumudde, jinja.', 'less salt please.', 'pending', 0.00, 47000.00, 1645.00, 48645.00, '2026-10-28 09:22:41', NULL, NULL, NULL, NULL, NULL),
+(19, 1, 1, NULL, 'ORD-20261104-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja  town', 'i need less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-11-04 15:19:28', NULL, NULL, NULL, NULL, NULL),
+(20, 1, 1, NULL, 'ORD-20261106-001', 'restaurant', 'takeaway', NULL, NULL, 'Tadeo Owot', '0782125278', '4maramans@gmail.com', 'Kimaka Senior Command', 'Not too much salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-11-06 13:25:18', NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -4622,6 +4676,14 @@ ALTER TABLE `journal_lines`
   ADD KEY `fk_jl_account` (`account_id`);
 
 --
+-- Indexes for table `kds_print_queue`
+--
+ALTER TABLE `kds_print_queue`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_kds_ticket` (`hotel_id`,`ticket_key`),
+  ADD KEY `idx_kds_print_status` (`status`);
+
+--
 -- Indexes for table `kitchen_order_items`
 --
 ALTER TABLE `kitchen_order_items`
@@ -5593,6 +5655,12 @@ ALTER TABLE `journal_lines`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `kds_print_queue`
+--
+ALTER TABLE `kds_print_queue`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `kitchen_order_items`
 --
 ALTER TABLE `kitchen_order_items`
@@ -5602,7 +5670,7 @@ ALTER TABLE `kitchen_order_items`
 -- AUTO_INCREMENT for table `kitchen_stations`
 --
 ALTER TABLE `kitchen_stations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `laundry_items`

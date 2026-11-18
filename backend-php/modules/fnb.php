@@ -14,6 +14,7 @@ declare(strict_types=1);
 $act=$_GET['act']??'';
 $u=current_user();
 require_once __DIR__.'/../app/pos.php';
+require_once __DIR__.'/../app/kds.php';
 
 /*
  * The window during which a settled order payment is still "fresh" on the F&B
@@ -73,8 +74,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     if($nst==='cancelled'){
      q('INSERT INTO voids(hotel_id,ref_type,ref_id,reason,amount,user_id,created_at) VALUES(1,\'order\',?,?,?,?,NOW())',[$oid,'Cancelled from Food and Beverage',(float)$r['total'],$u['id']]);
     }
-    q('UPDATE orders SET status=? WHERE id=?',[$nst,$oid]);
-    audit('order_status','order',$oid,['status'=>$r['status']],['status'=>$nst]);
+     q('UPDATE orders SET status=? WHERE id=?',[$nst,$oid]);
+     kds_set_order_status($oid,(string)$nst,(int)($u['id']??0));
+     audit('order_status','order',$oid,['status'=>$r['status']],['status'=>$nst]);
     if($nst==='cancelled'){
      notify_console('desk-fnb-cancel:'.$oid,'incident','Order '.$r['order_number'].' cancelled',
       'Cancelled from Food and Beverage (was '.str_replace('_',' ',(string)$r['status']).').',

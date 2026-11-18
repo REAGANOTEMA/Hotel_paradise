@@ -31,6 +31,16 @@
 - cash reconciliation
 - stock reconciliation
 
+## KDS / Kitchen
+- run `database/sql/patches/2026-11-18_kds_workflow.sql` against the main database
+- station routing reviewed with the kitchen (hot, cold, bar, pastry, room service)
+- KOT browser print tested on every station screen with real paper
+- print queue acknowledgements checked after each service
+- ready, bump, recall, cancellation and rush actions audited
+- room service runner and ETA dispatch tested
+- kitchen and bar dashboards agree with the KDS board
+- payment receipt print tested from the KDS board
+
 ## Security
 - HTTPS
 - secure cookies
