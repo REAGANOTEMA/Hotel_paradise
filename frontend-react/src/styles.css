@@ -812,6 +812,11 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 /* menu page */
 .menuMeta{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 18px;color:#8a95a5;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:18px}
 .menuMetaCount{color:var(--gold-ink);font-weight:700}
+.menuFetch{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold-ink)}
+.menuFetch i{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px #C9A22726;animation:fetchPulse 1.6s ease-in-out infinite}
+.menuFetch.error{color:#9a4b2f}
+.menuFetch.error i{background:#9a4b2f;box-shadow:0 0 0 4px #9a4b2f1f;animation:none}
+@keyframes fetchPulse{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
 .printBtn{background:none;border:1px solid #c8cfd9;color:var(--navy);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 18px;transition:border-color .2s ease,color .2s ease}
 .printBtn:hover{border-color:var(--gold);color:var(--gold-ink)}
 
@@ -833,47 +838,89 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 .menuClear{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:0;background:#eef0f3;color:var(--navy);transition:background .16s ease,color .16s ease}
 .menuClear svg{width:10px;height:10px}
 .menuClear:hover{background:var(--gold);color:#071A33}
-.menuResult{color:var(--gold-ink);font-size:12px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
+.menuResult{color:var(--gold-ink);font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;white-space:nowrap}
 .menuJumpInner{width:96%;max-width:1400px;margin:auto;padding:0 0 7px;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none}
 .menuJumpInner::-webkit-scrollbar{display:none}
 .catChip{flex:none;border:1px solid #e6e0d2;background:#fbf9f3;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:600;letter-spacing:.4px;color:#4a5666;white-space:nowrap;transition:color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
 .catChip:hover{color:var(--navy);border-color:#ded5bd;background:#fff;transform:translateY(-1px);box-shadow:0 4px 12px #071A3312}
-.catChip.on{background:linear-gradient(180deg,var(--navy2),var(--navy));color:#fff;border-color:var(--navy);box-shadow:0 6px 18px #071A332e,inset 0 1px 0 rgba(255,255,255,.14)}
+.catChip.on{background:linear-gradient(180deg,var(--navy2),var(--navy));color:#fff;border-color:var(--navy);box-shadow:0 6px 18px #071A332e,inset 0 1px 0 rgba(255,255,255,.14),inset 0 -2px 0 var(--gold)}
 .catChip.on::after{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);margin-left:8px;vertical-align:middle;box-shadow:0 0 0 3px #C9A22733}
 .jumpOrder{flex:none;margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:9px 16px;background:linear-gradient(180deg,#eccd68,#c9a227);color:#071A33;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;box-shadow:0 8px 20px #C9A2273d,inset 0 1px 0 rgba(255,255,255,.55);transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
 .jumpOrder:hover{transform:translateY(-1px);box-shadow:0 12px 26px #C9A22755,inset 0 1px 0 rgba(255,255,255,.6)}
 @media(max-width:700px){.menuTools{flex-wrap:wrap;gap:9px}.menuSearch{flex:1 1 100%;max-width:none}.menuResult{order:3;margin-left:auto}.jumpOrder{margin-left:0}}
 
-/* sections */
 .secBlock{margin-bottom:34px;scroll-margin-top:180px;padding:0}
-.secHead{margin-bottom:18px}
 .secEyebrow{color:var(--gold-ink);font-size:11px;font-weight:700;letter-spacing:4px;margin:0 0 6px}
-.secHead h2,.secBanner h2{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(26px,3vw,36px);color:var(--navy);margin:0 0 6px;line-height:1.1}
-.secBlurb{color:#5b6675;font-size:15px;margin:0;max-width:640px}
 .subGroup{margin-bottom:20px}
 .subHead{font-size:11px;font-weight:700;letter-spacing:3.4px;text-transform:uppercase;color:var(--gold-ink);margin:0 0 11px;padding-bottom:7px;border-bottom:1px solid #e3dccb;display:flex;align-items:center;gap:14px}
 .subHead::after{content:'';flex:1;height:1px;background:repeating-linear-gradient(90deg,#e3dccb 0 6px,transparent 6px 12px)}
-
-/* section banner: the name is laid over the photograph, on a navy scrim that
-   is heaviest on the left where the text sits */
-.secBanner{box-shadow:0 14px 38px #071A3318;margin-bottom:16px}
-.secBanner .photoOverlay{padding:20px 26px;justify-content:center}
-.secBanner .photoOverlay::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#071A33f0 0%,#071A33d1 38%,#071A3340 78%,#071A331a 100%)}
-.secBanner .secEyebrow,.secBanner h2{position:relative;color:#fff}
-.secBanner h2{color:#fff;margin:0;text-shadow:0 2px 18px #071A3380}
-.secBanner.isEmpty{background:linear-gradient(115deg,var(--navy) 0%,var(--nebula) 55%,var(--nile) 100%)}
-/* A ghosted initial, so an unphotographed section still looks composed */
+.menuSpotlight{position:relative;overflow:hidden;border-radius:14px;background:linear-gradient(115deg,var(--navy) 0%,var(--nebula) 55%,var(--nile) 100%);box-shadow:0 16px 44px #071A3324;margin-bottom:18px;--r:21/8;isolation:isolate}
+.spotlightStage{position:absolute;inset:0;z-index:0}
+.spotlightSlide{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden;transition:opacity .9s ease,visibility 0s linear .9s}
+.spotlightSlide.on{opacity:1;visibility:visible;z-index:1;transition:opacity .9s ease,visibility 0s}
+.spotlightSlide .photoBox{--r:auto;width:100%;height:100%}
+.spotlightSlide .photoImg{transform:scale(1.015);transition:transform 7s ease-out,opacity .9s ease}
+.spotlightSlide.on .photoImg{transform:scale(1.085)}
+.spotlightSlide .photoBox.isEmpty{background:linear-gradient(115deg,var(--navy) 0%,var(--nebula) 55%,var(--nile) 100%)}
+.spotlightScrim{position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,#071A33f2 0%,#071A33d8 38%,#071A336b 72%,#071A3324 100%)}
+.spotlightCopy{position:relative;z-index:3;max-width:min(680px,72%);min-height:clamp(220px,24vw,330px);padding:clamp(26px,4vw,58px) clamp(24px,4.5vw,64px);display:flex;flex-direction:column;justify-content:center;color:#fff}
+.spotlightCopy .secEyebrow{color:var(--gold);margin:0 0 8px}
+.spotlightCopy h2{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(30px,4vw,52px);line-height:1.05;margin:0;text-shadow:0 2px 22px #071A3380}
+.spotlightBlurb{color:#e8edf5;font-size:14.5px;line-height:1.7;margin:14px 0 0;max-width:520px;text-shadow:0 1px 12px #071A3399}
+.spotlightDish{margin:16px 0 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;animation:dishIn .5s ease both}
+.spotlightDish span{font-size:10px;letter-spacing:2.4px;text-transform:uppercase;color:#d7e0eb}
+.spotlightDish b{font-family:'Playfair Display',serif;font-size:19px;font-weight:600;color:#fff}
+.spotlightDish em{font-style:normal;font-weight:700;color:var(--gold);font-size:14px}
+@keyframes dishIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.spotlightNav{position:absolute;right:20px;bottom:18px;z-index:4;display:flex;align-items:center;gap:10px}
+.spotlightArrow{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#ffffff1f;color:#fff;border:1px solid #ffffff5c;transition:background .2s ease,color .2s ease,transform .2s ease}
+.spotlightArrow svg{width:15px;height:10px}
+.spotlightArrow.prev svg{transform:rotate(180deg)}
+.spotlightArrow:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);transform:translateY(-1px)}
+.spotlightDots{display:flex;align-items:center;gap:6px;padding:0 8px}
+.spotlightDot{width:7px;height:7px;border-radius:50%;background:#ffffff70;transition:width .25s ease,background .25s ease,box-shadow .25s ease}
+.spotlightDot.on{width:22px;border-radius:999px;background:var(--gold);box-shadow:0 0 0 3px #C9A22740}
 .secBannerGlyph{position:absolute;right:5%;top:50%;transform:translateY(-50%);z-index:1;font-family:'Playfair Display',serif;font-size:clamp(64px,10vw,132px);line-height:1;font-weight:700;color:#ffffff17;pointer-events:none;user-select:none}
 
-/* dish cards, each with its photograph */
-.dishGrid{display:grid;grid-template-columns:repeat(4,1fr);--dishGap:18px;gap:var(--dishGap);align-items:stretch}
-/* A category with fewer dishes than one full row centres its cards, so the
-   empty cells fall evenly to either side instead of all to the right. A full
-   row still fills the grid exactly as before. */
-@media(min-width:1051px){
-.dishGrid:not(:has(.dishCard:nth-child(4))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 3 * var(--dishGap)) / 4);justify-content:center}
+/* The complete catalogue: six columns on a desktop, the way a large shop
+   arranges its shelves. Cards stay compact enough to read at 1280px, and the
+   density lifts only where there is genuinely more width to spend. */
+.dishGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));--dishGap:16px;gap:var(--dishGap);align-items:stretch}
+@media(min-width:1401px){.dishGrid{--dishGap:18px}}
+/* A short category still centres its cards instead of leaving a ragged gap. */
+@media(min-width:1201px){
+.dishGrid:not(:has(.dishCard:nth-child(6))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 5 * var(--dishGap)) / 6);justify-content:center}
 }
-.dishCard{position:relative;background:linear-gradient(180deg,#fff 0%,#fdfbf4 100%);border-radius:10px;display:flex;flex-direction:column;box-shadow:0 1px 2px #071A3308,0 12px 30px #071A330d;border:1px solid #eae3d2;transition:transform .28s cubic-bezier(.22,.7,.3,1),box-shadow .28s ease,border-color .28s ease;overflow:hidden}
+@media(min-width:1051px) and (max-width:1200px){
+.dishGrid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.dishGrid:not(:has(.dishCard:nth-child(6))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 4 * var(--dishGap)) / 5);justify-content:center}
+}
+/* Compact cards at laptop width: dense, but every price and button still fits. */
+@media(min-width:1051px) and (max-width:1400px){
+.dishOpenText{padding:10px 11px 0;min-height:70px}
+.dishTitle{font-size:15px}
+.dishDesc{font-size:11.5px}
+.dishBody{padding:8px 11px 11px}
+.dishPriceRow{padding-top:8px}
+.dishPriceRow b{font-size:13px}
+.dishActions{gap:6px;margin-top:8px}
+.quickStep button{width:26px;height:30px}
+.quickStep output{min-width:20px;font-size:12.5px}
+.addBtn{padding:8px 9px;font-size:10.5px;gap:4px;letter-spacing:.5px}
+.dishCat,.dishStatus{font-size:8px;padding:4px 6px}
+}
+/* The catalogue introduction and its load-more footer. */
+.catAll{margin-bottom:38px}
+.catAll>.menuSpotlight{margin-bottom:24px}
+.catAllHead{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;margin:0 0 18px;padding:0 2px}
+.catAllHead h2{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(27px,3vw,40px);color:var(--navy);margin:0;line-height:1.12}
+.catAllHead p{margin:8px 0 0;color:#5b6675;font-size:14px;line-height:1.6;max-width:660px}
+.catAllCount{font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold-ink);white-space:nowrap;padding-bottom:4px}
+.catAllFoot{display:flex;justify-content:center;margin-top:22px}
+.catAllFoot .moreBtn{max-width:380px}
+.dishCard{position:relative;min-width:0;background:linear-gradient(180deg,#fff 0%,#fdfbf4 100%);border-radius:12px;display:flex;flex-direction:column;box-shadow:0 1px 2px #071A3308,0 12px 30px #071A330d;border:1px solid #eae3d2;transition:transform .28s cubic-bezier(.22,.7,.3,1),box-shadow .28s ease,border-color .28s ease;overflow:hidden}
+.dishCard.added{animation:cardAdded .7s ease-out}
+@keyframes cardAdded{0%{box-shadow:0 0 0 0 #C9A22777}60%{box-shadow:0 0 0 6px #C9A22722}100%{box-shadow:0 1px 2px #071A3308,0 12px 30px #071A330d}}
 .dishCard:hover{transform:translateY(-4px);box-shadow:0 3px 7px #071A3310,0 26px 54px #071A331f;border-color:#dccfa8}
 /* a hairline of gold wakes along the top edge as the card is picked up */
 .dishCard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold) 50%,transparent);transform:scaleX(0);transform-origin:center;transition:transform .35s ease;z-index:4;pointer-events:none}
@@ -881,43 +928,52 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 /* a dish already in the order keeps a gold edge, so a guest scanning the
    menu can see at a glance what they have chosen */
 .dishCard.held{border-color:var(--gold);box-shadow:0 10px 30px #C9A22722}
-/* the whole card opens the details; it sits over the plate and the words,
-   and under the price row, which carries its own button */
-.dishOpen{position:absolute;inset:0;z-index:1;background:none;border:0;padding:0;border-radius:0;font:inherit;color:inherit;text-align:left}
+.dishOverflow{display:none}
+.dishOverflow.revealed{display:flex}
+.dishOpen{position:absolute;inset:0;z-index:2;background:none;border:0;padding:0;border-radius:0;font:inherit;color:inherit;text-align:left}
 .dishOpen:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
 .dishOpenMedia{display:block;position:relative;overflow:hidden}
-/* a low scrim under the plate, so the card settles into the ivory page and the
-   photograph keeps the same depth whether it is pale or dark */
-.dishOpenMedia::after{content:'';position:absolute;left:0;right:0;bottom:0;height:38%;background:linear-gradient(180deg,transparent,rgba(7,26,51,.14));opacity:0;transition:opacity .3s ease;pointer-events:none;z-index:1}
-.dishCard:hover .dishOpenMedia::after{opacity:1}
+.dishOpenMedia::after{content:'';position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(180deg,transparent,rgba(7,26,51,.18));opacity:1;pointer-events:none;z-index:1}
 .shot{border-bottom:1px solid #ece7db}
 .shot.isEmpty{background:linear-gradient(150deg,#f9f6ee,#ece5d4)}
 .shotEmpty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:12px;text-align:center}
 .plateGlyph{width:46px;height:46px;color:#b39c5e;opacity:.85}
 .shotNote{font-size:10px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:#a08a4c}
-/* Only ever shown to staff, via ?photos=1 */
 .shotFile{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;color:#9a9384;background:#ffffff7a;border:1px dashed #d8cfb6;padding:3px 7px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-/* the word "Open" that fades in over the plate when the card is hovered */
-.dishPeek{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:9px;padding:26px 14px 12px;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,#071A3300,#071A33e0 62%);opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;pointer-events:none}
-.dishPeek svg{width:17px;height:12px}
+.dishCat{position:absolute;top:9px;left:9px;z-index:3;max-width:58%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#071A33e6;color:#f4e4b4;font-size:8.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;padding:5px 8px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.dishStatus{position:absolute;top:9px;right:9px;z-index:3;display:inline-flex;align-items:center;gap:5px;background:#fffffff2;color:#5b6675;font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:5px 7px}
+.dishStatus::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--ok)}
+.dishStatus.off::before{background:var(--bad)}
+.dishSave{position:absolute;left:9px;bottom:9px;z-index:3;background:var(--gold);color:#071A33;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:5px 8px;box-shadow:0 4px 14px #071A3333}
+.dishPeek{position:absolute;right:9px;bottom:8px;z-index:2;display:flex;align-items:center;gap:6px;font-size:9px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#fff;opacity:0;transform:translateY(5px);transition:opacity .25s ease,transform .25s ease;pointer-events:none;text-shadow:0 1px 8px #071A33}
+.dishPeek svg{width:15px;height:10px}
 .dishCard:hover .dishPeek,.dishCard:focus-within .dishPeek{opacity:1;transform:translateY(0)}
-/* how many of this dish are already in the order */
-.dishHeld{position:absolute;top:12px;left:12px;z-index:3;background:var(--gold);color:#071A33;font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;padding:6px 10px;box-shadow:0 4px 14px #071A3333}
-
-.dishOpenText{padding:13px 15px 0;position:relative;z-index:2}
-.dishTitle{font-family:'Playfair Display';font-weight:600;font-size:17.5px;color:var(--navy);margin:0 0 4px;line-height:1.25;letter-spacing:.002em}
+.dishHeld{position:absolute;right:9px;bottom:30px;z-index:3;background:var(--gold);color:#071A33;font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:5px 8px;box-shadow:0 4px 14px #071A3333}
+.dishOpenText{padding:13px 15px 0;min-height:76px}
+.dishTitle{font-family:'Playfair Display',serif;font-weight:600;font-size:17.5px;color:var(--navy);margin:0 0 4px;line-height:1.25;letter-spacing:.002em;overflow-wrap:anywhere}
 .dishDesc{margin:0 0 4px;color:#687386;font-size:12.5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-/* the price row is held to the foot of the card, so a row of cards reads as
-   one clean line of prices however long the descriptions are */
-.dishBody{padding:10px 15px 13px;display:flex;flex-direction:column;margin-top:auto;position:relative;z-index:2}
-.dishFoot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid rgba(201,162,39,.18)}
-.dishFoot b{color:var(--gold-ink);font-size:15px;font-weight:700;white-space:nowrap;letter-spacing:.005em}
-.dishFoot b.askPrice{color:#7c8593;font-size:12.5px;font-weight:600;font-style:italic}
+.dishBody{padding:10px 15px 13px;display:flex;flex-direction:column;margin-top:auto}
+.dishPriceRow{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid rgba(201,162,39,.22)}
+.dishPriceRow b{color:var(--gold-ink);font-size:15px;font-weight:700;letter-spacing:.005em}
+.dishPriceRow b.askPrice{color:#7c8593;font-size:12px;font-weight:600;font-style:italic}
+.dishPriceRow del{color:#9aa3ae;font-size:11px}
+.dishActions{display:flex;align-items:center;gap:8px;margin-top:9px}
+.quickStep{display:flex;align-items:center;gap:2px;background:#fff;border:1px solid #dcd4c2;border-radius:var(--r);overflow:hidden;flex:none}
+.quickStep button{width:30px;height:34px;display:flex;align-items:center;justify-content:center;background:#fff;color:var(--navy);font-size:16px;font-weight:700;line-height:1;transition:background .16s ease,color .16s ease}
+.quickStep button svg{width:10px;height:10px}
+.quickStep button:hover:not(:disabled){background:var(--navy);color:#fff}
+.quickStep button:disabled{opacity:.3;cursor:not-allowed}
+.quickStep output{min-width:24px;text-align:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums}
+.moreBtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:12px;padding:12px 18px;background:#fff;border:1px solid #ddd5c0;border-radius:var(--r);color:var(--navy);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;transition:background .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease}
+.moreBtn:hover{background:#fffdf6;border-color:var(--gold);box-shadow:0 8px 20px #071A3312}
+.moreBtn svg{width:16px;height:11px;transition:transform .2s ease}
+.moreBtn.open svg{transform:rotate(180deg)}
 .addBtn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(180deg,#eccd68,#c9a227);color:#071A33;font-weight:700;letter-spacing:1px;font-size:12px;padding:9px 13px;border-radius:var(--r);flex:none;box-shadow:0 6px 16px #C9A22738,inset 0 1px 0 rgba(255,255,255,.5);transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
 .addBtn svg{width:12px;height:12px;flex:none}
 .addBtn:hover{transform:translateY(-1px);box-shadow:0 10px 24px #C9A22755,inset 0 1px 0 rgba(255,255,255,.6)}
 .addBtn:active{background:var(--gold-deep);box-shadow:inset 0 2px 5px rgba(7,26,51,.25);transform:translateY(1px)}
+.addBtn:disabled{opacity:.42;cursor:not-allowed;box-shadow:none;transform:none}
+.addBtn:disabled:hover{transform:none;box-shadow:none}
 /* The turn of the Add button the menu is quietly pointing at: a soft ring of
    light and a small rise, held for the two seconds it keeps the floor. */
 .addBtn.addLit{animation:addLit 2s ease-in-out both}
@@ -1008,6 +1064,32 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 .orderPillText em{font-style:normal;font-size:11px;letter-spacing:1.4px;color:var(--gold);font-weight:700;margin-top:2px}
 .orderPill.pop{animation:pillPop .5s cubic-bezier(.22,1.2,.36,1)}
 @keyframes pillPop{0%{transform:scale(1)}35%{transform:scale(1.07)}100%{transform:scale(1)}}
+.cartDrawer{display:none}
+@media(max-width:700px){
+  .cartDrawer{display:block;position:fixed;inset:0;z-index:55;visibility:hidden;pointer-events:none;transition:visibility 0s linear .32s}
+  .cartDrawer.open{visibility:visible;pointer-events:auto;transition:visibility 0s}
+  .cartScrim{position:absolute;inset:0;background:rgba(5,13,26,.68);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transition:opacity .32s ease}
+  .cartDrawer.open .cartScrim{opacity:1}
+  .cartPanel{position:absolute;top:0;right:0;bottom:0;width:min(92vw,440px);display:flex;flex-direction:column;background:var(--ivory);box-shadow:-24px 0 70px #00000066;transform:translateX(102%);transition:transform .34s cubic-bezier(.22,.9,.3,1);padding-bottom:env(safe-area-inset-bottom)}
+  .cartDrawer.open .cartPanel{transform:translateX(0)}
+  .cartHead{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 18px 16px;background:var(--navy);color:#fff}
+  .cartHead p{margin:0 0 4px;font-size:10px;font-weight:700;letter-spacing:3px;color:var(--gold)}
+  .cartHead h2{margin:0;font-family:'Playfair Display',serif;font-size:22px;font-weight:600;line-height:1.2}
+  .cartHead h2 span{color:var(--gold)}
+  .cartClose{width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center;background:#ffffff14;border:1px solid #ffffff38;border-radius:50%;color:#fff}
+  .cartClose svg{width:14px;height:14px}
+  .cartBody{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:16px 18px 22px}
+  .cartBody .trayItem{padding:12px 0}
+  .cartBody .trayInfo b{font-size:14px}
+  .cartForm{display:flex;flex-direction:column;gap:0;margin-top:16px;padding-top:16px;border-top:1px solid #e3dccb}
+  .cartForm .acctGate{width:100%}
+  .cartForm .bookAs{margin:0 0 14px;font-size:12.5px;color:#5b6675}
+  .cartForm .bookAs a{color:var(--nile);font-weight:700;text-decoration:underline}
+  .cartForm .planField{margin-bottom:12px}
+  .cartForm .planBook{margin-top:6px}
+  .cartFoot{flex:none;padding:12px 18px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e3dccb}
+  .cartKeep{width:100%;padding:13px 18px;background:transparent;border:1px solid #d8d2c4;color:var(--navy);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+}
 
 /* ---------------------------------------------------------------
    THE DISH DETAIL VIEW
@@ -1186,8 +1268,8 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .planner{position:static;margin-top:6px}
   .bedCard{grid-template-columns:1fr}
   .bedMedia{--r:16/9}
-  .dishGrid{grid-template-columns:repeat(3,1fr);--dishGap:18px;gap:var(--dishGap)}
-  .dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 2 * var(--dishGap)) / 3);justify-content:center}
+  .dishGrid{grid-template-columns:repeat(4,minmax(0,1fr));--dishGap:16px;gap:var(--dishGap)}
+  .dishGrid:not(:has(.dishCard:nth-child(4))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 3 * var(--dishGap)) / 4);justify-content:center}
   .menuJumpInner{padding:0 0 9px}
   .menuTools{padding:10px 0 7px}
   .booking{grid-template-columns:1fr 1fr;gap:16px}
@@ -1233,6 +1315,8 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 
 /* --- 900: the order tray reflows ------------------------------------ */
 @media(max-width:900px){
+  .dishGrid{grid-template-columns:repeat(3,minmax(0,1fr));--dishGap:16px;gap:var(--dishGap)}
+  .dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 2 * var(--dishGap)) / 3);justify-content:center}
   .trayItem{grid-template-columns:52px minmax(0,1fr) auto;grid-template-areas:"thumb info total" "thumb qty drop";row-gap:8px;column-gap:12px}
   .trayThumb{width:52px;height:52px;align-self:center}
   .trayInfo{grid-area:info}
@@ -1254,23 +1338,20 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 }
 @keyframes sheetIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 
-/* --- 768: two calm columns, the way a printed carte reads on a tablet --- */
+/* --- 768: three readable columns on a tablet in portrait -------------- */
 @media(max-width:768px){
   .section.menuWrap{padding-top:20px}
-  .dishGrid{grid-template-columns:repeat(2,1fr);--dishGap:16px;gap:var(--dishGap)}
-  /* an odd last dish centres under the pair above it instead of hanging left */
-  .dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - var(--dishGap)) / 2);justify-content:center}
   .dishOpenText{padding:13px 13px 0}
   .dishTitle{font-size:16.5px;margin-bottom:4px}
   .dishDesc{font-size:12.5px;line-height:1.5;-webkit-line-clamp:2}
   .dishBody{padding:10px 13px 13px}
-  .dishFoot{flex-direction:row;align-items:center;gap:10px;padding-top:10px}
-  .dishFoot b{font-size:14px;text-align:left;white-space:nowrap}
-  .addBtn{width:auto;justify-content:center;padding:9px 12px;font-size:11.5px;letter-spacing:.4px}
+  .dishPriceRow{padding-top:10px}
+  .dishPriceRow b{font-size:14px}
+  .addBtn{justify-content:center;padding:9px 12px;font-size:11.5px;letter-spacing:.4px}
   /* the plate is small here, so the hover cue and the file hint go */
   .dishPeek{display:none}
   .shotFile{display:none}
-  .dishHeld{top:8px;left:8px;font-size:9px;letter-spacing:1.2px;padding:5px 8px}
+  .dishHeld{top:auto;left:auto;font-size:9px;letter-spacing:1.2px;padding:5px 8px}
   .plateGlyph{width:32px;height:32px}
   .secBanner{--r:16/9}
   .menuWatermark{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='300'%3E%3Ctext x='260' y='160' text-anchor='middle' font-family='Georgia,Times New Roman,serif' font-size='36' font-weight='700' letter-spacing='2' fill='%23071A33' fill-opacity='0.07' transform='rotate(-26 260 150)'%3EHotel Paradise on the Nile%3C/text%3E%3C/svg%3E");background-size:520px 300px}
@@ -1283,6 +1364,15 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .planGrid{grid-template-columns:1fr}
   .footerMain{grid-template-columns:1fr;gap:30px}
   .footerStudio{padding-top:22px}
+}
+
+/* --- 700: the phone's own two-column catalogue ---------------------- */
+@media(max-width:700px){
+  .dishGrid{grid-template-columns:repeat(2,minmax(0,1fr));--dishGap:14px;gap:var(--dishGap)}
+  /* an odd last dish centres under the pair above it instead of hanging left */
+  .dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - var(--dishGap)) / 2);justify-content:center}
+  .catAllHead{align-items:flex-start;flex-direction:column;gap:8px;margin-bottom:14px}
+  .catAllCount{padding-bottom:0}
 }
 
 /* --- 560: phones --------------------------------------------------- */
@@ -1342,21 +1432,33 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .badge{white-space:normal}
 }
 
-/* --- 480: one generous column, so a phone reads like a menu card ----- */
+/* --- 480: two calm columns, so a phone reads like a menu card -------- */
 @media(max-width:480px){
-  .dishGrid,.dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-flow:row;grid-auto-columns:auto;justify-content:stretch;--dishGap:9px;gap:var(--dishGap)}
-  .dishCard{border-radius:8px}
+  .dishGrid,.dishGrid:not(:has(.dishCard:nth-child(3))){grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;grid-auto-columns:auto;justify-content:stretch;--dishGap:10px;gap:var(--dishGap)}
+  .dishCard{border-radius:9px}
   .dishOpenMedia .shot{--r:4/3}
-  .dishOpenText{padding:8px 8px 0}
-  .dishTitle{font-size:11.5px;line-height:1.25;min-height:2.5em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .dishDesc{display:none}
-  .dishBody{padding:7px 8px 9px}
-  .dishFoot{flex-direction:column;align-items:stretch;gap:6px;padding-top:7px}
-  .dishFoot b{font-size:11.5px;text-align:left;white-space:normal;line-height:1.2}
-  .dishFoot b.askPrice{font-size:9.5px}
-  .addBtn{width:100%;justify-content:center;padding:7px 3px;font-size:10px;letter-spacing:0;gap:4px;box-shadow:none}
+  .dishCat,.dishStatus{top:6px;font-size:7px;letter-spacing:.7px;padding:4px 5px}
+  .dishCat{max-width:52%}
+  .dishSave,.dishHeld{font-size:7.5px;letter-spacing:.6px;padding:4px 5px}
+  .dishSave{left:6px;bottom:6px}
+  .dishHeld{right:6px;bottom:24px}
+  .dishPeek{opacity:1;transform:none;right:6px;bottom:5px;font-size:7.5px;letter-spacing:.8px}
+  .dishPeek svg{width:11px;height:8px}
+  .dishOpenText{padding:9px 9px 0;min-height:64px}
+  .dishTitle{font-size:12.5px;line-height:1.25;min-height:2.5em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .dishDesc{display:-webkit-box;-webkit-line-clamp:1;font-size:10.5px;line-height:1.35;color:#6d7887}
+  .dishBody{padding:8px 9px 10px}
+  .dishPriceRow{gap:5px;padding-top:8px}
+  .dishPriceRow b{font-size:12px}
+  .dishPriceRow b.askPrice{font-size:10px}
+  .dishPriceRow del{font-size:9.5px}
+  .dishActions{flex-direction:column;align-items:stretch;gap:6px;margin-top:8px}
+  .quickStep{width:100%;justify-content:space-between}
+  .quickStep button{width:36px;height:34px}
+  .quickStep output{flex:1;font-size:13px}
+  .addBtn{width:100%;justify-content:center;padding:8px 5px;font-size:10.5px;letter-spacing:.6px;min-height:34px}
   .addBtn svg{width:10px;height:10px}
-  .dishHeld{top:5px;left:5px;font-size:7.5px;letter-spacing:.5px;padding:3px 5px}
+  .moreBtn{font-size:10px;letter-spacing:1.2px;padding:11px 12px}
   .shotNote{font-size:8px;letter-spacing:1px}
   .shotEmpty{gap:3px;padding:5px}
   .plateGlyph{width:24px;height:24px}
@@ -1382,15 +1484,15 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .mobileCta{padding:9px 3vw calc(9px + env(safe-area-inset-bottom))}
   .mobileCta .btn{padding:13px 6px;font-size:12px;letter-spacing:.6px}
   .heroDots{bottom:calc(76px + env(safe-area-inset-bottom))}
-  /* the single column keeps the plate, the name, the description and the
-     price, only the scale steps down for the smallest screen */
-  .dishGrid{--dishGap:7px;gap:var(--dishGap)}
-  .dishOpenText{padding:7px 6px 0}
-  .dishTitle{font-size:10.5px}
-  .dishBody{padding:6px 6px 8px}
-  .dishFoot{gap:5px;padding-top:6px}
-  .dishFoot b{font-size:10.5px}
-  .addBtn{padding:6px 2px;font-size:9.5px}
+  .dishGrid{--dishGap:8px;gap:var(--dishGap)}
+  .dishOpenText{padding:8px 7px 0;min-height:60px}
+  .dishTitle{font-size:11.5px}
+  .dishDesc{font-size:10px}
+  .dishBody{padding:7px 7px 8px}
+  .dishPriceRow{gap:4px;padding-top:7px}
+  .dishPriceRow b{font-size:11px}
+  .quickStep button{width:34px;height:32px}
+  .addBtn{padding:7px 4px;font-size:10px;min-height:32px}
   .pickGrid{grid-template-columns:1fr}
   .cardBody{padding:20px 17px}
   .card h3{font-size:21px}
@@ -1450,12 +1552,11 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 @media(pointer:coarse){
   .btn{padding:15px 22px}
   .nav .btn{padding:13px 20px}
-  .addBtn{padding:12px 18px;font-size:12px}
   .printBtn{padding:11px 18px}
   .linkBtn{padding:6px 0}
   .trayQty button{width:34px;height:34px}
   .curToggle button{padding:14px 28px}
-  .dishFoot .addBtn{min-height:40px;display:inline-flex;align-items:center}
+  .dishActions .addBtn{min-height:40px;display:inline-flex;align-items:center}
   /* every choice in the detail view gets a thumb sized target */
   .pickCard{padding:14px;grid-template-columns:48px auto 1fr}
 .pickShot{width:48px;height:48px}
@@ -1463,6 +1564,11 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .qtyStep button{width:46px;height:48px}
   .modalClose{width:46px;height:46px}
   .askCall{padding:16px 24px}
+}
+/* Touch targets grow on larger touch screens without undoing the careful
+   compact sizing of the two-column phone catalogue. */
+@media(pointer:coarse) and (min-width:701px){
+  .dishActions .addBtn{padding:12px 18px;font-size:12px}
 }
 
 /* --- very large displays: hold the measure, do not stretch it ------ */
@@ -1528,6 +1634,11 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .pulse,.btn.loading::after{animation-duration:1.6s}
   /* nothing waits to be scrolled into view, and nothing drifts into place */
   .reveal{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
+  .menuFetch i{animation:none;opacity:1;transform:none}
+  .spotlightSlide,.spotlightSlide.on{transition:opacity .01s linear,visibility 0s}
+  .spotlightSlide .photoImg,.spotlightSlide.on .photoImg{transform:none;transition:none}
+  .spotlightDish{animation:none}
+  .dishCard.added{animation:none}
 }
 
 /* the menu is designed to be printed as well as browsed */
@@ -1535,7 +1646,7 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   @page{margin:12mm}
   html,body{background:#fff}
   body{padding-bottom:0}
-  .topbar,.nav,.skipLink,.drawer,.mobileCta,.menuJump,.orderPanelWrap,.printBtn,.heroBtns,.booking,.modal,.orderPill,.dishOpen,.dishPeek,.backTop,.backLink{display:none!important}
+  .topbar,.nav,.skipLink,.drawer,.mobileCta,.cartDrawer,.menuJump,.orderPanelWrap,.printBtn,.heroBtns,.booking,.modal,.orderPill,.dishOpen,.dishPeek,.backTop,.backLink,.menuFetch,.moreBtn,.dishActions,.dishCat,.dishStatus,.dishSave,.dishHeld,.spotlightNav{display:none!important}
   /* the header is gone, so nothing may keep the space it used to cover */
   .hero,.pageHero{margin-top:0}
   .pageHero{background:#fff!important;color:var(--navy)!important;padding:0 0 14mm;border-bottom:2px solid var(--gold)}
@@ -1556,8 +1667,9 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
   .dishOpenText{padding:12px 14px 0}
   .dishBody{padding:7px 14px 12px}
   .secBlock{break-inside:auto;margin-bottom:8mm}
-  .secHead h2{font-size:20pt}
-  .secBanner{--r:16/9;box-shadow:none;break-after:avoid}
+  .spotlightCopy h2{font-size:20pt}
+  .menuSpotlight{--r:16/9;box-shadow:none;break-after:avoid}
+  .dishOverflow,.dishOverflow.revealed{display:flex!important}
   .subHead{break-after:avoid}
   .dishCard:hover{transform:none;box-shadow:none}
   .photoBox.zooms .photoImg{transform:none}

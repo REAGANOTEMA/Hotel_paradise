@@ -251,6 +251,41 @@ function TrayThumb({dish}: {dish: MenuItem}) {
   );
 }
 
+function TrayLines({tray, justAdded, bump, drop, sumLine, subtotal}: {
+  tray: Line[];
+  justAdded: string | null;
+  bump: (key: string, delta: number) => void;
+  drop: (key: string) => void;
+  sumLine: (line: Line) => number;
+  subtotal: number;
+}) {
+  return (
+    <div className="trayList">
+      {tray.map(x => {
+        const unit = linePrice(x.dish, x.companion, x.salads);
+        return (
+          <div className={'trayItem' + (justAdded === x.key ? ' fresh' : '')} key={x.key}>
+            <TrayThumb dish={x.dish}/>
+            <div className="trayInfo">
+              <b>{x.dish.name}</b>
+              {(x.companion || x.salads.length > 0) && <span className="traySides">
+                {x.companion && <>with {x.companion.name.toLowerCase()}</>}
+                {x.companion && x.salads.length > 0 && ' · '}
+                {x.salads.length > 0 && x.salads.map(s => s.name).join(', ').toLowerCase()}
+              </span>}
+              <span>{fmtPrice(unit)} each</span>
+            </div>
+            <div className="trayQty"><button onClick={() => bump(x.key, -1)} aria-label="One less">&minus;</button><em>{x.qty}</em><button onClick={() => bump(x.key, 1)} aria-label="One more">+</button></div>
+            <span className="lineTotal">{fmtPrice(sumLine(x))}</span>
+            <button className="dropBtn" onClick={() => drop(x.key)} title="Drop this dish">Drop</button>
+          </div>
+        );
+      })}
+      <div className="trayTotal"><span>Total</span><b>{fmtPrice(subtotal)}</b></div>
+    </div>
+  );
+}
+
 type SpotlightSlide = {key: string; name: string; title: string; caption: string; price: string};
 
 /**
@@ -624,6 +659,8 @@ function useAddButtonLights() {
     if (reduce) return;
 
     let at = 0;
+    let turns = 0;
+    let id = 0;
     const lit = new Set<HTMLElement>();
     const clear = () => { lit.forEach(el => el.classList.remove('addLit')); lit.clear(); };
 
@@ -639,11 +676,16 @@ function useAddButtonLights() {
       clear();
       const el = onScreen[at % onScreen.length];
       at += 1;
+      turns += 1;
       el.classList.add('addLit');
       lit.add(el);
+      if (turns >= 3) {
+        window.clearInterval(id);
+        window.setTimeout(clear, 900);
+      }
     };
 
-    const id = window.setInterval(tick, 2000);
+    id = window.setInterval(tick, 2000);
     const onInteract = () => { clear(); };
     document.addEventListener('pointerdown', onInteract, {passive: true});
     return () => {
@@ -657,6 +699,8 @@ function useAddButtonLights() {
 function MenuPage() {
   useAddButtonLights();
   const [sections, setSections] = React.useState<MenuSection[]>(FALLBACK);
+  const [loading, setLoading] = React.useState(true);
+  const [fetchError, setFetchError] = React.useState(false);
   // The order survives a trip to sign in and back. A guest builds their tray,
   // is asked for an account, and returns to exactly the order they left, items
   // and quantities intact, rather than to an empty list.
@@ -692,15 +736,22 @@ function MenuPage() {
   // plates of a group are printed, and the rest are one tap away.
   const [sort, setSort] = React.useState<'featured' | 'price-asc' | 'price-desc'>('featured');
   const [expanded, setExpanded] = React.useState<Record<string, number>>({});
-  const [quickQty, setQuickQty] = React.useState<Record<number, number>>({});
+  // The complete catalogue opens with six full rows of six dishes. Everything
+  // else stays one tap away, so a first visit never has to build 260 cards.
+  const [catalogueLimit, setCatalogueLimit] = React.useState(36);
+  const [quickQty, setQuickQty] = React.useState<Record<string, number>>({});
   const [drawer, setDrawer] = React.useState(false);
   const chipRail = React.useRef<HTMLDivElement>(null);
+  const cartPanel = React.useRef<HTMLElement>(null);
+  const cartRestore = React.useRef<HTMLElement | null>(null);
 
   React.useEffect(() => {
+    let live = true;
     apiUrl('menu')
       .then(url => fetch(url))
       .then(r => r.json())
       .then(d => {
+        if (!live) return;
         if (d.ok && Array.isArray(d.categories) && d.categories.some((c: {items?: unknown[]}) => Array.isArray(c.items) && c.items.length)) {
           const next = tidySections(toSections(d.categories));
           if (next.length) {
@@ -709,7 +760,9 @@ function MenuPage() {
           }
         }
       })
-      .catch(() => {});
+      .catch(() => { if (live) setFetchError(true); })
+      .finally(() => { if (live) setLoading(false); });
+    return () => { live = false; };
   }, []);
 
   // Keep the order and the delivery details on this device, so a trip to sign
@@ -819,7 +872,24 @@ function MenuPage() {
     .filter(s => s.groups.length > 0);
   const resultCount = totalDishes(shown);
 
-  React.useEffect(() => { setExpanded({}); }, [activeCat, q, sort]);
+  // The whole menu in one list, in the kitchen's own order. No product is
+  // copied or invented: these are the very records the category view uses.
+  const catalogueItems: {dish: MenuItem; section: MenuSection; group: string}[] = shown.flatMap(s =>
+    s.groups.flatMap(g => g.items.map(dish => ({dish, section: s, group: g.name})))
+  );
+  const allView = activeCat === null && !needle;
+  // A genuine opening frame for the catalogue, taken from the dishes the
+  // kitchen has actually filed. It is a presentation, not another menu entry.
+  const featureSection: MenuSection = {
+    key: 'chef-selection',
+    name: 'From our kitchen',
+    eyebrow: "CHEF'S SELECTION",
+    blurb: 'A few of the plates being served today, drawn from the full catalogue below.',
+    image: shown[0]?.image || '',
+    groups: [{name: 'Featured', title: '', items: catalogueItems.slice(0, 8).map(x => x.dish)}]
+  };
+
+  React.useEffect(() => { setExpanded({}); setCatalogueLimit(36); }, [activeCat, q, sort]);
 
   React.useEffect(() => {
     const rail = chipRail.current;
@@ -827,25 +897,56 @@ function MenuPage() {
     const active = rail.querySelector<HTMLElement>('.catChip.on');
     if (!active) return;
     const left = active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2;
-    rail.scrollTo({left: Math.max(0, left), behavior: 'smooth'});
+    let soft = true;
+    try { soft = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch {}
+    rail.scrollTo({left: Math.max(0, left), behavior: soft ? 'smooth' : 'auto'});
   }, [activeCat]);
 
   React.useEffect(() => {
     if (!drawer) return;
+    cartRestore.current = document.activeElement as HTMLElement | null;
+    cartPanel.current?.querySelector<HTMLElement>('.cartClose')?.focus();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setDrawer(false); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setDrawer(false); return; }
+      if (e.key !== 'Tab' || !cartPanel.current) return;
+      const nodes = Array.from(
+        cartPanel.current.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select,[tabindex]:not([tabindex="-1"])')
+      ).filter(n => n.offsetParent !== null);
+      if (!nodes.length) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
     document.addEventListener('keydown', onKey);
-    return () => { document.body.style.overflow = prev; document.removeEventListener('keydown', onKey); };
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKey);
+      cartRestore.current?.focus?.();
+    };
   }, [drawer]);
+
+  React.useEffect(() => {
+    const mq = window.matchMedia('(min-width:701px)');
+    const closeIfWide = () => { if (mq.matches) setDrawer(false); };
+    mq.addEventListener?.('change', closeIfWide);
+    return () => mq.removeEventListener?.('change', closeIfWide);
+  }, []);
 
   /** One category, or the whole menu, and back to the head of the list. */
   const pickCat = (key: string | null) => {
     setCat(key);
+    const u = new URL(location.href);
+    if (key) u.hash = 'sec-' + key; else u.hash = '';
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
     const jump = document.getElementById('jump');
     if (jump) {
       const y = jump.getBoundingClientRect().top + window.scrollY;
-      if (window.scrollY > y) window.scrollTo({top: y, behavior: 'smooth'});
+      let soft = true;
+      try { soft = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch {}
+      if (window.scrollY > y) window.scrollTo({top: y, behavior: soft ? 'smooth' : 'auto'});
     }
   };
 
@@ -898,11 +999,69 @@ function MenuPage() {
   };
 
   const quick = (dish: MenuItem, delta: number) => {
-    setQuickQty(m => ({...m, [dish.id]: Math.max(1, Math.min(30, (m[dish.id] ?? 1) + delta))}));
+    const key = plainKey(dish);
+    setQuickQty(m => ({...m, [key]: Math.max(1, Math.min(30, (m[key] ?? 1) + delta))}));
   };
 
   const quickAdd = (dish: MenuItem) => {
-    add(dish, null, [], quickQty[dish.id] ?? 1);
+    add(dish, null, [], quickQty[plainKey(dish)] ?? 1);
+  };
+
+  /** One card, shared by the full catalogue and every category view. */
+  const dishCard = (dish: MenuItem, section: MenuSection, group: string, di: number, limit: number, allShown: boolean) => {
+    const key = plainKey(dish);
+    const qty = quickQty[key] ?? 1;
+    const live = dishAvailable(dish);
+    const saving = savingPercent(dish);
+    const mine = inTray(dish);
+    const status = dish.available === false ? 'Unavailable' : dish.price === null ? 'On request' : 'Available';
+    return (
+      <article
+        className={'dishCard' + (mine > 0 ? ' held' : '') + (justAdded === key ? ' added' : '') + (di >= limit ? ' dishOverflow' : '') + (allShown ? ' revealed' : '')}
+        key={section.key + '-' + dish.id + '-' + dish.name}
+      >
+        <div className="dishOpenMedia">
+          <DishShot dish={dish}/>
+          <span className="dishCat">{dish.group}</span>
+          <span className={'dishStatus ' + (live ? 'ok' : 'off')}>{status}</span>
+          {saving > 0 && dish.compareAt != null && <span className="dishSave">Save {saving}%</span>}
+          {mine > 0 && <span className="dishHeld">{mine} in your order</span>}
+          <span className="dishPeek" aria-hidden="true">View dish<ArrowIcon/></span>
+          <button
+            className="dishOpen"
+            onClick={() => openDish(dish, section, group)}
+            aria-label={'See the details of ' + dish.name}
+          />
+        </div>
+        <div className="dishOpenText">
+          <h4 className="dishTitle">{dish.name}</h4>
+          {dish.desc && <p className="dishDesc">{dish.desc}</p>}
+        </div>
+        <div className="dishBody">
+          <div className="dishPriceRow">
+            <b className={dish.price === null ? 'askPrice' : ''}>
+              {dish.price === null ? 'Price on request' : fmtPrice(dish.price)}
+            </b>
+            {saving > 0 && dish.compareAt != null && <del>{fmtPrice(dish.compareAt)}</del>}
+          </div>
+          <div className="dishActions">
+            <div className="quickStep" role="group" aria-label={'Quantity for ' + dish.name}>
+              <button onClick={() => quick(dish, -1)} disabled={!live || qty <= 1} aria-label={'One less ' + dish.name}>&minus;</button>
+              <output aria-live="polite">{qty}</output>
+              <button onClick={() => quick(dish, 1)} disabled={!live || qty >= 30} aria-label={'One more ' + dish.name}><PlusIcon/></button>
+            </div>
+            <button
+              className="addBtn"
+              onClick={() => quickAdd(dish)}
+              disabled={!live}
+              aria-label={'Add ' + qty + ' ' + dish.name + ' to your order'}
+            >
+              <PlusIcon/>{mine > 0 ? 'Add more' : 'Add'}
+            </button>
+          </div>
+        </div>
+      </article>
+    );
   };
 
   // Where a guest is sent to sign in or sign up. The order is kept on this
@@ -990,7 +1149,7 @@ if (d.ok) {
           )}
         </label>
         <span className="menuResult" aria-live="polite">
-          {needle ? resultCount + (resultCount === 1 ? ' dish' : ' dishes') : ''}
+          {needle ? resultCount + (resultCount === 1 ? ' match' : ' matches') : resultCount + (resultCount === 1 ? ' dish' : ' dishes')}
         </span>
         <label className="menuSort">
           <span>Sort</span>
@@ -1031,6 +1190,8 @@ if (d.ok) {
           {activeCat ? visible.map(s => s.name).join(' · ') + ' · ' : ''}
           {resultCount} {resultCount === 1 ? 'dish' : 'dishes'}
         </span>
+        {loading && <span className="menuFetch loading"><i aria-hidden="true"/>Checking today's menu</span>}
+        {!loading && fetchError && <span className="menuFetch error">Showing our printed menu · live menu unavailable</span>}
         <button className="printBtn" onClick={() => window.print()}>Print this menu</button>
       </div>
 
@@ -1052,57 +1213,66 @@ if (d.ok) {
         </div>
       )}
 
-      {shown.map(section => (
-        <section className="secBlock" id={'sec-' + section.key} key={section.key}>
-          <header className="secHead">
-            <SectionBanner section={section}>
-              {section.eyebrow && <p className="secEyebrow">{section.eyebrow}</p>}
-              <h2>{section.name}</h2>
-            </SectionBanner>
-            {section.blurb && <p className="secBlurb">{section.blurb}</p>}
-          </header>
+      {allView && catalogueItems.length > 0 && (
+        <section className="catAll" id="all-dishes" aria-labelledby="all-dishes-title">
+          <MenuSpotlight section={featureSection} dishes={featureSection.groups[0].items}/>
+          <div className="catAllHead">
+            <div>
+              <p className="secEyebrow">THE COMPLETE COLLECTION</p>
+              <h2 id="all-dishes-title">Every dish, one place.</h2>
+              <p>The full kitchen, bar and room-service menu in one catalogue. Pick a category above, or search by name to narrow it down.</p>
+            </div>
+            <span className="catAllCount">{resultCount} dishes · showing {Math.min(catalogueLimit, catalogueItems.length)}</span>
+          </div>
+          <div className="dishGrid dishGridCatalogue">
+            {catalogueItems.slice(0, catalogueLimit).map((entry, di) =>
+              dishCard(entry.dish, entry.section, entry.group, di, catalogueLimit, true)
+            )}
+          </div>
+          {catalogueItems.length > catalogueLimit && (
+            <div className="catAllFoot">
+              <button
+                className="moreBtn"
+                onClick={() => setCatalogueLimit(n => n + 36)}
+                aria-label={'Show 36 more dishes, ' + (catalogueItems.length - catalogueLimit) + ' remaining'}
+              >
+                <span>Show 36 more dishes · {catalogueItems.length - catalogueLimit} remaining</span>
+                <ArrowIcon/>
+              </button>
+            </div>
+          )}
+        </section>
+      )}
 
-          {section.groups.filter(g => g.items.length > 0).map((g, gi) => (
-            <div className={'subGroup' + (g.title === '' ? ' noHead' : '')} key={section.key + '-' + gi}>
+      {!allView && shown.map(section => (
+        <section className="secBlock" id={'sec-' + section.key} key={section.key}>
+          <MenuSpotlight section={section} dishes={section.groups.flatMap(g => g.items)}/>
+
+          {section.groups.filter(g => g.items.length > 0).map((g, gi) => {
+            const groupKey = section.key + ':' + gi;
+            const limit = expanded[groupKey] ?? 16;
+            const allShown = limit >= g.items.length;
+            return (
+            <div className={'subGroup' + (g.title === '' ? ' noHead' : '')} key={groupKey}>
               {g.title !== '' && <h3 className="subHead">{g.title}</h3>}
               <div className="dishGrid">
-                {g.items.map(dish => {
-                  const mine = inTray(dish);
-                  return (
-                  <article
-                    className={'dishCard' + (mine > 0 ? ' held' : '')}
-                    key={section.key + '-' + dish.id + '-' + dish.name}
-                  >
-                    <div className="dishOpenMedia">
-                      <DishShot dish={dish}/>
-                      <span className="dishPeek" aria-hidden="true">Open<ArrowIcon/></span>
-                      {mine > 0 && <span className="dishHeld">{mine} in your order</span>}
-                    </div>
-                    <div className="dishOpenText">
-                      <h4 className="dishTitle">{dish.name}</h4>
-                      {dish.desc && <p className="dishDesc">{dish.desc}</p>}
-                    </div>
-                    <div className="dishBody">
-                      <div className="dishFoot">
-                        <b className={dish.price === null ? 'askPrice' : ''}>
-                          {dish.price === null ? 'Price on request' : fmtPrice(dish.price)}
-                        </b>
-                        <button className="addBtn" onClick={() => openDish(dish, section, g.name)}>
-                          <PlusIcon/>{mine > 0 ? 'Add more' : 'Add'}
-                        </button>
-                      </div>
-                    </div>
-                    <button
-                      className="dishOpen"
-                      onClick={() => openDish(dish, section, g.name)}
-                      aria-label={'See the details of ' + dish.name}
-                    />
-                  </article>
-                  );
-                })}
+                {g.items.map((dish, di) =>
+                  dishCard(dish, section, g.name, di, limit, allShown)
+                )}
               </div>
+              {g.items.length > 16 && (
+                <button
+                  className={'moreBtn' + (allShown ? ' open' : '')}
+                  onClick={() => setExpanded(e => ({...e, [groupKey]: allShown ? 16 : g.items.length}))}
+                  aria-expanded={allShown}
+                >
+                  <span>{allShown ? 'Show fewer' : 'Show all ' + g.items.length + ' dishes'}</span>
+                  <ArrowIcon/>
+                </button>
+              )}
             </div>
-          ))}
+            );
+          })}
         </section>
       ))}
 
@@ -1123,29 +1293,7 @@ if (d.ok) {
           {tray.length === 0 ? (
             <div className="trayEmpty"><p>Your order is empty. Open any dish and add it to your order.</p></div>
           ) : (
-            <div className="trayList">
-              {tray.map(x => {
-                const unit = linePrice(x.dish, x.companion, x.salads);
-                return (
-                  <div className={'trayItem' + (justAdded === x.key ? ' fresh' : '')} key={x.key}>
-                    <TrayThumb dish={x.dish}/>
-                    <div className="trayInfo">
-                      <b>{x.dish.name}</b>
-                      {(x.companion || x.salads.length > 0) && <span className="traySides">
-                        {x.companion && <>with {x.companion.name.toLowerCase()}</>}
-                        {x.companion && x.salads.length > 0 && ' · '}
-                        {x.salads.length > 0 && x.salads.map(s => s.name).join(', ').toLowerCase()}
-                      </span>}
-                      <span>{fmtPrice(unit)} each</span>
-                    </div>
-                    <div className="trayQty"><button onClick={() => bump(x.key, -1)} aria-label="One less">&minus;</button><em>{x.qty}</em><button onClick={() => bump(x.key, 1)} aria-label="One more">+</button></div>
-                    <span className="lineTotal">{fmtPrice(sumLine(x))}</span>
-                    <button className="dropBtn" onClick={() => drop(x.key)} title="Drop this dish">Drop</button>
-                  </div>
-                );
-              })}
-              <div className="trayTotal"><span>Total</span><b>{fmtPrice(subtotal)}</b></div>
-            </div>
+            <TrayLines tray={tray} justAdded={justAdded} bump={bump} drop={drop} sumLine={sumLine} subtotal={subtotal}/>
           )}
 
           {!signedIn ? (
@@ -1170,6 +1318,47 @@ if (d.ok) {
         </div>}
       </div>
     </section>
+
+    <div className={'cartDrawer' + (drawer ? ' open' : '')} aria-hidden={!drawer}>
+      <div className="cartScrim" onClick={() => setDrawer(false)}/>
+      <aside className="cartPanel" role="dialog" aria-modal="true" aria-label="Your order" ref={cartPanel}>
+        <div className="cartHead">
+          <div>
+            <p>YOUR ORDER</p>
+            <h2>{count} {count === 1 ? 'item' : 'items'} <span>·</span> {fmtPrice(subtotal)}</h2>
+          </div>
+          <button className="cartClose" onClick={() => setDrawer(false)} aria-label="Close your order"><CloseIcon/></button>
+        </div>
+        <div className="cartBody">
+          {tray.length === 0 ? (
+            <div className="trayEmpty"><p>Your order is empty. Open any dish and add it to your order.</p></div>
+          ) : (
+            <TrayLines tray={tray} justAdded={justAdded} bump={bump} drop={drop} sumLine={sumLine} subtotal={subtotal}/>
+          )}
+          {tray.length > 0 && !signedIn && (
+            <div className="trayForm cartForm">
+              <AccountGate signupHref={accountUrl('signup')} signinHref={accountUrl('signin')}>
+                One quick account and your order stays exactly as you built it. We bring you straight back here.
+              </AccountGate>
+              <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>
+            </div>
+          )}
+          {tray.length > 0 && signedIn && (
+            <div className="trayForm cartForm">
+              <p className="bookAs">Ordering as <b>{name || 'you'}</b>{phone ? ' · ' + phone : ''} <a href="./account.html">change</a></p>
+              <div className="planField wide"><label>Delivery address</label><textarea value={address} onChange={e => setAddress(e.target.value)} rows={2} placeholder="Area, street, building and a landmark we should look for."/></div>
+              <div className="planField wide"><label>Notes for the kitchen <small>optional</small></label><textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder="Allergies, spice level, or a delivery time."/></div>
+              <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={send} disabled={busy || tray.length === 0}>{busy ? 'Opening payment...' : 'Continue to payment'}</button>
+              <button className="linkBtn" onClick={() => setTray([])}>Drop everything and start again</button>
+            </div>
+          )}
+          {msg && <div className={msg.ok ? 'bookMsg ok' : 'bookMsg'}>{msg.text}</div>}
+        </div>
+        <div className="cartFoot">
+          <button className="cartKeep" onClick={() => setDrawer(false)}>Keep browsing</button>
+        </div>
+      </aside>
+    </div>
 
     {count > 0 && orderAway && (
       <button className={'orderPill' + (justAdded ? ' pop' : '')} onClick={goToOrder}>
