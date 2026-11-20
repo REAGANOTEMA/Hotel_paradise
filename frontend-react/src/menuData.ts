@@ -29,6 +29,10 @@ export type MenuItem = {
   /** Overrides the auto generated file name, for example 'kalamari-01.jpg'. */
   image: string;
   group: string;
+  /** Optional catalogue metadata. Only ever shown when the kitchen supplies it. */
+  compareAt?: number | null;
+  available?: boolean;
+  badge?: string;
 };
 
 export type MenuGroup = {

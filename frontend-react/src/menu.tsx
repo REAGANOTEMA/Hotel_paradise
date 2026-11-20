@@ -48,6 +48,12 @@ const MENU_HERO_FRAMES: HeroCoverFrame[] = [
 /** Reads the live kitchen menu and folds it into the same shape as the fallback. */
 type LiveCategory = {name: string; outlet?: string; eyebrow?: string; blurb?: string; image?: string; items: any[]};
 
+/** Optional catalogue facts, used only when the kitchen actually supplies them. */
+const optionalNumber = (v: unknown): number | null => {
+  const n = Number(v);
+  return v === '' || v === null || v === undefined || !Number.isFinite(n) ? null : n;
+};
+
 /**
  * Where a section sits on the page. The kitchen orders its own sections by a
  * sort number that runs across all of its outlets at once, which puts the bar
@@ -98,7 +104,10 @@ const toSections = (cats: LiveCategory[]): MenuSection[] => {
         desc: String(raw.desc || ''),
         price,
         image: String(raw.image || ''),
-        group: g
+        group: g,
+        compareAt: optionalNumber(raw.compare_at ?? raw.compareAt ?? raw.old_price ?? raw.oldPrice),
+        available: raw.available === undefined && raw.in_stock === undefined ? undefined : (raw.available ?? raw.in_stock) !== false && String(raw.available ?? raw.in_stock) !== '0',
+        badge: raw.badge === undefined || raw.badge === null ? undefined : String(raw.badge).slice(0, 40)
       });
     });
   });
@@ -166,6 +175,30 @@ function ValueMark({children}: {children: React.ReactNode}) {
   return <span className="valueMark">{children}</span>;
 }
 
+function useReducedMotion() {
+  const [reduce, setReduce] = React.useState(() => {
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
+  });
+  React.useEffect(() => {
+    let mq: MediaQueryList | null = null;
+    try { mq = window.matchMedia('(prefers-reduced-motion: reduce)'); } catch { return; }
+    const update = () => setReduce(mq!.matches);
+    update();
+    mq.addEventListener?.('change', update);
+    return () => mq?.removeEventListener?.('change', update);
+  }, []);
+  return reduce;
+}
+
+/** Only a supplied price comparison becomes a saving; nothing is invented. */
+const savingPercent = (dish: MenuItem): number => {
+  if (dish.price === null || dish.compareAt === null || dish.compareAt === undefined || dish.compareAt <= dish.price) return 0;
+  return Math.round((1 - dish.price / dish.compareAt) * 100);
+};
+
+/** A priced dish is orderable; an unpriced one is honestly marked as on request. */
+const dishAvailable = (dish: MenuItem): boolean => dish.available !== false && dish.price !== null;
+
 /**
  * The photograph of one dish.
  *
@@ -180,9 +213,9 @@ function DishShot({dish, large = false, hint = true}: {dish: MenuItem; large?: b
       group="dishes"
       name={file}
       alt={dish.name}
-      ratio="16 / 10"
+      ratio="4 / 3"
       widths={large ? [640, 1024, 1440] : [320, 480, 640, 960]}
-      sizes={large ? '(max-width:900px) 100vw, 46vw' : '(max-width:480px) 92vw, (max-width:768px) 44vw, (max-width:1050px) 32vw, 320px'}
+      sizes={large ? '(max-width:900px) 100vw, 46vw' : '(max-width:560px) 46vw, (max-width:768px) 46vw, (max-width:1050px) 31vw, (max-width:1800px) 24vw, 340px'}
       position="50% 52%"
       zoom={!large}
       className={large ? 'shot shotLarge' : 'shot'}
@@ -218,27 +251,110 @@ function TrayThumb({dish}: {dish: MenuItem}) {
   );
 }
 
+type SpotlightSlide = {key: string; name: string; title: string; caption: string; price: string};
+
 /**
- * The wide photograph that opens a section, with the section name laid over it.
- * Falls back to a deep navy panel with a gold rule, which reads as designed
- * rather than broken while the photograph is still outstanding.
+ * The photographic opening of a category. Its frames are the section's own
+ * photograph and the genuine plates filed under that section - never a
+ * generic food picture. The caption is keyed to the frame, so a slide change
+ * replaces the old words instead of leaving them layered over the new plate.
  */
-function SectionBanner({section, children}: {section: MenuSection; children: React.ReactNode}) {
-  const file = sectionImage(section);
+function MenuSpotlight({section, dishes}: {section: MenuSection; dishes: MenuItem[]}) {
+  const slides = React.useMemo<SpotlightSlide[]>(() => {
+    const list: SpotlightSlide[] = [];
+    const seen = new Set<string>();
+    const add = (name: string, slide: SpotlightSlide) => {
+      const file = String(name || '').toLowerCase().replace(/\.[^.]+$/, '').replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      if (!file || seen.has(file)) return;
+      seen.add(file);
+      list.push({...slide, name: file});
+    };
+    add(sectionImage(section), {key: 'section-' + section.key, name: '', title: section.name, caption: section.eyebrow || 'From our kitchen', price: ''});
+    dishes.forEach(d => add(dishImage(d), {
+      key: 'dish-' + d.id,
+      name: '',
+      title: d.name,
+      caption: d.group || section.name,
+      price: d.price === null ? 'Price on request' : fmtPrice(d.price)
+    }));
+    return list.slice(0, 6);
+  }, [section, dishes]);
+
+  const reduce = useReducedMotion();
+  const [at, setAt] = React.useState(0);
+  const [paused, setPaused] = React.useState(false);
+  const count = slides.length;
+
+  React.useEffect(() => { setAt(0); }, [section.key]);
+  React.useEffect(() => {
+    if (count < 2 || paused || reduce) return;
+    const id = window.setInterval(() => {
+      if (!document.hidden) setAt(n => (n + 1) % count);
+    }, 5200);
+    return () => window.clearInterval(id);
+  }, [count, paused, reduce]);
+
+  const current = slides[Math.min(at, Math.max(0, count - 1))];
+  const move = (step: number) => setAt(n => (n + step + count) % count);
+
   return (
-    <SmartImage
-      group="dishes"
-      name={file}
-      alt=""
-      ratio="21 / 8"
-      widths={[640, 1024, 1440, 1920]}
-      sizes="96vw"
-      position="72% 50%"
-      className="secBanner"
-      placeholder={<span className="secBannerGlyph" aria-hidden="true">{section.name.slice(0, 1).toUpperCase()}</span>}
+    <div
+      className={'menuSpotlight secBanner' + (count > 1 ? ' hasSlides' : '')}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
     >
-      {children}
-    </SmartImage>
+      <div className="spotlightStage">
+        {slides.map((slide, i) => (
+          <div key={slide.key} className={'spotlightSlide' + (i === at ? ' on' : '')} aria-hidden={i !== at}>
+            <SmartImage
+              group="dishes"
+              name={slide.name}
+              alt={i === at ? slide.title : ''}
+              ratio="21 / 8"
+              widths={[640, 1024, 1440, 1920]}
+              sizes="96vw"
+              position="72% 50%"
+              priority={i === 0}
+              className="spotlightShot"
+              placeholder={<span className="secBannerGlyph" aria-hidden="true">{slide.title.slice(0, 1).toUpperCase()}</span>}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="spotlightScrim" aria-hidden="true"/>
+      <div className="spotlightCopy">
+        {section.eyebrow && <p className="secEyebrow">{section.eyebrow}</p>}
+        <h2>{section.name}</h2>
+        {section.blurb && <p className="spotlightBlurb">{section.blurb}</p>}
+        {current && current.key.indexOf('dish-') === 0 && (
+          <p className="spotlightDish" key={current.key}>
+            <span>{current.caption}</span>
+            <b>{current.title}</b>
+            <em>{current.price}</em>
+          </p>
+        )}
+      </div>
+      {count > 1 && (
+        <div className="spotlightNav" role="group" aria-label={'Photographs of ' + section.name}>
+          <button className="spotlightArrow prev" onClick={() => move(-1)} aria-label="Previous photograph"><ArrowIcon/></button>
+          <div className="spotlightDots" role="tablist" aria-label="Choose a photograph">
+            {slides.map((slide, i) => (
+              <button
+                key={slide.key}
+                role="tab"
+                aria-selected={i === at}
+                aria-label={'Show ' + slide.title}
+                className={'spotlightDot' + (i === at ? ' on' : '')}
+                onClick={() => setAt(i)}
+              />
+            ))}
+          </div>
+          <button className="spotlightArrow next" onClick={() => move(1)} aria-label="Next photograph"><ArrowIcon/></button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -572,6 +688,13 @@ function MenuPage() {
   const [busy, setBusy] = React.useState(false);
   const [picked, setPicked] = React.useState<{dish: MenuItem; section: MenuSection | null; group: string} | null>(null);
   const [justAdded, setJustAdded] = React.useState<string | null>(null);
+  // Catalogue controls. Nothing is removed from the menu: the first sixteen
+  // plates of a group are printed, and the rest are one tap away.
+  const [sort, setSort] = React.useState<'featured' | 'price-asc' | 'price-desc'>('featured');
+  const [expanded, setExpanded] = React.useState<Record<string, number>>({});
+  const [quickQty, setQuickQty] = React.useState<Record<number, number>>({});
+  const [drawer, setDrawer] = React.useState(false);
+  const chipRail = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     apiUrl('menu')
@@ -680,15 +803,41 @@ function MenuPage() {
   // A section or a group the kitchen has emptied out - or the search has
   // filtered to nothing - is left off the page altogether, rather than shown
   // as a heading with nothing beneath it.
+  const byPrice = (a: MenuItem, b: MenuItem) => {
+    if (a.price === null && b.price === null) return 0;
+    if (a.price === null) return 1;
+    if (b.price === null) return -1;
+    return sort === 'price-desc' ? b.price - a.price : a.price - b.price;
+  };
   const shown = visible
     .map(s => ({
       ...s,
       groups: s.groups
-        .map(g => ({...g, items: g.items.filter(matches)}))
+        .map(g => ({...g, items: g.items.filter(matches).slice().sort(sort === 'featured' ? () => 0 : byPrice)}))
         .filter(g => g.items.length > 0)
     }))
     .filter(s => s.groups.length > 0);
   const resultCount = totalDishes(shown);
+
+  React.useEffect(() => { setExpanded({}); }, [activeCat, q, sort]);
+
+  React.useEffect(() => {
+    const rail = chipRail.current;
+    if (!rail) return;
+    const active = rail.querySelector<HTMLElement>('.catChip.on');
+    if (!active) return;
+    const left = active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2;
+    rail.scrollTo({left: Math.max(0, left), behavior: 'smooth'});
+  }, [activeCat]);
+
+  React.useEffect(() => {
+    if (!drawer) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setDrawer(false); };
+    document.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = prev; document.removeEventListener('keydown', onKey); };
+  }, [drawer]);
 
   /** One category, or the whole menu, and back to the head of the list. */
   const pickCat = (key: string | null) => {
@@ -724,6 +873,7 @@ function MenuPage() {
   const subtotal = tray.reduce((s, x) => s + sumLine(x), 0);
   const count = tray.reduce((s, x) => s + x.qty, 0);
   const inTray = (dish: MenuItem) => tray.filter(x => x.dish.id === dish.id).reduce((s, x) => s + x.qty, 0);
+  const plainKey = (dish: MenuItem) => lineKey(dish, null, []);
 
   // The floating button stands in for the order panel only while the panel
   // is off the screen, so the two are never both asking for the same tap.
@@ -740,7 +890,19 @@ function MenuPage() {
 
   const goToOrder = () => {
     setOpen(true);
+    if (window.matchMedia('(max-width:700px)').matches) {
+      setDrawer(true);
+      return;
+    }
     document.getElementById('order')?.scrollIntoView({behavior: 'smooth', block: 'start'});
+  };
+
+  const quick = (dish: MenuItem, delta: number) => {
+    setQuickQty(m => ({...m, [dish.id]: Math.max(1, Math.min(30, (m[dish.id] ?? 1) + delta))}));
+  };
+
+  const quickAdd = (dish: MenuItem) => {
+    add(dish, null, [], quickQty[dish.id] ?? 1);
   };
 
   // Where a guest is sent to sign in or sign up. The order is kept on this
@@ -830,23 +992,31 @@ if (d.ok) {
         <span className="menuResult" aria-live="polite">
           {needle ? resultCount + (resultCount === 1 ? ' dish' : ' dishes') : ''}
         </span>
+        <label className="menuSort">
+          <span>Sort</span>
+          <select value={sort} onChange={e => setSort(e.target.value as typeof sort)} aria-label="Sort the menu">
+            <option value="featured">Chef's order</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+          </select>
+        </label>
         <button className="jumpOrder" onClick={goToOrder}>
           Your order{count > 0 && ' (' + count + ')'}
         </button>
       </div>
-      <div className="menuJumpInner" role="group" aria-label="Choose a category">
+      <div className="menuJumpInner" ref={chipRail} role="group" aria-label="Choose a category">
         <button
           className={'catChip' + (activeCat === null ? ' on' : '')}
           aria-pressed={activeCat === null}
           onClick={() => pickCat(null)}
-        >All</button>
+        >All <small>{totalDishes(sections)}</small></button>
         {sections.map(s => (
           <button
             key={s.key}
             className={'catChip' + (activeCat === s.key ? ' on' : '')}
             aria-pressed={activeCat === s.key}
             onClick={() => pickCat(s.key)}
-          >{s.name}</button>
+          >{s.name} <small>{totalDishes([s])}</small></button>
         ))}
       </div>
     </div>

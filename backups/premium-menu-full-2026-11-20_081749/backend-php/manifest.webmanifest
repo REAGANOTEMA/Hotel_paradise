@@ -1,0 +1,39 @@
+{
+  "name": "Hotel Paradise Staff Console",
+  "short_name": "Paradise Staff",
+  "description": "The management console for Hotel Paradise on the Nile, Jinja: rooms, restaurant, bar, kitchen, stores, finance and Director oversight.",
+  "id": "./",
+  "start_url": "./index.php?page=dashboard",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "any",
+  "launch_handler": { "client_mode": "navigate-existing" },
+  "background_color": "#071A33",
+  "theme_color": "#071A33",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Open the management dashboard",
+      "url": "./index.php?page=dashboard",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Notifications",
+      "short_name": "Alerts",
+      "description": "Open the notification feed",
+      "url": "./index.php?page=notifications",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

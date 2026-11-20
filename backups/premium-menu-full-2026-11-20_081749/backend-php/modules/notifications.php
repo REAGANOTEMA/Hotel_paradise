@@ -1,0 +1,311 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * Notifications, in the console.
+ *
+ * One screen with three jobs: show a member what has happened, let them put
+ * this phone on the list that gets rung, and let them choose which kinds of
+ * news are worth ringing about. Everything that changes state does so through
+ * notify_api.php, so the same rules hold whether the page is used or the API.
+ */
+
+require_once __DIR__.'/../app/notify.php';
+
+$u=current_user();
+$uid=(int)($u['id']??0);
+
+$installed=notify_ready();
+$vapid=\WebPush\vapid();
+$pushConfigured=$installed && \WebPush\configured();
+
+/* A no-JavaScript fallback for the two things people expect a form to do. */
+if($_SERVER['REQUEST_METHOD']==='POST' && $installed){
+ $act=(string)($_GET['act']??'');
+ if($act==='prefs'){
+  $cols=array_values(NOTIFY_CATEGORIES);
+  $vals=[]; foreach($cols as $c){ $vals[]=isset($_POST[$c])?1:0; }
+  q('INSERT INTO notification_preferences(user_id,'.implode(',',$cols).',updated_at) VALUES(?,'.rtrim(str_repeat('?,',count($cols)),',').',NOW())'
+    .' ON DUPLICATE KEY UPDATE '.implode(',',array_map(fn($c)=>$c.'=VALUES('.$c.')',$cols)).',updated_at=NOW()',array_merge([$uid],$vals));
+  flash('Your notification preferences were saved.');
+  go('notifications');
+ }
+ if($act==='read_all'){
+  q('UPDATE notifications SET read_at=NOW() WHERE user_id=? AND read_at IS NULL',[$uid]);
+  flash('All notifications marked as read.');
+  go('notifications');
+ }
+}
+
+$unread=$installed?notify_unread($uid):0;
+$items=$installed?notify_list($uid,40):[];
+$devices=$installed?notify_devices($uid):[];
+$devicesActive=count(array_filter($devices,fn($d)=>(int)$d['active']===1));
+
+$prefs=[];
+foreach(NOTIFY_CATEGORIES as $cat=>$col){ $prefs[$cat]=true; }
+if($installed){
+ // One row holds every switch; read it once rather than once per category.
+ $pr=row('SELECT * FROM notification_preferences WHERE user_id=?',[$uid]);
+ if($pr!==null){
+  foreach(NOTIFY_CATEGORIES as $cat=>$col){
+   if(array_key_exists($col,$pr)) $prefs[$cat]=((int)$pr[$col]===1);
+  }
+ }
+}
+$catLabel=['booking'=>'Bookings','order'=>'Restaurant orders','payment'=>'Payments','communication'=>'Messages','incident'=>'Incidents'];
+
+page_head('Notifications','notifications','What has happened, and the phones that hear about it');
+
+if(!$installed){
+ echo '<div class="panel"><h2>Notifications are not switched on yet</h2>';
+ echo '<p class="hint">The notification tables are not in the database. This is safe to fix: the migration only adds tables and one column, and it leaves every existing record exactly as it is.</p>';
+ echo '<p class="hint">Run this once, then reload:</p>';
+ echo '<pre style="background:#0f172a;color:#e2e8f0;padding:12px 14px;border-radius:6px;overflow:auto">C:\\xampp\\mysql\\bin\\mysql.exe -u root hotelpardise_system &lt; database\\sql\\patches\\2026-10-16_notifications_push.sql</pre>';
+ echo '<p class="hint">Push delivery and the in-app list are the same system, so once this runs, both work.</p></div>';
+ page_foot();
+ exit;
+}
+
+/* ---- the numbers ---- */
+echo '<div class="kpis">';
+ kpi_card('Unread',$unread>0?(string)$unread:'0',$unread>0?'Waiting for you':'All read',$unread>0?'gold':'ok');
+ kpi_card('Devices on this account',(string)$devicesActive,$devicesActive===1?'one phone or browser':'phones and browsers','navy');
+ kpi_card('Push delivery',$pushConfigured?'Ready':'Not configured',$pushConfigured?'VAPID keys in place':'run tools/make-vapid-keys.php',$pushConfigured?'ok':'warn');
+echo '</div>';
+
+echo '<div class="twoCol">';
+
+/* ---- this device ---- */
+echo '<div class="panel"><h2>This device</h2>';
+echo '<p class="hint">Turn on notifications and this phone or browser is rung whenever something below happens. Nothing is shared with anyone outside the hotel: the browser is handed the message directly by the push service.</p>';
+if(!$pushConfigured){
+ echo '<div class="flash warn"><span class="noteIco">!</span><span>Push delivery is not configured on this server yet. The in-app list still works. To switch push on, run <b>php tools/make-vapid-keys.php</b> once.</span></div>';
+}
+echo '<div id="pushState" class="notifyState" aria-live="polite">Checking this device…</div>';
+echo '<div class="row" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">';
+echo '<button type="button" class="btn" id="enablePush">Enable notifications on this device</button>';
+echo '<button type="button" class="btnGhost" id="sendTest">Send a test</button>';
+echo '</div>';
+echo '<p class="hint" style="margin-top:12px">If this device is already subscribed, enabling again simply refreshes it.</p>';
+echo '</div>';
+
+/* ---- which news, and the device list ---- */
+echo '<div>';
+ echo '<div class="panel"><h2>What to notify me about</h2>';
+ echo '<p class="hint">A switch off means the event still appears in the list, but no phone is rung for it.</p>';
+ echo '<form method="post" action="'.BASE.'/index.php?page=notifications&act=prefs">'.csrf_field();
+ foreach(NOTIFY_CATEGORIES as $cat=>$col){
+  echo '<label class="toggleRow"><span>'.e($catLabel[$cat]??ucfirst($cat)).'</span>';
+  echo '<input type="checkbox" name="'.e($col).'"'.($prefs[$cat]?' checked':'').'><span class="switch" aria-hidden="true"></span></label>';
+ }
+ echo '<button class="btn" style="margin-top:12px">Save preferences</button>';
+ echo '</form></div>';
+
+ echo '<div class="panel"><h2>Devices that can be rung</h2>';
+ if($devices===[]){
+  empty_state('No devices yet','Enable notifications on a phone and it will appear here.');
+ }else{
+  echo '<div class="tableScroll"><table class="tbl"><thead><tr><th>Device</th><th>Added</th><th>Last seen</th><th>Status</th></tr></thead><tbody>';
+  foreach($devices as $d){
+   $active=(int)$d['active']===1;
+   echo '<tr><td>'.e(substr((string)($d['user_agent']??''),0,60)?:'Web browser').'</td>';
+   echo '<td>'.e(fmtdt($d['created_at'])).'</td>';
+   echo '<td>'.e(fmtdt($d['last_seen_at'])).'</td>';
+   echo '<td>'.($active?badge('active','ok'):badge('off','grey')).'</td></tr>';
+  }
+  echo '</tbody></table></div>';
+ }
+ echo '</div>';
+echo '</div>';
+echo '</div>';
+
+/* ---- the list ---- */
+$hasRead=false; foreach($items as $n){ if($n['read_at']!==null){ $hasRead=true; break; } }
+echo '<div class="panel"><div class="panelHead"><h2>Notifications</h2>';
+echo '<div class="bar">';
+if($unread>0){
+ echo '<form method="post" action="'.BASE.'/index.php?page=notifications&act=read_all">'.csrf_field().'<button class="btnGhost sm">Mark all read</button></form>';
+}
+if($hasRead){
+ echo '<button type="button" class="btnGhost sm" id="clearRead" title="Remove the notifications you have already read from your list">Clear read</button>';
+}
+echo '</div></div>';
+if($items===[]){
+ empty_state('Nothing yet','Bookings, orders and payments raised on the website will show up here.');
+}else{
+ echo '<ul class="notifyList" id="notifyList">';
+ foreach($items as $n){
+  $isRead=$n['read_at']!==null;
+  echo '<li class="'.($isRead?'':'unread').'" data-id="'.(int)$n['id'].'"'
+   .' data-type="'.e($n['type']).'" data-title="'.e($n['title']).'"'
+   .' data-body="'.e($n['body']).'" data-when="'.e(fmtdt($n['created_at'])).'">';
+  echo '<span class="nIco">'.svg_icon($n['type']==='payment'?'coins':($n['type']==='order'?'pot':($n['type']==='booking'?'calendar':'bell'))).'</span>';
+  echo '<div class="nBody nOpenWrap" role="button" tabindex="0" aria-label="Open notification"><b>'.e($n['title']).'</b><p>'.e($n['body']).'</p><small>'.e(fmtdt($n['created_at'])).'</small></div>';
+  echo '<div class="nActions">';
+  echo '<button type="button" class="nOpen linkish" data-id="'.(int)$n['id'].'">Open</button>';
+  if(!$isRead) echo '<button type="button" class="nRead linkish" data-id="'.(int)$n['id'].'">Mark read</button>';
+  echo '<button type="button" class="nDel linkish danger" data-id="'.(int)$n['id'].'">Delete</button>';
+  echo '</div>';
+  echo '</li>';
+ }
+ echo '</ul>';
+}
+echo '</div>';
+
+/* Opening a notification reads it in full; deleting takes only this member's
+   own copy, so a colleague's list is never touched. The box below is the one
+   place a full notification is shown. */
+echo '<style>
+.nActions{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.notifyList li{cursor:pointer}
+.nOpenWrap:focus{outline:2px solid var(--gold);outline-offset:2px;border-radius:8px}
+.nModal{position:fixed;inset:0;background:#071a3399;display:flex;align-items:center;justify-content:center;padding:18px;z-index:80}
+.nModal[hidden]{display:none}
+.nCard{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:86vh;overflow:auto;padding:24px 24px 20px;box-shadow:0 24px 60px #071a3355}
+.nCard h3{font-family:\'Playfair Display\',serif;color:var(--navy);margin:0 0 4px;font-size:21px}
+.nCard .nWhen{color:var(--muted);font-size:12.5px;margin-bottom:14px}
+.nCard .nText{color:var(--navy);font-size:15px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.nCard .nFoot{display:flex;gap:8px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap}
+.linkish.danger{color:#c62828}
+</style>';
+echo '<div class="nModal" id="nModal" hidden><div class="nCard" role="dialog" aria-modal="true" aria-labelledby="nModalTitle">'
+ .'<h3 id="nModalTitle"></h3><div class="nWhen" id="nModalWhen"></div><div class="nText" id="nModalText"></div>'
+ .'<div class="nFoot"><button type="button" class="btnGhost sm" id="nModalMark">Mark read</button>'
+ .'<button type="button" class="btnGhost sm" id="nModalDelete" style="color:#c62828">Delete</button>'
+ .'<button type="button" class="btn sm" id="nModalClose">Close</button></div>'
+ .'</div></div>';
+
+$base=json_encode(BASE);
+$vapidJs=json_encode($vapid['public']??'');
+$canPush=$pushConfigured?'true':'false';
+echo <<<HTML
+<script>
+(function(){
+ var BASE={$base}, VAPID={$vapidJs}, CAN_PUSH={$canPush};
+ var state=document.getElementById('pushState');
+ function setState(t,cls){ if(state){ state.textContent=t; state.className='notifyState'+(cls?' '+cls:''); } }
+
+ function urlB64(b){
+  var pad='='.repeat((4-b.length%4)%4);
+  var s=(b+pad).replace(/-/g,'+').replace(/_/g,'/');
+  var raw=atob(s), arr=new Uint8Array(raw.length);
+  for(var i=0;i<raw.length;i++) arr[i]=raw.charCodeAt(i);
+  return arr;
+ }
+ function api(act,payload){
+  return fetch(BASE+'/notify_api.php?act='+act,{
+   method:'POST',credentials:'same-origin',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify(payload||{})
+  }).then(function(r){ return r.json(); });
+ }
+
+ if(!('serviceWorker' in navigator) || !('PushManager' in window)){
+  setState('This browser cannot receive push notifications. The list below still works.','warn');
+ }else{
+  navigator.serviceWorker.register(BASE+'/sw.js',{scope:BASE+'/'}).catch(function(){});
+  navigator.serviceWorker.ready.then(function(reg){
+   return reg.pushManager.getSubscription();
+  }).then(function(sub){
+   if(sub) setState('This device is subscribed and will be rung.','ok');
+   else setState('Not enabled on this device yet.','');
+  }).catch(function(){});
+ }
+
+ var enable=document.getElementById('enablePush');
+ if(enable) enable.addEventListener('click',function(){
+  if(!('serviceWorker' in navigator) || !('PushManager' in window)){ setState('This browser cannot receive push notifications.','warn'); return; }
+  if(!CAN_PUSH){ setState('Push is not configured on the server yet.','warn'); return; }
+  setState('Asking the browser…','');
+  navigator.serviceWorker.ready.then(function(reg){
+   return Notification.requestPermission().then(function(p){
+    if(p!=='granted'){ setState('Permission was not given. The list below still works.','warn'); return null; }
+    return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(VAPID)});
+   }).then(function(sub){
+    if(!sub) return;
+    var j=sub.toJSON();
+    return api('subscribe',{endpoint:j.endpoint,p256dh:j.keys.p256dh,auth:j.keys.auth}).then(function(r){
+     setState(r.ok?'This device is subscribed and will be rung.':'Could not save this device: '+(r.error||''),r.ok?'ok':'warn');
+    });
+   });
+  }).catch(function(e){ setState('Could not enable notifications: '+e.message,'warn'); });
+ });
+
+ var test=document.getElementById('sendTest');
+ if(test) test.addEventListener('click',function(){
+  setState('Sending a test…','');
+  api('test',{}).then(function(r){
+   setState(r.message||'Test queued.',r.ok?'ok':'warn');
+  }).catch(function(){ setState('Could not send the test.','warn'); });
+ });
+
+ /* One list, one set of handlers. Opening reads a notification in full; the
+    delete buttons remove only this member's own copy, and the server enforces
+    that, so a director clearing a notice leaves finance's copy in place. */
+ var list=document.getElementById('notifyList');
+ var modal=document.getElementById('nModal');
+ var mTitle=document.getElementById('nModalTitle');
+ var mWhen=document.getElementById('nModalWhen');
+ var mText=document.getElementById('nModalText');
+ var mMark=document.getElementById('nModalMark');
+ var mDel=document.getElementById('nModalDelete');
+ var currentId=0;
+
+ function liOf(id){ return list?list.querySelector('li[data-id="'+id+'"]'):null; }
+ function markLocalRead(li){ if(!li) return; li.classList.remove('unread'); var b=li.querySelector('.nRead'); if(b) b.remove(); }
+ function removeLocal(id){ var li=liOf(id); if(li) li.remove(); }
+ function openModal(id){
+  var li=liOf(id); if(!li) return;
+  currentId=id;
+  mTitle.textContent=li.getAttribute('data-title')||'Notification';
+  mWhen.textContent=li.getAttribute('data-when')||'';
+  mText.textContent=li.getAttribute('data-body')||'';
+  mMark.hidden=!li.classList.contains('unread');
+  modal.hidden=false;
+  if(mMark.focus) mMark.focus();
+ }
+ function closeModal(){ modal.hidden=true; currentId=0; }
+
+ if(list){
+  list.addEventListener('click',function(e){
+   var el=e.target;
+   var open=el.closest('.nOpen'), del=el.closest('.nDel'), rd=el.closest('.nRead'), wrap=el.closest('.nOpenWrap');
+   if(open){ e.stopPropagation(); var id=parseInt(open.getAttribute('data-id'),10);
+    api('open',{id:id}).then(function(){ markLocalRead(liOf(id)); openModal(id); }); return; }
+   if(rd){ e.stopPropagation(); var id2=parseInt(rd.getAttribute('data-id'),10);
+    api('read',{id:id2}).then(function(){ markLocalRead(liOf(id2)); }); return; }
+   if(del){ e.stopPropagation(); var id3=parseInt(del.getAttribute('data-id'),10);
+    if(!confirm('Remove this notification from your list? Other people keep their own copy.')) return;
+    api('delete',{id:id3}).then(function(){ removeLocal(id3); if(currentId===id3) closeModal(); }); return; }
+   if(wrap){ var id4=parseInt(wrap.closest('li').getAttribute('data-id'),10);
+    api('open',{id:id4}).then(function(){ markLocalRead(liOf(id4)); openModal(id4); }); }
+  });
+  list.addEventListener('keydown',function(e){
+   if(e.key==='Enter'||e.key===' '){ var w=e.target.closest('.nOpenWrap'); if(w){ e.preventDefault(); w.click(); } }
+  });
+ }
+
+ if(modal){
+  document.getElementById('nModalClose').addEventListener('click',closeModal);
+  modal.addEventListener('click',function(e){ if(e.target===modal) closeModal(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!modal.hidden) closeModal(); });
+  mMark.addEventListener('click',function(){ if(!currentId) return; var id=currentId;
+   api('read',{id:id}).then(function(){ markLocalRead(liOf(id)); mMark.hidden=true; }); });
+  mDel.addEventListener('click',function(){ if(!currentId) return; var id=currentId;
+   if(!confirm('Remove this notification from your list? Other people keep their own copy.')) return;
+   api('delete',{id:id}).then(function(){ removeLocal(id); closeModal(); }); });
+ }
+
+ var clear=document.getElementById('clearRead');
+ if(clear) clear.addEventListener('click',function(){
+  if(!confirm('Remove all the notifications you have already read? Everyone else keeps their own copies.')) return;
+  api('delete_read',{}).then(function(){ location.reload(); });
+ });
+
+ /* The bell in the header uses the same feed, so the count here stays honest. */
+})();
+</script>
+HTML;
+
+page_foot();

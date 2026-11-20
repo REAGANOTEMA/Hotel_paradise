@@ -1,0 +1,317 @@
+<?php
+declare(strict_types=1);
+$u=current_user();
+require_once __DIR__.'/../app/stock_requests.php';
+
+if($_SERVER['REQUEST_METHOD']==='POST'){
+ $act=$_GET['act']??'';
+ switch($act){
+  case 'req':
+   /* A department raises an inventory request. Every line carries the money it
+      comes to, so the Director sees the full cost on the alert itself. The store
+      manager is rung the moment it is sent, and the Director in the same breath. */
+   $dept=(int)($_POST['department_id']??0);
+   $deptRow=$dept?row('SELECT * FROM departments WHERE id=? AND active=1',[$dept]):null;
+   if(!$deptRow){ flash('Choose an active department.','bad'); go('purchases'); }
+   $items=$_POST['items']??[];
+   $clean=[];
+   $costs=[]; foreach(rows('SELECT id,unit_cost FROM inventory_items WHERE active=1 AND deleted_at IS NULL') as $it) $costs[(int)$it['id']]=(float)$it['unit_cost'];
+   foreach($items as $iid=>$row){
+    if($iid===''||!is_array($row)||!(float)($row['qty']??0)>0) continue;
+    $id=(int)$iid;
+    if(!isset($costs[$id])) continue;
+    $cost=(float)($row['cost']??0);
+    if($cost<=0) $cost=$costs[$id];
+    $clean[$id]=[(float)$row['qty'],$cost];
+   }
+   if(!count($clean)){ flash('Choose a department and add at least one item.','bad'); go('purchases'); }
+   $num=next_number('REQ','purchase_requisitions','number');
+   $note=trim($_POST['note']??'');
+   $pdo=db();
+   $pdo->beginTransaction();
+   try{
+    q('INSERT INTO purchase_requisitions(hotel_id,number,department_id,requested_by,status,note,created_at) VALUES(1,?,?,?,\'pending\',?,NOW())',[$num,$dept,$u['id'],$note]);
+    $rid=(int)$pdo->lastInsertId();
+    foreach($clean as $iid=>$d){ q('INSERT INTO purchase_requisition_items(requisition_id,item_id,requested_qty,est_cost) VALUES(?,?,?,?)',[$rid,$iid,$d[0],$d[1]]); }
+    $pdo->commit();
+   }catch(Throwable $e){
+    if($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[hotel purchases] could not raise requisition: '.$e->getMessage());
+    flash('The stock request could not be saved. Please try again.','bad');
+    go('purchases');
+   }
+   audit('create','requisition',$rid,['number'=>$num]);
+   $dname=(string)$deptRow['name'];
+   $list=stock_request_item_list($rid);
+   $total=stock_request_total($rid);
+   notify_console('req:'.$rid,'incident','Stock request '.$num.' awaiting approval',
+    $dname.' needs: '.$list.'. Total '.money($total).'.'.($note!==''?' - '.$note:''),
+    ['requisition_id'=>$rid,'number'=>$num,'amount'=>$total],
+    array_merge(stock_request_decision_roles(),stock_request_manager_roles()),'requisition',$rid);
+   flash('Stock request '.$num.' sent to the store manager and the Director.');
+   go('purchases');
+   break;
+case 'reqstatus':
+    $rid=(int)($_GET['id']??$_POST['id']??0); $nst=$_POST['nst']??'';
+    $r=row('SELECT * FROM purchase_requisitions WHERE id=? AND deleted_at IS NULL',[$rid]); if(!$r) break;
+    /* Approving or turning down a request is a director or general manager
+       decision. Anyone may open the page, but only these roles may change a
+       decision: the store keeps its inbox separate from who may act on it. */
+    if(!(has_role('director')||has_role('general_manager')||has_role('super_admin'))){
+     flash('Only the Director or General Manager may decide a stock request.','bad');
+     go(($_POST['back']??'')==='inventory'?'inventory':'purchases'); break;
+    }
+    $res=stock_request_decide($rid,$nst,(string)($_POST['reason']??''),(int)$u['id']);
+   if(!$res['ok']){
+    $msg=match($res['error']){
+     'reason-required'=>'A reason is required when turning down a request.',
+     'already-decided'=>'That request has already been decided.',
+     'not-allowed'=>'Only the Director or General Manager may decide a stock request.',
+     default=>'That request could not be updated.',
+    };
+    flash($msg,'bad');
+   }else{
+    flash('Stock request '.$r['number'].' '.$nst.'.');
+   }
+   go(($_POST['back']??'')==='inventory'?'inventory':'purchases');
+   break;
+  case 'reqtopo':
+   $rid=(int)($_POST['id']??0);
+   $r=row('SELECT * FROM purchase_requisitions WHERE id=? AND status=\'approved\' AND deleted_at IS NULL',[$rid]);
+   if(!$r){ flash('Only approved requisitions can become purchase orders.','bad'); go('purchases'); }
+   if(val('SELECT id FROM purchase_orders WHERE requisition_id=? AND deleted_at IS NULL',[$rid])){ flash('That requisition already has a purchase order.','bad'); go('purchases'); }
+   $sup=(int)($_POST['supplier_id']??0);
+   $supRow=$sup?row('SELECT * FROM suppliers WHERE id=? AND active=1',[$sup]):null;
+   if(!$supRow){ flash('Choose an active supplier for this purchase order.','bad'); go('purchases'); }
+   $rows=rows('SELECT * FROM purchase_requisition_items WHERE requisition_id=?',[$rid]);
+   if(!count($rows)){ flash('That requisition has no items to order.','bad'); go('purchases'); }
+   $num=next_number('PO','purchase_orders','number');
+   $pdo=db();
+   $pdo->beginTransaction();
+   try{
+    q('INSERT INTO purchase_orders(hotel_id,number,supplier_id,requisition_id,status,notes,created_by,created_at) VALUES(1,?,?,?,\'sent\',?,?,NOW())',[$num,$sup,$rid,trim($_POST['notes']??''),$u['id']]);
+    $oid=(int)$pdo->lastInsertId();
+    foreach($rows as $it){ $qty=(float)$it['requested_qty']; $cost=(float)$it['est_cost']; q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$it['item_id'],$qty,$cost,round($qty*$cost,2)]); }
+    $pdo->commit();
+   }catch(Throwable $e){
+    if($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[hotel purchases] could not create PO from requisition: '.$e->getMessage());
+    flash('The purchase order could not be created. Please try again.','bad');
+    go('purchases');
+   }
+   audit('create','purchase_order',$oid,['number'=>$num,'from_requisition'=>$rid]);
+   notify_console('po-from-req:'.$oid,'order','Purchase order '.$num.' created',
+    'Raised from requisition '.$r['number'].' to supplier '.$supRow['name'].'.',
+    ['purchase_order_id'=>$oid,'number'=>$num],['director','general_manager','storekeeper'],'purchase_order',$oid);
+   flash('Purchase order '.$num.' created from requisition with its estimated unit costs.');
+   go('purchases',['view'=>$oid]);
+   break;
+  case 'po':
+   $sup=(int)($_POST['supplier_id']??0);
+   $supRow=$sup?row('SELECT * FROM suppliers WHERE id=? AND active=1',[$sup]):null;
+   if(!$supRow){ flash('Choose an active supplier.','bad'); go('purchases'); }
+   $items=$_POST['items']??[];
+   $valid=[]; foreach(rows('SELECT id FROM inventory_items WHERE active=1 AND deleted_at IS NULL') as $it) $valid[(int)$it['id']]=true;
+   $clean=[];
+   foreach($items as $iid=>$row){
+    if($iid===''||!is_array($row)||!(float)($row['qty']??0)>0) continue;
+    $id=(int)$iid; if(!isset($valid[$id])) continue;
+    $clean[$id]=[(float)$row['qty'],max(0.0,(float)($row['cost']??0))];
+   }
+   if(!count($clean)){ flash('Choose a supplier and add at least one item.','bad'); go('purchases'); }
+   $num=next_number('PO','purchase_orders','number');
+   $pdo=db();
+   $pdo->beginTransaction();
+   try{
+    q('INSERT INTO purchase_orders(hotel_id,number,supplier_id,status,expected_date,notes,created_by,created_at) VALUES(1,?,?,\'sent\',?,?,?,NOW())',[$num,$sup,trim($_POST['expected_date']??''),trim($_POST['notes']??''),$u['id']]);
+    $oid=(int)$pdo->lastInsertId();
+    foreach($clean as $iid=>$d){ $tot=$d[0]*$d[1]; q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$iid,$d[0],$d[1],$tot]); }
+    $pdo->commit();
+   }catch(Throwable $e){
+    if($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[hotel purchases] could not create purchase order: '.$e->getMessage());
+    flash('The purchase order could not be created. Please try again.','bad');
+    go('purchases');
+   }
+   audit('create','purchase_order',$oid,['number'=>$num]);
+   notify_console('po:'.$oid,'order','Purchase order '.$num.' created',
+    'Sent to supplier '.$supRow['name'].' with '.count($clean).' item line(s).',
+    ['purchase_order_id'=>$oid,'number'=>$num],['director','general_manager','storekeeper'],'purchase_order',$oid);
+   flash('Purchase order '.$num.' created.');
+   go('purchases',['view'=>$oid]);
+   break;
+  case 'poitems':
+   $oid=(int)($_GET['oid']??$_POST['oid']??0);
+   $o=row('SELECT * FROM purchase_orders WHERE id=? AND deleted_at IS NULL',[$oid]);
+   if(!$o||!in_array($o['status'],['draft','sent','partially_received'],true)){ flash('That purchase order cannot take more items.','bad'); go('purchases'); }
+   $iid=(int)($_POST['additem']??0); $qty=(float)($_POST['addqty']??0); $cost=max(0.0,(float)($_POST['addcost']??0));
+   if(!$iid||$qty<=0||!val('SELECT id FROM inventory_items WHERE id=? AND active=1 AND deleted_at IS NULL',[$iid])){ flash('Choose an active item and quantity.','bad'); go('purchases',['view'=>$oid]); }
+   q('INSERT INTO purchase_order_items(order_id,item_id,quantity,unit_cost,total,received_qty) VALUES(?,?,?,?,?,0)',[$oid,$iid,$qty,$cost,$qty*$cost]);
+   audit('update','purchase_order',$oid,['action'=>'add_items']);
+   flash('Item added to the purchase order.');
+   go('purchases',['view'=>$oid]);
+   break;
+  case 'receive':
+   $oid=(int)($_GET['oid']??$_POST['oid']??0);
+   $items=$_POST['items']??[];
+   $loc=trim($_POST['loc']??'')?:'Main Store';
+   $pdo=db();
+   $pdo->beginTransaction();
+   try{
+    $o=row('SELECT * FROM purchase_orders WHERE id=? AND deleted_at IS NULL FOR UPDATE',[$oid]);
+    if(!$o||!in_array($o['status'],['sent','partially_received'],true)){
+     if($pdo->inTransaction()) $pdo->rollBack();
+     flash('That purchase order cannot receive goods.','bad'); go('purchases');
+    }
+    foreach($items as $piid=>$row){
+     if(!is_array($row)) continue;
+     $rcv=(float)($row['qty']??0); if($rcv<=0) continue;
+     $poi=row('SELECT * FROM purchase_order_items WHERE id=? AND order_id=? FOR UPDATE',[(int)$piid,$oid]); if(!$poi) continue;
+     $newRcv=$poi['received_qty']+$rcv; if($newRcv>$poi['quantity']) $newRcv=$poi['quantity'];
+     $qty=(float)$newRcv-$poi['received_qty']; if($qty<=0) continue;
+     q('UPDATE purchase_order_items SET received_qty=? WHERE id=?',[$newRcv,$poi['id']]);
+     q('INSERT INTO stock_movements(hotel_id,item_id,location,type,quantity,unit_cost,reference_type,reference_id,note,user_id,created_at) VALUES(1,?,?,\'purchase_in\',?,?,?,?,?,?,NOW())',[$poi['item_id'],$loc,$qty,$poi['unit_cost'],'purchase_order',$oid,'GRN for PO '.$oid,$u['id']]);
+     q('INSERT INTO stock_levels(hotel_id,item_id,location,quantity) VALUES(1,?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+VALUES(quantity)',[$poi['item_id'],$loc,$qty]);
+    }
+    $totQty=val('SELECT COALESCE(SUM(quantity),0) FROM purchase_order_items WHERE order_id=?',[$oid]);
+    $rcvQty=val('SELECT COALESCE(SUM(received_qty),0) FROM purchase_order_items WHERE order_id=?',[$oid]);
+    q('UPDATE purchase_orders SET status=? WHERE id=?',[$rcvQty>=$totQty?'received':'partially_received',$oid]);
+    $pdo->commit();
+   }catch(Throwable $e){
+    if($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[hotel purchases] could not receive goods: '.$e->getMessage());
+    flash('The goods could not be received. Please try again.','bad');
+    go('purchases',['view'=>$oid]);
+   }
+   audit('goods_receive','purchase_order',$oid,['location'=>$loc]);
+   $pnum=(string)val('SELECT number FROM purchase_orders WHERE id=?',[$oid]);
+   notify_console('grn:'.$oid,'communication','Goods received for '.$pnum,
+    'Received into '.$loc.'. Stock levels have been updated.',
+    ['purchase_order_id'=>$oid],['director','general_manager','storekeeper','accountant'],'purchase_order',$oid);
+   flash('Goods received and stock updated.');
+   go('purchases',['view'=>$oid]);
+   break;
+  case 'pocancel':
+   $oid=(int)($_POST['oid']??0);
+   $o=row('SELECT * FROM purchase_orders WHERE id=? AND deleted_at IS NULL',[$oid]);
+   if(!$o||!in_array($o['status'],['draft','sent','partially_received'],true)){ flash('That purchase order cannot be cancelled.','bad'); go('purchases'); }
+   q('UPDATE purchase_orders SET status=\'cancelled\' WHERE id=? AND status IN(\'draft\',\'sent\',\'partially_received\')',[$oid]);
+   audit('cancel','purchase_order',$oid);
+   notify_console('po-cancel:'.$oid,'incident','Purchase order '.$o['number'].' cancelled',
+    'The order has been cancelled before or during delivery.',
+    ['purchase_order_id'=>$oid],['director','general_manager','storekeeper','accountant'],'purchase_order',$oid);
+   flash('Purchase order cancelled.');
+   go('purchases');
+   break;
+ }
+}
+
+$view=(int)($_GET['view']??0);
+if($view){
+ $o=row('SELECT po.*,s.name supplier,d.name dept FROM purchase_orders po JOIN suppliers s ON s.id=po.supplier_id LEFT JOIN purchase_requisitions pr ON pr.id=po.requisition_id LEFT JOIN departments d ON d.id=pr.department_id WHERE po.id=?',[$view]); if(!$o){ page_head('Purchases','purchases'); echo '<div class="panel"><p>Not found.</p></div>'; page_foot(); exit; }
+ $items=rows('SELECT poi.*,i.name iname FROM purchase_order_items poi JOIN inventory_items i ON i.id=poi.item_id WHERE poi.order_id=?',[$view]);
+ page_head('Purchase order '.$o['number'],'purchases','Supplier: '.$o['supplier']);
+ echo '<div class="toolbar"><a class="btnGhost sm" href="'.BASE.'/index.php?page=purchases">&larr; Purchases</a>'.status_badge($o['status']).'</div>';
+
+ echo '<div class="twoCol"><div>';
+ echo '<div class="panel"><h2>Order items</h2><p class="hint">Expected quantities, unit costs and received goods.</p>';
+ echo '<table class="tbl"><thead><tr><th>Item</th><th class="num">Ordered</th><th class="num">Unit cost</th><th class="num">Total</th><th class="num">Received</th></tr></thead><tbody>';
+ foreach($items as $i){ echo '<tr><td><b>'.e($i['iname']).'</b></td><td class="num">'.num($i['quantity']).'</td><td class="num">'.money($i['unit_cost']).'</td><td class="num">'.money($i['total']).'</td><td class="num">'.num($i['received_qty']).'</td></tr>'; }
+ echo '</tbody></table></div></div>';
+
+ echo '<div>';
+ echo '<div class="panel"><h2>Receive goods</h2><p class="hint">Receiving moves goods into stock automatically.</p>';
+ form_open('purchases','receive',['oid'=>$view]);
+ echo '<div class="field"><label>Deliver to location</label><select name="loc"><option>Main Store</option><option>Bar</option><option>Kitchen</option></select></div>';
+ $pending=array_filter($items,fn($i)=>(float)($i['received_qty'])<(float)($i['quantity']));
+ if(count($pending)){
+  foreach($pending as $i){ echo '<div class="field"><label>'.e($i['iname']).'  (received '.num($i['received_qty']).' of '.num($i['quantity']).')</label><input type="number" step="0.5" min="0" name="items['.(int)$i['id'].'][qty]" value="'.num($i['quantity']-$i['received_qty']).'"></div>'; }
+  echo '<button class="btn tick">Receive goods</button>';
+ }else{ echo '<p class="emptyLine">This order is fully received.</p>'; }
+ form_close();
+ echo '</div>';
+ if($o['status']!=='cancelled'){ echo '<div class="panel"><h2>Add more items</h2><p class="hint">Extend this order with an item and its unit cost.</p>'; form_open('purchases','poitems',['oid'=>$view]);
+  echo '<div class="field"><label>Item</label><select name="additem" id="addpoi"><option value="">Choose item</option>'; $listy=rows('SELECT * FROM inventory_items ORDER BY name'); foreach($listy as $it) echo '<option value="'.(int)$it['id'].'">'.e($it['name']).'</option>'; echo '</select></div>';
+  echo '<div class="field"><label>Quantity</label><input type="number" name="addqty" min="0.5" step="0.5" value="1"></div>';
+  echo '<div class="field"><label>Unit cost (UGX)</label><input type="number" name="addcost" min="0" step="100" value="0"></div>';
+  echo '<button class="btn">Add to order</button>'; form_close(); echo '</div>'; }
+ if($o['status']==='sent'||$o['status']==='partially_received'){ echo '<div class="panel">'; form_open('purchases','pocancel'); echo '<input type="hidden" name="oid" value="'.(int)$view.'"><button class="btn danger" onclick="return confirm(\'Cancel this purchase order?\')">Cancel order</button>'; form_close(); echo '</div>'; }
+ echo '</div></div>';
+ page_foot(); exit;
+}
+
+$reqs=rows('SELECT pr.*,d.name dept,u.name reqby FROM purchase_requisitions pr JOIN departments d ON d.id=pr.department_id JOIN users u ON u.id=pr.requested_by WHERE pr.deleted_at IS NULL ORDER BY pr.id DESC LIMIT 30');
+$pos=rows('SELECT po.*,s.name supplier FROM purchase_orders po JOIN suppliers s ON s.id=po.supplier_id WHERE po.deleted_at IS NULL ORDER BY po.id DESC LIMIT 30');
+$depts=rows('SELECT * FROM departments ORDER BY name');
+$items=rows('SELECT * FROM inventory_items ORDER BY name');
+$suppliers=rows('SELECT * FROM suppliers WHERE active=1 ORDER BY name');
+
+page_head('Purchases','purchases','Requisitions, purchase orders and receiving');
+echo '<div class="twoCol"><div>';
+
+echo '<div class="panel"><h2>Purchase requisitions</h2><p class="hint">Department requests awaiting approval or converted to orders.</p>';
+echo '<table class="tbl"><thead><tr><th>Number</th><th>Department</th><th>Requested by</th><th>Status</th><th></th></tr></thead><tbody>';
+foreach($reqs as $r){
+$line=(int)val('SELECT COALESCE(SUM(ri.requested_qty),0) FROM purchase_requisition_items ri WHERE ri.requisition_id=?',[$r['id']]);
+  echo '<tr><td><b>'.e($r['number']).'</b></td><td>'.e($r['dept']).'</td><td>'.e($r['reqby']).'</td><td><small>'.$line.' item(s)</small></td><td>'.status_badge($r['status']).'</td><td>';
+ if($r['status']==='pending'){
+   $reqsCanDecide=has_role('director')||has_role('general_manager')||has_role('super_admin');
+   if($reqsCanDecide){ form_open('purchases','reqstatus',['id'=>$r['id']]); echo '<input type="hidden" name="nst" value="approved"><button class="btn sm tick">Approve</button>'; form_close(); }
+   if($reqsCanDecide){ form_open('purchases','reqstatus',['id'=>$r['id']]); echo '<input type="hidden" name="nst" value="rejected"><input name="reason" placeholder="Reason (required)" style="margin:0 0 6px;width:150px;padding:7px;border:1px solid var(--line);border-radius:8px"><button class="btn sm danger">Reject</button>'; form_close(); }
+   if(!$reqsCanDecide) echo '<small style="color:var(--muted)">Awaiting Director or General Manager</small>';
+  }
+ if($r['status']==='approved'){ echo ' <button class="btn sm blue" onclick="document.getElementById(\'poFrom'.(int)$r['id'].'\').hidden=false">Create purchase order</button>';
+  echo '<div id="poFrom'.(int)$r['id'].'" hidden style="margin-top:10px;background:#f6f4ea;border:1px solid var(--line);border-radius:10px;padding:12px">';
+  form_open('purchases','reqtopo'); echo '<input type="hidden" name="id" value="'.(int)$r['id'].'">';
+  echo '<div class="field"><label>Supplier</label><select name="supplier_id">'; foreach($suppliers as $s) echo '<option value="'.(int)$s['id'].'">'.e($s['name']).'</option>'; echo '</select></div>';
+  echo '<div class="field"><label>Notes</label><input name="notes"></div><button class="btn sm">Create from requisition</button>'; form_close(); echo '</div>';
+  }
+  if(!in_array($r['status'],['approved','cancelled'],true)) echo ' '.trash_button('purchase_requisitions',(int)$r['id'],'purchases');
+  echo '</td></tr>';
+}
+echo '</tbody></table></div>';
+
+echo '<div class="panel"><h2>Purchase orders</h2><p class="hint">Orders sent to suppliers and their receiving status.</p>';
+echo '<table class="tbl"><thead><tr><th>Number</th><th>Supplier</th><th>Created</th><th>Status</th><th></th></tr></thead><tbody>';
+foreach($pos as $p){ echo '<tr><td><b>'.e($p['number']).'</b></td><td>'.e($p['supplier']).'</td><td>'.fmtdt($p['created_at']).'</td><td>'.status_badge($p['status']).'</td><td style="white-space:nowrap"><a class="btn sm" href="'.BASE.'/index.php?page=purchases&view='.(int)$p['id'].'">Open</a> '.(in_array($p['status'],['draft','pending','sent'],true)?trash_button('purchase_orders',(int)$p['id'],'purchases'):'').'</td></tr>'; }
+echo '</tbody></table></div></div>';
+
+echo '<div>';
+$deptsel=count($depts)?$depts[0]['id']:0;
+echo '<div class="panel"><h2>New requisition</h2><p class="hint">Request stock for a department.</p>';
+form_open('purchases','req');
+echo '<div class="field"><label>Department</label><select name="department_id">'; foreach($depts as $d) echo '<option value="'.(int)$d['id'].'">'.e($d['name']).'</option>'; echo '</select></div>';
+echo '<div class="field"><label>Items needed</label><div id="reqitems"></div></div>';
+echo '<button type="button" class="btnGhost sm" onclick="addReqRow()">+ Add item</button>';
+echo '<div class="field" style="margin-top:14px"><label>Note</label><input name="note"></div>';
+echo '<button class="btn">Submit for approval</button>'; form_close();
+echo '</div>';
+
+echo '<div class="panel"><h2>New purchase order</h2><p class="hint">Order directly from a supplier.</p>';
+form_open('purchases','po');
+echo '<div class="field"><label>Supplier</label><select name="supplier_id">'; foreach($suppliers as $s) echo '<option value="'.(int)$s['id'].'">'.e($s['name']).'</option>'; echo '</select></div>';
+echo '<div class="field"><label>Items (qty and unit cost)</label><div id="poitems"></div></div>';
+echo '<button type="button" class="btnGhost sm" onclick="addPORow()">+ Add item</button>';
+echo '<div class="field" style="margin-top:14px"><label>Expected date</label><input type="date" name="expected_date"></div>';
+echo '<div class="field"><label>Notes</label><input name="notes"></div>';
+echo '<button class="btn">Create order</button>'; form_close();
+echo '</div></div></div>';
+
+$opts='';
+foreach($items as $it) $opts.="<option value=\"{$it['id']}\">".htmlspecialchars(($it['name']))."</option>";
+echo '<script>
+var opts=\''.addslashes($opts).'\';
+function addPORow(id){ var d=document.getElementById("poitems"); var row=document.createElement("div"); row.style.cssText="display:flex;gap:8px;margin-bottom:8px"; row.innerHTML="<select class=\'poItemSel\' style=\'flex:1;padding:9px;border:1px solid var(--line);border-radius:8px\'></select><input class=\'poQty\' type=\'number\' placeholder=\'Qty\' style=\'width:90px;padding:9px;border:1px solid var(--line);border-radius:8px\'><input class=\'poCost\' type=\'number\' placeholder=\'Cost\' step=\'100\' style=\'width:110px;padding:9px;border:1px solid var(--line);border-radius:8px\'><button type=\'button\' onclick=\'this.parentNode.remove()\'>x</button>";
+ row.querySelector(".poItemSel").innerHTML="<option value=\'\'>Choose item</option>"+opts;
+ row.querySelector(".poItemSel").onchange=function(){ this.name="items["+this.value+"][qty]"; this.nextElementSibling.name="items["+this.value+"][qty]"; this.nextElementSibling.nextElementSibling.name="items["+this.value+"][cost]"; };
+ d.appendChild(row);
+}
+function addReqRow(){ var d=document.getElementById("reqitems"); var row=document.createElement("div"); row.style.cssText="display:flex;gap:8px;margin-bottom:8px"; row.innerHTML="<select class=\'rqItemSel\' style=\'flex:1;padding:9px;border:1px solid var(--line);border-radius:8px\'></select><input class=\'rqQty\' type=\'number\' placeholder=\'Qty\' style=\'width:110px;padding:9px;border:1px solid var(--line);border-radius:8px\'><button type=\'button\' onclick=\'this.parentNode.remove()\'>x</button>";
+ row.querySelector(".rqItemSel").innerHTML="<option value=\'\'>Choose item</option>"+opts;
+ row.querySelector(".rqItemSel").onchange=function(){ this.name="items["+this.value+"][qty]"; this.nextElementSibling.name="items["+this.value+"][qty]"; };
+ d.appendChild(row);
+}
+addPORow();addPORow();addReqRow();addReqRow();
+</script>';
+page_foot();
+
