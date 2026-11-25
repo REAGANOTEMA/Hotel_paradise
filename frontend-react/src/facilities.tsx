@@ -68,7 +68,7 @@ function FacilitiesPage() {
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero hasCover" id="main">
+  <section className="pageHero hasCover facilitiesIntro" id="main">
    <SmartImage group="site" name="Pool-Area"
     alt="" ratio="auto" widths={[480, 960, 1440]} sizes="100vw" className="pageHeroCover"/>
    <div className="pageHeroInner">

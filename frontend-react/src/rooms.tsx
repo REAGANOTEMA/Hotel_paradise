@@ -336,7 +336,7 @@ if (d.ok) {
     <TopBar/>
     <PageNav onDark/>
 
-<section className="pageHero hasCover" id="main">
+<section className="pageHero hasCover roomsIntro" id="main">
     <PageHeroCover frames={ROOM_HERO_FRAMES}/>
     <div className="pageHeroInner">
      <BackLink label="Back" fallback="./index.html"/>

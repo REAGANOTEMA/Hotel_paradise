@@ -22,7 +22,7 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;
    above it keep their own backgrounds, so the image reads as the ground the
    hotel is built on rather than a picture laid over the design. */
 body{
-  margin:0;color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:15.5px;line-height:1.65;-webkit-font-smoothing:antialiased;
+  margin:0;color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:15.5px;line-height:1.65;-webkit-font-smoothing:antialiased;
   background-color:var(--ivory);
   background-image:linear-gradient(180deg,rgba(248,245,236,.88) 0%,rgba(248,245,236,.93) 55%,rgba(248,245,236,.96) 100%),var(--site-bg,none);
   background-size:cover;background-position:50% 42%;background-repeat:no-repeat;background-attachment:fixed;
@@ -69,7 +69,7 @@ b,strong{font-variant-numeric:tabular-nums}
 .nav.dark .burger span{background:#fff}
 .brand{display:flex;flex-direction:column;color:var(--navy);font-family:'Playfair Display',serif;letter-spacing:3px;line-height:1.1}
 .brand span{font-size:25px}
-.brand small{font-family:'DM Sans';letter-spacing:4px;color:var(--gold-ink);font-size:9px}
+.brand small{font-family:'Inter';letter-spacing:4px;color:var(--gold-ink);font-size:9px}
 /* Each destination in the header is a real button: a soft surface that lifts
    and warms on hover, and a gold plate with a hairline ring for the page you
    are on. The last one, the staff entrance, is set apart as a gold key. */
@@ -641,7 +641,7 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 .brandL.light .brandLogo{height:42px;width:auto;display:block;object-fit:contain;filter:drop-shadow(0 6px 16px rgba(0,0,0,.34))}
 .brandWord{display:flex;flex-direction:column;line-height:1.1;color:var(--navy);font-family:'Playfair Display',serif;letter-spacing:3px}
 .brandWord span{font-size:21px}
-.brandWord small{font-family:'DM Sans';letter-spacing:4px;color:var(--gold-ink);font-size:9px}
+.brandWord small{font-family:'Inter';letter-spacing:4px;color:var(--gold-ink);font-size:9px}
 /* On a navy surface the gold itself passes contrast; on ivory it must deepen. */
 .nav.dark .brandWord small,.brandL.light .brandWord small{color:var(--gold)}
 .brandL.light .brandWord{color:#fff}
@@ -1130,7 +1130,7 @@ footer::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:no
 .modalCrumb{margin:0 0 10px;color:var(--gold-ink);font-size:10px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase}
 .modalTitle{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(28px,3vw,40px);line-height:1.1;color:var(--navy);margin:0 0 12px;padding-right:38px;text-wrap:balance}
 .modalPrice{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 16px;color:var(--gold-ink);font-family:'Playfair Display',serif;font-size:30px;font-weight:600}
-.modalPrice small{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8a95a5}
+.modalPrice small{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8a95a5}
 .modalPrice .askPrice{color:#8a95a5;font-size:22px;font-style:italic}
 .modalDesc{margin:0 0 26px;color:#4a5568;font-size:15.5px;line-height:1.78;padding-left:16px;border-left:3px solid var(--gold)}
 .modalFile{display:inline-block;margin:-14px 0 22px}
@@ -2526,7 +2526,7 @@ footer::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:non
 .legalClause{background:#fff;border:1px solid var(--line2);border-radius:14px;padding:clamp(22px,3vw,34px) clamp(22px,3vw,38px);margin:0 0 20px;box-shadow:var(--shadow);scroll-margin-top:calc(var(--navh) + 22px);transition:box-shadow .3s ease,border-color .3s ease}
 .legalClause:hover{border-color:#C9A22740;box-shadow:0 3px 8px rgba(7,26,51,.05),0 22px 46px rgba(7,26,51,.10)}
 .legalClause h2{display:flex;gap:15px;align-items:center;font-family:'Playfair Display',serif;font-size:clamp(1.15rem,1.8vw,1.45rem);color:var(--navy);margin:0 0 16px;line-height:1.28}
-.legalClause h2 .legalNum{flex:none;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--gold);background:linear-gradient(160deg,var(--navy2),var(--navy));box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 14px rgba(7,26,51,.24)}
+.legalClause h2 .legalNum{flex:none;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--gold);background:linear-gradient(160deg,var(--navy2),var(--navy));box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 14px rgba(7,26,51,.24)}
 .legalClause p{margin:0 0 12px;color:#3c4855;line-height:1.78}
 .legalClause p:last-child{margin-bottom:0}
 .legalClause ul{margin:0 0 12px;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
@@ -2696,7 +2696,7 @@ footer::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:non
 .reactNote{flex:1 1 100%;margin:0;color:var(--bad);font-size:12.5px}
 .commentsBlock{margin-top:34px}
 .commentsHead h2{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--navy);margin:0 0 6px;display:flex;align-items:center;gap:10px}
-.commentsHead h2 span{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--gold-ink);background:var(--gold-soft);border:1px solid rgba(201,162,39,.35);border-radius:999px;padding:2px 9px}
+.commentsHead h2 span{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--gold-ink);background:var(--gold-soft);border:1px solid rgba(201,162,39,.35);border-radius:999px;padding:2px 9px}
 .commentsHead p{color:var(--muted);font-size:13.5px;line-height:1.65;margin:0 0 20px;max-width:66ch}
 .commentsList{list-style:none;margin:0 0 26px;padding:0;display:grid;gap:13px}
 .commentsList li{background:#fbfaf6;border:1px solid var(--line2);border-left:3px solid var(--gold);border-radius:10px;padding:15px 19px}
@@ -2976,7 +2976,7 @@ body.hpn-concierge .installApp{bottom:calc(28px + 156px)}
 
 /* buffet packages on the events page */
 .venueBody p.buffetPrice,.buffetTier p.buffetPrice{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--nile);font-weight:700;line-height:1.2;margin:0 0 12px}
-.buffetTier p.buffetPrice span{display:block;font-family:'DM Sans',sans-serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:5px}
+.buffetTier p.buffetPrice span{display:block;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:5px}
 .buffetTiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:26px}
 .buffetTier{background:#fff;border:1px solid var(--line2);border-top:3px solid var(--gold);border-radius:var(--r);padding:26px 24px;box-shadow:var(--shadow);text-align:center}
 .buffetTier .pill{margin:0 0 10px}
@@ -3047,4 +3047,248 @@ a.btn:active,button.btn:active,.btn:active{transform:translateY(0)}
 }
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}.reveal{animation:none !important}*,*::before,*::after{transition:none !important}
+}
+:root{
+  --hp-gold-soft:rgba(201,162,39,.14);--hp-radius:4px;--hp-radius-sm:3px;
+  --hp-shadow:0 1px 2px rgba(7,26,51,.05),0 10px 24px rgba(7,26,51,.07);
+  --hp-shadow-soft:0 1px 1px rgba(7,26,51,.04),0 6px 16px rgba(7,26,51,.05);
+  --paper:#faf7ee;--paper-deep:#f1ecdd;--hairline:#ded7c4;--hairline-soft:#e8e2d3;
+}
+html,body{max-width:100%;overflow-x:clip}
+body,button,input,select,textarea{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif}
+body{background:var(--paper);background-image:none;color:#1b2431;font-size:15.5px;line-height:1.72}
+h1,h2,h3,h4,.brand,.brandWord,.heroTitle,.pageHero h1,.section h2,.card h3,.bedBody h3,.plannerActive h3,.venueBody h3,.facBody h2,.said figcaption b,.newsCardTitle,.newsArticleHead h1,.payCard h3,.acctBrand b,.acctHeadText h3,.acctActRow b,.legalToc h2,.legalClause h2,.legalFoot h3,.commentsHead h2{font-family:'Playfair Display',Georgia,serif;font-weight:500;letter-spacing:-.015em}
+b,strong,.price,.dishPrice,.menuPrice,.payLine dd,.payMoney b,.payLineSum,.booking strong,.planner b{font-variant-numeric:tabular-nums}
+.topbar{background:var(--navy);letter-spacing:.16em;font-size:10px;padding:8px 6vw}
+.topbar,.siteHeader,header,.nav,.nav.stuck{backdrop-filter:none;-webkit-backdrop-filter:none}
+.nav,.nav.stuck{background:var(--paper);border-bottom:1px solid var(--hairline-soft);box-shadow:none;height:76px}
+.nav.dark{background:transparent;border-bottom-color:rgba(255,255,255,.18)}
+.nav.dark.stuck{background:var(--navy);border-bottom-color:rgba(255,255,255,.14);box-shadow:none}
+.nav::after,.nav.dark::after{display:none}
+.brandLogo,.footerLogo,.sideLogo,.lsLogo,.loginBrandTop img{filter:none}
+.brand span{font-size:22px;letter-spacing:.22em}
+.brand small,.brandWord small{font-size:9px;letter-spacing:.34em}
+.nav nav{gap:2px}
+.nav nav a{border:0;border-bottom:1px solid transparent;border-radius:0;background:transparent;padding:9px 12px;font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;box-shadow:none}
+.nav nav a:hover{background:transparent;border-bottom-color:rgba(201,162,39,.5);transform:none;box-shadow:none}
+.nav nav a.active{background:transparent;border-bottom-color:var(--gold);box-shadow:none}
+.nav nav a.staffNav{border:1px solid rgba(201,162,39,.45);border-radius:2px;background:transparent}
+.nav nav a.staffNav:hover{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:none}
+.nav.dark nav a{color:#eaf0f7}
+.nav.dark nav a.active{border-bottom-color:var(--gold)}
+.btn,.checkoutBtn,.payBtn{border-radius:3px;padding:12px 22px;min-height:44px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;box-shadow:none;background:var(--navy);border:1px solid var(--navy);color:#fff;transition:background .24s var(--hp-ease),color .24s var(--hp-ease),border-color .24s var(--hp-ease),transform .24s var(--hp-ease),box-shadow .24s var(--hp-ease)}
+.btn:hover,.checkoutBtn:hover,.payBtn:hover{background:#102b4e;border-color:#102b4e;transform:translateY(-1px);box-shadow:0 7px 16px rgba(7,26,51,.16);filter:none}
+.btn:active{transform:none;box-shadow:none}
+.btn.ghost,.btn.ghost2{background:transparent;background-image:none;color:#fff;border-color:rgba(255,255,255,.7);box-shadow:none;text-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.btn.ghost:hover,.btn.ghost2:hover{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:none}
+.btn.navy{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:none}
+.btn.navy:hover{background:#102b4e;border-color:#102b4e;box-shadow:0 7px 16px rgba(7,26,51,.16)}
+.btn.danger{background:#a62727;border-color:#a62727;color:#fff}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px;box-shadow:0 0 0 4px rgba(201,162,39,.16)}
+.hero{min-height:100svh;background:var(--navy)}
+.heroShade{background:linear-gradient(90deg,rgba(4,14,30,.94) 0%,rgba(7,26,51,.76) 38%,rgba(7,26,51,.28) 78%,rgba(7,26,51,.16) 100%)}
+.heroCopy{padding:calc(var(--navh) + clamp(44px,5vw,72px)) 7vw clamp(108px,10vw,144px)}
+.heroPanel{max-width:780px}
+.heroPanelInner{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.heroPanelInner::before{content:'';position:absolute;left:-22px;top:8px;bottom:8px;width:1px;background:rgba(201,162,39,.62)}
+.heroPanelInner h1,.heroPanelInner .heroTitle{font-size:clamp(3rem,6vw,5.1rem);line-height:1.02;font-weight:500;letter-spacing:-.03em;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.72),0 14px 34px rgba(0,0,0,.42)}
+.heroPanelInner .eyebrow{font-size:10.5px;letter-spacing:.28em;color:#e8c96a}
+.heroPanelInner .heroText{font-size:clamp(1rem,1.15vw,1.18rem);line-height:1.75;color:#e8edf4;border:0;padding:0;max-width:54ch;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.heroRule{width:48px;height:1px;margin:26px 0 0;background:var(--gold);box-shadow:none}
+.heroBtns{margin-top:30px;gap:12px}
+.heroBtns .btn{min-height:46px;padding:13px 24px}
+.heroBtns .btn.ghost2{background:transparent;border-color:rgba(255,255,255,.72);color:#fff}
+.heroDots{left:7vw;bottom:30px;transform:none;gap:7px}
+.heroDots .dot{width:30px;height:18px}
+.heroDots .dot::before,.heroDots .dot::after{top:8px;height:1px}
+.heroDots .dot::before{background:rgba(255,255,255,.42)}
+.heroDots .dot.on{width:46px}
+.booking{margin-top:-40px;max-width:1160px;padding:24px 26px;border:1px solid var(--hairline);border-radius:3px;box-shadow:0 12px 30px rgba(7,26,51,.09);background:#fff}
+.booking::before{height:1px;background:var(--gold);opacity:.72}
+.booking label{font-size:10px;letter-spacing:.16em;color:var(--gold-ink)}
+.booking input,.booking select,.planField input,.planField select,.paySub input{border:1px solid #d8d2c3;border-radius:3px;box-shadow:none}
+.booking input:focus,.booking select:focus,.planField input:focus,.planField select:focus,.paySub input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.12)}
+.stripNote{border-radius:2px;box-shadow:none;border-left:2px solid var(--gold);background:#fff}
+.section{max-width:1240px;padding:clamp(72px,8vw,108px) 6vw}
+.section h2{font-size:clamp(1.85rem,3vw,2.55rem);line-height:1.18}
+.section .center h2::after{width:44px;height:1px;border-radius:0;background:var(--gold)}
+.catTitle::after,.sectionTitle h2::after{width:44px;height:1px;border-radius:0;background:var(--gold)}
+.intro{max-width:640px}
+.section.hasTint::before{opacity:.04}
+.section.hasTint::after{background:rgba(250,247,238,.9)}
+.card,.roomCard,.menuCard,.foodCard,.venueCard,.featureCard,.dineCard,.buffetTier,.factCard,[class*="Card"]:not(.dishCard){border:1px solid var(--hairline);border-radius:3px;box-shadow:none;background:#fff;transition:transform .28s var(--hp-ease),box-shadow .28s var(--hp-ease),border-color .28s var(--hp-ease)}
+.card:hover,.roomCard:hover,.menuCard:hover,.foodCard:hover,.venueCard:hover,.featureCard:hover,.dineCard:hover,.buffetTier:hover,.factCard:hover,[class*="Card"]:not(.dishCard):hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(7,26,51,.08);border-color:rgba(201,162,39,.45)}
+.card img,.roomCard img,.menuCard img,.foodCard img,.venueCard img,.dineCard img,[class*="Card"]:not(.dishCard) img{transition:transform .6s var(--hp-ease),filter .4s var(--hp-ease)}
+.card:hover img,.roomCard:hover img,.menuCard:hover img,.foodCard:hover img,.venueCard:hover img,.dineCard:hover img,[class*="Card"]:not(.dishCard):hover img{transform:scale(1.03);filter:saturate(.96)}
+.cardBody{padding:24px}
+.card h3{font-size:1.3rem}
+.rates{background:var(--navy);color:#fff;border-top:1px solid rgba(201,162,39,.35);border-bottom:1px solid rgba(201,162,39,.35)}
+.rateCard{background:#fff;border:1px solid rgba(255,255,255,.16);border-radius:3px;box-shadow:none}
+.rateRow h4{font-family:'Playfair Display',Georgia,serif;font-weight:500}
+.fact{border:1px solid rgba(255,255,255,.12);border-radius:3px;box-shadow:none}
+.fact::after{height:1px;background:var(--gold)}
+.factScrim{background:linear-gradient(180deg,rgba(7,26,51,.12),rgba(7,26,51,.52) 46%,rgba(6,18,36,.94))}
+.factIdx{font-size:28px;color:#e8c96a}
+.pageHero{margin-top:calc(-1 * var(--navh));background:var(--navy);padding:calc(var(--navh) + clamp(62px,8vw,108px)) 7vw clamp(58px,7vw,90px)}
+.pageHero h1{font-size:clamp(2.5rem,5vw,4rem);line-height:1.05;max-width:18ch;color:#fff}
+.pageHero p{font-size:clamp(1rem,1.2vw,1.12rem);color:#dbe3ed;max-width:62ch}
+.pageHero.hasCover::after{background:linear-gradient(90deg,rgba(7,26,51,.92) 0%,rgba(7,26,51,.62) 44%,rgba(7,26,51,.24) 100%)}
+.pageHeroInner{max-width:1180px;margin:0 auto}
+.backLink{border:1px solid rgba(255,255,255,.28);border-radius:2px;background:rgba(7,26,51,.55);padding:10px 14px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;backdrop-filter:none;-webkit-backdrop-filter:none}
+.backLink:hover{background:var(--navy);border-color:var(--gold);color:#fff}
+.roomsIntro .pageHeroInner{max-width:1320px}
+.roomsIntro h1{max-width:12ch}
+.menuIntro .pageHeroInner{max-width:900px}
+.menuIntro h1{font-size:clamp(2.7rem,5.6vw,4.4rem)}
+.eventsIntro .pageHeroInner{margin-left:0;max-width:1060px}
+.eventsIntro h1{max-width:16ch}
+.facilitiesIntro .pageHeroInner{margin-left:auto;margin-right:0;max-width:820px}
+.facilitiesIntro h1{max-width:14ch}
+.talkIntro .pageHeroInner{max-width:760px;margin:0 auto;text-align:center}
+.talkIntro .eyebrow{justify-content:center}
+.talkIntro p{margin-left:auto;margin-right:auto}
+.newsIntro .pageHeroInner{max-width:980px}
+.newsIntro h1{font-style:italic;font-weight:500}
+.legalIntro,.accountIntro,.payIntro{padding-top:calc(var(--navh) + 48px);padding-bottom:54px}
+.legalIntro h1,.accountIntro h1,.payIntro h1{font-size:clamp(2.1rem,3.4vw,3rem)}
+.payIntro .pageHeroInner{max-width:720px;margin:0 auto;text-align:center}
+.bedsWrap{max-width:1400px}
+.bedCard{border:1px solid var(--hairline);border-radius:3px;box-shadow:none}
+.bedCard:hover,.bedCard.chosen{box-shadow:0 8px 22px rgba(7,26,51,.08)}
+.bedCard.chosen{border-color:var(--gold)}
+.planner{border:1px solid var(--hairline);border-radius:3px;box-shadow:none;padding:24px}
+.spotTotal{background:var(--navy);border-radius:3px;padding:16px 18px}
+.spotTotal b{font-family:'Playfair Display',Georgia,serif;font-size:24px}
+.stepNum{border-radius:2px}
+.payWrap{padding:56px 7vw 96px;max-width:1180px}
+.payCard{border:1px solid var(--hairline);border-radius:3px;box-shadow:none;background:#fff;padding:30px}
+.payGrid{grid-template-columns:.95fr 1.05fr;gap:30px}
+.payDue{border-top:1px solid var(--hairline);padding-top:14px}
+.payDue b{font-size:28px;color:var(--navy)}
+.payMethodRow{border:1px solid var(--hairline);border-radius:3px;box-shadow:none}
+.payMethodRow.sel{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold)}
+.paySettled{border-radius:3px;box-shadow:none}
+.payReceipt{border:1px solid var(--hairline);border-radius:3px;box-shadow:none}
+.acctBrand img{border-radius:50%;border:1px solid var(--gold);padding:2px;box-shadow:none}
+.acctAvatar{border-radius:50%;border:1px solid var(--gold);box-shadow:none}
+.acctMore{border-radius:3px;background:#fff;box-shadow:none}
+.acctActRow{border-radius:3px;box-shadow:none;border-left:2px solid var(--gold)}
+.menuJump{background:rgba(250,247,238,.97);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;border-bottom:1px solid var(--hairline)}
+.menuSearch input{border-radius:3px;box-shadow:none}
+.catChip{border:1px solid var(--hairline);border-radius:2px;background:transparent;box-shadow:none;transform:none}
+.catChip:hover{background:#fff;box-shadow:none}
+.catChip.on{background:var(--navy);border-color:var(--navy);border-bottom-color:var(--gold);color:#fff;box-shadow:none}
+.catChip.on::after{display:none}
+.menuWatermark{opacity:.4}
+.dishCard{border:1px solid var(--hairline);border-radius:3px;box-shadow:none;background:#fff}
+.dishCard::after{display:none}
+.dishCard:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(7,26,51,.08);border-color:rgba(201,162,39,.45)}
+.dishCat,.dishStatus{border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none;font-size:9px;letter-spacing:.14em}
+.dishPriceRow{border-top:1px solid var(--hairline-soft)}
+.dishPriceRow b{color:var(--navy)}
+.orderPanel{border:1px solid var(--hairline);border-radius:3px;box-shadow:none}
+.orderPanelHead::before{background:var(--gold)}
+.orderPanelToggle{border-radius:2px}
+.orderPill{border-radius:3px;box-shadow:0 10px 26px rgba(7,26,51,.24)}
+.orderPill::before{display:none}
+.venue,.evPill,.evForm,.gift,.said{border-radius:3px;box-shadow:none}
+.venueBody{padding:24px}
+.evPill,.gift{padding-left:60px;border-top:0;border-left:2px solid var(--gold)}
+.evPill::before,.gift::before{left:22px;top:20px;width:24px;height:24px;border-radius:2px;background:var(--navy);box-shadow:none}
+.evPill::after,.gift::after{left:22px;top:20px;width:24px;height:24px;color:var(--gold);font-size:13px;text-shadow:none}
+.evPill:hover,.gift:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(7,26,51,.08)}
+.facIdx{display:block;width:auto;height:auto;border-radius:0;background:transparent;box-shadow:none;color:var(--gold-ink);font-size:11px;letter-spacing:.24em;opacity:1}
+.facBody h2::after{width:44px;height:1px;border-radius:0;background:var(--gold)}
+.talkTabs{gap:6px}
+.talkTab{border-radius:2px;background:transparent;box-shadow:none;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.talkTab.on{background:var(--navy);border-color:var(--navy);border-bottom-color:var(--gold);color:#fff;box-shadow:none}
+.said{border-top:2px solid var(--gold)}
+.newsCard,.newsArticle{border:1px solid var(--hairline);border-radius:3px;box-shadow:none}
+.newsCard:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(7,26,51,.08);border-color:rgba(201,162,39,.45)}
+.newsApply,.reactionBar{border-radius:3px;border-top:2px solid var(--gold);box-shadow:none}
+.reactBtn{border-radius:2px;box-shadow:none}
+.reactBtn.on{background:var(--navy);border-color:var(--navy);box-shadow:none}
+.commentsList li,.commentForm{border-radius:3px;box-shadow:none}
+.commentsHead h2 span{font-family:'Inter',sans-serif;border-radius:2px;background:rgba(201,162,39,.12)}
+.legalToc,.legalClause,.legalMeta{border:1px solid var(--hairline);border-radius:3px;box-shadow:none}
+.legalToc .legalRule{width:44px;height:1px;border-radius:0;background:var(--gold)}
+.legalClause h2 .legalNum{border-radius:2px;background:var(--navy);box-shadow:none;color:var(--gold)}
+.legalClause ul li::before{border-radius:0;background:var(--gold)}
+.legalFoot{background:var(--navy);border-radius:3px;box-shadow:none}
+.legalFoot .btn{background:var(--navy);border-color:rgba(255,255,255,.4);color:#fff}
+.legalFoot .btn:hover{background:#fff;border-color:#fff;color:var(--navy)}
+footer{background:var(--navy)}
+footer .flag{box-shadow:none}
+footer .footerLogo{filter:none}
+.footerMain h4{letter-spacing:.16em}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+::selection{background:rgba(201,162,39,.22);color:var(--navy)}
+@media (max-width:1120px){
+  .booking{grid-template-columns:repeat(2,1fr)}
+  .booking .btn{grid-column:1 / -1;justify-self:start}
+  .bedsWrap{grid-template-columns:1fr}
+  .planner{position:static}
+  .payGrid{grid-template-columns:1fr}
+  .venueGrid{grid-template-columns:1fr}
+  .legalGrid{grid-template-columns:1fr}
+  .legalToc{position:static}
+}
+@media (max-width:900px){
+  .nav nav a{padding:8px 9px;letter-spacing:.06em}
+  .heroCopy{padding-left:6vw;padding-right:6vw}
+  .heroPanelInner::before{display:none}
+  .heroPanelInner h1,.heroPanelInner .heroTitle{font-size:clamp(2.7rem,9vw,4rem)}
+  .heroDots{left:6vw;bottom:24px}
+  .pageHero{padding-left:6vw;padding-right:6vw}
+  .pageHero h1{max-width:20ch}
+  .talkIntro .pageHeroInner{text-align:left}
+  .talkIntro .eyebrow{justify-content:flex-start}
+  .evSplit,.fac,.fac.rev{grid-template-columns:1fr}
+  .fac.rev .facIdx,.fac.rev .facBody h2::after{text-align:left;left:0;right:auto}
+  .saidGrid{grid-template-columns:1fr}
+  .contactWrap{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .topbar{padding:7px 5vw;font-size:9px;letter-spacing:.12em}
+  .nav,.nav.stuck{height:68px}
+  .brand span{font-size:19px}
+  .btn,.checkoutBtn,.payBtn{padding:11px 18px;letter-spacing:.07em}
+  .heroCopy{padding:calc(var(--navh) + 42px) 5vw 120px}
+  .heroPanelInner .heroText{font-size:15.5px}
+  .heroDots{max-width:90vw;flex-wrap:wrap;justify-content:flex-start;gap:2px;left:5vw}
+  .heroDots .dot{width:20px;height:20px}
+  .heroDots .dot::before,.heroDots .dot::after{top:9px}
+  .heroDots .dot.on{width:30px}
+  .booking{margin-top:-30px;padding:20px 18px;grid-template-columns:1fr;gap:14px}
+  .booking .btn{grid-column:1;justify-self:stretch}
+  .section{padding:64px 5vw}
+  .pageHero{padding-left:5vw;padding-right:5vw}
+  .pageHero.hasCover::after{background:linear-gradient(90deg,rgba(7,26,51,.92),rgba(7,26,51,.58))}
+  .payWrap{padding:42px 5vw 76px}
+  .payCard{padding:22px 18px}
+  .menuJumpInner{padding-bottom:8px}
+  .acctGrid{grid-template-columns:1fr}
+  .evPill,.gift{padding-left:56px}
+  .legal{padding-left:5vw;padding-right:5vw}
+  .commentFields{grid-template-columns:1fr}
+}
+@media (max-width:390px){
+  .heroPanelInner h1,.heroPanelInner .heroTitle{font-size:2.45rem}
+  .heroDots .dot{width:16px}
+  .heroDots .dot.on{width:24px}
+  .pageHero h1{font-size:2.15rem}
+  .booking{padding:18px 14px}
+}
+@media print{
+  body{background:#fff;color:#000}
+  .topbar,.nav,.footer,.backTop,.orderPill,.conLauncher,.concierge,.bookMsg,.btn,.checkoutBtn,.payBtn{display:none!important}
+  .payCard,.newsArticle,.legalClause,.card,.venue,.said{border:1px solid #999!important;box-shadow:none!important;background:#fff!important}
+  .pageHero,.hero{background:#071a33!important;color:#fff!important;min-height:auto!important;padding:32px!important}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html.js .reveal{opacity:1!important;transform:none!important;filter:none!important}
+  .heroSlide.active{transform:none!important}
+  .heroFx.smoke,.heroFx.smoke::after,.heroFx.sheen{display:none}
 }

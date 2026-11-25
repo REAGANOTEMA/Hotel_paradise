@@ -82,7 +82,7 @@ function TalkPage() {
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero hasCover" id="main">
+  <section className="pageHero hasCover talkIntro" id="main">
    <SmartImage group="site" name="hero-hotel-entrence"
     alt="" ratio="auto" widths={[480, 960, 1440]} sizes="100vw" className="pageHeroCover"/>
    <div className="pageHeroInner">

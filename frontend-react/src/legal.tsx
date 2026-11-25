@@ -39,7 +39,7 @@ export function LegalPage({eyebrow, title, updated, intro, heroBg, clauses}: Leg
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero canvas hasCover" id="main" style={{'--bg': bgUrl(heroBg)} as unknown as React.CSSProperties}>
+  <section className="pageHero canvas hasCover legalIntro" id="main" style={{'--bg': bgUrl(heroBg)} as unknown as React.CSSProperties}>
    <div className="pageHeroInner">
     <BackLink label="Back" fallback="./index.html"/>
     <p className="eyebrow">{eyebrow}</p>

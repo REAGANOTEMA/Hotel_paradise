@@ -521,7 +521,7 @@ function NewsPage() {
     <TopBar/>
     <PageNav onDark/>
 
-    <section className="pageHero hasCover" id="main">
+    <section className="pageHero hasCover newsIntro" id="main">
       <HeroCover/>
       <div className="pageHeroInner">
         <BackLink label="Back" fallback="./index.html"/>

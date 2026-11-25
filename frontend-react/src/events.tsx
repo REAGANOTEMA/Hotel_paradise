@@ -85,7 +85,7 @@ function EventsPage() {
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero hasCover" id="main">
+  <section className="pageHero hasCover eventsIntro" id="main">
    <SmartImage group="site" name="Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover"
     alt="" ratio="auto" widths={[480, 960, 1440]} sizes="100vw" className="pageHeroCover"/>
    <div className="pageHeroInner">

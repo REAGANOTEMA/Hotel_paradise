@@ -347,7 +347,7 @@ function AccountPage() {
    <TopBar/>
    <PageNav onDark/>
 
-   <section className="pageHero canvas hasCover" id="main" style={{'--bg': bgUrl('./images/hero/bed-executive-1920.webp')} as unknown as React.CSSProperties}>
+   <section className="pageHero canvas hasCover accountIntro" id="main" style={{'--bg': bgUrl('./images/hero/bed-executive-1920.webp')} as unknown as React.CSSProperties}>
     <div className="pageHeroInner">
     <BackLink label="Back" fallback="./index.html"/>
     <p className="eyebrow">YOUR ACCOUNT</p>

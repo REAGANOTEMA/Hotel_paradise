@@ -758,7 +758,7 @@ if (done) {
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero canvas hasCover" id="main" style={{'--bg': bgUrl('./images/hero/pool-1920.webp')} as unknown as React.CSSProperties}>
+  <section className="pageHero canvas hasCover payIntro" id="main" style={{'--bg': bgUrl('./images/hero/pool-1920.webp')} as unknown as React.CSSProperties}>
    <div className="pageHeroInner">
    <BackLink label="Back" fallback="./index.html"/>
    <p className="eyebrow">SECURE CHECKOUT</p>
