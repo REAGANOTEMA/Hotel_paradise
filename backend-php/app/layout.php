@@ -13,26 +13,26 @@ require_once __DIR__.'/notify.php';
  *  view opens itself and reads as the active one. */
 function nav_groups(): array{
   return [
-   ['label'=>'Overview','items'=>[
-     'dashboard'=>'Dashboard','overview'=>'CEO / Director','integrity'=>'Integrity & Control']],
-   ['label'=>'Reservations & Rooms','items'=>[
-     'reservations'=>'Reservations','rooms'=>'Rooms','guests'=>'Guests']],
+    ['label'=>'Overview','items'=>[
+      'dashboard'=>'Dashboard','overview'=>'CEO / Director','analytics'=>'Executive Analytics','integrity'=>'Integrity & Control']],
+    ['label'=>'Reservations & Rooms','items'=>[
+      'reservations'=>'Reservations','frontdesk'=>'Front Office','rooms'=>'Rooms','guests'=>'Guests']],
    ['label'=>'News & Events','items'=>[
      'news'=>'News & Careers','events'=>'Events & Enquiries']],
-   ['label'=>'Guest Communications','items'=>[
-     'messages'=>'Guest Messages','testimonials'=>'Guest Experiences']],
+    ['label'=>'Guest Communications','items'=>[
+      'messages'=>'Guest Messages','guest_relations'=>'Guest Relations','testimonials'=>'Guest Experiences']],
    ['label'=>'Restaurant & Bar','items'=>[
      'restaurant'=>'Restaurant Dashboard','bar'=>'Bar Dashboard','pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
    ['label'=>'Kitchen','items'=>[
      'kitchen'=>'Kitchen']],
-   ['label'=>'Housekeeping & Maintenance','items'=>[
-     'shifts'=>'Shifts']],
+    ['label'=>'Housekeeping & Maintenance','items'=>[
+      'housekeeping'=>'Housekeeping','maintenance'=>'Maintenance','shifts'=>'Shifts']],
    ['label'=>'Procurement & Stores','items'=>[
      'inventory'=>'Inventory','suppliers'=>'Suppliers','purchases'=>'Purchases']],
 ['label'=>'Finance & Control','items'=>[
       'cashier'=>'Cashier Workspace','accountant'=>'Accountant Workspace','auditor'=>'Auditor Workspace','finance'=>'Finance','invoices'=>'Invoices','expenses'=>'Expenses','approvals'=>'Approvals','reports'=>'Reports','audit'=>'Audit Trail']],
-   ['label'=>'Administration','items'=>[
-     'users'=>'Team and Users','notifications'=>'Notifications','trash'=>'Trash','profile'=>'My Profile']],
+    ['label'=>'Administration','items'=>[
+      'users'=>'Team and Users','hr'=>'Human Resource','security'=>'Security & Access','notifications'=>'Notifications','trash'=>'Trash','profile'=>'My Profile']],
   ];
 }
 
@@ -236,15 +236,19 @@ function assistant_knowledge(): array{
  *  assistant can always say what to do next without guessing. */
 function assistant_guides(): array{
  return [
-  'dashboard'=>'You are on the Dashboard. It shows today\'s arrivals, who is in house, today\'s payments, what is awaiting approval and low stock. Use the rail on the left to open a module, or the bell at the top for notifications.',
-  'reservations'=>'You are on Reservations. Press New reservation, choose the dates and the room type, add the guest and save. Open a booking to check the guest in, post a charge, take a payment, or print the confirmation.',
+   'dashboard'=>'You are on the Dashboard. It shows today\'s arrivals, who is in house, today\'s payments, what is awaiting approval and low stock. Use the rail on the left to open a module, or the bell at the top for notifications.',
+   'analytics'=>'You are on Executive Analytics. It reads occupancy, average daily rate, revenue per available room, departmental revenue and booking trends for the period you choose. Export the figures as CSV or print the page.',
+   'reservations'=>'You are on Reservations. Press New reservation, choose the dates and the room type, add the guest and save. Open a booking to check the guest in, post a charge, take a payment, or print the confirmation.',
+   'frontdesk'=>'You are on the Front Office desk. Today\'s arrivals and departures, room allocation, outstanding balances and the handover are here. Open a booking to record an early check in, extension, transfer, upgrade, cancellation or a refund request. Sensitive changes are sent for authorization.',
   'rooms'=>'You are on Rooms. Each room shows its state. Set a room to Cleaning and then Inspected, mark one Out of service for repairs, or open a room to allocate it to a booking.',
   'guests'=>'You are on Guests. This is the guest list. Add a guest with their name and telephone, or open a record to see their stays. Use the search box to find someone quickly.',
   'bar'=>'You are on the Bar Dashboard. It shows the bar orders waiting, what the bar has sold today, the bar list and your shift. Use Take a bar order to open the till at the bar, or Bar bills to take a payment.',
   'restaurant'=>'You are on the Restaurant Dashboard. It shows the restaurant orders waiting, what the restaurant has sold today, custom requests written off menu, the restaurant list and your shift. Use Take a restaurant order to open the till, or Restaurant bills to take a payment.',
   'fnb'=>'You are on Food and Beverage. This shows the restaurant and bar bills. Open a bill to take a payment and print the receipt.',
-  'kitchen'=>'You are on Kitchen. Read each docket, then mark the order Preparing and, when it is done, Ready, so the waiting staff are told.',
-  'shifts'=>'You are on Shifts. Housekeeping tasks and the cash up are recorded here. Start a shift, then close it with the counted cash.',
+   'kitchen'=>'You are on Kitchen. Read each docket, then mark the order Preparing and, when it is done, Ready, so the waiting staff are told.',
+   'housekeeping'=>'You are on the Housekeeping board. Rooms are grouped by cleaning state. Assign a task to an attendant, work the checklist, then submit it for inspection. A verified room is released to reception at once.',
+   'maintenance'=>'You are on Maintenance. Raise a fault, assign it to an engineer, record the repair cost and preventive schedule, and take a room out of service while it is unsafe to sell.',
+   'shifts'=>'You are on Shifts. Housekeeping tasks and the cash up are recorded here. Start a shift, then close it with the counted cash.',
   'inventory'=>'You are on Inventory. Add items, and record every movement: an issue, a waste, a transfer between stores, or a stock count. Low stock raises an alert on its own.',
   'suppliers'=>'You are on Suppliers. Keep the supplier list here, with their contacts and what they supply.',
   'purchases'=>'You are on Purchases. Raise a requisition, take it through approval, then record the goods received so the stock rises.',
@@ -257,8 +261,11 @@ function assistant_guides(): array{
   'approvals'=>'You are on Approvals. Everything waiting for a decision is listed here: expenses, requisitions, shifts and large payments.',
   'reports'=>'You are on Reports. Choose a date range from the top, then read or print the bookings, occupancy and sales figures.',
   'audit'=>'You are on the Audit Trail. Every change is listed here, with who made it and when.',
-  'messages'=>'You are on Guest Messages. Answer what guests have sent to your desk, and mark each one resolved when it is done.',
-  'news'=>'You are on the Newsroom. Write a news item or an update, then publish it to the website.',
+   'messages'=>'You are on Guest Messages. Answer what guests have sent to your desk, and mark each one resolved when it is done.',
+   'guest_relations'=>'You are on Guest Relations. This is the guest 360 view: stay history, preferences, loyalty, complaints and follow-ups. Add a preference or a follow-up from the guest you have selected.',
+   'news'=>'You are on the Newsroom. Write a news item or an update, then publish it to the website.',
+   'hr'=>'You are on Human Resource. The rota, attendance, payroll drafts, training, staff documents and disciplinary records are here. Disciplinary records and payroll approval are restricted to Human Resource and management.',
+   'security'=>'You are on Security and Access. Review login history, failed sign-in attempts, the role map and the queue of sensitive actions waiting for approval.',
   'users'=>'You are on Team and Users. Add a member, choose their role, and manage access here.',
   'events'=>'You are on Events and Enquiries. Record a function or a venue enquiry, then follow it through to a booking.',
   'notifications'=>'You are on Notifications. This lists everything that has happened to you, and the phones that hear about it.',
@@ -458,13 +465,13 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
 
 /** The icon a module carries in the rail. */
 function nav_icon_key(string $page): string{
-$map=['dashboard'=>'grid','overview'=>'chart','integrity'=>'alert','reservations'=>'calendar','rooms'=>'bed','guests'=>'users','events'=>'event',
-   'restaurant'=>'fork','bar'=>'fork','pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
+ $map=['dashboard'=>'grid','overview'=>'chart','analytics'=>'chart','integrity'=>'alert','reservations'=>'calendar','frontdesk'=>'calendar','rooms'=>'bed','guests'=>'users','events'=>'event',
+    'restaurant'=>'fork','bar'=>'fork','pos'=>'cart','fnb'=>'fork','kitchen'=>'pot','housekeeping'=>'bed','maintenance'=>'alert','shifts'=>'clock','inventory'=>'box','suppliers'=>'truck',
    'purchases'=>'bag','expenses'=>'receipt','finance'=>'coins','approvals'=>'check','audit'=>'file',
-   'cashier'=>'wallet','accountant'=>'bars','auditor'=>'alert',
-   'reports'=>'bars','users'=>'users','notifications'=>'bell','trash'=>'trash','profile'=>'user',
-   'invoices'=>'file',
-   'messages'=>'bell','testimonials'=>'spark'];
+    'cashier'=>'wallet','accountant'=>'bars','auditor'=>'alert','security'=>'check','hr'=>'users',
+    'reports'=>'bars','users'=>'users','notifications'=>'bell','trash'=>'trash','profile'=>'user',
+    'invoices'=>'file',
+    'messages'=>'bell','guest_relations'=>'globe','testimonials'=>'spark'];
  return $map[$page]??'grid';
 }
 

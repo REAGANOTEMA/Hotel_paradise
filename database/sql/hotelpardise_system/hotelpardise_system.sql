@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 18, 2026 at 01:51 PM
--- Server version: 10.11.19-MariaDB
--- PHP Version: 8.4.27
+-- Generation Time: Nov 25, 2026 at 09:01 PM
+-- Server version: 10.11.20-MariaDB
+-- PHP Version: 8.4.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -284,7 +284,22 @@ INSERT INTO `audit_logs` (`id`, `hotel_id`, `user_id`, `action`, `entity_type`, 
 (200, 1, 3, 'login', 'user', 3, NULL, NULL, '41.210.147.45', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-06 13:40:40'),
 (201, 1, 3, 'logout', 'user', 3, NULL, NULL, '41.210.147.45', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', '2026-11-06 13:43:12'),
 (202, 1, 3, 'login', 'user', 3, NULL, NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 06:32:03'),
-(203, 1, 3, 'logout', 'user', 3, NULL, NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 06:32:57');
+(203, 1, 3, 'logout', 'user', 3, NULL, NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 06:32:57'),
+(204, 1, NULL, 'web_order', 'order', 21, '{\"order_number\":\"ORD-20261118-001\",\"subtotal\":6000,\"service_charge\":210,\"total\":6210,\"customer\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:00:10'),
+(205, 1, NULL, 'web_payment', 'payments', 27, '{\"provider_reference\":\"PAY-20261118-001\",\"source\":\"order\",\"reference\":\"ORD-20261118-001\",\"method\":\"mtn_momo\",\"amount\":6210,\"status\":\"pending\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:00:20'),
+(206, 1, NULL, 'payment_settled', 'payments', 27, '{\"provider_reference\":\"PAY-20261118-001\",\"from\":\"pending\",\"to\":\"successful\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:00:20'),
+(207, 1, NULL, 'web_payment_settled', 'payments', 27, '{\"provider_reference\":\"PAY-20261118-001\",\"source\":\"order\",\"reference\":\"ORD-20261118-001\",\"method\":\"mtn_momo\",\"amount\":6210,\"status\":\"successful\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:00:21'),
+(208, 1, NULL, 'web_order', 'order', 22, '{\"order_number\":\"ORD-20261118-002\",\"subtotal\":14000,\"service_charge\":490,\"total\":14490,\"customer\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:02:04'),
+(209, 1, NULL, 'web_payment', 'payments', 28, '{\"provider_reference\":\"PAY-20261118-002\",\"source\":\"order\",\"reference\":\"ORD-20261118-002\",\"method\":\"pesapal\",\"amount\":14490,\"status\":\"pending\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:02:22'),
+(210, 1, NULL, 'payment_settled', 'payments', 28, '{\"provider_reference\":\"PAY-20261118-002\",\"from\":\"pending\",\"to\":\"successful\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:02:22'),
+(211, 1, NULL, 'web_payment_settled', 'payments', 28, '{\"provider_reference\":\"PAY-20261118-002\",\"source\":\"order\",\"reference\":\"ORD-20261118-002\",\"method\":\"pesapal\",\"amount\":14490,\"status\":\"successful\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:02:23'),
+(212, 1, NULL, 'web_order', 'order', 23, '{\"order_number\":\"ORD-20261118-003\",\"subtotal\":30000,\"service_charge\":1050,\"total\":31050,\"customer\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:02:47'),
+(213, 1, NULL, 'web_payment', 'payments', 29, '{\"provider_reference\":\"PAY-20261118-003\",\"source\":\"order\",\"reference\":\"ORD-20261118-003\",\"method\":\"mtn_momo\",\"amount\":31050,\"status\":\"pending\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:02:54'),
+(214, 1, NULL, 'payment_settled', 'payments', 29, '{\"provider_reference\":\"PAY-20261118-003\",\"from\":\"pending\",\"to\":\"successful\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:02:54'),
+(215, 1, NULL, 'web_payment_settled', 'payments', 29, '{\"provider_reference\":\"PAY-20261118-003\",\"source\":\"order\",\"reference\":\"ORD-20261118-003\",\"method\":\"mtn_momo\",\"amount\":31050,\"status\":\"successful\"}', NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:02:55'),
+(216, 1, 4, 'login', 'user', 4, NULL, NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:04:17'),
+(217, 1, 4, 'logout', 'user', 4, NULL, NULL, '102.86.12.191', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-18 14:05:31'),
+(218, 1, 8, 'login', 'user', 8, NULL, NULL, '91.134.91.22', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36', '2026-11-18 21:27:46');
 
 -- --------------------------------------------------------
 
@@ -450,7 +465,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `hotel_id`, `full_name`, `email`, `phone`, `password_hash`, `google_sub`, `status`, `created_at`, `updated_at`, `last_login_at`, `profile_image`, `date_of_birth`, `gender`, `nationality`, `national_id`, `address`, `city`, `country`, `postcode`, `company`, `job_title`, `preferred_language`, `dietary_preferences`, `room_preferences`, `marketing_opt_in`, `emergency_contact_name`, `emergency_contact_phone`, `notes`, `deleted_at`, `deleted_by`) VALUES
-(1, 1, 'Reagan Otema', 'reaganotema2022@gmail.com', '0772514889', '$2y$10$Tki76GP1jf405y9UUUI1Ret6Xw9sdaPrHVODp.fYu0P7ib/JOSl9.', NULL, 'active', '2026-10-09 12:25:49', '2026-11-04 18:18:35', '2026-11-04 18:18:35', 'cust_1_1792041214_48fb6a55.jpg', '1998-06-01', 'male', 'Ugandan', 'CM9801910356YD', 'JINJA', 'JINJA', 'Uganda', '904188', 'ReaganSoft Innovation Ltd', 'Director', 'english', 'too much salt', 'quiet side', 1, 'Reagan Otema', '0772514889', 'arrival time', NULL, NULL),
+(1, 1, 'Reagan Otema', 'reaganotema2022@gmail.com', '0772514889', '$2y$10$Tki76GP1jf405y9UUUI1Ret6Xw9sdaPrHVODp.fYu0P7ib/JOSl9.', NULL, 'active', '2026-10-09 12:25:49', '2026-11-18 16:59:43', '2026-11-18 16:59:43', 'cust_1_1792041214_48fb6a55.jpg', '1998-06-01', 'male', 'Ugandan', 'CM9801910356YD', 'JINJA', 'JINJA', 'Uganda', '904188', 'ReaganSoft Innovation Ltd', 'Director', 'english', 'too much salt', 'quiet side', 1, 'Reagan Otema', '0772514889', 'arrival time', NULL, NULL),
 (2, 1, 'Andrew wakabi', 'andrew@gmail.com', '0772514889', '$2y$10$Mi0P4grIsraJuxS5bIgnXuPHhGnH4DMnDGOK3N.UWlY06xPHcfzyC', NULL, 'active', '2026-10-09 16:54:56', '2026-10-09 16:55:09', '2026-10-09 16:55:09', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
 (3, 1, 'Okot Denis', 'denisokot47@gmail.com', '0705761090', '$2y$10$0x18s2lSk1oUg7pNubR1TuGeBY.CUHBzCAt6tvD7PomQzOzr/ExTW', NULL, 'active', '2026-10-10 19:46:56', '2026-10-10 19:47:13', '2026-10-10 19:47:13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
 (4, 1, 'Reagan Otema', 'reaganotemas@gmail.com', '0772514889', '$2y$10$uu9Ag/WbheyjzMV18aVJyeSCZfe8nXn7B6ODG1nnowKMpSwjkak1i', NULL, 'active', '2026-10-11 12:45:41', '2026-10-11 12:45:51', '2026-10-11 12:45:51', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL),
@@ -522,7 +537,8 @@ INSERT INTO `customer_signin_attempts` (`id`, `ip_address`, `email`, `attempts`,
 (1, '102.86.9.118', 'reaganotema2022@gmail.com', 2, '2026-10-09 12:25:33'),
 (2, '41.210.143.202', 'reaganotemas@gmail.com', 2, '2026-10-11 12:45:21'),
 (4, '154.227.129.184', 'innocentabaasiku9@gmail.com', 6, '2026-10-19 07:49:32'),
-(5, '154.227.129.184', 'innocentabaasiku469@gmail.com', 2, '2026-10-19 07:50:12');
+(5, '154.227.129.184', 'innocentabaasiku469@gmail.com', 2, '2026-10-19 07:50:12'),
+(6, '102.86.10.225', 'frontdesk@hotelparadiseonthenile.info', 2, '2026-11-25 19:54:29');
 
 -- --------------------------------------------------------
 
@@ -564,7 +580,8 @@ INSERT INTO `customer_tokens` (`id`, `customer_id`, `token_hash`, `purpose`, `ex
 (26, 1, 'c726c3a2c780ab9c643a9775c58a96e85f653fce715dda0ce78aac2b7a2f9245', 'session', '2026-12-04 18:18:35', '2026-11-04 18:18:35', '2026-11-06 16:43:26'),
 (27, 9, '173750301de28ad847755e5ee52bd62a7ae280550599602d4dc5580b07de7817', 'register', '2026-11-05 19:11:52', '2026-11-04 19:11:52', NULL),
 (29, 10, '6ad1ddc4dc53e775b7591385dc92dc53c212752d1efeab152f44c43fc4c0b570', 'session', '2026-12-04 19:44:56', '2026-11-04 19:44:56', '2026-11-04 19:44:57'),
-(31, 11, '97338957f9b77fa71db40c7df7025a1f76eabfa1924568c6f7ca60324f21410c', 'session', '2026-12-06 16:23:57', '2026-11-06 16:23:57', '2026-11-06 16:25:20');
+(31, 11, '97338957f9b77fa71db40c7df7025a1f76eabfa1924568c6f7ca60324f21410c', 'session', '2026-12-06 16:23:57', '2026-11-06 16:23:57', '2026-11-06 16:25:20'),
+(32, 1, 'e1e789ad28b5739d6c79f73e8d1542d993b319350fd944b6bdfcfb9913fc8041', 'session', '2026-12-18 16:59:43', '2026-11-18 16:59:43', '2026-11-21 11:46:00');
 
 -- --------------------------------------------------------
 
@@ -1262,6 +1279,207 @@ CREATE TABLE `housekeeping_tasks` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `hp_cleaning_checklists`
+--
+
+CREATE TABLE `hp_cleaning_checklists` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `task_id` bigint(20) UNSIGNED NOT NULL,
+  `room_id` bigint(20) UNSIGNED NOT NULL,
+  `item_name` varchar(120) NOT NULL,
+  `checked` tinyint(1) NOT NULL DEFAULT 0,
+  `checked_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `checked_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_disciplinary_records`
+--
+
+CREATE TABLE `hp_disciplinary_records` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `incident_date` date NOT NULL,
+  `category` varchar(80) NOT NULL,
+  `severity` enum('warning','suspension','termination','other') NOT NULL,
+  `description` text NOT NULL,
+  `action_taken` text NOT NULL,
+  `authorization_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `recorded_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_front_events`
+--
+
+CREATE TABLE `hp_front_events` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `reservation_id` bigint(20) UNSIGNED NOT NULL,
+  `event_type` enum('registration','allocation','check_in','check_out','early_check_in','late_check_out','extension','transfer','upgrade','cancellation','no_show','refund','deposit') NOT NULL,
+  `details` varchar(500) DEFAULT NULL,
+  `amount` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `authorization_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_guest_followups`
+--
+
+CREATE TABLE `hp_guest_followups` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `guest_id` bigint(20) UNSIGNED NOT NULL,
+  `channel` enum('call','email','whatsapp','visit') NOT NULL,
+  `subject` varchar(190) NOT NULL,
+  `notes` text DEFAULT NULL,
+  `status` enum('open','done') NOT NULL DEFAULT 'open',
+  `due_date` date DEFAULT NULL,
+  `assigned_to` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL,
+  `completed_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_guest_preferences`
+--
+
+CREATE TABLE `hp_guest_preferences` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `guest_id` bigint(20) UNSIGNED NOT NULL,
+  `preference_type` enum('room','bed','floor','diet','celebration','communication','other') NOT NULL,
+  `preference_value` varchar(255) NOT NULL,
+  `notes` varchar(500) DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_handovers`
+--
+
+CREATE TABLE `hp_handovers` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `handover_date` date NOT NULL,
+  `shift_label` varchar(80) NOT NULL,
+  `outgoing_user_id` bigint(20) UNSIGNED NOT NULL,
+  `incoming_user_id` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
+  `cash_expected` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `cash_counted` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `variance` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `open_issues` text DEFAULT NULL,
+  `handover_notes` text DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL,
+  `acknowledged_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_linen_movements`
+--
+
+CREATE TABLE `hp_linen_movements` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `item_name` varchar(120) NOT NULL,
+  `location` varchar(80) NOT NULL DEFAULT 'Linen Store',
+  `movement_type` enum('issued','returned','laundry_sent','laundry_received','wasted') NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `room_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `notes` varchar(255) DEFAULT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_linen_stock`
+--
+
+CREATE TABLE `hp_linen_stock` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `item_name` varchar(120) NOT NULL,
+  `location` varchar(80) NOT NULL DEFAULT 'Linen Store',
+  `quantity` int(11) NOT NULL DEFAULT 0,
+  `reorder_level` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_loyalty_accounts`
+--
+
+CREATE TABLE `hp_loyalty_accounts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `guest_id` bigint(20) UNSIGNED NOT NULL,
+  `tier` enum('silver','gold','platinum') NOT NULL DEFAULT 'silver',
+  `points` int(11) NOT NULL DEFAULT 0,
+  `lifetime_stays` int(11) NOT NULL DEFAULT 0,
+  `joined_at` date NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_loyalty_transactions`
+--
+
+CREATE TABLE `hp_loyalty_transactions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `guest_id` bigint(20) UNSIGNED NOT NULL,
+  `points` int(11) NOT NULL,
+  `reason` varchar(190) NOT NULL,
+  `reservation_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_maintenance_costs`
+--
+
+CREATE TABLE `hp_maintenance_costs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `ticket_id` bigint(20) UNSIGNED NOT NULL,
+  `amount` decimal(14,2) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `recorded_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `hp_payment_mix_daily`
 -- (See below for the actual view)
 --
@@ -1272,6 +1490,44 @@ CREATE TABLE `hp_payment_mix_daily` (
 ,`payments_count` bigint(21)
 ,`amount` decimal(36,2)
 );
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_payroll_lines`
+--
+
+CREATE TABLE `hp_payroll_lines` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `run_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `days_worked` decimal(8,2) NOT NULL DEFAULT 0.00,
+  `hours_worked` decimal(8,2) NOT NULL DEFAULT 0.00,
+  `hourly_rate` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `gross` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `deductions` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `net` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `notes` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_payroll_runs`
+--
+
+CREATE TABLE `hp_payroll_runs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `period_start` date NOT NULL,
+  `period_end` date NOT NULL,
+  `status` enum('draft','approved','paid') NOT NULL DEFAULT 'draft',
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL,
+  `approved_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `approved_at` datetime DEFAULT NULL,
+  `authorization_id` bigint(20) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1331,6 +1587,46 @@ CREATE TABLE `hp_pos_order_balances` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `hp_preventive_schedules`
+--
+
+CREATE TABLE `hp_preventive_schedules` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `asset_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `title` varchar(190) NOT NULL,
+  `frequency` enum('daily','weekly','monthly','quarterly','annually') NOT NULL,
+  `next_due` date NOT NULL,
+  `last_done` date DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_sensitive_actions`
+--
+
+CREATE TABLE `hp_sensitive_actions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `action_type` enum('refund','discount','cancellation','upgrade','void','payroll_approval','disciplinary_action','late_checkout') NOT NULL,
+  `entity_type` varchar(60) NOT NULL,
+  `entity_id` bigint(20) UNSIGNED NOT NULL,
+  `amount` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `reason` varchar(500) NOT NULL,
+  `requested_by` bigint(20) UNSIGNED NOT NULL,
+  `authorized_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `created_at` datetime NOT NULL,
+  `decided_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `hp_shift_reconciliation`
 -- (See below for the actual view)
 --
@@ -1351,6 +1647,66 @@ CREATE TABLE `hp_shift_reconciliation` (
 ,`payments_count` bigint(21)
 ,`live_expected_cash` decimal(37,2)
 );
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_staff_documents`
+--
+
+CREATE TABLE `hp_staff_documents` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `document_type` varchar(80) NOT NULL,
+  `document_number` varchar(120) DEFAULT NULL,
+  `file_path` varchar(255) DEFAULT NULL,
+  `expires_on` date DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_staff_schedules`
+--
+
+CREATE TABLE `hp_staff_schedules` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `shift_date` date NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `outlet` varchar(80) NOT NULL DEFAULT 'Front Desk',
+  `status` enum('scheduled','clocked_in','clocked_out','cancelled') NOT NULL DEFAULT 'scheduled',
+  `clocked_in_at` datetime DEFAULT NULL,
+  `clocked_out_at` datetime DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_training_records`
+--
+
+CREATE TABLE `hp_training_records` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `hotel_id` bigint(20) UNSIGNED NOT NULL DEFAULT 1,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(190) NOT NULL,
+  `provider` varchar(190) DEFAULT NULL,
+  `completed_on` date DEFAULT NULL,
+  `expiry_date` date DEFAULT NULL,
+  `status` enum('planned','completed','certified') NOT NULL DEFAULT 'planned',
+  `score` varchar(40) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1613,6 +1969,15 @@ CREATE TABLE `kds_print_queue` (
   `printed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `kds_print_queue`
+--
+
+INSERT INTO `kds_print_queue` (`id`, `hotel_id`, `ticket_key`, `kind`, `order_id`, `station_id`, `target`, `payload`, `status`, `attempts`, `last_error`, `created_at`, `printed_at`) VALUES
+(1, 1, 'ORD21:22:1', 'kot', 21, 1, NULL, '{\"item\":\"Chicken Spring Rolls\",\"qty\":1,\"note\":\"Web takeaway order from Reagan Otema, 0772514889\"}', 'queued', 0, NULL, '2026-11-18 17:00:10', NULL),
+(2, 1, 'ORD22:23:1', 'kot', 22, 1, NULL, '{\"item\":\"Crunchy Vegetable Wrap\",\"qty\":1,\"note\":\"Web takeaway order from Reagan Otema, 0772514889\"}', 'queued', 0, NULL, '2026-11-18 17:02:04', NULL),
+(3, 1, 'ORD23:24:1', 'kot', 23, 1, NULL, '{\"item\":\"Liver with Shredded Vegetables\",\"qty\":1,\"note\":\"Web takeaway order from Reagan Otema, 0772514889\"}', 'queued', 0, NULL, '2026-11-18 17:02:47', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -1640,6 +2005,15 @@ CREATE TABLE `kitchen_order_items` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `kitchen_order_items`
+--
+
+INSERT INTO `kitchen_order_items` (`id`, `order_item_id`, `station_id`, `status`, `started_at`, `completed_at`, `course`, `priority`, `note`, `accepted_at`, `ready_at`, `served_at`, `served_by`, `started_by`, `ready_by`, `recall_count`, `fire_at`, `created_at`, `updated_at`) VALUES
+(1, 22, 1, 'queued', NULL, NULL, NULL, 'normal', 'Web takeaway order from Reagan Otema, 0772514889', NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2026-11-18 17:00:10', '2026-11-18 17:00:10'),
+(2, 23, 1, 'queued', NULL, NULL, NULL, 'normal', 'Web takeaway order from Reagan Otema, 0772514889', NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2026-11-18 17:02:04', '2026-11-18 17:02:04'),
+(3, 24, 1, 'queued', NULL, NULL, NULL, 'normal', 'Web takeaway order from Reagan Otema, 0772514889', NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2026-11-18 17:02:47', '2026-11-18 17:02:47');
 
 -- --------------------------------------------------------
 
@@ -2581,7 +2955,59 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `body`, `data`, `
 (297, 3, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', '2026-11-06 16:41:38', '2026-11-06 13:25:41'),
 (298, 4, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', NULL, '2026-11-06 13:25:41'),
 (299, 5, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', NULL, '2026-11-06 13:25:41'),
-(300, 66, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', NULL, '2026-11-06 13:25:41');
+(300, 66, 'payment', 'Payment request PAY-20261106-001', 'Tadeo Owot started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261106-001.', '{\"reference\":\"PAY-20261106-001\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Tadeo Owot\",\"phone\":\"0782125278\"}', NULL, '2026-11-06 13:25:41'),
+(301, 1, 'order', 'New KOT ORD-20261118-001', 'Chicken Spring Rolls · 1 · Cold Kitchen', '{\"order_id\":21,\"station\":\"Cold Kitchen\",\"item\":\"Chicken Spring Rolls\"}', NULL, '2026-11-18 14:00:10'),
+(302, 2, 'order', 'New KOT ORD-20261118-001', 'Chicken Spring Rolls · 1 · Cold Kitchen', '{\"order_id\":21,\"station\":\"Cold Kitchen\",\"item\":\"Chicken Spring Rolls\"}', NULL, '2026-11-18 14:00:10'),
+(303, 3, 'order', 'New KOT ORD-20261118-001', 'Chicken Spring Rolls · 1 · Cold Kitchen', '{\"order_id\":21,\"station\":\"Cold Kitchen\",\"item\":\"Chicken Spring Rolls\"}', NULL, '2026-11-18 14:00:10'),
+(304, 9, 'order', 'New KOT ORD-20261118-001', 'Chicken Spring Rolls · 1 · Cold Kitchen', '{\"order_id\":21,\"station\":\"Cold Kitchen\",\"item\":\"Chicken Spring Rolls\"}', NULL, '2026-11-18 14:00:10'),
+(305, 66, 'order', 'New KOT ORD-20261118-001', 'Chicken Spring Rolls · 1 · Cold Kitchen', '{\"order_id\":21,\"station\":\"Cold Kitchen\",\"item\":\"Chicken Spring Rolls\"}', NULL, '2026-11-18 14:00:10'),
+(306, 1, 'order', 'New website order ORD-20261118-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261118-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:00:10'),
+(307, 2, 'order', 'New website order ORD-20261118-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261118-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:00:10'),
+(308, 3, 'order', 'New website order ORD-20261118-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261118-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:00:10'),
+(309, 5, 'order', 'New website order ORD-20261118-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261118-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:00:10'),
+(310, 9, 'order', 'New website order ORD-20261118-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261118-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:00:10'),
+(311, 66, 'order', 'New website order ORD-20261118-001', 'Reagan Otema placed a takeaway order, 1 item, total UGX 6,210.', '{\"order_number\":\"ORD-20261118-001\",\"items\":1,\"total\":6210,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:00:10'),
+(312, 1, 'payment', 'Payment request PAY-20261118-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261118-001.', '{\"reference\":\"PAY-20261118-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:00:20'),
+(313, 2, 'payment', 'Payment request PAY-20261118-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261118-001.', '{\"reference\":\"PAY-20261118-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:00:20'),
+(314, 3, 'payment', 'Payment request PAY-20261118-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261118-001.', '{\"reference\":\"PAY-20261118-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:00:20'),
+(315, 4, 'payment', 'Payment request PAY-20261118-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261118-001.', '{\"reference\":\"PAY-20261118-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:00:20'),
+(316, 5, 'payment', 'Payment request PAY-20261118-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261118-001.', '{\"reference\":\"PAY-20261118-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:00:20'),
+(317, 66, 'payment', 'Payment request PAY-20261118-001', 'Reagan Otema started a MTN_MOMO payment of UGX 6,210 for the order ORD-20261118-001.', '{\"reference\":\"PAY-20261118-001\",\"source\":\"order\",\"amount\":6210,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:00:20'),
+(318, 1, 'order', 'New KOT ORD-20261118-002', 'Crunchy Vegetable Wrap · 1 · Cold Kitchen', '{\"order_id\":22,\"station\":\"Cold Kitchen\",\"item\":\"Crunchy Vegetable Wrap\"}', NULL, '2026-11-18 14:02:04'),
+(319, 2, 'order', 'New KOT ORD-20261118-002', 'Crunchy Vegetable Wrap · 1 · Cold Kitchen', '{\"order_id\":22,\"station\":\"Cold Kitchen\",\"item\":\"Crunchy Vegetable Wrap\"}', NULL, '2026-11-18 14:02:04'),
+(320, 3, 'order', 'New KOT ORD-20261118-002', 'Crunchy Vegetable Wrap · 1 · Cold Kitchen', '{\"order_id\":22,\"station\":\"Cold Kitchen\",\"item\":\"Crunchy Vegetable Wrap\"}', NULL, '2026-11-18 14:02:04'),
+(321, 9, 'order', 'New KOT ORD-20261118-002', 'Crunchy Vegetable Wrap · 1 · Cold Kitchen', '{\"order_id\":22,\"station\":\"Cold Kitchen\",\"item\":\"Crunchy Vegetable Wrap\"}', NULL, '2026-11-18 14:02:04'),
+(322, 66, 'order', 'New KOT ORD-20261118-002', 'Crunchy Vegetable Wrap · 1 · Cold Kitchen', '{\"order_id\":22,\"station\":\"Cold Kitchen\",\"item\":\"Crunchy Vegetable Wrap\"}', NULL, '2026-11-18 14:02:04'),
+(323, 1, 'order', 'New website order ORD-20261118-002', 'Reagan Otema placed a takeaway order, 1 item, total UGX 14,490.', '{\"order_number\":\"ORD-20261118-002\",\"items\":1,\"total\":14490,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:04'),
+(324, 2, 'order', 'New website order ORD-20261118-002', 'Reagan Otema placed a takeaway order, 1 item, total UGX 14,490.', '{\"order_number\":\"ORD-20261118-002\",\"items\":1,\"total\":14490,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:04'),
+(325, 3, 'order', 'New website order ORD-20261118-002', 'Reagan Otema placed a takeaway order, 1 item, total UGX 14,490.', '{\"order_number\":\"ORD-20261118-002\",\"items\":1,\"total\":14490,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:04'),
+(326, 5, 'order', 'New website order ORD-20261118-002', 'Reagan Otema placed a takeaway order, 1 item, total UGX 14,490.', '{\"order_number\":\"ORD-20261118-002\",\"items\":1,\"total\":14490,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:04'),
+(327, 9, 'order', 'New website order ORD-20261118-002', 'Reagan Otema placed a takeaway order, 1 item, total UGX 14,490.', '{\"order_number\":\"ORD-20261118-002\",\"items\":1,\"total\":14490,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:04'),
+(328, 66, 'order', 'New website order ORD-20261118-002', 'Reagan Otema placed a takeaway order, 1 item, total UGX 14,490.', '{\"order_number\":\"ORD-20261118-002\",\"items\":1,\"total\":14490,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:04'),
+(329, 1, 'payment', 'Payment request PAY-20261118-002', 'Reagan Otema started a PESAPAL payment of UGX 14,490 for the order ORD-20261118-002.', '{\"reference\":\"PAY-20261118-002\",\"source\":\"order\",\"amount\":14490,\"method\":\"pesapal\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:22'),
+(330, 2, 'payment', 'Payment request PAY-20261118-002', 'Reagan Otema started a PESAPAL payment of UGX 14,490 for the order ORD-20261118-002.', '{\"reference\":\"PAY-20261118-002\",\"source\":\"order\",\"amount\":14490,\"method\":\"pesapal\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:22'),
+(331, 3, 'payment', 'Payment request PAY-20261118-002', 'Reagan Otema started a PESAPAL payment of UGX 14,490 for the order ORD-20261118-002.', '{\"reference\":\"PAY-20261118-002\",\"source\":\"order\",\"amount\":14490,\"method\":\"pesapal\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:22'),
+(332, 4, 'payment', 'Payment request PAY-20261118-002', 'Reagan Otema started a PESAPAL payment of UGX 14,490 for the order ORD-20261118-002.', '{\"reference\":\"PAY-20261118-002\",\"source\":\"order\",\"amount\":14490,\"method\":\"pesapal\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:22');
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `body`, `data`, `read_at`, `created_at`) VALUES
+(333, 5, 'payment', 'Payment request PAY-20261118-002', 'Reagan Otema started a PESAPAL payment of UGX 14,490 for the order ORD-20261118-002.', '{\"reference\":\"PAY-20261118-002\",\"source\":\"order\",\"amount\":14490,\"method\":\"pesapal\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:22'),
+(334, 66, 'payment', 'Payment request PAY-20261118-002', 'Reagan Otema started a PESAPAL payment of UGX 14,490 for the order ORD-20261118-002.', '{\"reference\":\"PAY-20261118-002\",\"source\":\"order\",\"amount\":14490,\"method\":\"pesapal\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:22'),
+(335, 1, 'order', 'New KOT ORD-20261118-003', 'Liver with Shredded Vegetables · 1 · Cold Kitchen', '{\"order_id\":23,\"station\":\"Cold Kitchen\",\"item\":\"Liver with Shredded Vegetables\"}', NULL, '2026-11-18 14:02:47'),
+(336, 2, 'order', 'New KOT ORD-20261118-003', 'Liver with Shredded Vegetables · 1 · Cold Kitchen', '{\"order_id\":23,\"station\":\"Cold Kitchen\",\"item\":\"Liver with Shredded Vegetables\"}', NULL, '2026-11-18 14:02:47'),
+(337, 3, 'order', 'New KOT ORD-20261118-003', 'Liver with Shredded Vegetables · 1 · Cold Kitchen', '{\"order_id\":23,\"station\":\"Cold Kitchen\",\"item\":\"Liver with Shredded Vegetables\"}', NULL, '2026-11-18 14:02:47'),
+(338, 9, 'order', 'New KOT ORD-20261118-003', 'Liver with Shredded Vegetables · 1 · Cold Kitchen', '{\"order_id\":23,\"station\":\"Cold Kitchen\",\"item\":\"Liver with Shredded Vegetables\"}', NULL, '2026-11-18 14:02:47'),
+(339, 66, 'order', 'New KOT ORD-20261118-003', 'Liver with Shredded Vegetables · 1 · Cold Kitchen', '{\"order_id\":23,\"station\":\"Cold Kitchen\",\"item\":\"Liver with Shredded Vegetables\"}', NULL, '2026-11-18 14:02:47'),
+(340, 1, 'order', 'New website order ORD-20261118-003', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261118-003\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:47'),
+(341, 2, 'order', 'New website order ORD-20261118-003', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261118-003\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:47'),
+(342, 3, 'order', 'New website order ORD-20261118-003', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261118-003\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:47'),
+(343, 5, 'order', 'New website order ORD-20261118-003', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261118-003\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:47'),
+(344, 9, 'order', 'New website order ORD-20261118-003', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261118-003\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:47'),
+(345, 66, 'order', 'New website order ORD-20261118-003', 'Reagan Otema placed a takeaway order, 1 item, total UGX 31,050.', '{\"order_number\":\"ORD-20261118-003\",\"items\":1,\"total\":31050,\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\",\"address\":\"jinja\"}', NULL, '2026-11-18 14:02:47'),
+(346, 1, 'payment', 'Payment request PAY-20261118-003', 'Reagan Otema started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261118-003.', '{\"reference\":\"PAY-20261118-003\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:54'),
+(347, 2, 'payment', 'Payment request PAY-20261118-003', 'Reagan Otema started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261118-003.', '{\"reference\":\"PAY-20261118-003\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:54'),
+(348, 3, 'payment', 'Payment request PAY-20261118-003', 'Reagan Otema started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261118-003.', '{\"reference\":\"PAY-20261118-003\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:54'),
+(349, 4, 'payment', 'Payment request PAY-20261118-003', 'Reagan Otema started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261118-003.', '{\"reference\":\"PAY-20261118-003\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:54'),
+(350, 5, 'payment', 'Payment request PAY-20261118-003', 'Reagan Otema started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261118-003.', '{\"reference\":\"PAY-20261118-003\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:54'),
+(351, 66, 'payment', 'Payment request PAY-20261118-003', 'Reagan Otema started a MTN_MOMO payment of UGX 31,050 for the order ORD-20261118-003.', '{\"reference\":\"PAY-20261118-003\",\"source\":\"order\",\"amount\":31050,\"method\":\"mtn_momo\",\"guest\":\"Reagan Otema\",\"phone\":\"0772514889\"}', NULL, '2026-11-18 14:02:54');
 
 -- --------------------------------------------------------
 
@@ -2675,7 +3101,34 @@ INSERT INTO `notification_deliveries` (`id`, `notification_id`, `user_id`, `devi
 (65, 290, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:18', '2026-11-06 13:42:42'),
 (66, 296, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:41', '2026-11-06 13:42:42'),
 (67, 296, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:41', '2026-11-06 13:42:42'),
-(68, 296, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:41', '2026-11-06 13:42:42');
+(68, 296, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-06 13:25:41', '2026-11-06 13:42:42'),
+(69, 302, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:00:10', '2026-11-18 14:04:52'),
+(70, 302, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:00:10', '2026-11-18 14:04:52'),
+(71, 302, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:00:10', '2026-11-18 14:04:52'),
+(72, 307, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:00:10', '2026-11-18 14:04:52'),
+(73, 307, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:00:10', '2026-11-18 14:04:52'),
+(74, 307, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:00:10', '2026-11-18 14:04:52'),
+(75, 313, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:00:20', '2026-11-18 14:04:52'),
+(76, 313, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:00:20', '2026-11-18 14:04:52'),
+(77, 313, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:00:20', '2026-11-18 14:04:52'),
+(78, 319, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:04', '2026-11-18 14:04:52'),
+(79, 319, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:04', '2026-11-18 14:04:52'),
+(80, 319, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:04', '2026-11-18 14:04:52'),
+(81, 324, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:04', '2026-11-18 14:04:52'),
+(82, 324, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:04', '2026-11-18 14:04:52'),
+(83, 324, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:04', '2026-11-18 14:04:52'),
+(84, 330, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:22', '2026-11-18 14:04:52'),
+(85, 330, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:22', '2026-11-18 14:04:52'),
+(86, 330, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:22', '2026-11-18 14:04:52'),
+(87, 336, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:47', '2026-11-18 14:04:52'),
+(88, 336, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:47', '2026-11-18 14:04:52'),
+(89, 336, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:47', '2026-11-18 14:05:19'),
+(90, 341, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:47', '2026-11-18 14:05:19'),
+(91, 341, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:47', '2026-11-18 14:05:19'),
+(92, 341, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:47', '2026-11-18 14:05:19'),
+(93, 347, 2, 1, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:54', '2026-11-18 14:05:19'),
+(94, 347, 2, 2, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:54', '2026-11-18 14:05:19'),
+(95, 347, 2, 3, 'web_push', 'failed', NULL, 5, 'Could not build the web push payload', '2026-11-18 14:02:54', '2026-11-18 14:05:19');
 
 -- --------------------------------------------------------
 
@@ -2780,7 +3233,16 @@ INSERT INTO `notification_events` (`id`, `event_key`, `event_type`, `entity_type
 (53, 'payment:PAY-20261104-001', 'payment', NULL, NULL, '2026-11-04 15:20:09'),
 (54, 'event:EVT-20261104-001', 'communication', NULL, NULL, '2026-11-04 15:36:35'),
 (55, 'order:ORD-20261106-001', 'order', NULL, NULL, '2026-11-06 13:25:18'),
-(56, 'payment:PAY-20261106-001', 'payment', NULL, NULL, '2026-11-06 13:25:41');
+(56, 'payment:PAY-20261106-001', 'payment', NULL, NULL, '2026-11-06 13:25:41'),
+(57, 'kds-new:21:22', 'order', 'order', 21, '2026-11-18 14:00:10'),
+(58, 'order:ORD-20261118-001', 'order', NULL, NULL, '2026-11-18 14:00:10'),
+(59, 'payment:PAY-20261118-001', 'payment', NULL, NULL, '2026-11-18 14:00:20'),
+(60, 'kds-new:22:23', 'order', 'order', 22, '2026-11-18 14:02:04'),
+(61, 'order:ORD-20261118-002', 'order', NULL, NULL, '2026-11-18 14:02:04'),
+(62, 'payment:PAY-20261118-002', 'payment', NULL, NULL, '2026-11-18 14:02:22'),
+(63, 'kds-new:23:24', 'order', 'order', 23, '2026-11-18 14:02:47'),
+(64, 'order:ORD-20261118-003', 'order', NULL, NULL, '2026-11-18 14:02:47'),
+(65, 'payment:PAY-20261118-003', 'payment', NULL, NULL, '2026-11-18 14:02:54');
 
 -- --------------------------------------------------------
 
@@ -2856,7 +3318,10 @@ INSERT INTO `orders` (`id`, `hotel_id`, `user_id`, `shift_id`, `order_number`, `
 (17, 1, 1, NULL, 'ORD-20261027-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja town', 'less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-10-27 14:01:41', NULL, NULL, NULL, NULL, NULL),
 (18, 1, 1, NULL, 'ORD-20261028-001', 'restaurant', 'takeaway', NULL, NULL, 'paiton witness', '0750891058', 'paiton@gmail.com', 'mpumudde, jinja.', 'less salt please.', 'pending', 0.00, 47000.00, 1645.00, 48645.00, '2026-10-28 09:22:41', NULL, NULL, NULL, NULL, NULL),
 (19, 1, 1, NULL, 'ORD-20261104-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja  town', 'i need less salt', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-11-04 15:19:28', NULL, NULL, NULL, NULL, NULL),
-(20, 1, 1, NULL, 'ORD-20261106-001', 'restaurant', 'takeaway', NULL, NULL, 'Tadeo Owot', '0782125278', '4maramans@gmail.com', 'Kimaka Senior Command', 'Not too much salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-11-06 13:25:18', NULL, NULL, NULL, NULL, NULL);
+(20, 1, 1, NULL, 'ORD-20261106-001', 'restaurant', 'takeaway', NULL, NULL, 'Tadeo Owot', '0782125278', '4maramans@gmail.com', 'Kimaka Senior Command', 'Not too much salt', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-11-06 13:25:18', NULL, NULL, NULL, NULL, NULL),
+(21, 1, 1, NULL, 'ORD-20261118-001', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja', 'less spice', 'pending', 0.00, 6000.00, 210.00, 6210.00, '2026-11-18 14:00:10', NULL, NULL, NULL, NULL, NULL),
+(22, 1, 1, NULL, 'ORD-20261118-002', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja', 'less spice', 'pending', 0.00, 14000.00, 490.00, 14490.00, '2026-11-18 14:02:04', NULL, NULL, NULL, NULL, NULL),
+(23, 1, 1, NULL, 'ORD-20261118-003', 'restaurant', 'takeaway', NULL, NULL, 'Reagan Otema', '0772514889', 'reaganotema2022@gmail.com', 'jinja', 'less spice', 'pending', 0.00, 30000.00, 1050.00, 31050.00, '2026-11-18 14:02:47', NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2900,7 +3365,10 @@ INSERT INTO `order_items` (`id`, `order_id`, `menu_item_id`, `custom_name`, `qua
 (18, 17, 2292, NULL, 1.00, 6000.00, 6000.00, 'Web takeaway order from Reagan Otema, 0772514889'),
 (19, 18, 2318, NULL, 1.00, 47000.00, 47000.00, 'Web takeaway order from paiton witness, 0750891058'),
 (20, 19, 2292, NULL, 1.00, 6000.00, 6000.00, 'Web takeaway order from Reagan Otema, 0772514889'),
-(21, 20, 2391, NULL, 1.00, 30000.00, 30000.00, 'Web takeaway order from Tadeo Owot, 0782125278 Ã¢â‚¬â€ Companion: Chips. Also: Green salad.');
+(21, 20, 2391, NULL, 1.00, 30000.00, 30000.00, 'Web takeaway order from Tadeo Owot, 0782125278 Ã¢â‚¬â€ Companion: Chips. Also: Green salad.'),
+(22, 21, 2292, NULL, 1.00, 6000.00, 6000.00, 'Web takeaway order from Reagan Otema, 0772514889'),
+(23, 22, 2289, NULL, 1.00, 14000.00, 14000.00, 'Web takeaway order from Reagan Otema, 0772514889'),
+(24, 23, 2293, NULL, 1.00, 30000.00, 30000.00, 'Web takeaway order from Reagan Otema, 0772514889');
 
 -- --------------------------------------------------------
 
@@ -3008,7 +3476,10 @@ INSERT INTO `payments` (`id`, `hotel_id`, `user_id`, `customer_id`, `invoice_id`
 (23, 1, NULL, 8, NULL, 18, NULL, NULL, 48645.00, 'UGX', 48645.00, 'UGX', 1.0000000000, NULL, NULL, 48645.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261028-001', NULL, NULL, NULL, 'e23a02943cde5a7203cef697d398d5e9', 'failed', 'not_settled', NULL, NULL, '2026-10-28 12:25:11', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"9111b2b1-5bdb-45f5-8711-d9bbedfd4445\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":48645,\"created_date\":\"2026-10-28T12:25:11.513\",\"confirmation_code\":\"3C47DD281026P\",\"order_tracking_id\":\"9111b2b1-5bdb-45f5-8711-d9bbedfd4445\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx91058\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261028-001&OrderTrackingId=9111b2b1-5bdb-45f5-8711-d9bbedfd4445&OrderMerchantReference=PAY-20261028-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261028-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx91058', '2026-10-28 09:22:49'),
 (24, 1, NULL, 8, NULL, NULL, NULL, 42, 440910.00, 'UGX', 440910.00, 'UGX', 1.0000000000, NULL, NULL, 440910.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261031-001', NULL, NULL, NULL, 'b9bc659707db5b74fbef97c73e51318d', 'failed', 'not_settled', NULL, NULL, '2026-10-31 10:57:44', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"f6e020c8-8b72-489f-b2c5-d9b84f75b6eb\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":440910,\"created_date\":\"2026-10-31T10:57:43.997\",\"confirmation_code\":\"3C91CD311026Z\",\"order_tracking_id\":\"f6e020c8-8b72-489f-b2c5-d9b84f75b6eb\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://www.hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261031-001&OrderTrackingId=f6e020c8-8b72-489f-b2c5-d9b84f75b6eb&OrderMerchantReference=PAY-20261031-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261031-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-10-31 07:57:15'),
 (25, 1, NULL, 1, NULL, 19, NULL, NULL, 6210.00, 'UGX', 6210.00, 'UGX', 1.0000000000, NULL, NULL, 6210.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261104-001', NULL, NULL, NULL, '3db3fef55866b19db61719f51d38df6a', 'failed', 'not_settled', NULL, NULL, '2026-11-04 18:27:21', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"13c2508e-edb7-4fe9-8704-d9b41fafa757\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":6210,\"created_date\":\"2026-11-04T18:27:21.203\",\"confirmation_code\":\"44813328084\",\"order_tracking_id\":\"13c2508e-edb7-4fe9-8704-d9b41fafa757\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx14889\",\"call_back_url\":\"https://hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261104-001&OrderTrackingId=13c2508e-edb7-4fe9-8704-d9b41fafa757&OrderMerchantReference=PAY-20261104-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261104-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx14889', '2026-11-04 15:20:09'),
-(26, 1, NULL, 11, NULL, 20, NULL, NULL, 31050.00, 'UGX', 31050.00, 'UGX', 1.0000000000, NULL, NULL, 31050.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261106-001', NULL, NULL, NULL, '8f4c38f670cf16f71d8f3544313293df', 'failed', 'not_settled', NULL, NULL, '2026-11-06 16:26:38', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"d191ace7-47b7-479a-b5af-d9b211308520\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":31050,\"created_date\":\"2026-11-06T16:26:39.157\",\"confirmation_code\":\"3D2EF661126Q\",\"order_tracking_id\":\"d191ace7-47b7-479a-b5af-d9b211308520\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx25278\",\"call_back_url\":\"https://www.hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261106-001&OrderTrackingId=d191ace7-47b7-479a-b5af-d9b211308520&OrderMerchantReference=PAY-20261106-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261106-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx25278', '2026-11-06 13:25:41');
+(26, 1, NULL, 11, NULL, 20, NULL, NULL, 31050.00, 'UGX', 31050.00, 'UGX', 1.0000000000, NULL, NULL, 31050.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261106-001', NULL, NULL, NULL, '8f4c38f670cf16f71d8f3544313293df', 'failed', 'not_settled', NULL, NULL, '2026-11-06 16:26:38', NULL, NULL, '{\"gateway\":\"pesapal\",\"tracking_id\":\"d191ace7-47b7-479a-b5af-d9b211308520\",\"code\":2,\"description\":\"Failed\",\"raw\":{\"payment_method\":\"MTNUG\",\"amount\":31050,\"created_date\":\"2026-11-06T16:26:39.157\",\"confirmation_code\":\"3D2EF661126Q\",\"order_tracking_id\":\"d191ace7-47b7-479a-b5af-d9b211308520\",\"payment_status_description\":\"Failed\",\"description\":null,\"message\":\"Request processed successfully\",\"payment_account\":\"2567xxx25278\",\"call_back_url\":\"https://www.hotelparadiseonthenile.info/backend-php/api.php?act=pesapal_callback&reference=PAY-20261106-001&OrderTrackingId=d191ace7-47b7-479a-b5af-d9b211308520&OrderMerchantReference=PAY-20261106-001\",\"status_code\":2,\"merchant_reference\":\"PAY-20261106-001\",\"account_number\":null,\"payment_status_code\":\"\",\"currency\":\"UGX\",\"error\":{\"error_type\":null,\"code\":null,\"message\":null},\"status\":\"200\"}}', '2567xxx25278', '2026-11-06 13:25:41'),
+(27, 1, NULL, 1, NULL, 21, NULL, NULL, 6210.00, 'UGX', 6210.00, 'UGX', 1.0000000000, 'same currency', '2026-11-18T14:00:20+00:00', 6210.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261118-001', NULL, NULL, NULL, 'e8eed0c6afe8b3f2dd6c8a61e4b86016', 'successful', 'not_settled', NULL, NULL, '2026-11-18 17:00:20', NULL, NULL, '{\"gateway\":\"demo\"}', NULL, '2026-11-18 14:00:20'),
+(28, 1, NULL, 1, NULL, 22, NULL, NULL, 14490.00, 'UGX', 14490.00, 'UGX', 1.0000000000, 'same currency', '2026-11-18T14:02:22+00:00', 14490.00, 'UGX', 'pesapal', 'pesapal', 'PAY-20261118-002', NULL, NULL, NULL, 'af14e30db755edb674aed095c9d89848', 'successful', 'not_settled', NULL, NULL, '2026-11-18 17:02:22', NULL, NULL, '{\"gateway\":\"demo\"}', NULL, '2026-11-18 14:02:22'),
+(29, 1, NULL, 1, NULL, 23, NULL, NULL, 31050.00, 'UGX', 31050.00, 'UGX', 1.0000000000, 'same currency', '2026-11-18T14:02:54+00:00', 31050.00, 'UGX', 'mtn_momo', 'pesapal', 'PAY-20261118-003', NULL, NULL, NULL, '04c02abfedf9274bbb9f309623662a8a', 'successful', 'not_settled', NULL, NULL, '2026-11-18 17:02:54', NULL, NULL, '{\"gateway\":\"demo\"}', NULL, '2026-11-18 14:02:54');
 
 -- --------------------------------------------------------
 
@@ -3298,7 +3769,22 @@ INSERT INTO `receipt_deliveries` (`id`, `payment_id`, `hotel_id`, `source`, `ref
 (12, 13, 1, 'booking', 'HPN-20261011-002', 'staff', 'director@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-11 12:48:21', '2026-10-11 12:48:21'),
 (13, 13, 1, 'booking', 'HPN-20261011-002', 'staff', 'accounts@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-11 12:48:21', '2026-10-11 12:48:21'),
 (14, 13, 1, 'booking', 'HPN-20261011-002', 'staff', 'frontdesk@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-11 12:48:22', '2026-10-11 12:48:22'),
-(15, 13, 1, 'booking', 'HPN-20261011-002', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-11 12:48:22', '2026-10-11 12:48:22');
+(15, 13, 1, 'booking', 'HPN-20261011-002', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-10-11 12:48:22', '2026-10-11 12:48:22'),
+(16, 27, 1, 'order', 'ORD-20261118-001', 'email', 'reaganotema2022@gmail.com', 'sent', 1, NULL, NULL, '2026-11-18 17:00:21', '2026-11-18 17:00:21'),
+(17, 27, 1, 'order', 'ORD-20261118-001', 'staff', 'director@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:00:21', '2026-11-18 17:00:21'),
+(18, 27, 1, 'order', 'ORD-20261118-001', 'staff', 'cashier@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:00:21', '2026-11-18 17:00:21'),
+(19, 27, 1, 'order', 'ORD-20261118-001', 'staff', 'kitchen@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:00:21', '2026-11-18 17:00:21'),
+(20, 27, 1, 'order', 'ORD-20261118-001', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:00:21', '2026-11-18 17:00:21'),
+(21, 28, 1, 'order', 'ORD-20261118-002', 'email', 'reaganotema2022@gmail.com', 'sent', 1, NULL, NULL, '2026-11-18 17:02:22', '2026-11-18 17:02:22'),
+(22, 28, 1, 'order', 'ORD-20261118-002', 'staff', 'director@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:02:22', '2026-11-18 17:02:22'),
+(23, 28, 1, 'order', 'ORD-20261118-002', 'staff', 'cashier@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:02:22', '2026-11-18 17:02:22'),
+(24, 28, 1, 'order', 'ORD-20261118-002', 'staff', 'kitchen@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:02:22', '2026-11-18 17:02:22'),
+(25, 28, 1, 'order', 'ORD-20261118-002', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:02:23', '2026-11-18 17:02:23'),
+(26, 29, 1, 'order', 'ORD-20261118-003', 'email', 'reaganotema2022@gmail.com', 'sent', 1, NULL, NULL, '2026-11-18 17:02:55', '2026-11-18 17:02:55'),
+(27, 29, 1, 'order', 'ORD-20261118-003', 'staff', 'director@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:02:55', '2026-11-18 17:02:55'),
+(28, 29, 1, 'order', 'ORD-20261118-003', 'staff', 'cashier@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:02:55', '2026-11-18 17:02:55'),
+(29, 29, 1, 'order', 'ORD-20261118-003', 'staff', 'kitchen@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:02:55', '2026-11-18 17:02:55'),
+(30, 29, 1, 'order', 'ORD-20261118-003', 'staff', 'staff@hotelparadiseonthenile.info', 'sent', 1, NULL, NULL, '2026-11-18 17:02:55', '2026-11-18 17:02:55');
 
 -- --------------------------------------------------------
 
@@ -4589,6 +5075,137 @@ ALTER TABLE `housekeeping_tasks`
   ADD KEY `fk_hk_verifier` (`verified_by`);
 
 --
+-- Indexes for table `hp_cleaning_checklists`
+--
+ALTER TABLE `hp_cleaning_checklists`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_checklist_task` (`task_id`);
+
+--
+-- Indexes for table `hp_disciplinary_records`
+--
+ALTER TABLE `hp_disciplinary_records`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_discipline_user` (`user_id`,`incident_date`);
+
+--
+-- Indexes for table `hp_front_events`
+--
+ALTER TABLE `hp_front_events`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_front_reservation` (`reservation_id`,`created_at`),
+  ADD KEY `idx_hp_front_type` (`event_type`);
+
+--
+-- Indexes for table `hp_guest_followups`
+--
+ALTER TABLE `hp_guest_followups`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_followup_status` (`status`,`due_date`),
+  ADD KEY `idx_hp_followup_guest` (`guest_id`);
+
+--
+-- Indexes for table `hp_guest_preferences`
+--
+ALTER TABLE `hp_guest_preferences`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_pref_guest` (`guest_id`,`preference_type`);
+
+--
+-- Indexes for table `hp_handovers`
+--
+ALTER TABLE `hp_handovers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_handover_date` (`handover_date`,`shift_label`);
+
+--
+-- Indexes for table `hp_linen_movements`
+--
+ALTER TABLE `hp_linen_movements`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_linen_item` (`item_name`,`created_at`);
+
+--
+-- Indexes for table `hp_linen_stock`
+--
+ALTER TABLE `hp_linen_stock`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_hp_linen` (`item_name`,`location`);
+
+--
+-- Indexes for table `hp_loyalty_accounts`
+--
+ALTER TABLE `hp_loyalty_accounts`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_hp_loyalty_guest` (`guest_id`);
+
+--
+-- Indexes for table `hp_loyalty_transactions`
+--
+ALTER TABLE `hp_loyalty_transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_loyalty_guest` (`guest_id`,`created_at`);
+
+--
+-- Indexes for table `hp_maintenance_costs`
+--
+ALTER TABLE `hp_maintenance_costs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_maint_cost_ticket` (`ticket_id`);
+
+--
+-- Indexes for table `hp_payroll_lines`
+--
+ALTER TABLE `hp_payroll_lines`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_hp_payroll_line` (`run_id`,`user_id`);
+
+--
+-- Indexes for table `hp_payroll_runs`
+--
+ALTER TABLE `hp_payroll_runs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_payroll_period` (`period_start`,`period_end`);
+
+--
+-- Indexes for table `hp_preventive_schedules`
+--
+ALTER TABLE `hp_preventive_schedules`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_preventive_due` (`next_due`,`active`);
+
+--
+-- Indexes for table `hp_sensitive_actions`
+--
+ALTER TABLE `hp_sensitive_actions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_sensitive_status` (`status`),
+  ADD KEY `idx_hp_sensitive_entity` (`entity_type`,`entity_id`),
+  ADD KEY `idx_hp_sensitive_requested` (`requested_by`,`created_at`);
+
+--
+-- Indexes for table `hp_staff_documents`
+--
+ALTER TABLE `hp_staff_documents`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_staff_doc_user` (`user_id`,`expires_on`);
+
+--
+-- Indexes for table `hp_staff_schedules`
+--
+ALTER TABLE `hp_staff_schedules`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_rota_user_date` (`user_id`,`shift_date`),
+  ADD KEY `idx_hp_rota_date` (`shift_date`);
+
+--
+-- Indexes for table `hp_training_records`
+--
+ALTER TABLE `hp_training_records`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hp_training_user` (`user_id`,`status`);
+
+--
 -- Indexes for table `integrity_flags`
 --
 ALTER TABLE `integrity_flags`
@@ -5364,7 +5981,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=204;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=219;
 
 --
 -- AUTO_INCREMENT for table `beds`
@@ -5418,13 +6035,13 @@ ALTER TABLE `customer_documents`
 -- AUTO_INCREMENT for table `customer_signin_attempts`
 --
 ALTER TABLE `customer_signin_attempts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `customer_tokens`
 --
 ALTER TABLE `customer_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -5601,6 +6218,114 @@ ALTER TABLE `housekeeping_tasks`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `hp_cleaning_checklists`
+--
+ALTER TABLE `hp_cleaning_checklists`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_disciplinary_records`
+--
+ALTER TABLE `hp_disciplinary_records`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_front_events`
+--
+ALTER TABLE `hp_front_events`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_guest_followups`
+--
+ALTER TABLE `hp_guest_followups`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_guest_preferences`
+--
+ALTER TABLE `hp_guest_preferences`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_handovers`
+--
+ALTER TABLE `hp_handovers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_linen_movements`
+--
+ALTER TABLE `hp_linen_movements`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_linen_stock`
+--
+ALTER TABLE `hp_linen_stock`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_loyalty_accounts`
+--
+ALTER TABLE `hp_loyalty_accounts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_loyalty_transactions`
+--
+ALTER TABLE `hp_loyalty_transactions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_maintenance_costs`
+--
+ALTER TABLE `hp_maintenance_costs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_payroll_lines`
+--
+ALTER TABLE `hp_payroll_lines`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_payroll_runs`
+--
+ALTER TABLE `hp_payroll_runs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_preventive_schedules`
+--
+ALTER TABLE `hp_preventive_schedules`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_sensitive_actions`
+--
+ALTER TABLE `hp_sensitive_actions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_staff_documents`
+--
+ALTER TABLE `hp_staff_documents`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_staff_schedules`
+--
+ALTER TABLE `hp_staff_schedules`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hp_training_records`
+--
+ALTER TABLE `hp_training_records`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `integrity_flags`
 --
 ALTER TABLE `integrity_flags`
@@ -5658,13 +6383,13 @@ ALTER TABLE `journal_lines`
 -- AUTO_INCREMENT for table `kds_print_queue`
 --
 ALTER TABLE `kds_print_queue`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `kitchen_order_items`
 --
 ALTER TABLE `kitchen_order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `kitchen_stations`
@@ -5748,13 +6473,13 @@ ALTER TABLE `news_reactions`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=301;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=352;
 
 --
 -- AUTO_INCREMENT for table `notification_deliveries`
 --
 ALTER TABLE `notification_deliveries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT for table `notification_devices`
@@ -5766,19 +6491,19 @@ ALTER TABLE `notification_devices`
 -- AUTO_INCREMENT for table `notification_events`
 --
 ALTER TABLE `notification_events`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `outlets`
@@ -5796,7 +6521,7 @@ ALTER TABLE `password_reset_tokens`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `payment_notifications`
@@ -5880,7 +6605,7 @@ ALTER TABLE `purchase_requisition_items`
 -- AUTO_INCREMENT for table `receipt_deliveries`
 --
 ALTER TABLE `receipt_deliveries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `reception_activity_log`

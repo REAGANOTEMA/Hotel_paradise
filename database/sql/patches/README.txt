@@ -157,6 +157,15 @@ Patches
     chart of accounts. Every statement checks first, so the patch is safe to run
     more than once and never rewrites a transaction.
 
+2026-11-25_enterprise_expansion.sql
+    Creates the empty operational tables behind the Front Office, Housekeeping,
+    Maintenance, HR, Guest Relations, Security and Executive Analytics modules:
+    sensitive-action approvals, stay events and handovers, cleaning checklists
+    and linen, maintenance costs and preventive schedules, rotas, payroll,
+    training, staff documents, disciplinary records, guest preferences, loyalty
+    and follow-ups. Every statement is CREATE TABLE IF NOT EXISTS, so the patch
+    is safe to run more than once and inserts no example or demo records.
+
 How to run one
 --------------
 phpMyAdmin: open the system database, "Import", choose the .sql file, then Go.

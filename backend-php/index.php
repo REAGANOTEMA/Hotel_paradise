@@ -27,6 +27,8 @@ function pagelogin(): void{
   $pass=$_POST['password']??'';
   $u=row('SELECT * FROM users WHERE email=? AND status=\'active\'',[$email]);
   if($u && password_verify($pass,$u['password_hash'])){
+   q('INSERT INTO login_attempts(user_id,identifier,ip_address,successful,failure_reason,attempted_at) VALUES(?,?,?,1,NULL,NOW())',[$u['id'],$email,$_SERVER['REMOTE_ADDR']??null]);
+   session_regenerate_id(true);
    unset($u['password_hash']);
    set_current_user($u);
    $rs=rows('SELECT r.name FROM user_roles ur JOIN roles r ON r.id=ur.role_id WHERE ur.user_id=?',[$u['id']]);
@@ -39,6 +41,7 @@ function pagelogin(): void{
    $land=(in_array('bar_staff',$_SESSION['roles'],true)&&$wide===[])?'bar':'dashboard';
    go($land);
   }
+  q('INSERT INTO login_attempts(user_id,identifier,ip_address,successful,failure_reason,attempted_at) VALUES(?,?,?,0,?,NOW())',[$u['id']??null,$email,$_SERVER['REMOTE_ADDR']??null,'Invalid credentials']);
   flash('Incorrect email or password. Please try again.','bad');
  }
 
