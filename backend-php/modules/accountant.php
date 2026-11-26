@@ -297,7 +297,7 @@ echo '<div class="panel"><h2>Receivables</h2><p class="hint">Open guest, invoice
 finance_ui_open('accountantRecv','Receivables',['source'=>'Source','ref'=>'Reference','name'=>'Guest or customer','status'=>'Status','num:due'=>'Balance'],'','',true);
 $recvRows=0;
 foreach($receivable['invoices'] as $r){ $recvRows++; $due=(float)$r['total']-(float)$r['paid']; echo '<tr><td>Invoice</td><td>'.e((string)$r['invoice_number']).'</td><td>'.e((string)$r['billing_name']).'</td><td>'.finance_ui_status((string)$r['status']).'</td><td class="num">'.money($due).'</td></tr>'; }
-foreach($receivable['reservations'] as $r){ $recvRows++; echo '<tr><td>Booking</td><td>'.e((string)$r['booking_number']).'</td><td>'.e((string)($r['full_name']??'')).'</td><td>'.finance_ui_status((string)$r['status']).'</td><td class="num">'.money((float)$r['total']-(float)$r['paid']).'</td></tr>'; }
+foreach($receivable['reservations'] as $r){ $recvRows++; echo '<tr><td>Booking</td><td>'.e((string)$r['booking_number']).'</td><td>'.e(guest_name($r['full_name']??'',$r['guest_id']??0)).'</td><td>'.finance_ui_status((string)$r['status']).'</td><td class="num">'.money((float)$r['total']-(float)$r['paid']).'</td></tr>'; }
 foreach($receivable['orders'] as $r){ $recvRows++; echo '<tr><td>Order</td><td>'.e((string)$r['order_number']).'</td><td>'.e((string)($r['customer_name']??'')).'</td><td>'.finance_ui_status((string)$r['status']).'</td><td class="num">'.money((float)$r['total']-(float)$r['paid']).'</td></tr>'; }
 if(!$recvRows) finance_ui_empty(5,'No open receivables.');
 finance_ui_close(5,[],'No receivables.');

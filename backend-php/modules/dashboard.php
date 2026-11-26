@@ -18,8 +18,8 @@ $k=[
  'pend'=>val("SELECT COUNT(*) FROM expenses WHERE status='pending'",[])+val("SELECT COUNT(*) FROM purchase_requisitions WHERE status='pending'",[]),
  'low'=>val("SELECT COUNT(*) FROM stock_levels sl JOIN inventory_items i ON i.id=sl.item_id WHERE sl.quantity<=i.reorder_level AND i.active=1",[]),
 ];
-$arrivals=rows("SELECT r.id,r.booking_number,g.full_name,rt.name rtype,r.adults FROM reservations r JOIN guests g ON g.id=r.guest_id JOIN reservation_rooms rr ON rr.reservation_id=r.id JOIN room_types rt ON rt.id=rr.room_type_id WHERE r.status IN('pending','confirmed') AND r.check_in>=? AND r.check_in<? ORDER BY r.check_in",[$day0,$day1]);
-$inhouse=rows("SELECT r.id,g.full_name,rt.name rtype,rr.room_id,rn.room_number FROM reservations r JOIN guests g ON g.id=r.guest_id JOIN reservation_rooms rr ON rr.reservation_id=r.id JOIN room_types rt ON rt.id=rr.room_type_id LEFT JOIN rooms rn ON rn.id=rr.room_id WHERE r.status='checked_in' AND r.deleted_at IS NULL GROUP BY r.id,g.full_name,rt.name,rr.room_id,rn.room_number ORDER BY g.full_name");
+$arrivals=rows("SELECT r.id,r.booking_number,g.id guest_id,g.full_name,rt.name rtype,r.adults FROM reservations r JOIN guests g ON g.id=r.guest_id JOIN reservation_rooms rr ON rr.reservation_id=r.id JOIN room_types rt ON rt.id=rr.room_type_id WHERE r.status IN('pending','confirmed') AND r.check_in>=? AND r.check_in<? ORDER BY r.check_in",[$day0,$day1]);
+$inhouse=rows("SELECT r.id,g.id guest_id,g.full_name,rt.name rtype,rr.room_id,rn.room_number FROM reservations r JOIN guests g ON g.id=r.guest_id JOIN reservation_rooms rr ON rr.reservation_id=r.id JOIN room_types rt ON rt.id=rr.room_type_id LEFT JOIN rooms rn ON rn.id=rr.room_id WHERE r.status='checked_in' AND r.deleted_at IS NULL GROUP BY r.id,g.id,g.full_name,rt.name,rr.room_id,rn.room_number ORDER BY CASE WHEN g.full_name='' THEN 1 ELSE 0 END,g.full_name");
 $payments=rows("SELECT p.id,p.amount,p.method,p.status,DATE(p.created_at) d,u.name usr FROM payments p LEFT JOIN users u ON u.id=p.user_id WHERE p.created_at>=? AND p.created_at<? ORDER BY p.id DESC LIMIT 8",[$day0,$day1]);
 $pend=rows("SELECT 'expense' kind,e.number ref,e.amount amount,e.department_name dept FROM (SELECT e.id,e.number,e.amount,d.name department_name FROM expenses e LEFT JOIN departments d ON d.id=e.department_id WHERE e.status='pending') e UNION ALL SELECT 'requisition',pr.number,0,d.name FROM purchase_requisitions pr LEFT JOIN departments d ON d.id=pr.department_id WHERE pr.status='pending' LIMIT 6",[]);
 
@@ -38,13 +38,13 @@ echo '<div class="dashGrid"><div>';
 echo '<div class="panel"><h2>Expected arrivals today</h2><p class="hint">Pending and confirmed reservations due in today.</p>';
 if(!$arrivals){ echo '<p class="emptyLine">No expected arrivals today.</p>'; }
 else{ echo '<table class="tbl"><thead><tr><th>Booking</th><th>Guest</th><th>Room type</th><th>Guests</th><th></th></tr></thead><tbody>';
- foreach($arrivals as $r){ echo '<tr><td>'.e($r['booking_number']).'</td><td><b>'.e($r['full_name']).'</b></td><td>'.e($r['rtype']).'</td><td>'.(int)$r['adults'].'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=reservations&view='.(int)$r['id'].'">View</a></td></tr>'; }
+   foreach($arrivals as $r){ echo '<tr><td>'.e($r['booking_number']).'</td><td><b>'.e(guest_name($r['full_name'],$r['guest_id'])).'</b></td><td>'.e($r['rtype']).'</td><td>'.(int)$r['adults'].'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=reservations&view='.(int)$r['id'].'">View</a></td></tr>'; }
  echo '</tbody></table>'; }
 echo '</div>';
 echo '<div class="panel"><h2>In house now</h2><p class="hint">Guests currently occupying a room.</p>';
 if(!$inhouse){ echo '<p class="emptyLine">No guests in house.</p>'; }
 else{ echo '<table class="tbl"><thead><tr><th>Guest</th><th>Room type</th><th>Room</th></tr></thead><tbody>';
- foreach($inhouse as $r){ echo '<tr><td><b>'.e($r['full_name']).'</b></td><td>'.e($r['rtype']).'</td><td>'.e($r['room_number']??'Not allocated').'</td></tr>'; }
+   foreach($inhouse as $r){ echo '<tr><td><b>'.e(guest_name($r['full_name'],$r['guest_id'])).'</b></td><td>'.e($r['rtype']).'</td><td>'.e($r['room_number']??'Not allocated').'</td></tr>'; }
  echo '</tbody></table>'; }
 echo '</div></div>';
 

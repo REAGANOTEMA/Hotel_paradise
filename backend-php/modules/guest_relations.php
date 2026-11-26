@@ -140,7 +140,7 @@ echo '</div>';
 
 echo '<div class="panel"><h2>Choose a guest</h2>'; form_open('guest_relations','');
 echo '<div class="formGrid"><div class="field"><label>Guest</label><select name="guest_id" onchange="this.form.submit()"><option value="">Select guest...</option>';
-foreach($guests as $g) echo '<option value="'.(int)$g['id'].'"'.($guestId===(int)$g['id']?' selected':'').'>'.e($g['full_name'].' · '.$g['phone']).'</option>';
+foreach($guests as $g) echo '<option value="'.(int)$g['id'].'"'.($guestId===(int)$g['id']?' selected':'').'>'.e(guest_name($g['full_name'],$g['id']).($g['phone']?' · '.$g['phone']:'')).'</option>';
 echo '</select></div></div>'; form_close(); echo '</div>';
 
 if($guestId){
@@ -177,7 +177,7 @@ if($guestId){
 }
 
 echo '<div class="panel"><h2>Follow-up queue</h2>'; form_open('guest_relations','followup',['view'=>$guestId]);
-echo '<div class="formGrid"><div class="field"><label>Guest</label><select name="guest_id" required><option value="">Choose guest...</option>'; foreach($guests as $g) echo '<option value="'.(int)$g['id'].'"'.($guestId===(int)$g['id']?' selected':'').'>'.e($g['full_name']).'</option>'; echo '</select></div>';
+echo '<div class="formGrid"><div class="field"><label>Guest</label><select name="guest_id" required><option value="">Choose guest...</option>'; foreach($guests as $g) echo '<option value="'.(int)$g['id'].'"'.($guestId===(int)$g['id']?' selected':'').'>'.e(guest_name($g['full_name'],$g['id'])).'</option>'; echo '</select></div>';
 echo '<div class="field"><label>Channel</label><select name="channel">'; foreach(['call'=>'Call','email'=>'Email','whatsapp'=>'WhatsApp','visit'=>'Visit'] as $k=>$v) echo '<option value="'.e($k).'">'.e($v).'</option>'; echo '</select></div>';
 echo field('Subject','subject','','text','',true).field('Due date','due_date','','date');
 echo '<div class="field"><label>Assigned to</label><select name="assigned_to"><option value="">Unassigned</option>'; foreach($users as $u) echo '<option value="'.(int)$u['id'].'">'.e($u['name']).'</option>'; echo '</select></div></div>'.area('Notes','notes','','What should be said or checked?','',2).'<button class="btn">Record follow-up</button>'; form_close();

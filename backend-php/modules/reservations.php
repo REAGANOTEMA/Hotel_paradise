@@ -30,16 +30,28 @@ if($act==='feed'){
 
 if($_SERVER['REQUEST_METHOD']==='POST' && $act){
  switch($act){
-  case 'new':
-   $gid=(int)($_POST['guest_id']??0);
-   if(!$gid && trim($_POST['full_name']??'')){
+   case 'new':
+    /*
+     * Every new booking creates its own guest record. The name is optional:
+     * walk-in clients are often not named at the desk. A readable provisional
+     * label keeps every dashboard, folio and registration card useful until
+     * reception has the real name.
+     */
+    $gname=mb_substr(trim((string)($_POST['full_name']??'')),0,190);
+    $phone=mb_substr(trim((string)($_POST['phone']??'')),0,50);
+    $email=mb_substr(trim((string)($_POST['email']??'')),0,190);
+    $nationality=mb_substr(trim((string)($_POST['nationality']??'')),0,100);
+    $idType=mb_substr(trim((string)($_POST['id_type']??'')),0,50);
+    $idNumber=mb_substr(trim((string)($_POST['id_number']??'')),0,100);
     q('INSERT INTO guests(hotel_id,full_name,phone,email,nationality,id_type,id_number,created_at) VALUES(1,?,?,?,?,?,?,NOW())',
-      [trim($_POST['full_name']),trim($_POST['phone']),trim($_POST['email']),trim($_POST['nationality']),trim($_POST['id_type']),trim($_POST['id_number'])]);
+      [$gname,$phone,$email,$nationality,$idType,$idNumber]);
     $gid=(int)db()->lastInsertId();
+    if($gname===''){
+     $gname='Guest #'.$gid;
+     q('UPDATE guests SET full_name=? WHERE id=?',[$gname,$gid]);
+    }
     audit('create','guest',$gid);
-   }
-   if(!$gid){ flash('Choose a guest or enter guest details.','bad'); go('reservations',['new'=>1]); }
-   $rt=(int)($_POST['room_type_id']??0); $qty=max(1,(int)($_POST['qty']??1));
+    $rt=(int)($_POST['room_type_id']??0); $qty=max(1,(int)($_POST['qty']??1));
    $rate=(float)($_POST['rate']??0);
    $rate=$rate>0?$rate:(float)val('SELECT base_rate FROM room_types WHERE id=?',[$rt]);
    $cin=trim($_POST['check_in']??''); $cout=trim($_POST['check_out']??'');
@@ -54,7 +66,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
    $rid=(int)db()->lastInsertId();
     q('INSERT INTO reservation_rooms(reservation_id,room_type_id,room_id,quantity,nightly_rate) VALUES(?,?,NULL,?,?)',[$rid,$rt,$qty,$rate]);
     audit('create','reservation',$rid,['booking_no'=>$num]);
-    $gname=(string)val('SELECT full_name FROM guests WHERE id=?',[$gid]);
+    $gname=guest_name(val('SELECT full_name FROM guests WHERE id=?',[$gid]),$gid);
     notify_console('desk-booking:'.$rid,'booking','New booking '.$num,
      $gname.' · '.(int)$qty.' room(s) · '.$nights.' night(s) · '.money($total),
      ['reservation_id'=>$rid,'booking_number'=>$num],['director','general_manager','receptionist'],'reservation',$rid);
@@ -160,7 +172,7 @@ if($view){
  echo '<div class="twoCol"><div>';
  echo '<div class="panel"><h2>Guest and stay</h2><p class="hint">Contact and reservation information.</p>';
  echo '<div class="res-meta">';
- echo '<div class="field"><label>Guest</label><b>'.e($r['full_name']).'</b>'.($r['phone']?'<br><span>'.e($r['phone']).'</span>':'').($r['email']?'<br><span>'.e($r['email']).'</span>':'').'</div>';
+  echo '<div class="field"><label>Guest</label><b>'.e(guest_name($r['full_name'],$r['guest_id'])).'</b>'.($r['phone']?'<br><span>'.e($r['phone']).'</span>':'').($r['email']?'<br><span>'.e($r['email']).'</span>':'').'</div>';
  echo '<div class="field"><label>Booking number</label><b>'.e($r['booking_number']).'</b></div>';
  echo '<div class="field"><label>Check in</label><b>'.fmtdt($r['check_in']).'</b></div>';
  echo '<div class="field"><label>Check out</label><b>'.fmtdt($r['check_out']).'</b></div>';
@@ -211,15 +223,11 @@ if($view){
 
 if($act==='new'){
  $types=rows('SELECT * FROM room_types WHERE active=1 ORDER BY base_rate DESC');
- $guests=rows('SELECT id,full_name,phone FROM guests ORDER BY full_name');
  page_head('New reservation','reservations','Create a new booking');
  echo '<div class="panel" style="max-width:820px">';
  form_open('reservations','new');
- echo '<div class="field"><label>Guest</label><select name="guest_id" required><option value="">Select an existing guest...</option>';
- foreach($guests as $g) echo '<option value="'.(int)$g['id'].'">'.e($g['full_name']).($g['phone']?'  ('.e($g['phone']).')':'').'</option>';
- echo '</select></div>';
- echo '<p style="color:var(--muted);font-size:12.5px">Or enter a new guest below and they will be added automatically.</p>';
- echo '<div class="formGrid"><div class="field"><label>Full name</label><input name="full_name"></div>';
+ echo '<p style="color:var(--muted);font-size:12.5px">Enter the client details below. The name is optional; an unnamed walk-in is saved with a provisional label that reception can replace later.</p>';
+ echo '<div class="formGrid"><div class="field"><label>Full name (optional)</label><input name="full_name"></div>';
  echo '<div class="field"><label>Phone</label><input name="phone"></div>';
  echo '<div class="field"><label>Email</label><input name="email"></div>';
  echo '<div class="field"><label>Nationality</label><input name="nationality"></div>';
@@ -246,8 +254,11 @@ $qtext=trim($_GET['q']??'');
 $where='1=1'; $params=[];
 if($st){ $where.=' AND r.status=?'; $params[]=$st; }
 $where.=' AND r.deleted_at IS NULL';
-if($qtext!==''){ $where.=' AND (g.full_name LIKE ? OR r.booking_number LIKE ?)'; $params[]='%'.$qtext.'%'; $params[]='%'.$qtext.'%'; }
-$list=rows("SELECT r.id,r.booking_number,r.check_in,r.check_out,r.status,r.total,r.paid,r.adults,g.full_name FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE $where ORDER BY r.check_in DESC LIMIT 200",$params);
+if($qtext!==''){
+ $where.=' AND (g.full_name LIKE ? OR r.booking_number LIKE ? OR g.phone LIKE ? OR g.email LIKE ? OR g.id_number LIKE ?)';
+ for($i=0;$i<5;$i++) $params[]='%'.$qtext.'%';
+}
+$list=rows("SELECT r.id,r.booking_number,r.check_in,r.check_out,r.status,r.total,r.paid,r.adults,g.id guest_id,g.full_name FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE $where ORDER BY r.check_in DESC LIMIT 200",$params);
 
 page_head('Reservations','reservations','Bookings, arrivals and departures');
 echo '<div class="toolbar"><a class="btn" href="'.BASE.'/index.php?page=reservations&act=new">+ New reservation</a></div>';
@@ -255,9 +266,9 @@ echo '<div class="rfilter">';
 foreach([''=>'All','pending'=>'Pending','confirmed'=>'Confirmed','checked_in'=>'In house','checked_out'=>'Checked out','cancelled'=>'Cancelled','no_show'=>'No show'] as $k=>$v4){
  echo '<a href="'.BASE.'/index.php?page=reservations'.($k?'&st='.$k:'').'"><button class="'.($st===$k?'on':'').'">'.$v4.'</button></a>';
 }
-echo '<form method="get" style="margin-left:auto;display:flex;gap:6px"><input type="hidden" name="page" value="reservations"><input name="q" value="'.e($qtext).'" placeholder="Search guest or booking..." style="padding:9px 12px;border:1px solid var(--line);border-radius:9px"><button class="btn sm">Search</button></form></div>';
+echo '<form method="get" style="margin-left:auto;display:flex;gap:6px"><input type="hidden" name="page" value="reservations"><input name="q" value="'.e($qtext).'" placeholder="Search name, phone, email, ID or booking..." style="padding:9px 12px;border:1px solid var(--line);border-radius:9px"><button class="btn sm">Search</button></form></div>';
 echo '<div class="panel"><table class="tbl"><thead><tr><th>Booking</th><th>Guest</th><th>Check in</th><th>Check out</th><th class="num">Total</th><th class="num">Paid</th><th>Status</th><th></th></tr></thead><tbody>';
-foreach($list as $r){ echo '<tr><td>'.e($r['booking_number']).'</td><td><b>'.e($r['full_name']).'</b></td><td>'.fmtdate($r['check_in']).'</td><td>'.fmtdate($r['check_out']).'</td><td class="num">'.money($r['total']).'</td><td class="num">'.money($r['paid']).'</td><td>'.status_badge($r['status']).'</td><td style="white-space:nowrap"><a class="btn sm" href="'.BASE.'/index.php?page=reservations&view='.(int)$r['id'].'">Open</a> '.trash_button('reservations',(int)$r['id'],'reservations').'</td></tr>'; }
+foreach($list as $r){ echo '<tr><td>'.e($r['booking_number']).'</td><td><b>'.e(guest_name($r['full_name'],$r['guest_id'])).'</b></td><td>'.fmtdate($r['check_in']).'</td><td>'.fmtdate($r['check_out']).'</td><td class="num">'.money($r['total']).'</td><td class="num">'.money($r['paid']).'</td><td>'.status_badge($r['status']).'</td><td style="white-space:nowrap"><a class="btn sm" href="'.BASE.'/index.php?page=reservations&view='.(int)$r['id'].'">Open</a> '.trash_button('reservations',(int)$r['id'],'reservations').'</td></tr>'; }
 if(!count($list)) echo '<tr><td colspan="8" style="text-align:center;color:var(--muted)">No reservations found.</td></tr>';
 echo '</tbody></table></div>';
 

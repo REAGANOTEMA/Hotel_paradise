@@ -8025,25 +8025,29 @@
       "ext": "webp",
       "w": 768,
       "h": 512,
-      "variants": []
+      "variants": [],
+      "file": "DSC_5418-768x512.webp"
     },
     "hotel-paradise-on-the-nile-logo": {
       "ext": "webp",
       "w": 1532,
       "h": 442,
-      "variants": []
+      "variants": [],
+      "file": "Hotel-Paradise-on-the-Nile-Logo.webp"
     },
     "single-room-768x512": {
       "ext": "webp",
       "w": 768,
       "h": 512,
-      "variants": []
+      "variants": [],
+      "file": "Single-Room-768x512.webp"
     },
     "suite-768x511": {
       "ext": "webp",
       "w": 768,
       "h": 511,
-      "variants": []
+      "variants": [],
+      "file": "Suite-768x511.webp"
     },
     "backgroun-image": {
       "ext": "png",

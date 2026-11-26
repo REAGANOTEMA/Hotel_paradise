@@ -29,6 +29,10 @@ if($method==='POST'){
  $raw=file_get_contents('php://input');
  $decoded=json_decode($raw,true);
  if(is_array($decoded)) $body=$decoded; else $body=$_POST;
+ $token=(string)($body['_csrf']??($_SERVER['HTTP_X_CSRF_TOKEN']??''));
+ if($token===''||!hash_equals(csrf_token(),$token)){
+  $out(['ok'=>false,'error'=>'Invalid security token. Please reload the page and try again.'],403);
+ }
 }
 
 if(!notify_ready()){

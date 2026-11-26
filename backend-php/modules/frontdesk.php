@@ -310,7 +310,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && $act){
 }
 
 if($act==='card'){
-  $r=row('SELECT r.*,g.full_name,g.phone,g.email,g.nationality,g.id_type,g.id_number FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE r.id=?',[$rid]);
+  $r=row('SELECT r.*,g.id guest_id,g.full_name,g.phone,g.email,g.nationality,g.id_type,g.id_number FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE r.id=?',[$rid]);
   if(!$r){ page_head('Registration card','frontdesk'); echo '<div class="panel"><p>Booking not found.</p></div>'; page_foot(); exit; }
   $rooms=rows('SELECT rn.room_number,rt.name rtype FROM reservation_rooms rr LEFT JOIN rooms rn ON rn.id=rr.room_id LEFT JOIN room_types rt ON rt.id=rr.room_type_id WHERE rr.reservation_id=?',[$rid]);
   page_head('Registration card '.e($r['booking_number']),'frontdesk','Guest registration and identification record');
@@ -319,7 +319,7 @@ if($act==='card'){
   echo '<div class="panel regCard" style="max-width:780px;margin:auto;padding:28px">';
   echo '<h2 style="text-align:center">HOTEL PARADISE ON THE NILE</h2><p style="text-align:center;margin-top:-8px">Jinja, Uganda · Guest Registration Card</p><hr>';
   echo '<div class="res-meta">';
-  echo '<div class="field"><label>Guest</label><b>'.e($r['full_name']).'</b></div>';
+   echo '<div class="field"><label>Guest</label><b>'.e(guest_name($r['full_name'],$r['guest_id'])).'</b></div>';
   echo '<div class="field"><label>Booking</label><b>'.e($r['booking_number']).'</b></div>';
   echo '<div class="field"><label>Telephone</label><b>'.e($r['phone']??'').'</b></div>';
   echo '<div class="field"><label>Email</label><b>'.e($r['email']??'').'</b></div>';
@@ -338,10 +338,10 @@ if($act==='card'){
 
 $day0=today().' 00:00:00';
 $day1=date('Y-m-d',strtotime(today().' +1 day')).' 00:00:00';
-$arrivals=rows("SELECT r.id,r.booking_number,r.check_in,r.status,r.total,r.paid,g.full_name,g.phone,rt.name rtype FROM reservations r JOIN guests g ON g.id=r.guest_id LEFT JOIN reservation_rooms rr ON rr.reservation_id=r.id LEFT JOIN room_types rt ON rt.id=rr.room_type_id WHERE r.status IN('pending','confirmed') AND r.check_in>=? AND r.check_in<? AND r.deleted_at IS NULL ORDER BY r.check_in",[$day0,$day1]);
-$departures=rows("SELECT r.id,r.booking_number,r.check_out,r.total,r.paid,g.full_name,rn.room_number FROM reservations r JOIN guests g ON g.id=r.guest_id LEFT JOIN reservation_rooms rr ON rr.reservation_id=r.id LEFT JOIN rooms rn ON rn.id=rr.room_id WHERE r.status='checked_in' AND r.check_out>=? AND r.check_out<? AND r.deleted_at IS NULL ORDER BY r.check_out",[$day0,$day1]);
-$outstanding=rows("SELECT r.id,r.booking_number,g.full_name,r.total,r.paid,r.status FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE r.status IN('pending','confirmed','checked_in') AND r.paid<r.total AND r.deleted_at IS NULL ORDER BY (r.total-r.paid) DESC LIMIT 30");
-$openRequests=rows("SELECT rr.id,rr.title,rr.priority,rr.created_at,g.full_name FROM reception_records rr LEFT JOIN guests g ON g.id=rr.guest_id WHERE rr.status='open' ORDER BY rr.created_at DESC LIMIT 20");
+$arrivals=rows("SELECT r.id,r.booking_number,r.check_in,r.status,r.total,r.paid,g.id guest_id,g.full_name,g.phone,rt.name rtype FROM reservations r JOIN guests g ON g.id=r.guest_id LEFT JOIN reservation_rooms rr ON rr.reservation_id=r.id LEFT JOIN room_types rt ON rt.id=rr.room_type_id WHERE r.status IN('pending','confirmed') AND r.check_in>=? AND r.check_in<? AND r.deleted_at IS NULL ORDER BY r.check_in",[$day0,$day1]);
+$departures=rows("SELECT r.id,r.booking_number,r.check_out,r.total,r.paid,g.id guest_id,g.full_name,rn.room_number FROM reservations r JOIN guests g ON g.id=r.guest_id LEFT JOIN reservation_rooms rr ON rr.reservation_id=r.id LEFT JOIN rooms rn ON rn.id=rr.room_id WHERE r.status='checked_in' AND r.check_out>=? AND r.check_out<? AND r.deleted_at IS NULL ORDER BY r.check_out",[$day0,$day1]);
+$outstanding=rows("SELECT r.id,r.booking_number,g.id guest_id,g.full_name,r.total,r.paid,r.status FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE r.status IN('pending','confirmed','checked_in') AND r.paid<r.total AND r.deleted_at IS NULL ORDER BY (r.total-r.paid) DESC LIMIT 30");
+$openRequests=rows("SELECT rr.id,rr.title,rr.priority,rr.created_at,g.id guest_id,g.full_name FROM reception_records rr LEFT JOIN guests g ON g.id=rr.guest_id WHERE rr.status='open' ORDER BY rr.created_at DESC LIMIT 20");
 $handovers=rows('SELECT h.*,u.name outgoing,v.name incoming FROM hp_handovers h LEFT JOIN users u ON u.id=h.outgoing_user_id LEFT JOIN users v ON v.id=h.incoming_user_id ORDER BY h.id DESC LIMIT 20');
 $guests=rows('SELECT id,full_name,phone FROM guests WHERE deleted_at IS NULL ORDER BY full_name LIMIT 300');
 $users=rows("SELECT id,name FROM users WHERE status='active' ORDER BY name");
@@ -362,13 +362,13 @@ echo '<a class="btnGhost sm" href="'.BASE.'/index.php?page=frontdesk&act=handove
 echo '<a class="btnGhost sm" href="'.BASE.'/index.php?page=frontdesk&view='.$rid.'">Open selected booking</a></div>';
 
 if($rid){
-  $r=row('SELECT r.*,g.full_name,g.phone,g.email,g.nationality,g.id_type,g.id_number FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE r.id=?',[$rid]);
+  $r=row('SELECT r.*,g.id guest_id,g.full_name,g.phone,g.email,g.nationality,g.id_type,g.id_number FROM reservations r JOIN guests g ON g.id=r.guest_id WHERE r.id=?',[$rid]);
   if($r){
    $allocated=rows('SELECT rr.id,rr.room_id,rr.quantity,rr.nightly_rate,rn.room_number,rt.name rtype FROM reservation_rooms rr LEFT JOIN rooms rn ON rn.id=rr.room_id LEFT JOIN room_types rt ON rt.id=rr.room_type_id WHERE rr.reservation_id=? ORDER BY rr.id',[$rid]);
    $events=rows('SELECT e.*,u.name actor FROM hp_front_events e LEFT JOIN users u ON u.id=e.created_by WHERE e.reservation_id=? ORDER BY e.id DESC LIMIT 20',[$rid]);
    $auths=rows('SELECT a.*,u.name requester FROM hp_sensitive_actions a LEFT JOIN users u ON u.id=a.requested_by WHERE a.entity_type=\'reservation\' AND a.entity_id=? ORDER BY a.id DESC LIMIT 12',[$rid]);
    $balance=max(0,(float)$r['total']-(float)$r['paid']);
-   echo '<div class="panel"><h2>'.e($r['booking_number']).' · '.e($r['full_name']).'</h2><p class="hint">'.status_badge($r['status']).' · Balance '.money($balance).' · <a href="'.BASE.'/index.php?page=frontdesk&act=card&id='.$rid.'">Print registration card</a></p>';
+       echo '<div class="panel"><h2>'.e($r['booking_number']).' · '.e(guest_name($r['full_name'],$r['guest_id'])).'</h2><p class="hint">'.status_badge($r['status']).' · Balance '.money($balance).' · <a href="'.BASE.'/index.php?page=frontdesk&act=card&id='.$rid.'">Print registration card</a></p>';
    echo '<table class="tbl"><thead><tr><th>Room</th><th>Type</th><th class="num">Rate</th></tr></thead><tbody>';
    foreach($allocated as $a) echo '<tr><td>'.e($a['room_number']??'Not allocated').'</td><td>'.e($a['rtype']??'').'</td><td class="num">'.money($a['nightly_rate']).'</td></tr>';
    echo '</tbody></table>';
@@ -417,26 +417,26 @@ if($rid){
 }
 
 echo '<div class="twoCol"><div><div class="panel"><h2>Arrivals today</h2><p class="hint">Pending and confirmed reservations due in.</p><table class="tbl"><thead><tr><th>Booking</th><th>Guest</th><th>Time</th><th>Type</th><th></th></tr></thead><tbody>';
-foreach($arrivals as $a) echo '<tr><td>'.e($a['booking_number']).'</td><td><b>'.e($a['full_name']).'</b><br><small>'.e($a['phone']??'').'</small></td><td>'.fmtdt($a['check_in']).'</td><td>'.e($a['rtype']??'').'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=frontdesk&view='.(int)$a['id'].'">Open</a></td></tr>';
+foreach($arrivals as $a) echo '<tr><td>'.e($a['booking_number']).'</td><td><b>'.e(guest_name($a['full_name'],$a['guest_id'])).'</b><br><small>'.e($a['phone']??'').'</small></td><td>'.fmtdt($a['check_in']).'</td><td>'.e($a['rtype']??'').'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=frontdesk&view='.(int)$a['id'].'">Open</a></td></tr>';
 if(!$arrivals) echo '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No arrivals today.</td></tr>';
 echo '</tbody></table></div>';
 echo '<div class="panel"><h2>Guest requests</h2><p class="hint">Open requests raised at the desk.</p><table class="tbl"><thead><tr><th>Guest</th><th>Request</th><th>Priority</th></tr></thead><tbody>';
-foreach($openRequests as $r) echo '<tr><td>'.e($r['full_name']??'Guest').'</td><td>'.e($r['title']).'</td><td>'.status_badge($r['priority']).'</td></tr>';
+foreach($openRequests as $r) echo '<tr><td>'.e(guest_name($r['full_name']??'',$r['guest_id']??0)).'</td><td>'.e($r['title']).'</td><td>'.status_badge($r['priority']).'</td></tr>';
 if(!$openRequests) echo '<tr><td colspan="3" style="text-align:center;color:var(--muted)">No open requests.</td></tr>';
 echo '</tbody></table></div></div>';
 
 echo '<div><div class="panel"><h2>Departures today</h2><p class="hint">Guests in house due to leave.</p><table class="tbl"><thead><tr><th>Guest</th><th>Room</th><th>Time</th><th></th></tr></thead><tbody>';
-foreach($departures as $d) echo '<tr><td><b>'.e($d['full_name']).'</b></td><td>'.e($d['room_number']??'Not allocated').'</td><td>'.fmtdt($d['check_out']).'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=frontdesk&view='.(int)$d['id'].'">Open</a></td></tr>';
+foreach($departures as $d) echo '<tr><td><b>'.e(guest_name($d['full_name'],$d['guest_id'])).'</b></td><td>'.e($d['room_number']??'Not allocated').'</td><td>'.fmtdt($d['check_out']).'</td><td><a class="btn sm" href="'.BASE.'/index.php?page=frontdesk&view='.(int)$d['id'].'">Open</a></td></tr>';
 if(!$departures) echo '<tr><td colspan="4" style="text-align:center;color:var(--muted)">No departures today.</td></tr>';
 echo '</tbody></table></div>';
 echo '<div class="panel"><h2>Outstanding payments</h2><p class="hint">Bookings with a balance due.</p><table class="tbl"><thead><tr><th>Booking</th><th>Guest</th><th class="num">Balance</th></tr></thead><tbody>';
-foreach($outstanding as $o) echo '<tr><td><a href="'.BASE.'/index.php?page=frontdesk&view='.(int)$o['id'].'">'.e($o['booking_number']).'</a></td><td>'.e($o['full_name']).'</td><td class="num">'.money((float)$o['total']-(float)$o['paid']).'</td></tr>';
+foreach($outstanding as $o) echo '<tr><td><a href="'.BASE.'/index.php?page=frontdesk&view='.(int)$o['id'].'">'.e($o['booking_number']).'</a></td><td>'.e(guest_name($o['full_name'],$o['guest_id'])).'</td><td class="num">'.money((float)$o['total']-(float)$o['paid']).'</td></tr>';
 if(!$outstanding) echo '<tr><td colspan="3" style="text-align:center;color:var(--muted)">All bookings are settled.</td></tr>';
 echo '</tbody></table></div></div></div>';
 
 echo '<div class="panel"><h2>Raise a guest request</h2>'; form_open('frontdesk','request');
 echo '<div class="formGrid"><div class="field"><label>Guest</label><select name="guest_id" required><option value="">Choose guest...</option>';
-foreach($guests as $g) echo '<option value="'.(int)$g['id'].'">'.e($g['full_name'].' ('.$g['phone'].')').'</option>';
+foreach($guests as $g) echo '<option value="'.(int)$g['id'].'">'.e(guest_name($g['full_name'],$g['id']).($g['phone']?' ('.$g['phone'].')':'')).'</option>';
 echo '</select></div>'.field('Title','title','','text','e.g. Extra towels',true);
 echo '<div class="field"><label>Priority</label><select name="priority">'; foreach(['low'=>'Low','normal'=>'Normal','high'=>'High','urgent'=>'Urgent'] as $k=>$v) echo '<option value="'.e($k).'"'.($k==='normal'?' selected':'').'>'.e($v).'</option>'; echo '</select></div>';
 echo '</div>'.area('Request','description','','What does the guest need?','',3).'<button class="btn">Record request</button>'; form_close(); echo '</div>';

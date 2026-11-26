@@ -100,7 +100,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
      else audit('custom_order_item','order',$oid,['name'=>(string)$ln['custom_name'],'qty'=>(float)$ln['quantity'],'price'=>(float)$ln['unit_price']]);
      $firstLine=false;
     }
-     require_once __DIR__.'/app/kds.php';
+     require_once __DIR__.'/../app/kds.php';
      kds_sync_order($oid);
      audit('create','order',$oid,['number'=>$num,'subtotal'=>$totals['subtotal'],'service_charge'=>$totals['tax'],'total'=>$totals['total']]);
    notify_console('desk-order:'.$oid,'order','New order '.$num,

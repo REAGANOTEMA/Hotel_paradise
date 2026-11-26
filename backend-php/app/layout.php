@@ -21,10 +21,10 @@ function nav_groups(): array{
      'news'=>'News & Careers','events'=>'Events & Enquiries']],
     ['label'=>'Guest Communications','items'=>[
       'messages'=>'Guest Messages','guest_relations'=>'Guest Relations','testimonials'=>'Guest Experiences']],
-   ['label'=>'Restaurant & Bar','items'=>[
-     'restaurant'=>'Restaurant Dashboard','bar'=>'Bar Dashboard','pos'=>'POS and Orders','fnb'=>'Food and Beverage']],
-   ['label'=>'Kitchen','items'=>[
-     'kitchen'=>'Kitchen']],
+    ['label'=>'Restaurant & Bar','items'=>[
+      'restaurant'=>'Restaurant Dashboard','bar'=>'Bar Dashboard','pos'=>'POS and Orders','fnb'=>'Food and Beverage','room_service'=>'Room Service']],
+    ['label'=>'Kitchen','items'=>[
+      'kitchen'=>'Kitchen','kds'=>'Kitchen Display']],
     ['label'=>'Housekeeping & Maintenance','items'=>[
       'housekeeping'=>'Housekeeping','maintenance'=>'Maintenance','shifts'=>'Shifts']],
    ['label'=>'Procurement & Stores','items'=>[

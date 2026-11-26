@@ -154,7 +154,7 @@ kpi_card('Discounts today',money($k['discount']),'Given on orders','warn');
 kpi_card('Voids today',money($k['voids']),'Flagged for review','red');
 echo '</div>';
 
-$pending=rows("SELECT p.*,o.order_number,o.customer_name,o.customer_email,r.booking_number,g.full_name AS guest_name,g.email AS guest_email
+$pending=rows("SELECT p.*,o.order_number,o.customer_name,o.customer_email,r.booking_number,g.id AS guest_id,g.full_name AS guest_name,g.email AS guest_email
  FROM payments p
  LEFT JOIN orders o ON o.id=p.order_id
  LEFT JOIN reservations r ON r.id=p.reservation_id
@@ -166,7 +166,8 @@ if($pending){
   .'Confirming records the money, emails the guest their receipt and prints the hotel copy. Nothing is emailed or printed before you confirm.</p>';
   echo '<table class="tbl"><thead><tr><th>#</th><th>Requested</th><th>Guest</th><th>Against</th><th class="num">Hotel price</th><th class="num">Charged</th><th>Method</th><th>Action</th></tr></thead><tbody>';
  foreach($pending as $p){
-  $guest=trim((string)($p['guest_name']??''))?:trim((string)($p['customer_name']??''));
+   $guest=guest_name($p['guest_name']??'',(int)($p['guest_id']??0));
+   if(trim((string)($p['guest_name']??''))==='' && trim((string)($p['customer_name']??''))!=='') $guest=trim((string)$p['customer_name']);
   $email=trim((string)($p['guest_email']??''))?:trim((string)($p['customer_email']??''));
   $against=$p['order_number']?:($p['booking_number']?:'-');
   echo '<tr><td>'.e($p['id']).'</td><td>'.fmtdt($p['created_at']).'</td>'

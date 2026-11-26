@@ -514,6 +514,11 @@ function hp_ensure_procurement_tables(): void{
 }
 
 function e($v=null): string{ return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8'); }
+function guest_name($name=null,$id=0): string{
+ $name=trim((string)$name);
+ if($name!=='') return $name;
+ return (int)$id>0?'Guest #'.(int)$id:'Guest';
+}
 function money($v): string{ return 'UGX '.number_format((float)$v,0); }
 function num($v): string{ return number_format((float)$v,0); }
 function today(): string{ return date('Y-m-d'); }

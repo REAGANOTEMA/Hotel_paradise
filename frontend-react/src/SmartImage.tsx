@@ -14,7 +14,7 @@ export type ImageGroup =
   | 'beds-twin';
 
 type Variant = {w: number; ext: string; h: number; file?: string};
-type Entry = {ext: string; w: number; h: number; variants: Variant[]};
+type Entry = {ext: string; w: number; h: number; file?: string; variants: Variant[]};
 
 /** The folder a photo may actually live in. */
 export type ImageHome = ImageGroup | 'food';
@@ -219,13 +219,13 @@ function candidatesFor(entry: Entry, slug: string, widths: number[]): Array<{fil
 
   for (const target of widths) {
     const variant = entry.variants.find(v => v.w >= target);
-    if (variant) add(slug + '-' + variant.w + '.' + variant.ext, variant.w);
+    if (variant) add(variant.file ?? slug + '-' + variant.w + '.' + variant.ext, variant.w);
   }
 
   const ceiling = widths.length ? Math.max(...widths) : 0;
   const widestCopy = entry.variants.reduce((m, v) => Math.max(m, v.w), 0);
   const copyNearlyCovers = widestCopy >= entry.w * 0.6;
-  if (entry.w && entry.w <= ceiling * 1.6 && !copyNearlyCovers) add(slug + '.' + entry.ext, entry.w);
+  if (entry.w && entry.w <= ceiling * 1.6 && !copyNearlyCovers) add(entry.file ?? slug + '.' + entry.ext, entry.w);
 
   return out.sort((a, b) => a.w - b.w);
 }

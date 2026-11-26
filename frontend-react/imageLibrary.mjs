@@ -118,8 +118,13 @@ function scanFolder(dir) {
       entry.ext = ext.slice(1);
       entry.w = size.w;
       entry.h = size.h;
+      // Keep the real bytes when a filename cannot be rebuilt from its slug,
+      // for example an uppercase letter or an underscore in the original.
+      if (name !== slug + '.' + entry.ext) entry.file = name;
     } else {
-      entry.variants.push({ w: width, ext: ext.slice(1), h: size.h });
+      const variant = { w: width, ext: ext.slice(1), h: size.h };
+      if (name !== slug + '-' + width + '.' + variant.ext) variant.file = name;
+      entry.variants.push(variant);
     }
   }
 

@@ -215,7 +215,7 @@ if($order){
 
 $who=$customer?:$guest;
 if($who){
- $name=(string)$who['full_name'];
+ $name=guest_name($who['full_name']??'',$who['id']??0);
  $stays=$who['stays']??[];
  $myOrders=$who['orders']??[];
  $pays=$who['payments']??[];
@@ -319,7 +319,7 @@ if($order){
 if($who){
  $isC=($customer!==null);
  echo '<div class="panel"><div class="toolbar" style="margin-bottom:14px">';
- echo '<div><h2>'.e($who['full_name']).'</h2><p class="hint" style="margin:0">'.($isC?'Website customer':'Hotel guest').' &middot; guest since '.fmtdate($who['created_at']).'</p></div>';
+ echo '<div><h2>'.e($isC?$who['full_name']:guest_name($who['full_name']??'',$who['id']??0)).'</h2><p class="hint" style="margin:0">'.($isC?'Website customer':'Hotel guest').' &middot; guest since '.fmtdate($who['created_at']).'</p></div>';
  echo '<div class="bar"><button class="btn sm" type="button" onclick="printReceipt(\'who-'.($isC?'c':'g').(int)$who['id'].'\')">Print statement</button>';
  echo '<a class="btnGhost sm" href="'.BASE.'/index.php?page=overview">Close</a></div></div>';
 
@@ -388,7 +388,7 @@ foreach($recentCustomers as $c){
 echo '</div>';
 echo '<h3>Hotel guests</h3><div class="miniList">';
 foreach($recentGuests as $g){
- echo '<div class="li"><span><b><a href="'.BASE.'/index.php?page=overview&amp;guest='.(int)$g['id'].'">'.e($g['full_name']).'</a></b><br><small>'.e($g['phone']??'').' &middot; '.e($g['email']??'').'</small></span>';
+ echo '<div class="li"><span><b><a href="'.BASE.'/index.php?page=overview&amp;guest='.(int)$g['id'].'">'.e(guest_name($g['full_name'],$g['id'])).'</a></b><br><small>'.e($g['phone']??'').' &middot; '.e($g['email']??'').'</small></span>';
  echo '<b><a class="btnGhost sm" href="'.BASE.'/index.php?page=overview&amp;guest='.(int)$g['id'].'">Open</a></b></div>';
 }
 echo '</div></div></div>';

@@ -95,7 +95,7 @@ echo '<div class="toolbar"><a class="btn" href="'.BASE.'/index.php?page=security
 if($act==='lost'){
   echo '<div class="panel"><h2>Log found property</h2>'; form_open('security','lost');
   echo '<div class="formGrid"><div class="field"><label>Room (optional)</label><select name="room_id"><option value="">No room</option>'; foreach($rooms as $r) echo '<option value="'.(int)$r['id'].'">'.e($r['room_number']).'</option>'; echo '</select></div>';
-  echo '<div class="field"><label>Guest (optional)</label><select name="guest_id"><option value="">Unknown</option>'; foreach($guests as $g) echo '<option value="'.(int)$g['id'].'">'.e($g['full_name']).'</option>'; echo '</select></div></div>';
+  echo '<div class="field"><label>Guest (optional)</label><select name="guest_id"><option value="">Unknown</option>'; foreach($guests as $g) echo '<option value="'.(int)$g['id'].'">'.e(guest_name($g['full_name'],$g['id'])).'</option>'; echo '</select></div></div>';
   area('Description','description','','What was found and where?','',3).'<button class="btn">Record item</button>'; form_close(); echo '</div>';
   echo '<div class="panel"><h2>Lost property register</h2><table class="tbl"><thead><tr><th>Item</th><th>Found by</th><th>Found at</th><th>Status</th><th>Released to</th><th></th></tr></thead><tbody>';
   foreach($lost as $l) echo '<tr><td>'.nl2br(e($l['description'])).'<br><small>'.e($l['room_number']??'').'</small></td><td>'.e($l['found_name']??'').'</td><td>'.fmtdt($l['found_at']).'</td><td>'.status_badge($l['status']).'</td><td>'.e($l['released_to']??'').'</td><td>';

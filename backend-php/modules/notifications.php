@@ -178,11 +178,12 @@ echo '<div class="nModal" id="nModal" hidden><div class="nCard" role="dialog" ar
 
 $base=json_encode(BASE);
 $vapidJs=json_encode($vapid['public']??'');
+$csrfJs=json_encode(csrf_token());
 $canPush=$pushConfigured?'true':'false';
 echo <<<HTML
 <script>
 (function(){
- var BASE={$base}, VAPID={$vapidJs}, CAN_PUSH={$canPush};
+ var BASE={$base}, VAPID={$vapidJs}, CAN_PUSH={$canPush}, CSRF={$csrfJs};
  var state=document.getElementById('pushState');
  function setState(t,cls){ if(state){ state.textContent=t; state.className='notifyState'+(cls?' '+cls:''); } }
 
@@ -197,7 +198,7 @@ echo <<<HTML
   return fetch(BASE+'/notify_api.php?act='+act,{
    method:'POST',credentials:'same-origin',
    headers:{'Content-Type':'application/json'},
-   body:JSON.stringify(payload||{})
+   body:JSON.stringify(Object.assign({},payload||{},{'_csrf':CSRF}))
   }).then(function(r){ return r.json(); });
  }
 
