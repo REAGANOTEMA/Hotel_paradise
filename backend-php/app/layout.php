@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__.'/notify.php';
+require_once __DIR__.'/dashboard_ui.php';
 
 /** The rail, in groups. Every group and every link is dropped when the
  *  signed-in member is not allowed to open that module, so each person
@@ -301,7 +302,9 @@ function page_head(string $title,string $active='dashboard',string $sub=''): voi
  echo '<title>'.e($title).' | Hotel Paradise on the Nile</title>';
  echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
  echo '<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">';
- echo '<link rel="stylesheet" href="'.BASE.'/assets/admin.css">'; echo '<link rel="stylesheet" href="'.BASE.'/assets/luxury-admin.css">';
+ echo '<link rel="stylesheet" href="'.BASE.'/assets/admin.css">';
+ echo '<link rel="stylesheet" href="'.BASE.'/assets/luxury-admin.css">';
+ echo '<link rel="stylesheet" href="'.BASE.'/assets/dashboard-premium.css">';
  echo '<meta name="theme-color" content="#071A33">';
  echo '<meta name="mobile-web-app-capable" content="yes">';
  echo '<meta name="apple-mobile-web-app-capable" content="yes">';

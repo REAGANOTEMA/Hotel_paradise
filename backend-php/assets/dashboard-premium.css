@@ -1,0 +1,99 @@
+﻿/* Hotel Paradise Dashboard Premium - additive, no destructive overrides */
+:root{
+  --hp-navy:#071A33;--hp-navy-2:#0f2850;--hp-navy-3:#123056;
+  --hp-gold:#D4AF37;--hp-gold-soft:#E8CD78;--hp-gold-deep:#A9861B;
+  --hp-nebbi:#0B5D78;--hp-nebbi-2:#12809f;
+  --hp-bg:#f4f1e8;--hp-surface:#ffffff;--hp-surface-2:#fbfaf6;
+  --hp-line:#e5decd;--hp-muted:#5d6878;--hp-ink:#132033;
+  --hp-ok:#2e7d32;--hp-warn:#b26a00;--hp-bad:#c62828;
+  --hp-shadow:0 12px 30px rgba(7,26,51,.08);--hp-shadow-lg:0 24px 60px rgba(7,26,51,.14);
+  --hp-radius:18px;--hp-radius-sm:12px;
+}
+body{background:radial-gradient(1200px 420px at 100% -10%,rgba(212,175,55,.12),transparent 60%),radial-gradient(900px 340px at -5% 0,rgba(11,93,120,.08),transparent 60%),linear-gradient(180deg,#f8f5ec,#f2efe6)!important;}
+.top{backdrop-filter:blur(14px) saturate(140%);background:rgba(255,255,255,.86)!important;}
+.content{max-width:1760px;}
+.dashHero{position:relative;overflow:hidden;border-radius:24px;padding:28px 28px 24px;margin-bottom:20px;color:#fff;background:linear-gradient(135deg,rgba(7,26,51,.96),rgba(15,40,80,.92) 55%,rgba(11,93,120,.88));box-shadow:var(--hp-shadow-lg);border:1px solid rgba(212,175,55,.22)}
+.dashHero::before{content:'';position:absolute;inset:0;background:radial-gradient(700px 220px at 15% 0,rgba(212,175,55,.22),transparent 60%),radial-gradient(500px 220px at 100% 100%,rgba(18,128,159,.28),transparent 60%);pointer-events:none}
+.dashHero::after{content:'';position:absolute;top:-80px;right:-40px;width:220px;height:220px;border-radius:50%;border:1px solid rgba(212,175,55,.18)}
+.dashHeroGrid{position:relative;display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:end}
+.dashEyebrow{display:inline-flex;gap:8px;align-items:center;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--hp-gold-soft);margin-bottom:10px}
+.dashEyebrow::before{content:'';width:28px;height:1px;background:var(--hp-gold)}
+.dashHero h2{font-family:'Playfair Display',serif;font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin:0 0 10px;color:#fff}
+.dashHero p{margin:0;color:rgba(255,255,255,.82);max-width:760px;font-size:14px;line-height:1.7}
+.dashHeroMeta{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+.heroChip{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(8px);font-size:12px;color:#fff}
+.heroChip b{color:var(--hp-gold-soft);margin-right:6px}
+.dashHeroActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.dashHeroActions .btn,.dashHeroActions .btnGhost{min-height:42px}
+.dashHeroActions .btnGhost{color:#fff;border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.03)}
+.dashHeroActions .btnGhost:hover{color:var(--hp-gold-soft);border-color:rgba(212,175,55,.5);background:rgba(212,175,55,.08)}
+
+/* KPI upgrade */
+.kpis{gap:16px;margin-bottom:20px}
+.kpi{border-radius:18px!important;border:1px solid rgba(212,175,55,.14)!important;padding:18px 18px 16px!important;box-shadow:var(--hp-shadow)!important;background:linear-gradient(180deg,#fff,#fbfaf6)!important}
+.kpi::before{width:4px!important;border-radius:18px 0 0 18px}
+.kpi:hover{transform:translateY(-2px)!important;box-shadow:var(--hp-shadow-lg)!important}
+.kpiVal{font-size:clamp(26px,2.4vw,34px)!important;letter-spacing:-.02em}
+.kpiHint{color:var(--hp-muted)!important}
+.kpiTrend{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.kpiTrend.up{background:rgba(46,125,50,.1);color:#236428}.kpiTrend.down{background:rgba(198,40,40,.08);color:#b32626}.kpiTrend.flat{background:rgba(11,93,120,.08);color:var(--hp-nebbi)}
+
+/* Panels */
+.panel{border-radius:20px!important;border:1px solid rgba(212,175,55,.14)!important;box-shadow:var(--hp-shadow)!important;background:rgba(255,255,255,.94)!important}
+.panel h2{font-size:20px!important;margin-bottom:4px!important}
+.panel .hint{margin-bottom:16px!important;color:#5e6978!important;line-height:1.6}
+.panelHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.panelHead .hint{margin:0!important}
+.panelTools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pillFilter{display:inline-flex;gap:4px;padding:4px;background:#f4efe2;border:1px solid rgba(212,175,55,.14);border-radius:999px}
+.pillFilter span,.pillFilter a{padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;color:var(--hp-muted);text-decoration:none}
+.pillFilter .on{background:#fff;color:var(--hp-navy);box-shadow:0 2px 8px rgba(7,26,51,.08)}
+
+/* Chart cards */
+.chartGrid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-bottom:18px}
+.chartCard{grid-column:span 6;min-width:0}
+.chartCard.span-4{grid-column:span 4}.chartCard.span-8{grid-column:span 8}.chartCard.span-12{grid-column:span 12}.chartCard.span-3{grid-column:span 3}
+.chartWrap{width:100%;overflow:hidden}
+.chartSvg{width:100%;height:auto;display:block}
+.chartLegend{display:flex;flex-wrap:wrap;gap:10px 14px;margin-top:12px}
+.legendItem{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--hp-muted)}
+.legendDot{width:10px;height:10px;border-radius:3px;flex:none}
+.chartEmpty{padding:28px;border:1px dashed rgba(212,175,55,.45);border-radius:16px;background:linear-gradient(180deg,#fcfbf7,#f6f2e8);text-align:center;color:var(--hp-muted)}
+.chartEmpty b{display:block;color:var(--hp-navy);font-size:15px;margin-bottom:4px}
+
+/* Progress/list visuals */
+.metricRows{display:flex;flex-direction:column;gap:12px}
+.metricRow{display:grid;grid-template-columns:minmax(120px,1.2fr) 2fr auto;gap:12px;align-items:center}
+.metricLabel{font-size:13px;color:var(--hp-ink);font-weight:600;min-width:0}
+.metricLabel small{display:block;color:var(--hp-muted);font-weight:500}
+.metricBar{height:10px;background:#ece7da;border-radius:999px;overflow:hidden;position:relative}
+.metricBar > i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--hp-gold-deep),var(--hp-gold));}
+.metricBar.nebbi > i{background:linear-gradient(90deg,#0b5d78,#17a0c5)}
+.metricBar.ok > i{background:linear-gradient(90deg,#2e7d32,#66bb6a)}
+.metricBar.bad > i{background:linear-gradient(90deg,#c62828,#ef5350)}
+.metricVal{font-size:12px;font-weight:700;color:var(--hp-navy);white-space:nowrap}
+
+/* Status board */
+.statusGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.statusTile{padding:14px;border-radius:14px;background:linear-gradient(180deg,#fff,#f9f7f1);border:1px solid var(--hp-line)}
+.statusTile b{display:block;font-size:22px;font-family:'Playfair Display',serif;color:var(--hp-navy);line-height:1}
+.statusTile span{display:block;margin-top:6px;font-size:12px;color:var(--hp-muted);font-weight:600}
+
+/* Tables */
+.tbl th{background:#fbf8f1!important;color:#566274!important}
+.tbl td,.tbl th{padding:12px 12px!important}
+.tbl tbody tr:hover td{background:#fcfaf4!important}
+.tableScroll{border-radius:14px}
+
+/* Insight strip */
+.insightStrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px}
+.insight{padding:14px 16px;border-radius:14px;background:#f8f5ec;border:1px solid rgba(212,175,55,.12)}
+.insight span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--hp-muted);font-weight:700}
+.insight b{display:block;margin-top:4px;font-size:16px;color:var(--hp-navy)}
+
+/* Responsive */
+@media (max-width:1200px){.chartCard.span-4,.chartCard.span-8{grid-column:span 6}.dashHeroGrid{grid-template-columns:1fr}.dashHeroMeta{justify-content:flex-start}}
+@media (max-width:900px){.chartGrid{gap:14px}.chartCard,.chartCard.span-3,.chartCard.span-4,.chartCard.span-8,.chartCard.span-12{grid-column:span 12}.metricRow{grid-template-columns:1fr;gap:6px}.metricVal{text-align:left}}
+@media (max-width:640px){.dashHero{padding:22px 18px;border-radius:20px}.dashHeroActions .btn,.dashHeroActions .btnGhost{width:100%}.kpiVal{font-size:28px!important}}
+@media print{.dashHero,.pillFilter,.dashHeroActions,.panelTools .btn,.panelTools .btnGhost{box-shadow:none!important}.dashHero{background:#fff!important;color:#000!important;border:1px solid #ccc}.dashHero h2,.dashHero p,.dashEyebrow,.heroChip,.heroChip b{color:#000!important}}
+@media (prefers-reduced-motion:reduce){.kpi,.sideNav a,.btn,.btnGhost{transition:none!important;transform:none!important}}

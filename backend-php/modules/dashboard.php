@@ -7,7 +7,8 @@ $t=today();
 // tomorrow). Written as a range rather than DATE(created_at)=? so MySQL can
 // use the index on the column instead of scanning the whole table.
 $day0=$t.' 00:00:00';
-$day1=date('Y-m-d',strtotime($t.' +1 day')).' 00:00:00';
+=date('Y-m-d',strtotime(.' +1 day')).' 00:00:00';
+$week0=date('Y-m-d',strtotime('monday this week')).' 00:00:00';
 $k=[
  'arrivals'=>val("SELECT COUNT(*) FROM reservations WHERE status IN('pending','confirmed') AND check_in>=? AND check_in<?",[$day0,$day1]),
  'inhouse'=>val("SELECT COUNT(*) FROM rooms WHERE status='occupied'"),
