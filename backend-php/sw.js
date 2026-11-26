@@ -15,8 +15,6 @@ self.addEventListener('activate', function(event){
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('fetch', function(){});
-
 self.addEventListener('push', function(event){
   var payload = {};
   try { payload = event.data ? event.data.json() : {}; }
