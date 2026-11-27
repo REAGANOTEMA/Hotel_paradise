@@ -1,0 +1,213 @@
+.lux-b{
+  --luxb-gold:#C9A227;
+  --luxb-gold-deep:#A9861B;
+  --luxb-navy:#071A33;
+  --luxb-navy-2:#0F2850;
+  --luxb-nile:#0B5D78;
+  --luxb-nebula:#1E3A5F;
+  --luxb-ivory:#F8F5EC;
+  --luxb-ink:#172033;
+  --luxb-muted:#5D6878;
+  --luxb-line:rgba(201,162,39,.26);
+  --luxb-ease:cubic-bezier(.22,.7,.3,1);
+  font-family:'Inter',Arial,sans-serif;
+  color:var(--luxb-ink);
+  background:var(--luxb-ivory)
+}
+.lux-b h1,.lux-b h2,.lux-b h3,.lux-b h4{font-family:'Playfair Display',Georgia,serif;font-weight:500}
+.lux-b p{line-height:1.7}
+.lux-b .eyebrow{font-family:'Inter',Arial,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--luxb-gold-deep)}
+.lux-b :focus-visible{outline:2px solid var(--luxb-gold);outline-offset:3px}
+.lux-b .btn{font-family:'Inter',Arial,sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:none}
+.lux-b .pageHero{background:var(--luxb-navy)}
+.lux-b .pageHero.hasCover::after{background:linear-gradient(90deg,rgba(7,26,51,.94) 0%,rgba(7,26,51,.68) 44%,rgba(7,26,51,.22) 100%),linear-gradient(0deg,rgba(7,26,51,.34) 0%,rgba(7,26,51,0) 44%)}
+.lux-b .pageHero h1{font-size:clamp(2.4rem,4.6vw,3.9rem);line-height:1.08;letter-spacing:-.02em;color:#fff}
+.lux-b .pageHero p{font-size:clamp(.98rem,1.2vw,1.08rem);line-height:1.75;color:#dce4ee;max-width:64ch}
+.lux-b .pageHero .eyebrow{color:var(--luxb-gold)}
+.lux-b .backLink{border:1px solid rgba(201,162,39,.5);border-radius:2px;background:rgba(7,26,51,.62);font-size:10px;letter-spacing:.18em;-webkit-backdrop-filter:none;backdrop-filter:none}
+.lux-b .center h2::after{width:48px;height:1px;border-radius:0;background:var(--luxb-gold)}
+.lux-b .intro{max-width:62ch;line-height:1.75}
+.lux-b .bookMsg{border-radius:2px;border-left-width:2px}
+
+.lux-menu .menuIntro .pageHeroInner{max-width:980px}
+.lux-menu .menuIntro h1{max-width:17ch}
+.lux-menu .menuJump{background:rgba(248,245,236,.98);border-bottom:1px solid var(--luxb-line);box-shadow:0 6px 18px rgba(7,26,51,.05);-webkit-backdrop-filter:none;backdrop-filter:none}
+.lux-menu .menuTools{padding:11px 0 7px;gap:16px}
+.lux-menu .menuSearch input{height:42px;border:1px solid #ded8c8;border-radius:3px;background:#fff;box-shadow:none;font-size:14px}
+.lux-menu .menuSearch input:focus{border-color:var(--luxb-gold);box-shadow:0 0 0 3px rgba(201,162,39,.16)}
+.lux-menu .menuResult{color:var(--luxb-navy);font-size:10px;letter-spacing:.16em}
+.lux-menu .menuMeta{color:var(--luxb-muted);font-size:10.5px;letter-spacing:.16em}
+.lux-menu .menuMetaCount{font-variant-numeric:tabular-nums}
+.lux-menu .menuSort span{color:var(--luxb-gold-deep);font-size:10px;letter-spacing:.16em}
+.lux-menu .menuSort select{border-radius:3px}
+.lux-menu .catChip{border:1px solid transparent;border-bottom:2px solid transparent;border-radius:0;background:transparent;box-shadow:none;color:var(--luxb-muted);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:8px 11px;transform:none;white-space:nowrap}
+.lux-menu .catChip small{color:var(--luxb-gold-deep);font-size:9px;font-variant-numeric:tabular-nums;margin-left:4px}
+.lux-menu .catChip:hover{background:rgba(7,26,51,.04);border-color:rgba(7,26,51,.08);border-bottom-color:var(--luxb-gold);box-shadow:none;color:var(--luxb-navy);transform:none}
+.lux-menu .catChip.on{background:var(--luxb-navy);border-color:var(--luxb-navy);border-bottom-color:var(--luxb-gold);color:#fff;box-shadow:none}
+.lux-menu .catChip.on small{color:var(--luxb-gold)}
+.lux-menu .jumpOrder{border-radius:2px;border-bottom:2px solid var(--luxb-gold);background:var(--luxb-navy);color:#fff;box-shadow:none;font-size:10px;letter-spacing:.14em;padding:10px 15px}
+.lux-menu .jumpOrder:hover{background:var(--luxb-navy-2);box-shadow:none;transform:translateY(-1px)}
+.lux-menu .menuSpotlight{border:1px solid rgba(201,162,39,.3);border-radius:2px;box-shadow:none}
+.lux-menu .spotlightCopy h2{font-size:clamp(2rem,3.6vw,3.35rem);font-weight:500;line-height:1.06;letter-spacing:-.015em}
+.lux-menu .spotlightDish em,.lux-menu .catAllCount{font-variant-numeric:tabular-nums}
+.lux-menu .catAllHead h2{font-weight:500;letter-spacing:-.015em}
+.lux-menu .catAllCount{color:var(--luxb-gold-deep);letter-spacing:.14em;font-size:10px}
+.lux-menu .dishGrid{gap:18px}
+.lux-menu .dishCard{border:1px solid #e5dfd1;border-radius:3px;background:#fff;box-shadow:none}
+.lux-menu .dishCard:hover{transform:translateY(-2px);border-color:rgba(201,162,39,.55);box-shadow:0 10px 24px rgba(7,26,51,.09)}
+.lux-menu .dishCard.held{border-color:var(--luxb-gold);box-shadow:inset 0 0 0 1px rgba(201,162,39,.32)}
+.lux-menu .dishOpenMedia{background:var(--luxb-navy)}
+.lux-menu .dishCat{background:rgba(7,26,51,.92);color:var(--luxb-gold);font-size:8.5px;letter-spacing:.18em}
+.lux-menu .dishStatus{font-size:8.5px;letter-spacing:.12em}
+.lux-menu .dishTitle{font-size:1.06rem;font-weight:500;line-height:1.25}
+.lux-menu .dishDesc{line-height:1.55}
+.lux-menu .dishPriceRow{border-top:1px solid var(--luxb-line)}
+.lux-menu .dishPriceRow b,.lux-menu .lineTotal,.lux-menu .trayTotal b,.lux-menu .quickStep output,.lux-menu .orderPanelTitle em{font-variant-numeric:tabular-nums}
+.lux-menu .dishPriceRow b{color:var(--luxb-navy);font-size:14px}
+.lux-menu .quickStep{border:1px solid #dcd6c6;border-radius:3px}
+.lux-menu .addBtn{border:1px solid var(--luxb-navy);border-bottom:2px solid var(--luxb-gold);border-radius:3px;background:#fff;color:var(--luxb-navy);box-shadow:none;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.lux-menu .addBtn:hover:not(:disabled){background:var(--luxb-navy);color:#fff;box-shadow:none}
+.lux-menu .addBtn:disabled:hover{background:#fff;color:var(--luxb-navy);box-shadow:none}
+.lux-menu .moreBtn{border-radius:3px;border-color:#ddd6c4;background:#fdfbf5;font-size:10px;letter-spacing:.16em}
+.lux-menu .moreBtn:hover{border-color:var(--luxb-gold);box-shadow:none;background:#fff}
+.lux-menu .orderNote{border-left:2px solid var(--luxb-gold);box-shadow:none;background:#fff;line-height:1.75}
+.lux-menu .orderPanel,.lux-menu .modalPanel{border:1px solid var(--luxb-line);border-radius:3px;background:var(--luxb-ivory);box-shadow:0 12px 30px rgba(7,26,51,.09)}
+.lux-menu .orderPanelHead{padding:18px 24px;background:#fff}
+.lux-menu .orderPanelHead::before{width:2px;background:var(--luxb-gold)}
+.lux-menu .orderPanelTitle b{font-size:1.35rem;font-weight:500}
+.lux-menu .orderPanelBody{background:#fff}
+.lux-menu .orderPanelToggle{border-radius:2px;font-size:10px;letter-spacing:.16em}
+.lux-menu .trayItem{border-bottom:1px solid rgba(7,26,51,.09)}
+.lux-menu .trayThumb{border-radius:2px}
+.lux-menu .trayTotal{background:#fbf8ef;border:1px solid var(--luxb-line);border-radius:2px}
+.lux-menu .trayTotal b{font-size:1.4rem}
+.lux-menu .bookAs{background:#fbf8ef;border-left:2px solid var(--luxb-gold);border-radius:2px}
+.lux-menu .linkBtn{font-size:12px;letter-spacing:.04em}
+.lux-menu .orderPill{border:1px solid rgba(201,162,39,.45);border-radius:3px;background:var(--luxb-navy);box-shadow:0 8px 22px rgba(7,26,51,.2);padding:8px 14px 8px 8px;gap:10px}
+.lux-menu .orderPill:hover{background:var(--luxb-navy-2);box-shadow:0 10px 26px rgba(7,26,51,.26)}
+.lux-menu .orderPillDot{min-width:28px;width:28px;height:28px;font-size:12px}
+.lux-menu .orderPillText b{font-size:13px;font-weight:500}
+.lux-menu .orderPillText em{font-size:10px;letter-spacing:.12em}
+.lux-menu .modalPanel::before{border:1px solid rgba(201,162,39,.45);box-shadow:none}
+.lux-menu .modalMedia{background:var(--luxb-navy)}
+.lux-menu .modalTitle{font-size:clamp(1.8rem,3vw,2.55rem);font-weight:500;line-height:1.1}
+.lux-menu .modalPrice{font-variant-numeric:tabular-nums}
+.lux-menu .modalBar{border-top:1px solid var(--luxb-line)}
+.lux-menu .pickCard{border:1px solid #ddd7c7;border-radius:3px;background:#fff}
+.lux-menu .pickCard.on{border-color:var(--luxb-gold);box-shadow:inset 0 0 0 1px var(--luxb-gold)}
+.lux-menu .pickPrice{font-variant-numeric:tabular-nums}
+.lux-menu .askCall{border-bottom:2px solid var(--luxb-gold)}
+.lux-menu .cartPanel{background:var(--luxb-ivory);box-shadow:-14px 0 44px rgba(7,26,51,.28)}
+.lux-menu .cartHead{background:var(--luxb-navy);border-bottom:1px solid var(--luxb-line)}
+.lux-menu .cartClose{border-radius:3px}
+.lux-menu .cartKeep{border-radius:3px;font-size:10px;letter-spacing:.16em}
+@media(max-width:700px){
+  .lux-menu .orderPill{right:14px;bottom:16px}
+  .lux-menu .spotlightCopy{max-width:none}
+}
+
+.lux-account .accountIntro{padding-top:calc(var(--navh) + 44px);padding-bottom:52px}
+.lux-account .accountIntro::after{background:linear-gradient(90deg,rgba(7,26,51,.94),rgba(7,26,51,.68) 52%,rgba(7,26,51,.28))}
+.lux-account .accountIntro h1{font-size:clamp(2.1rem,3.4vw,3rem);max-width:18ch}
+.lux-account .accountIntro h1,.lux-account .accountIntro p{text-align:left}
+.lux-account .luxLoungeWrap{padding-top:48px}
+.lux-account .luxLoungeCard{border:1px solid var(--luxb-line);border-top:2px solid var(--luxb-gold);border-radius:3px;background:#fff;box-shadow:0 14px 34px rgba(7,26,51,.06)}
+.lux-account .luxBrand{padding-bottom:18px;margin-bottom:20px;border-bottom:1px solid var(--luxb-line)}
+.lux-account .luxBrand img{border:1px solid var(--luxb-gold);border-radius:3px;box-shadow:none;background:#fff}
+.lux-account .luxBrand b{font-size:1.3rem;font-weight:500;letter-spacing:.02em}
+.lux-account .luxBrand span{color:var(--luxb-gold-deep);font-size:9px;letter-spacing:.2em}
+.lux-account .luxGuestHead{gap:20px;padding:6px 0 4px}
+.lux-account .luxGuestHead h3{font-size:clamp(1.7rem,2.6vw,2.2rem);font-weight:500}
+.lux-account .luxAvatar{border:1px solid var(--luxb-gold);box-shadow:0 0 0 4px rgba(201,162,39,.1)}
+.lux-account .luxAvatar span{font-weight:500}
+.lux-account .acctPhotoActions .btn{border-bottom:2px solid var(--luxb-gold)}
+.lux-account .luxStep{display:inline-flex;align-items:center;gap:10px;color:var(--luxb-gold-deep)}
+.lux-account .luxStep::before{content:none}
+.lux-account .luxStepOne::before,.lux-account .luxStepTwo::before{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border:1px solid var(--luxb-gold);color:var(--luxb-navy);font-size:10px;letter-spacing:0}
+.lux-account .luxStepOne::before{content:'01'}
+.lux-account .luxStepTwo::before{content:'02'}
+.lux-account .luxStepForm h3{font-size:clamp(1.7rem,2.8vw,2.15rem);font-weight:500;line-height:1.16}
+.lux-account .luxStepForm .planField{margin-top:16px}
+.lux-account .acctSection{color:var(--luxb-navy);border-bottom:1px solid var(--luxb-line);font-size:10px;letter-spacing:.2em}
+.lux-account .luxProfileGrid{column-gap:24px;row-gap:18px}
+.lux-account .luxProfileGrid>.planField{padding-bottom:12px;border-bottom:1px solid rgba(7,26,51,.07)}
+.lux-account .luxProfileToggle{margin-top:20px;border:1px solid var(--luxb-line);border-radius:3px;background:#fdfbf5;font-size:13px}
+.lux-account .luxProfileToggle:hover{border-color:var(--luxb-gold);background:#fff}
+.lux-account .acctCheck input{accent-color:var(--luxb-gold-deep)}
+.lux-account .luxActivity{gap:8px}
+.lux-account .luxActivityRow{border:1px solid var(--luxb-line);border-left:2px solid var(--luxb-gold);border-radius:3px;background:#fff;padding:14px 18px;transition:border-color .22s var(--luxb-ease),transform .22s var(--luxb-ease)}
+.lux-account .luxActivityRow:hover{border-color:rgba(201,162,39,.55);transform:translateY(-1px)}
+.lux-account .luxActivityRow b{font-weight:500}
+.lux-account .luxActivityRow em{font-variant-numeric:tabular-nums}
+.lux-account .luxGoogle{min-height:44px;margin:4px 0 6px}
+.lux-account .acctOr span{color:var(--luxb-muted);letter-spacing:.18em}
+.lux-account .plannerNote{color:var(--luxb-muted);font-size:12.5px}
+.lux-account .footLink{color:var(--luxb-nile)}
+.lux-account .luxQuickLinks .btn{border-bottom:2px solid var(--luxb-gold)}
+@media(max-width:560px){
+  .lux-account .luxGuestHead{align-items:flex-start}
+  .lux-account .accountIntro h1,.lux-account .accountIntro p{text-align:left}
+}
+
+.lux-events .eventsIntro .pageHeroInner{max-width:1120px}
+.lux-events .eventsIntro h1{max-width:15ch}
+.lux-events .pageHeroBgImg{filter:saturate(.92)}
+.lux-events .venueGrid .venue{border:1px solid var(--luxb-line);border-radius:3px;background:#fff;box-shadow:none;overflow:hidden}
+.lux-events .venueGrid .venue:hover{transform:translateY(-2px);border-color:rgba(201,162,39,.48);box-shadow:0 10px 24px rgba(7,26,51,.08)}
+.lux-events .venueBody{padding:24px}
+.lux-events .venueBody h3{font-size:1.5rem;font-weight:500}
+.lux-events .venue .pill{border:0;border-bottom:1px solid var(--luxb-gold);border-radius:0;padding:0 0 7px;margin:0 0 12px;color:var(--luxb-gold-deep);font-size:10px;letter-spacing:.16em}
+.lux-events .buffetPrice{color:var(--luxb-nile);font-variant-numeric:tabular-nums}
+.lux-events .buffetTier{border:1px solid var(--luxb-line);border-top:2px solid var(--luxb-gold);border-radius:3px;box-shadow:none;background:#fff}
+.lux-events .buffetNote{color:var(--luxb-muted);line-height:1.75}
+.lux-events .luxOcc{border-radius:3px;border:1px solid var(--luxb-line);border-left:2px solid var(--luxb-gold);box-shadow:none;background:#fff}
+.lux-events .luxOcc h3{font-weight:500}
+.lux-events .luxFeature{border:1px solid var(--luxb-line);border-left:2px solid var(--luxb-gold);border-radius:3px;box-shadow:none;background:#fff}
+.lux-events .luxFeature b{font-weight:500}
+.lux-events .luxGallery .photoBox{border:1px solid var(--luxb-line);border-radius:2px}
+.lux-events .frameCap{letter-spacing:.14em;font-size:10px}
+.lux-events .luxEnquiry{border:1px solid rgba(201,162,39,.35);border-top:2px solid var(--luxb-gold);border-radius:3px;background:var(--luxb-navy);color:#fff;box-shadow:none}
+.lux-events .luxEnquiry .planField label{color:#dbe4ef;font-size:10px;letter-spacing:.16em}
+.lux-events .luxEnquiry .planField input,.lux-events .luxEnquiry .planField select,.lux-events .luxEnquiry textarea{border:1px solid rgba(255,255,255,.25);border-radius:3px;background:#fff;color:var(--luxb-ink)}
+.lux-events .luxEnquiry .planField input:focus,.lux-events .luxEnquiry .planField select:focus,.lux-events .luxEnquiry textarea:focus{border-color:var(--luxb-gold);box-shadow:0 0 0 3px rgba(201,162,39,.2)}
+.lux-events .luxEnquiry .planBook:hover:not(.loading){background:var(--luxb-gold);border-color:var(--luxb-gold);color:var(--luxb-navy)}
+.lux-events .luxEnquiry .bookMsg{border-radius:2px;background:rgba(255,255,255,.96)}
+.lux-events .luxEnquiry .evFormNote{color:#c7d3e1}
+.lux-events .luxEnquiry .footLink{color:#f0d78d}
+@media(min-width:1121px){
+  .lux-events .venueGrid .venue{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+  .lux-events .venueGrid .venue .photoBox{height:100%;min-height:320px}
+  .lux-events .venueGrid .venue:nth-child(even) .photo{order:2}
+  .lux-events .venueGrid .venue:nth-child(even) .venueBody{order:1}
+  .lux-events .venueGrid .venueBody{justify-content:center}
+}
+
+.lux-facilities .facilitiesIntro .pageHeroInner{max-width:900px}
+.lux-facilities .facilitiesIntro h1{max-width:13ch}
+.lux-facilities .luxFeature .photoBox{border:1px solid var(--luxb-line);border-radius:2px}
+.lux-facilities .luxFeature .facIdx{font-family:'Inter',Arial,sans-serif;font-size:10px;letter-spacing:.24em;color:var(--luxb-gold-deep)}
+.lux-facilities .facBody h2{font-size:clamp(1.8rem,3.2vw,2.55rem);font-weight:500;line-height:1.12}
+.lux-facilities .facText{max-width:56ch;font-size:15.5px;line-height:1.8}
+.lux-facilities .luxGift{border:1px solid var(--luxb-line);border-top:2px solid var(--luxb-gold);border-radius:3px;box-shadow:none;background:#fff}
+.lux-facilities .luxGift b{font-weight:500}
+.lux-facilities .luxMosaic{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(150px,16vw,240px);gap:12px}
+.lux-facilities .luxMosaic .photoBox{width:100%;height:100%;border:1px solid rgba(201,162,39,.24);border-radius:2px}
+.lux-facilities .luxMosaicOne{grid-column:span 2;grid-row:span 2}
+.lux-facilities .luxMosaicTwo,.lux-facilities .luxMosaicThree{grid-column:span 2}
+.lux-facilities .frameCap{letter-spacing:.14em;font-size:10px}
+.lux-facilities .luxCompactForm{border:1px solid var(--luxb-line);border-top:2px solid var(--luxb-gold);border-radius:3px;background:#fff;box-shadow:none}
+.lux-facilities .luxCompactForm .planGrid{column-gap:18px;row-gap:12px}
+.lux-facilities .luxCompactForm .evFormNote{color:var(--luxb-muted)}
+.lux-facilities .luxCompactForm .footLink{color:var(--luxb-nile)}
+@media(max-width:760px){
+  .lux-facilities .luxMosaic{grid-template-columns:1fr;grid-auto-rows:auto}
+  .lux-facilities .luxMosaic .photoBox{height:auto;aspect-ratio:16 / 9}
+  .lux-facilities .luxMosaicOne,.lux-facilities .luxMosaicTwo,.lux-facilities .luxMosaicThree{grid-column:auto;grid-row:auto}
+}
+
+.lux-b a,.lux-b button,.lux-b input,.lux-b select,.lux-b textarea{transition-duration:.22s}
+.lux-b .reveal{transition-duration:.32s}
+@media(prefers-reduced-motion:reduce){
+  .lux-b *,.lux-b *::before,.lux-b *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .lux-b .venueGrid .venue:hover,.lux-b .dishCard:hover,.lux-b .luxActivityRow:hover{transform:none}
+}

@@ -734,7 +734,39 @@ Every implementation batch must verify:
 
 - Discovery and image/integration audits: complete.
 - Design direction, typography, color, motion and page-by-page improvement plan: complete.
-- Temp design brief for implementation agents: not yet written.
-- Implementation: not started.
-- Build/typecheck/browser verification: not yet run for redesign.
-- No public files have been modified for this redesign yet.
+- Temp design brief for implementation agents: written at `%TEMP%\hotel-paradise-luxury-yxme3fjj.uf4\brief.md`.
+- Implementation: ready to begin with additive CSS/JSX changes.
+- Build/typecheck/browser verification: not yet run for this transformation.
+- No public files have been modified for this transformation yet.
+
+## 15. 2026-11-27 Verification Addendum
+
+### 15.1 Complete page inventory confirmed
+
+Public Vite inputs and deployed pages: `home/index`, `rooms`, `menu`, `pay`, `account`, `events`, `facilities`, `news`, `talk`, `terms`, `privacy`, `cookies`; utility pages: `offline`, `qr/index`, `management-system` redirect. Management console modules: 41 pages, matching `page_caps()` and `nav_groups()` exactly — dashboard, overview, analytics, integrity, reservations, frontdesk, rooms, guests, news, events, messages, guest_relations, testimonials, restaurant, bar, pos, fnb, room_service, kitchen, kds, housekeeping, maintenance, shifts, inventory, suppliers, purchases, cashier, accountant, auditor, finance, invoices, expenses, approvals, reports, audit, users, hr, security, notifications, trash, profile.
+
+All 12 deployed root HTML files match their `dist` counterparts. Root-only `assets/Hotel-Paradise-on-the-Nile-Logo.webp` must be preserved when syncing builds.
+
+### 15.2 Fonts, colors, components, animations and layouts confirmed
+
+- Fonts: Inter 400/500/600/700 body/UI and Playfair Display 500/600/700 headings, loaded in every HTML shell via Google Fonts with preconnect and `display=swap`; no local font files in active source.
+- Colors: canonical tokens already exist at `styles.css:5-15`; conflicting late tokens at `styles.css:2992-3056` cause duplicate button/card/footer systems and must be normalized rather than expanded.
+- Shared components: `TopBar`, `PageNav`, `Footer`, `ExploreMore`, `EndLinks`, `AccountGate`, `HeroCoverFrame`, `PageHeroCover`, `SmartImage`, `MenuConcierge`, `LegalPage`, `buttonShake`, reveal/cinematic hooks.
+- Animations: hero zoom/carousel, section reveal, card and button hover, news spotlight, concierge pulse, install prompt, footer pulse; global reduced-motion rules exist and must stay authoritative.
+- Mobile: existing breakpoints and `overflow-x:clip` guards exist; sticky install prompt and concierge launcher can collide and must be checked at 390px/768px/1024px/1440px/1920px.
+
+### 15.3 Image assessment and preservation decisions
+
+- The actual asset library contains 472 meaningful top-level/hero/gallery/facilities/room images plus the full dish/food catalogs; `dist/images` matches the root library.
+- Keep the approved home hero sequence and copy. Preserve all original image files.
+- Correct misleading references by pointing to existing real hotel photographs, not by adding new photos: Terms should stop using `hero/hotel-1920.webp` because it is byte-identical to `hero/food-pizza-1920.webp`; Talk should stop using the 548x364 `hero-hotel-entrence.jpg`; Events should use a large existing hall photo rather than only the 2000x624 banner; News should include the existing 1440px `hero/coctail-juice.webp`; wide room covers should avoid portrait `bed-twin-1920.webp` and `bed-deluxe-1920.webp`.
+- Strong existing candidates: `hero/pool-1920.webp`, `hero/view-1920.webp`, `hero/bed-suite-1920.webp`, `hero/bed-executive-1920.webp`, `hero/food-pizza-two-1920.webp`, `hero/food-breakfast-1920.webp`, `gallery/exterior1.jpg`, `gallery/exterior2.jpg`, `gallery/drone1.jpg`, `gallery/nile-hall1.jpg`, `meeting-rooms/nile-hall-meeting-room3.jpg`, `facilities/*`, `twin-bed-images/bed1.jpg`, `rooms/triple-room.jpg`, `deluxe-double-beds-images/deluxe-double-sits.jpg`.
+- Manifest issues to preserve only if used, otherwise avoid: eight missing paths, three case-only mismatches, 14 numbered-file width misreads and three AVIF entries with 0x0 dimensions.
+
+### 15.4 Functionality and dashboard findings
+
+- PHP lint: 80 of 81 files pass. Fatal defect: `backend-php/modules/dashboard.php:9-10` has a broken `$day1` assignment and must be repaired before any dashboard verification.
+- Database check passes: both databases open and configured accounts work; 126 system tables exist.
+- Missing runtime schema objects are already guarded in several modules but affect full feature depth: `reservation_holds`, `payment_notifications`, finance workspace tables, and 18 enterprise expansion tables. Do not apply destructive SQL during this visual transformation; report remaining schema upgrades separately.
+- Public API actions currently wired: rooms, menu, booking, order, payment, event, facility, guest_message, testimonials, news, news_react, news_comment, account, avatar, currencies, quote, checkout, pesapal_ipn, pesapal_callback, health. No standalone newsletter endpoint exists; marketing opt-in is part of the account profile.
+- Console whitelist, module files and navigation align at 41 pages. Console POSTs are CSRF-protected. Public API needs rate limiting/proof hardening separately; do not weaken or bypass payment settlement while polishing design.

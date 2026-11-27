@@ -331,7 +331,7 @@ function VoiceGuide({src, reference, amount}: {src: string; reference: string; a
  React.useEffect(() => () => { try { window.speechSynthesis.cancel(); } catch { /* leaving */ } }, []);
 
  return (
-  <div className={'voiceGuide' + (playing ? ' on' : '')}>
+  <div className={'voiceGuide lux-voice-guide' + (playing ? ' on' : '')}>
    <span className="vgIcon" aria-hidden="true">
     <svg viewBox="0 0 24 24" width="20" height="20"><path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.6a4.7 4.7 0 0 1 0 6.8"/><path d="M18.4 6a8.4 8.4 0 0 1 0 12"/></svg>
    </span>
@@ -701,8 +701,8 @@ function PayPage() {
    return <div>
     <TopBar/>
     <PageNav/>
-    <section className="payWrap" style={{paddingTop: 70, paddingBottom: 90}}>
-     <div className="payCard" style={{maxWidth: 520, margin: '0 auto', textAlign: 'center'}}>
+    <section className="payWrap lux-pay-wrap" style={{paddingTop: 70, paddingBottom: 90}}>
+     <div className="payCard lux-pay-card" style={{maxWidth: 520, margin: '0 auto', textAlign: 'center'}}>
       <p className="eyebrow">SECURE CHECKOUT</p>
       <h3>One moment&hellip;</h3>
       <p className="plannerNote">Taking you to sign in. Your booking reference and amount are kept exactly as they are, and you come straight back here.</p>
@@ -716,8 +716,8 @@ if (done) {
   return <div className="payPage">
    <TopBar/>
    <PageNav/>
-   <section className="payWrap">
-    <div className="payCard panned" style={{maxWidth: 620, margin: '0 auto', textAlign: 'center'}}>
+   <section className="payWrap lux-pay-wrap">
+    <div className="payCard panned lux-pay-card" style={{maxWidth: 620, margin: '0 auto', textAlign: 'center'}}>
      <div className="payCheck"><CheckIcon/></div>
      <p className="eyebrow">{done.paid ? 'PAYMENT RECEIVED' : 'PAYMENT CONFIRMING'}</p>
      <h1 className="payThanks">Thank you, {form.name.trim().split(' ')[0] || 'friend'}.</h1>
@@ -758,7 +758,7 @@ if (done) {
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero canvas hasCover payIntro" id="main" style={{'--bg': bgUrl('./images/hero/pool-1920.webp')} as unknown as React.CSSProperties}>
+  <section className="pageHero canvas hasCover payIntro lux-page-hero" id="main" style={{'--bg': bgUrl('./images/hero/pool-1920.webp')} as unknown as React.CSSProperties}>
    <div className="pageHeroInner">
    <BackLink label="Back" fallback="./index.html"/>
    <p className="eyebrow">SECURE CHECKOUT</p>
@@ -769,17 +769,17 @@ if (done) {
 
   <VoiceGuide src={src} reference={ref} amount={payable || amt}/>
 
-  <section className="payWrap section" style={{paddingTop: 56}}>
+  <section className="payWrap section lux-pay-wrap" style={{paddingTop: 56}}>
    {!src || !ref ? (
-    <div className="payCard panned" style={{maxWidth: 620, margin: '0 auto', textAlign: 'center'}}>
+    <div className="payCard panned lux-pay-card" style={{maxWidth: 620, margin: '0 auto', textAlign: 'center'}}>
      <h3>Nothing to pay</h3>
      <p className="payDoneNote">This page finishes a booking or an order. Nothing has been carried here yet, so there is nothing to pay.</p>
      <div className="payDoneActions"><a className="btn" href="./rooms.html">Book a room</a><a className="btn ghost2" href="./menu.html">Order food</a></div>
     </div>
    ) : (
-   <div className="payGrid">
+   <div className="payGrid lux-pay-grid">
     <div>
-      <div className="payCard">
+      <div className="payCard lux-pay-card">
        <p className="eyebrow">YOUR REQUEST</p>
        <h3>{detail?.booking?.room_type || (detail?.invoice ? 'Invoice ' + detail.invoice.number : item) || (src === 'booking' ? 'Room booking' : src === 'invoice' ? 'Hotel invoice' : 'Food order')}</h3>
        {detail && <span className={'badge ' + statusTone(detail.status)} style={{marginTop: 10}}>{detail.status || 'Status'}</span>}
@@ -898,7 +898,7 @@ if (done) {
       <div className="payTrust"><LockIcon/><span>Secured by Pesapal. You can also pay this at the front desk with this reference.</span></div>
      </div>
 
-     <div className="payCard paySteps">
+     <div className="payCard paySteps lux-pay-card">
       <p className="eyebrow">WHAT HAPPENS NEXT</p>
       <ol>
        <li>You pay on Pesapal\u2019s secure page, by MTN Mobile Money, Airtel Money, or a Visa or Mastercard.</li>
@@ -908,7 +908,7 @@ if (done) {
      </div>
     </div>
 
-    <div className="payCard">
+    <div className="payCard lux-pay-card">
      <p className="eyebrow">1 &middot; YOUR DETAILS</p>
      <h3>Receipt details</h3>
      {token && !editWho && form.name.trim() && form.phone.trim() ? (

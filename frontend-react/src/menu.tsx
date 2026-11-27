@@ -1,6 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
+import './luxury-batch-b.css';
 import {EndLinks, TopBar, PageNav, Footer, fmtPrice, apiUrl, CALL, telHref, customerToken, BackLink, PageHeroCover, AccountGate, type HeroCoverFrame} from './shared';
 import {SmartImage, photoHintsEnabled} from './SmartImage';
 import {MenuConcierge} from './concierge';
@@ -334,7 +335,7 @@ function MenuSpotlight({section, dishes}: {section: MenuSection; dishes: MenuIte
 
   return (
     <div
-      className={'menuSpotlight secBanner' + (count > 1 ? ' hasSlides' : '')}
+      className={'menuSpotlight secBanner luxSpotlight' + (count > 1 ? ' hasSlides' : '')}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -537,7 +538,7 @@ function DishDetail({
     <div className="modal" role="presentation">
       <div className="modalScrim" onClick={onClose}/>
       <div
-        className="modalPanel"
+        className="modalPanel luxDishModal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="dishTitle"
@@ -1017,7 +1018,7 @@ function MenuPage() {
     const status = dish.available === false ? 'Unavailable' : dish.price === null ? 'On request' : 'Available';
     return (
       <article
-        className={'dishCard' + (mine > 0 ? ' held' : '') + (justAdded === key ? ' added' : '') + (di >= limit ? ' dishOverflow' : '') + (allShown ? ' revealed' : '')}
+        className={'dishCard luxDishCard' + (mine > 0 ? ' held' : '') + (justAdded === key ? ' added' : '') + (di >= limit ? ' dishOverflow' : '') + (allShown ? ' revealed' : '')}
         key={section.key + '-' + dish.id + '-' + dish.name}
       >
         <div className="dishOpenMedia">
@@ -1114,11 +1115,11 @@ if (d.ok) {
     setBusy(false);
   };
 
-  return <div className="menuPage">
+  return <div className="menuPage lux-b lux-menu">
     <TopBar/>
     <PageNav onDark/>
 
-    <section className="pageHero hasCover menuIntro" id="main">
+    <section className="pageHero hasCover menuIntro luxHero" id="main">
       <PageHeroCover frames={MENU_HERO_FRAMES}/>
       <div className="pageHeroInner">
         <BackLink label="Back" fallback="./index.html"/>
@@ -1280,7 +1281,7 @@ if (d.ok) {
     </section>
 
     <section className="orderPanelWrap section" id="order">
-      <div className={'orderPanel' + (open ? ' open' : '')}>
+      <div className={'orderPanel luxOrderSheet' + (open ? ' open' : '')}>
         <button className="orderPanelHead" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-controls="orderBody">
           <span className="orderPanelTitle">
             <b>Your order</b>
@@ -1321,7 +1322,7 @@ if (d.ok) {
 
     <div className={'cartDrawer' + (drawer ? ' open' : '')} aria-hidden={!drawer}>
       <div className="cartScrim" onClick={() => setDrawer(false)}/>
-      <aside className="cartPanel" role="dialog" aria-modal="true" aria-label="Your order" ref={cartPanel}>
+      <aside className="cartPanel luxOrderSheet" role="dialog" aria-modal="true" aria-label="Your order" ref={cartPanel}>
         <div className="cartHead">
           <div>
             <p>YOUR ORDER</p>
@@ -1361,7 +1362,7 @@ if (d.ok) {
     </div>
 
     {count > 0 && orderAway && (
-      <button className={'orderPill' + (justAdded ? ' pop' : '')} onClick={goToOrder}>
+      <button className={'orderPill luxOrderPill' + (justAdded ? ' pop' : '')} onClick={goToOrder}>
         <span className="orderPillDot">{count}</span>
         <span className="orderPillText">
           <b>Your order</b>

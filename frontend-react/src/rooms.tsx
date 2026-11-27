@@ -336,7 +336,7 @@ if (d.ok) {
     <TopBar/>
     <PageNav onDark/>
 
-<section className="pageHero hasCover roomsIntro" id="main">
+<section className="pageHero hasCover roomsIntro lux-page-hero" id="main">
     <PageHeroCover frames={ROOM_HERO_FRAMES}/>
     <div className="pageHeroInner">
      <BackLink label="Back" fallback="./index.html"/>
@@ -345,12 +345,12 @@ if (d.ok) {
      <p>Every room is photographed, so you see exactly what you are booking. Pick a bed, check your dates, and continue to payment. Rates are per night and include breakfast and the local hotel tax.</p>
     </div>
    </section>
-   <section className="bedsWrap section">
+   <section className="bedsWrap section lux-section">
     <div className="bedList">
      {rooms.map(r => {
       const active = chosen === r.type;
       return (
-       <article className={'bedCard' + (active ? ' chosen' : '')} id={'bed-' + r.id} key={r.id}>
+       <article className={'bedCard lux-bed-card' + (active ? ' chosen' : '')} id={'bed-' + r.id} key={r.id}>
         <BedSlider
          slides={ROOM_SLIDES[r.type]?.length ? ROOM_SLIDES[r.type] : roomFallback(r.type)}
          alt={r.type}
@@ -382,7 +382,7 @@ if (d.ok) {
      })}
     </div>
 
-    <div className="planner" id="planner">
+    <div className="planner lux-planner" id="planner">
      {!sel ? (
       <div className="plannerEmpty">
        <BedGlyph size={70}/>

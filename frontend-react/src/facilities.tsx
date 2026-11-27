@@ -1,6 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
+import './luxury-batch-b.css';
 import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal} from './shared';
 import {SmartImage, type ImageGroup} from './SmartImage';
 import {MenuConcierge} from './concierge';
@@ -64,12 +65,12 @@ function FacilitiesPage() {
   setBusy(false);
  };
 
- return <div>
+ return <div className="lux-b lux-facilities">
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero hasCover facilitiesIntro" id="main">
-   <SmartImage group="site" name="Pool-Area"
+  <section className="pageHero hasCover facilitiesIntro luxFacilitiesHero" id="main">
+   <SmartImage group="site" name="Pool-Area" priority
     alt="" ratio="auto" widths={[480, 960, 1440]} sizes="100vw" className="pageHeroCover"/>
    <div className="pageHeroInner">
     <BackLink label="Back" fallback="./index.html"/>
@@ -82,7 +83,7 @@ function FacilitiesPage() {
   <section className="section" id="facilities">
    <div className="facStack">
     {facilities.map((fl, i) => (
-     <article className={'fac reveal' + (i % 2 ? ' rev' : '')} key={fl.title}>
+     <article className={'fac reveal luxFeature' + (i % 2 ? ' rev' : '')} key={fl.title}>
       <SmartImage group={fl.group} name={fl.name} alt={fl.alt} ratio="16 / 10"
        widths={[320, 480, 640, 960]} sizes="(max-width:1050px) 100vw, 560px"
        position="50% 50%" zoom className="photo"/>
@@ -104,16 +105,16 @@ function FacilitiesPage() {
     <p className="intro">The hotel sits on the banks of the Nile with 69 rooms across three floors, restaurants and a bar, grounds for functions and gardens to walk in. These are the small courtesies that make the stay.</p>
    </div>
    <div className="giftGrid">
-    {gifts.map(g => <div className="gift reveal" key={g.t}><b>{g.t}</b><span>{g.d}</span></div>)}
+    {gifts.map(g => <div className="gift reveal luxGift" key={g.t}><b>{g.t}</b><span>{g.d}</span></div>)}
    </div>
-   <div className="facGallery reveal">
-    <SmartImage group="site" name="Hotel-paradise" alt="The main building of Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" position="50% 40%" zoom className="photo">
+   <div className="facGallery reveal luxMosaic">
+    <SmartImage group="site" name="Hotel-paradise" alt="The main building of Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" position="50% 40%" zoom className="photo luxMosaicOne">
      <span className="frameCap">The main building, on the banks of the Nile</span>
     </SmartImage>
-    <SmartImage group="facilities" name="fact-wellness" alt="Relaxation and wellness at Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" zoom className="photo">
+    <SmartImage group="facilities" name="fact-wellness" alt="Relaxation and wellness at Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" zoom className="photo luxMosaicTwo">
      <span className="frameCap">Relaxation and wellness, indoors and out</span>
     </SmartImage>
-    <SmartImage group="gallery" name="pool1" alt="The pool at Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" position="50% 45%" zoom className="photo">
+    <SmartImage group="gallery" name="pool1" alt="The pool at Hotel Paradise on the Nile" ratio="16 / 9" widths={[480, 960, 1440]} sizes="(max-width:900px) 100vw, 640px" position="50% 45%" zoom className="photo luxMosaicThree">
      <span className="frameCap">The pool, a few steps from the river</span>
     </SmartImage>
    </div>
@@ -125,7 +126,7 @@ function FacilitiesPage() {
     <h2>Ask us anything</h2>
     <p className="intro">Whether you want a pool day, a fitness plan, a table at the bar or a function in the grounds, tell us here and the front desk will answer the same day.</p>
    </div>
-   <div className="evForm reveal">
+   <div className="evForm reveal luxCompactForm">
     <div className="planGrid">
      <div className="planField"><label>Your name</label><input value={form.name} onChange={f('name')} placeholder="Full name"/></div>
      <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>

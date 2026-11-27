@@ -1,6 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
+import './luxury-batch-c.css';
 import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal, type HeroCoverFrame} from './shared';
 import {MenuConcierge} from './concierge';
 
@@ -39,7 +40,7 @@ type State = {posts: Post[]; cats: Record<string, string>} | null;
  * the same photograph turns in the slides up top.
  */
 const NEWS_COVER: HeroCoverFrame[] = [
-  {base: './images/hero/coctail-juice', ext: 'webp', widths: [640, 1024]}
+  {base: './images/hero/coctail-juice', ext: 'webp', widths: [640, 1024, 1440]}
 ];
 
 /**
@@ -517,31 +518,31 @@ function NewsPage() {
   const rest = filtered.filter(p => !p.pinned);
   const eotm = posts.find(p => p.category === 'employee');
 
-  return <div>
+  return <div className="lux-batch-c newsPage">
     <TopBar/>
     <PageNav onDark/>
 
-    <section className="pageHero hasCover newsIntro" id="main">
+    <section className="pageHero hasCover newsIntro luxHero" id="main">
       <HeroCover/>
-      <div className="pageHeroInner">
+      <div className="pageHeroInner luxHeroInner">
         <BackLink label="Back" fallback="./index.html"/>
-        <p className="eyebrow">NEWS, UPDATES, OPPORTUNITIES &amp; CAREERS</p>
-        <h1>What is happening at the hotel.</h1>
-        <p>Announcements and notices, opportunities for our community, and the roles we are hiring for. When we honour a colleague or open a vacancy, this is where the hotel says it first.</p>
+        <p className="eyebrow luxEyebrow">NEWS, UPDATES, OPPORTUNITIES &amp; CAREERS</p>
+        <h1 className="luxHeroTitle">What is happening at the hotel.</h1>
+        <p className="luxHeroLead">Announcements and notices, opportunities for our community, and the roles we are hiring for. When we honour a colleague or open a vacancy, this is where the hotel says it first.</p>
       </div>
     </section>
 
-    <section className="section newsWrap">
+    <section className="section newsWrap luxSection">
       {!open && (
         <>
           {!loading && !error && <NewsSpotlight posts={posts} onOpen={show}/>}
-          <div className="newsBar reveal">
-            <div className="newsSearch">
+          <div className="newsBar reveal luxNewsBar">
+            <div className="newsSearch luxSearch">
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg>
               <input type="search" value={q} onChange={e => setQ(e.target.value)}
                 placeholder="Search news, notices, vacancies…" aria-label="Search the newsroom"/>
             </div>
-            <div className="newsChips" role="tablist" aria-label="Filter by category">
+            <div className="newsChips luxChips" role="tablist" aria-label="Filter by category">
               <button type="button" className={'newsChip' + (cat === '' ? ' on' : '')} onClick={() => setCat('')}>All</button>
               {Object.entries(cats).map(([key, label]) => (
                 <button type="button" key={key} className={'newsChip' + (cat === key ? ' on' : '')}
@@ -567,11 +568,11 @@ function NewsPage() {
       )}
 
       {!loading && !error && open && (
-        <div className="newsDetail" ref={detailRef}>
-          <button type="button" className="newsBackLink" onClick={close}>
+        <div className="newsDetail luxDetail" ref={detailRef}>
+          <button type="button" className="newsBackLink luxBackLink" onClick={close}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg> All news
           </button>
-          <article className="newsArticle reveal">
+          <article className="newsArticle reveal luxArticle">
             <header className="newsArticleHead">
               <Tag>{open.category_label}</Tag>
               <h1>{open.title}</h1>
@@ -698,8 +699,9 @@ function NewsPage() {
             </div>
           )}
 
-          <div className="newsCta reveal">
+          <div className="newsCta reveal luxCtaPanel">
             <div>
+              <p className="luxEyebrow">CAREERS &amp; COMMUNITY</p>
               <h3>Looking for work, or offering a hand?</h3>
               <p>Vacancies, internships and community opportunities are published here first. To speak to our human resource team directly, call or email the front desk.</p>
             </div>

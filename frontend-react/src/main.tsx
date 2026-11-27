@@ -367,7 +367,7 @@ function Hero() {
 
   return (
     <section
-     className="hero"
+     className="hero lux-hero"
      id="main"
      style={{'--slide-ms': SLIDE_MS + 'ms', '--heroZoom': (SLIDE_MS + 1200) + 'ms'} as React.CSSProperties}
      aria-roledescription="carousel"
@@ -413,7 +413,7 @@ function Hero() {
 
     {/* Every slide's writing is stacked in the same grid cell, so the block
         keeps one height and the carousel never jumps as the words change. */}
-    <div className="heroCopy">
+    <div className="heroCopy lux-hero-copy">
      {slides.map((_, n) => {
       const c = HERO_COPY[n % HERO_COPY.length];
       const on = n === i;
@@ -477,7 +477,7 @@ function AvailabilityStrip() {
   window.location.href = './rooms.html' + (q.toString() ? '?' + q.toString() : '');
  };
  return (
-  <section className="booking" id="book">
+  <section className="booking lux-booking" id="book">
    <div><label>Check in</label><input type="date" value={st.cin} onChange={f('cin')}/></div>
    <div><label>Check out</label><input type="date" value={st.cout} onChange={f('cout')}/></div>
    <div><label>Guests</label><select value={st.adults} onChange={f('adults')}><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
@@ -493,7 +493,7 @@ function Rates() {
  // each row so a guest can see the range of rates without reading every figure.
  const maxRate = Math.max(...rooms.filter(x => x.price > 0).map(x => x.price), 1);
  return (
-   <section className="section band rates hasBackdrop" id="rates" style={{'--bg': bgUrl('./images/hero/bed-executive-1920.webp')} as unknown as React.CSSProperties}>
+   <section className="section band rates hasBackdrop lux-section" id="rates" style={{'--bg': bgUrl('./images/hero/bed-executive-1920.webp')} as unknown as React.CSSProperties}>
     <div className="bandInner">
     <div className="center reveal">
      <p className="eyebrow">ROOM RATES AND POLICIES</p>
@@ -550,7 +550,7 @@ function Home() {
 
    <p className="stripNote reveal">Your room has its own page. When you choose below, you will see the bed clearly and you are free to change your mind before booking.</p>
 
-   <section className="section hasTint" id="rooms" style={{'--bg': bgUrl('./images/hero/bed-twin-1920.webp')} as unknown as React.CSSProperties}>
+   <section className="section hasTint lux-section" id="rooms" style={{'--bg': bgUrl('./images/hero/bed-twin-1920.webp')} as unknown as React.CSSProperties}>
     <div className="center reveal">
      <p className="eyebrow">STAY IN PARADISE</p>
      <h2>Rooms and beds</h2>
@@ -589,7 +589,7 @@ function Home() {
    <Rates/>
 
 
-  <section className="section hasTint" id="dining" style={{'--bg': bgUrl('./images/hero/food-fruit-1920.webp')} as unknown as React.CSSProperties}>
+  <section className="section hasTint lux-section" id="dining" style={{'--bg': bgUrl('./images/hero/food-fruit-1920.webp')} as unknown as React.CSSProperties}>
    <div className="center reveal">
     <p className="eyebrow">DINING AND BAR</p>
     <h2>Good food, great moments</h2>
@@ -629,7 +629,7 @@ function Home() {
    </section>
 
 
-  <section className="section hasTint" id="facilities" style={{'--bg': bgUrl('./images/hotel-paradise-on-the-nile-conferences-weddings-cover.jpg')} as unknown as React.CSSProperties}>
+  <section className="section hasTint lux-section" id="facilities" style={{'--bg': bgUrl('./images/hotel-paradise-on-the-nile-conferences-weddings-cover.jpg')} as unknown as React.CSSProperties}>
    <div className="center reveal">
     <p className="eyebrow">THE HOTEL</p>
     <h2>Everything you need, in one place</h2>
@@ -685,7 +685,7 @@ function Home() {
     />
    </section>
 
-  <section className="section hasTint" id="events" style={{'--bg': bgUrl('./images/hero/view-1920.webp')} as unknown as React.CSSProperties}>
+  <section className="section hasTint lux-section" id="events" style={{'--bg': bgUrl('./images/hero/view-1920.webp')} as unknown as React.CSSProperties}>
    <div className="center reveal">
     <p className="eyebrow">CONFERENCES, WEDDINGS AND FUNCTIONS</p>
     <h2>Gather by the Nile</h2>
@@ -710,7 +710,7 @@ function Home() {
    </div>
   </section>
 
-  <section className="section band contact hasBackdrop" id="contact" style={{'--bg': bgUrl('./images/hero/view-1920.webp')} as unknown as React.CSSProperties}>
+  <section className="section band contact hasBackdrop lux-section" id="contact" style={{'--bg': bgUrl('./images/hero/view-1920.webp')} as unknown as React.CSSProperties}>
    <div className="bandInner">
    <div className="center reveal">
     <p className="eyebrow">BOOKINGS AND ENQUIRIES</p>

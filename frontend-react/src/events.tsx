@@ -1,7 +1,8 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, fmtPrice, CALL, telHref, HOTEL, useReveal} from './shared';
+import './luxury-batch-b.css';
+import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, fmtPrice, CALL, telHref, HOTEL, useReveal, PageHeroCover, type HeroCoverFrame} from './shared';
 import {SmartImage, type ImageGroup} from './SmartImage';
 import {MenuConcierge} from './concierge';
 
@@ -55,6 +56,12 @@ const buffetTiers: {label: string; detail: string; price: number}[] = [
 
 const EVENT_TYPES = ['Wedding', 'Conference / seminar', 'Team retreat', 'Birthday party', 'Anniversary / ceremony', 'Corporate dinner', 'Family function', 'Other'];
 
+const EVENT_HERO_FRAMES: HeroCoverFrame[] = [
+ {base: './images/gallery/nile-hall1', ext: 'jpg', widths: [480, 960, 1440]},
+ {base: './images/meeting-rooms/meeting-room-nile-hall', ext: 'jpg', widths: [480, 960, 1280]},
+ {base: './images/meeting-rooms/nile-hall-meeting-room2', ext: 'jpg', widths: [480, 960, 1280]}
+];
+
 function EventsPage() {
  const [form, setForm] = React.useState({name: '', phone: '', email: '', event_type: '', event_date: '', guests: '', venue: '', message: ''});
  const [msg, setMsg] = React.useState<{ok: boolean; text: string} | null>(null);
@@ -81,13 +88,12 @@ function EventsPage() {
   setBusy(false);
  };
 
- return <div>
+ return <div className="lux-b lux-events">
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero hasCover eventsIntro" id="main">
-   <SmartImage group="site" name="Hotel-Paradise-on-the-Nile-Conferences-Weddings-cover"
-    alt="" ratio="auto" widths={[480, 960, 1440]} sizes="100vw" className="pageHeroCover"/>
+  <section className="pageHero hasCover eventsIntro luxEventsHero" id="main">
+   <PageHeroCover frames={EVENT_HERO_FRAMES}/>
    <div className="pageHeroInner">
     <BackLink label="Back" fallback="./index.html"/>
     <p className="eyebrow">CONFERENCES, WEDDINGS AND FUNCTIONS</p>
@@ -104,7 +110,7 @@ function EventsPage() {
    </div>
    <div className="venueGrid">
     {venues.map(v => (
-     <article className="venue reveal" key={v.title}>
+     <article className="venue reveal luxVenue" key={v.title}>
       <SmartImage group={v.group} name={v.name} alt={v.alt} ratio="4 / 3"
        widths={[320, 480, 640, 960]} sizes="(max-width:900px) 100vw, (max-width:1400px) 480px, 560px"
        position="50% 45%" zoom className="photo"/>
@@ -126,7 +132,7 @@ function EventsPage() {
    </div>
    <div className="venueGrid">
     {buffets.map(b => (
-     <article className="venue reveal" key={b.title}>
+     <article className="venue reveal luxVenue luxBuffet" key={b.title}>
       <SmartImage group={b.group} name={b.name} alt={b.alt} ratio="4 / 3"
        widths={[320, 480, 640, 960]} sizes="(max-width:900px) 100vw, 560px"
        position="50% 50%" zoom className="photo"/>
@@ -141,7 +147,7 @@ function EventsPage() {
    </div>
    <div className="buffetTiers reveal">
     {buffetTiers.map(t => (
-     <article className="buffetTier" key={t.label}>
+     <article className="buffetTier luxTier" key={t.label}>
       <p className="pill">Full Buffet</p>
       <h3>{t.label}</h3>
       <p className="buffetPrice">{fmtPrice(t.price)} <span>per adult</span></p>
@@ -160,7 +166,7 @@ function EventsPage() {
    </div>
    <div className="occGrid">
     {occasions.map(o => (
-     <article className="occ reveal" key={o.title}>
+     <article className="occ reveal luxOcc" key={o.title}>
       <h3>{o.title}</h3>
       <p>{o.text}</p>
      </article>
@@ -175,12 +181,12 @@ function EventsPage() {
    </div>
    <div className="evSplit">
     <div className="evWrite reveal">
-     <div className="evPill"><b>Riverside setting</b><span>The Nile is a few steps from the door. Your guests will not need a story to tell; the hotel is one.</span></div>
-     <div className="evPill"><b>On-site catering</b><span>Menus written with you, cooked by a kitchen that plates for every guest at once - buffet or seated.</span></div>
-     <div className="evPill"><b>Rooms for your guests</b><span>Sixty nine rooms mean the wedding party sleeps at the wedding, and the conference stays until Friday.</span></div>
-     <div className="evPill"><b>An events manager</b><span>One person who owns your day from the first phone call to the last dance, so nothing is ever someone else's job.</span></div>
+     <div className="evPill luxFeature"><b>Riverside setting</b><span>The Nile is a few steps from the door. Your guests will not need a story to tell; the hotel is one.</span></div>
+     <div className="evPill luxFeature"><b>On-site catering</b><span>Menus written with you, cooked by a kitchen that plates for every guest at once - buffet or seated.</span></div>
+     <div className="evPill luxFeature"><b>Rooms for your guests</b><span>Sixty nine rooms mean the wedding party sleeps at the wedding, and the conference stays until Friday.</span></div>
+     <div className="evPill luxFeature"><b>An events manager</b><span>One person who owns your day from the first phone call to the last dance, so nothing is ever someone else's job.</span></div>
     </div>
-    <div className="evGall reveal">
+    <div className="evGall reveal luxGallery">
      <div className="evGallRow">
       <SmartImage group="halls" name="nile-hall-meeting-room2" alt="Horizon spread across the Nile Hall" ratio="16 / 10" widths={[320, 480, 640]} sizes="(max-width:1050px) 100vw, 460px" className="photo">
        <span className="frameCap">Horizon spread across the Nile Hall</span>
@@ -204,7 +210,7 @@ function EventsPage() {
     <h2>Tell us about your event</h2>
     <p className="intro">Send the outline below and our events team will come back to you the same day with dates, a menu and a clear price. No obligation, and no small print.</p>
    </div>
-   <div className="evForm reveal">
+   <div className="evForm reveal luxEnquiry">
     <div className="planGrid">
      <div className="planField"><label>Your name</label><input value={form.name} onChange={f('name')} placeholder="Full name"/></div>
      <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>

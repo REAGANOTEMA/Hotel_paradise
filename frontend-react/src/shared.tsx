@@ -246,7 +246,7 @@ export const CALL = HOTEL.phones[0];
 
 export function Brand({light = false}: {light?: boolean}) {
   return (
-   <a className={light ? 'brandL light' : 'brandL'} href="./index.html">
+   <a className={light ? 'brandL light lux-brand' : 'brandL lux-brand'} href="./index.html">
     <img className="brandLogo" src={LOGO} alt="Hotel Paradise on the Nile" width={1532} height={442} decoding="async" draggable={false}/>
     
    </a>
@@ -255,7 +255,7 @@ export function Brand({light = false}: {light?: boolean}) {
 
 export function TopBar() {
  return (
-  <div className="topbar">
+  <div className="topbar lux-topbar">
    <span>HOTEL PARADISE ON THE NILE, PLOT 12, 19 &amp; 25 KIIRA LANE, JINJA, UGANDA</span>
    <span className="right">{HOTEL.phones.join('  ·  ')}</span>
   </div>
@@ -395,7 +395,7 @@ export function InstallApp() {
 
 export function Footer() {
   return (
-   <footer>
+   <footer className="lux-footer">
     <div className="flag"><i></i><i></i><i></i></div>
     <div className="footerMain">
      <div className="footerBrand">
@@ -695,7 +695,7 @@ export function PageNav({onDark = false}: {onDark?: boolean}) {
  return (
   <>
    <a className="skipLink" href="#main">Skip to content</a>
-   <header className={(onDark ? 'nav dark' : 'nav') + (stuck ? ' stuck' : '')}>
+   <header className={(onDark ? 'nav dark lux-nav' : 'nav lux-nav') + (stuck ? ' stuck' : '')}>
     <Brand light={onDark}/>
     <nav>{NAV.map(([href, label]) => <a key={href} className={(active(href) ? 'active ' : '') + (label === 'Staffs Logins' ? 'staffNav' : '')} href={href}>{label === 'Staffs Logins' && <LockIcon/>}<span>{label}</span></a>)}</nav>
     <div className="navRight">

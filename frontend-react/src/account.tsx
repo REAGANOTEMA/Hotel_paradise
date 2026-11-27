@@ -1,6 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
+import './luxury-batch-b.css';
 import {ExploreMore, TopBar, PageNav, Footer, apiUrl, CALL, HOTEL, telHref, customerToken, setCustomer, forgetCustomer, LOGO, BackLink, bgUrl} from './shared';
 
 /*
@@ -326,9 +327,9 @@ function AccountPage() {
   };
 
   if (mode === 'checking') {
-    return <div><TopBar/><PageNav/>
-      <section className="payWrap" style={{paddingTop: 70, paddingBottom: 90}}>
-        <div className="payCard" style={{maxWidth: 520, margin: '0 auto', textAlign: 'center'}}>
+    return <div className="lux-b lux-account luxChecking"><TopBar/><PageNav/>
+      <section className="payWrap luxLoungeWrap" style={{paddingTop: 70, paddingBottom: 90}}>
+        <div className="payCard luxLoungeCard" style={{maxWidth: 520, margin: '0 auto', textAlign: 'center'}}>
           <p className="eyebrow">YOUR ACCOUNT</p>
           <h3>One moment…</h3>
           <p className="plannerNote">Checking whether you are already signed in on this browser.</p>
@@ -343,11 +344,11 @@ function AccountPage() {
     : mode === 'account' ? 'Your account'
     : 'Sign in';
 
-  return <div>
+  return <div className="lux-b lux-account">
    <TopBar/>
    <PageNav onDark/>
 
-   <section className="pageHero canvas hasCover accountIntro" id="main" style={{'--bg': bgUrl('./images/hero/bed-executive-1920.webp')} as unknown as React.CSSProperties}>
+   <section className="pageHero canvas hasCover accountIntro luxLoungeHero" id="main" style={{'--bg': bgUrl('./images/hero/bed-executive-1920.webp')} as unknown as React.CSSProperties}>
     <div className="pageHeroInner">
     <BackLink label="Back" fallback="./index.html"/>
     <p className="eyebrow">YOUR ACCOUNT</p>
@@ -360,18 +361,18 @@ function AccountPage() {
     </div>
    </section>
 
-   <section className="payWrap" style={{paddingTop: 56}}>
-    <div className="payCard" style={{maxWidth: mode === 'account' ? 720 : 480, margin: '0 auto'}}>
+   <section className="payWrap luxLoungeWrap" style={{paddingTop: 56}}>
+    <div className="payCard luxLoungeCard" style={{maxWidth: mode === 'account' ? 720 : 480, margin: '0 auto'}}>
 
-     <div className="acctBrand">
+     <div className="acctBrand luxBrand">
       <img src={LOGO} alt=""/>
       <div><b>Hotel Paradise</b><span>on the Nile &middot; Jinja</span></div>
      </div>
 
      {mode === 'account' && cust ? (
       <>
-       <div className="acctHead">
-        <div className={'acctAvatar' + (avatarUrl ? ' hasImg' : '')}>
+       <div className="acctHead luxGuestHead">
+        <div className={'acctAvatar luxAvatar' + (avatarUrl ? ' hasImg' : '')}>
          {avatarUrl ? <img src={avatarUrl} alt={`${cust.name}'s photo`}/> : <span>{(cust.name || 'G').trim().charAt(0).toUpperCase()}</span>}
         </div>
         <div className="acctHeadText">
@@ -390,9 +391,9 @@ function AccountPage() {
         {busy && photo && <span className="acctHintPhoto">Saving your photo…</span>}
        </div>
 
-       <form className="acctForm" onSubmit={e => { e.preventDefault(); saveProfile(); }}>
+       <form className="acctForm luxProfileForm" onSubmit={e => { e.preventDefault(); saveProfile(); }}>
         <p className="acctSection">Your details</p>
-        <div className="acctGrid">
+        <div className="acctGrid luxProfileGrid">
          <div className="planField acctWide"><label>Full name</label><input value={name} onChange={e => setName(e.target.value)} autoComplete="name"/></div>
          <div className="planField"><label>Mobile number</label><input value={phone} onChange={e => setPhone(e.target.value)} type="tel" inputMode="tel" placeholder="0759 504 928" autoComplete="tel"/></div>
          <div className="planField"><label>Email</label><input value={cust.email} readOnly/></div>
@@ -400,14 +401,14 @@ function AccountPage() {
          <div className="planField"><label>Nationality</label><input value={prof.nationality} onChange={e => setF('nationality', e.target.value)} placeholder="Ugandan"/></div>
         </div>
 
-        <button type="button" className="acctMore" aria-expanded={more} onClick={() => setMore(v => !v)}>
+        <button type="button" className="acctMore luxProfileToggle" aria-expanded={more} onClick={() => setMore(v => !v)}>
          {more ? 'Hide extra details' : 'Add extra details (optional)'}
          <span className="acctMoreSign" aria-hidden="true">{more ? '−' : '+'}</span>
         </button>
 
         {more && (
          <>
-          <div className="acctGrid">
+          <div className="acctGrid luxProfileGrid">
            <div className="planField"><label>Gender</label>
             <select value={prof.gender} onChange={e => setF('gender', e.target.value)}>
              <option value="">Prefer not to say</option>
@@ -445,16 +446,16 @@ function AccountPage() {
 
        <p className="acctSection">Your stays &amp; orders</p>
        {act && (act.bookings.length || act.orders.length || act.payments.length) ? (
-        <div className="acctAct">
+        <div className="acctAct luxActivity">
          {act.bookings.map(b => (
-          <div className="acctActRow" key={'b' + b.reference}>
+          <div className="acctActRow luxActivityRow" key={'b' + b.reference}>
            <b>Room {b.reference}</b>
            <span>{b.check_in} → {b.check_out} · {b.nights} night{b.nights === 1 ? '' : 's'} · {b.status}</span>
            <em>UGX {Math.round(b.total).toLocaleString()}</em>
           </div>
          ))}
          {act.orders.map(o => (
-          <div className="acctActRow" key={'o' + o.reference}>
+          <div className="acctActRow luxActivityRow" key={'o' + o.reference}>
            <b>Order {o.reference}</b>
            <span>{(o.outlet || o.kind || 'Restaurant') + (o.when ? ' · ' + o.when : '')} · {o.status}</span>
            <em>UGX {Math.round(o.total).toLocaleString()}</em>
@@ -466,7 +467,7 @@ function AccountPage() {
        )}
 
        {next && <button className="btn planBook" style={{marginTop: 16}} onClick={() => window.location.replace(next)}>Continue</button>}
-       <div className="payDoneActions" style={{marginTop: 16}}>
+       <div className="payDoneActions luxQuickLinks" style={{marginTop: 16}}>
         <a className="btn ghost2" href="./rooms.html">Book a room</a>
         <a className="btn ghost2" href="./menu.html">Order food</a>
         <a className="btn ghost2" href="./news.html">News &amp; careers</a>
@@ -475,8 +476,8 @@ function AccountPage() {
        <p className="plannerNote">Need to change anything urgent? Call <a className="footLink" href={telHref(CALL)}>{CALL}</a> or email {HOTEL.email}.</p>
       </>
      ) : mode === 'phone' ? (
-      <form onSubmit={e => { e.preventDefault(); submit('phone'); }}>
-       <p className="eyebrow">STEP 2 OF 2</p>
+      <form className="luxStepForm" onSubmit={e => { e.preventDefault(); submit('phone'); }}>
+       <p className="eyebrow luxStep luxStepTwo">STEP 2 OF 2</p>
        <h3>Add your mobile number</h3>
        {note && <div className="bookMsg ok" style={{marginTop: 14}}>{note}</div>}
        <div className="planField" style={{marginTop: 16}}>
@@ -489,10 +490,10 @@ function AccountPage() {
       </form>
      ) : (
       <>
-       <p className="eyebrow">{mode === 'signup' ? 'STEP 1 OF 2 · EMAIL' : 'WELCOME BACK'}</p>
+       <p className="eyebrow luxStep luxStepOne">{mode === 'signup' ? 'STEP 1 OF 2 · EMAIL' : 'WELCOME BACK'}</p>
        <h3>{mode === 'signup' ? 'Where should we reach you?' : 'Sign in to your account'}</h3>
 
-       <form onSubmit={e => { e.preventDefault(); submit(mode === 'signup' ? 'signup' : 'signin'); }}>
+       <form className="luxStepForm" onSubmit={e => { e.preventDefault(); submit(mode === 'signup' ? 'signup' : 'signin'); }}>
         {mode === 'signup' && (
          <div className="planField" style={{marginTop: 16}}>
           <label>Full name</label>
@@ -521,7 +522,7 @@ function AccountPage() {
 
        {googleId && <>
         <div className="acctOr"><span>or</span></div>
-        <div ref={btn} style={{display: 'flex', justifyContent: 'center'}}/>
+        <div ref={btn} className="luxGoogle" style={{display: 'flex', justifyContent: 'center'}}/>
        </>}
 
        <p className="plannerNote">

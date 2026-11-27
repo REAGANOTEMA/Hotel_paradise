@@ -1,8 +1,8 @@
-import React from 'react';
+﻿import React from 'react';
 import {createRoot} from 'react-dom/client';
 import './styles.css';
-import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal, customerToken} from './shared';
-import {SmartImage} from './SmartImage';
+import './luxury-batch-c.css';
+import {ExploreMore, TopBar, PageNav, Footer, BackLink, apiUrl, CALL, telHref, HOTEL, useReveal, customerToken, PageHeroCover, type HeroCoverFrame} from './shared';
 import {MenuConcierge} from './concierge';
 
 /**
@@ -29,6 +29,10 @@ function StarPicker({value, onChange}: {value: number; onChange: (n: number) => 
   <span className="starWord">{value ? STAR_LABELS[value] : 'Tap to rate'}</span>
  </div>;
 }
+
+const TALK_COVER: HeroCoverFrame[] = [
+ {base: './images/gallery/exterior2', ext: 'jpg', widths: [480, 960, 1440]}
+];
 
 function TalkPage() {
  const [mode, setMode] = React.useState<'message' | 'experience'>('message');
@@ -78,34 +82,33 @@ function TalkPage() {
 
  const pick = (m: 'message' | 'experience') => { setMode(m); setMsg(null); };
 
- return <div>
+ return <div className="lux-batch-c talkPage">
   <TopBar/>
   <PageNav onDark/>
 
-  <section className="pageHero hasCover talkIntro" id="main">
-   <SmartImage group="site" name="hero-hotel-entrence"
-    alt="" ratio="auto" widths={[480, 960, 1440]} sizes="100vw" className="pageHeroCover"/>
-   <div className="pageHeroInner">
+  <section className="pageHero hasCover talkIntro luxHero" id="main">
+   <PageHeroCover frames={TALK_COVER}/>
+   <div className="pageHeroInner luxHeroInner">
     <BackLink label="Back" fallback="./index.html"/>
-    <p className="eyebrow">TALK TO THE HOUSE</p>
-    <h1>The front desk is listening.</h1>
-    <p>Message the front office or the kitchen, tell us how your stay was, or ask for anything at all. Whether you are in the house tonight or remembering it months later, this is where your words reach the people who made your stay.</p>
+    <p className="eyebrow luxEyebrow">TALK TO THE HOUSE</p>
+    <h1 className="luxHeroTitle">The front desk is listening.</h1>
+    <p className="luxHeroLead">Message the front office or the kitchen, tell us how your stay was, or ask for anything at all. Whether you are in the house tonight or remembering it months later, this is where your words reach the people who made your stay.</p>
    </div>
   </section>
 
-  <section className="section" id="write">
-   <div className="center reveal">
-    <p className="eyebrow">ONE FORM, TWO DOORS</p>
+  <section className="section luxSection" id="write">
+   <div className="center reveal luxCenterHead">
+    <p className="eyebrow luxEyebrow">ONE FORM, TWO DOORS</p>
     <h2>Send a message, or write your experience</h2>
     <p className="intro">Everything you send reaches the house directly. A message goes to the desk that handles it; an experience is read by the team and, when it is kind, kept for other guests to see.</p>
    </div>
 
-   <div className="talkTabs reveal" role="tablist">
+   <div className="talkTabs reveal luxTalkTabs" role="tablist">
     <button type="button" role="tab" aria-selected={mode === 'message'} className={mode === 'message' ? 'talkTab on' : 'talkTab'} onClick={() => pick('message')}>Send a message</button>
     <button type="button" role="tab" aria-selected={mode === 'experience'} className={mode === 'experience' ? 'talkTab on' : 'talkTab'} onClick={() => pick('experience')}>Tell us about your stay</button>
    </div>
 
-   <div className="evForm reveal">
+   <div className="evForm reveal luxDeskForm">
     <div className="planGrid">
      <div className="planField"><label>Your name</label><input value={form.name} onChange={f('name')} placeholder="Full name"/></div>
      <div className="planField"><label>Phone</label><input value={form.phone} onChange={f('phone')} type="tel" placeholder="e.g. 0759504928"/></div>
@@ -130,28 +133,28 @@ function TalkPage() {
 
     <div className="planField"><label>{mode === 'message' ? 'Your message' : 'Your experience of the stay'}</label>
      <textarea value={form.message} onChange={f('message')} rows={5}
-      placeholder={mode === 'message' ? 'Write it in your own words. A room number or a time helps the desk find you faster…' : 'What made the stay? The room, the food, the people, the river. Write it as you would tell a friend…'}/></div>
+      placeholder={mode === 'message' ? 'Write it in your own words. A room number or a time helps the desk find you fasterâ€¦' : 'What made the stay? The room, the food, the people, the river. Write it as you would tell a friendâ€¦'}/></div>
 
     {msg && <div className={'bookMsg' + (msg.ok ? ' ok' : '')}>{msg.text}{msg.ref ? <><br/><small>Your reference is {msg.ref}.</small></> : null}</div>}
 
     <button className={'btn planBook' + (busy ? ' loading' : '')} onClick={send} disabled={busy}>
-     {busy ? 'Sending…' : mode === 'message' ? 'Send to the hotel' : 'Share your experience'}
+     {busy ? 'Sendingâ€¦' : mode === 'message' ? 'Send to the hotel' : 'Share your experience'}
     </button>
     <p className="evFormNote">In the house and need someone now? Call the front desk on <a className="footLink nileLine" href={telHref(CALL)}>{CALL}</a> or write to <a className="footLink nileLine" href={'mailto:' + HOTEL.email}>{HOTEL.email}</a>. The desk is answered 24 hours.</p>
    </div>
   </section>
 
-  <section className="section hasTint" id="said">
-   <div className="center reveal">
-    <p className="eyebrow">WHAT OUR GUESTS SAY</p>
+  <section className="section hasTint luxSection" id="said">
+   <div className="center reveal luxCenterHead">
+    <p className="eyebrow luxEyebrow">WHAT OUR GUESTS SAY</p>
     <h2>Words from the people who stayed</h2>
     <p className="intro">A few of the experiences guests have trusted us with, chosen by the hotel from those written here.</p>
    </div>
    {saidLoading ? <p className="saidEmpty">Loading what guests have said…</p>
     : said.length === 0 ? <p className="saidEmpty">No experiences are on show just yet. Yours could be the first: write it in the form above.</p>
-    : <div className="saidGrid">
+    : <div className="saidGrid luxSaidGrid">
      {said.map((s, i) => (
-      <figure className="said reveal" key={i}>
+      <figure className="said reveal luxQuote" key={i}>
        <div className="saidStars" aria-label={s.rating + ' out of 5'}>{'★'.repeat(Math.max(0, Math.min(5, s.rating)))}{'☆'.repeat(Math.max(0, 5 - s.rating))}</div>
        <blockquote>{s.text}</blockquote>
        <figcaption><b>{s.name}</b><span>{s.when}{s.department === 'kitchen' ? ' · on the dining' : ' · on the stay'}</span></figcaption>
@@ -169,3 +172,5 @@ function TalkPage() {
 }
 
 createRoot(document.getElementById('root')!).render(<TalkPage/>);
+
+

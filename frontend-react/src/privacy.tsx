@@ -1,5 +1,6 @@
 import {createRoot} from 'react-dom/client';
 import './styles.css';
+import './luxury-batch-c.css';
 import {LegalPage, type LegalClause} from './legal';
 
 /**

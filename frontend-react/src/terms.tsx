@@ -1,5 +1,6 @@
 import {createRoot} from 'react-dom/client';
 import './styles.css';
+import './luxury-batch-c.css';
 import {LegalPage, type LegalClause} from './legal';
 
 /**
@@ -152,7 +153,7 @@ createRoot(document.getElementById('root')!).render(
   eyebrow="LEGAL"
   title="Terms & Conditions"
   updated="10 October 2026"
-  heroBg="./images/hero/hotel-1920.webp"
+  heroBg="./images/gallery/exterior1.jpg"
   intro="The terms on which we welcome you to Hotel Paradise on the Nile. They set out how bookings, payments, stays and events work, and the standards we hold ourselves to in looking after every guest."
   clauses={clauses}
  />
